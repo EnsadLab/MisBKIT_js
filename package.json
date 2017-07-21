@@ -1,0 +1,11 @@
+{
+  "name": "MisBKIT-WIFI",
+  "version": "1.0.0",
+  "author": "Didier Bouchon",
+  "description": "",
+  "main": "main.js",
+  "devDependencies": {
+    "electron-prebuilt": "^0.35.2"
+  }
+
+}

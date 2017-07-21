@@ -1,0 +1,576 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>misB KIT WIFI</title>
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="author" href="humans.txt">
+
+    </head>
+    <body>
+        
+		<div class="wapper">
+			<div class="connexions">
+				<h2>Connexions</h2>
+
+				<div class="plug">
+					<!--button class="gear"><img src="assets/settings.png"></button-->
+					<p>
+						USB : <span class="status" id="serialText"></span>
+					</p>
+
+					<select name="" id="selectSerial" title="select serial port">
+						<option value="">Scan</option>
+					</select>
+					<button class="error" id="btSerial">Off</button>
+				</div>
+
+				<div class="plug">
+					<p>
+						MIDI : <span class="status" id="midiText"></span>
+					</p>
+					<select name="" id="selectMidi">
+						<option value="scan">scan</option>
+					</select>
+					<button class="disconnected" id="btMidi">Off</button>
+				</div>
+
+				<div class="plug">
+					<p>
+						OSC : <span class="status"></span>
+					</p>
+					<select name="" id="selectOSC">
+						<option value="">disabled</option>
+					</select>
+					<button class="disconnected" id="btOSC">OFF</button>
+				</div>
+
+				<div class="plug">
+					<p>
+						WebSocket : <span class="status"></span>
+					</p>
+					<select name="" id="">
+						<option value="">disabled</option>
+					</select>
+					<button class="disconnected">OFF</button>
+				</div>
+
+				<!--div class="plug" >
+						ADVANCED :
+						<button class="gear"><img src="assets/settings.png"></button>
+						<input type="text" size="3">
+				</div-->
+
+
+			</div>
+
+
+			<!-- MOTORS -->
+			<div class="motors" >
+				<h2>Motors</h2>
+				<div class="motors-btn-group">
+					<button class="start-rec">Start RECording</button>
+					<button class="advanced"><img src="assets/settings.png" alt=""></button>
+				</div>
+
+				<div id="divMotors" class="normal">
+					<!-- SINGLE MOTOR -->
+					<div class="single-motor">
+						<div class="left-col">
+							<div class="identity">10</div>
+							<input type="checkbox" class="power cmdTog" name ="enable"
+								   title="enable/disable">
+							<input type="checkbox" class="rec cmdTog"   name="recCheck"
+								   title="check for next record">
+						</div>
+						<div class="circle">
+							<svg class="rotAngle" ></svg>
+							<svg class="rotSpeed" ></svg>
+						</div>
+						<div class="properties">
+							<label class="switch">
+							  <input type="checkbox" class="cmdTog" name="mode">
+							  <div class="slider round"></div>
+							</label>
+						</div>
+					</div>
+
+				</div>
+
+
+				<!-- Advanced Motors -->
+				<div id="divMotorSettings" class="settings">
+					<!-- AREVOIR : bouton tools ...  -->
+					<!--div-->
+					<button class="gear" id="opener"><img src="assets/settings.png"></button>
+					<button class="disconnected" id="btScan" name="startScan" style="color:white;">Scan</button>
+					<!--div id="scanProgress"></div-->
+					<progress id="scanProgress" value="0" max="254"></progress>
+					<!--/div-->
+
+
+						<!-- SINGLE MOTOR Advanced-->
+					<div class="single-motor">
+						<div class="left-col">
+							<!--button class="gear" id="opener"><img src="assets/settings.png"></button-->
+							<div class="identity">id :</div>
+							<input type="text" class="name cmd" name="dxlID" placeholder="01">
+						</div>
+						<div class="properties">
+							<label class="switch-clock">
+							  <input type="checkbox" class="cmdTog" name="clockwise">
+							  <div class="slider round"></div>
+							</label>
+						</div>
+						<div class="advanced">
+							<ul>
+								<li><label for="">Angle Max :</label><input type="number" class="name cmd" name="angleMax" placeholder="0"></li>
+								<li><label for="">Speed Max :</label><input type="number" class="name cmd" name="speedMax" placeholder="0"></li>
+								<li><label for="">Angle Min :</label><input type="number" class="name cmd" name="angleMin" placeholder="0"></li>
+								<li><label for="">Speed Min :</label><input type="number" class="name cmd" name="speedMin" placeholder="0"></li>
+							</ul>
+						</div>
+					</div>
+
+					<!-- SINGLE MOTOR Advanced
+					<div class="single-motor">
+						<div class="left-col">
+							<div class="identity">id :</div>
+							<input type="text" class="name" placeholder="01">
+						</div>
+						<div class="properties">
+							<label class="switch-clock">
+							  <input type="checkbox">
+							  <div class="slider round"></div>
+							</label>
+						</div>
+						<div class="advanced">
+							<ul>
+								<li><label for="">Angle Max :</label><input type="number" class="name" placeholder="0"></li>
+								<li><label for="">Speed Max :</label><input type="number" class="name" placeholder="0"></li>
+								<li><label for="">Angle Min :</label><input type="number" class="name" placeholder="0"></li>
+								<li><label for="">Speed Min :</label><input type="number" class="name" placeholder="0"></li>
+							</ul>
+						</div>
+					</div>
+
+					<!-- SINGLE MOTOR Advanced
+					<div class="single-motor">
+						<div class="left-col">
+							<div class="identity">id :</div>
+							<input type="text" class="name" placeholder="01">
+						</div>
+						<div class="properties">
+							<label class="switch-clock">
+							  <input type="checkbox">
+							  <div class="slider round"></div>
+							</label>
+						</div>
+						<div class="advanced">
+							<ul>
+								<li><label for="">Angle Max :</label><input type="number" class="name" placeholder="0"></li>
+								<li><label for="">Speed Max :</label><input type="number" class="name" placeholder="0"></li>
+								<li><label for="">Angle Min :</label><input type="number" class="name" placeholder="0"></li>
+								<li><label for="">Speed Min :</label><input type="number" class="name" placeholder="0"></li>
+							</ul>
+						</div>
+					</div>
+
+					<!-- SINGLE MOTOR Advanced
+					<div class="single-motor">
+						<div class="left-col">
+							<div class="identity">id :</div>
+							<input type="text" class="name" placeholder="01">
+						</div>
+						<div class="properties">
+							<label class="switch-clock">
+							  <input type="checkbox">
+							  <div class="slider round"></div>
+							</label>
+						</div>
+						<div class="advanced">
+							<ul>
+								<li><label for="">Angle Max :</label><input type="number" class="name" placeholder="0"></li>
+								<li><label for="">Speed Max :</label><input type="number" class="name" placeholder="0"></li>
+								<li><label for="">Angle Min :</label><input type="number" class="name" placeholder="0"></li>
+								<li><label for="">Speed Min :</label><input type="number" class="name" placeholder="0"></li>
+							</ul>
+						</div>
+					</div>
+
+					<!-- SINGLE MOTOR Advanced
+					<div class="single-motor">
+						<div class="left-col">
+							<div class="identity">id :</div>
+							<input type="text" class="name" placeholder="01">
+						</div>
+						<div class="properties">
+							<label class="switch-clock">
+							  <input type="checkbox">
+							  <div class="slider round"></div>
+							</label>
+						</div>
+						<div class="advanced">
+							<ul>
+								<li><label for="">Angle Max :</label><input type="number" class="name" placeholder="0"></li>
+								<li><label for="">Speed Max :</label><input type="number" class="name" placeholder="0"></li>
+								<li><label for="">Angle Min :</label><input type="number" class="name" placeholder="0"></li>
+								<li><label for="">Speed Min :</label><input type="number" class="name" placeholder="0"></li>
+							</ul>
+						</div>
+					</div>
+
+					<!-- SINGLE MOTOR Advanced
+					<div class="single-motor">
+						<div class="left-col">
+							<div class="identity">id :</div>
+							<input type="text" class="name" placeholder="01">
+						</div>
+						<div class="properties">
+							<label class="switch-clock">
+							  <input type="checkbox">
+							  <div class="slider round"></div>
+							</label>
+						</div>
+						<div class="advanced">
+							<ul>
+								<li><label for="">Angle Max :</label><input type="number" class="name" placeholder="0"></li>
+								<li><label for="">Speed Max :</label><input type="number" class="name" placeholder="0"></li>
+								<li><label for="">Angle Min :</label><input type="number" class="name" placeholder="0"></li>
+								<li><label for="">Speed Min :</label><input type="number" class="name" placeholder="0"></li>
+							</ul>
+						</div>
+					</div>
+					-->
+
+				</div>
+
+
+			</div>
+
+
+			<div-- class="animations" id="divAnims">
+				<h2>Animations</h2>
+				<button class="load"><img src="assets/open.png" alt="" id="loadAnim"></button>
+				
+				<!--div class="single-anim ui-state-default">
+					<input type="text" class="shorcut" disabled>
+					<input type="checkbox" class="rec cmdTog" name="rec0">
+					<input type="checkbox" class="rec cmdTog" name="rec1">
+					<input type="checkbox" class="rec cmdTog" name="rec2">
+					<input type="checkbox" class="rec cmdTog" name="rec3">
+					<input type="checkbox" class="rec cmdTog" name="rec4">
+					<input type="checkbox" class="rec cmdTog" name="rec5">
+					<!--button class="disconnected">Record</button-- >
+					<button class="start-rec">Start RECording</button>
+				</div-->
+
+			<ul id="sortable" name="listAnims">
+				<!-- SIngle Animation -->
+				<li class="single-anim ui-state-default">
+					<button class="close"><img src="assets/close.png" alt=""></button>
+					<input type="text" class="name" placeholder="Nom de l'animation" name="animName" size="30">
+					<div class="anim-motors">
+						<input type="text" class="shorcut" placeholder="?" name="animKey">
+						
+						<input type="checkbox" class="motor-none" name="track">
+						<input type="checkbox" class="motor-none" name="track">
+						<input type="checkbox" class="motor-none" name="track">
+						<input type="checkbox" class="motor-none" name="track">
+						<input type="checkbox" class="motor-none" name="track">
+						<input type="checkbox" class="motor-none" name="track">
+
+						<div class="controls">
+							<button class="play"><img src="assets/play.png" alt="" name="play"></button>
+							<button class="stop"><img src="assets/stop.png" alt="" name="stop"></button>
+							<button class="loop"><img src="assets/loop.png" alt="" name="loop"></button>
+						</div>
+
+						<meter name="progress" class="progress" value="70" max="100"></meter>
+
+					</div>
+				</li>
+
+
+				<!-- SIngle Animation
+				<li class="single-anim ui-state-default">
+					<button class="close"><img src="assets/close.png" alt=""></button>
+					<input type="text" class="name" placeholder="Nom de l'animation">
+					<div class="anim-motors">
+						<input type="text" class="shorcut" placeholder="?">
+						
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-speed">
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-speed">
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-angle">
+
+						<div class="controls">
+							<button class="play"><img src="assets/play.png" alt=""></button>
+							<button class="stop"><img src="assets/stop.png" alt=""></button>
+							<button class="loop"><img src="assets/loop.png" alt=""></button>
+						</div>
+
+						<meter name="progress" class="progress" value="70" max="100"></meter>
+					</div>
+				</li>
+
+				<!-- SIngle Animation
+				<li class="single-anim ui-state-default">
+					<button class="close"><img src="assets/close.png" alt=""></button>
+					<input type="text" class="name" placeholder="Nom de l'animation">
+					<div class="anim-motors">
+						<input type="text" class="shorcut" placeholder="?">
+						
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-speed">
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-speed">
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-angle">
+
+						<div class="controls">
+							<button class="play"><img src="assets/play.png" alt=""></button>
+							<button class="stop"><img src="assets/stop.png" alt=""></button>
+							<button class="loop"><img src="assets/loop.png" alt=""></button>
+						</div>
+
+						<meter name="progress" class="progress" value="60" max="100"></meter>
+					</div>
+				</li>
+
+
+				<!-- SIngle Animation
+				<li class="single-anim ui-state-default">
+					<button class="close"><img src="assets/close.png" alt=""></button>
+					<input type="text" class="name" placeholder="Nom de l'animation">
+					<div class="anim-motors">
+						<input type="text" class="shorcut" placeholder="?">
+						
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-speed">
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-speed">
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-angle">
+
+						<div class="controls">
+							<button class="play"><img src="assets/play.png" alt=""></button>
+							<button class="stop"><img src="assets/stop.png" alt=""></button>
+							<button class="loop"><img src="assets/loop.png" alt=""></button>
+						</div>
+
+						<meter name="progress" class="progress" value="100" max="100"></meter>
+					</div>
+				</li>
+
+
+				<!-- SIngle Animation
+				<li class="single-anim ui-state-default">
+					<button class="close"><img src="assets/close.png" alt=""></button>
+					<input type="text" class="name" placeholder="Nom de l'animation">
+					<div class="anim-motors">
+						<input type="text" class="shorcut" placeholder="?">
+						
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-speed">
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-speed">
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-angle">
+
+						<div class="controls">
+							<button class="play"><img src="assets/play.png" alt=""></button>
+							<button class="stop"><img src="assets/stop.png" alt=""></button>
+							<button class="loop"><img src="assets/loop.png" alt=""></button>
+						</div>
+
+						<meter name="progress" class="progress" value="80" max="100"></meter>
+					</div>
+				</li>
+
+				<!-- SIngle Animation
+				<li class="single-anim ui-state-default">
+					<button class="close"><img src="assets/close.png" alt=""></button>
+					<input type="text" class="name" placeholder="Nom de l'animation">
+					<div class="anim-motors">
+						<input type="text" class="shorcut" placeholder="?">
+						
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-speed">
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-speed">
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-angle">
+
+						<div class="controls">
+							<button class="play"><img src="assets/play.png" alt=""></button>
+							<button class="stop"><img src="assets/stop.png" alt=""></button>
+							<button class="loop"><img src="assets/loop.png" alt=""></button>
+						</div>
+
+						<meter name="progress" class="progress" value="50" max="100"></meter>
+					</div>
+				</li>
+
+				<!-- SIngle Animation
+				<li class="single-anim ui-state-default">
+					<button class="close"><img src="assets/close.png" alt=""></button>
+					<input type="text" class="name" placeholder="Nom de l'animation">
+					<div class="anim-motors">
+						<input type="text" class="shorcut" placeholder="?">
+						
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-speed">
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-speed">
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-angle">
+
+						<div class="controls">
+							<button class="play"><img src="assets/play.png" alt=""></button>
+							<button class="stop"><img src="assets/stop.png" alt=""></button>
+							<button class="loop"><img src="assets/loop.png" alt=""></button>
+						</div>
+
+						<meter name="progress" class="progress" value="20" max="100"></meter>
+					</div>
+				</li>
+
+				<!-- SIngle Animation
+				<li class="single-anim ui-state-default">
+					<button class="close"><img src="assets/close.png" alt=""></button>
+					<input type="text" class="name" placeholder="Nom de l'animation">
+					<div class="anim-motors">
+						<input type="text" class="shorcut" placeholder="?">
+						
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-speed">
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-speed">
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-angle">
+
+						<div class="controls">
+							<button class="play"><img src="assets/play.png" alt=""></button>
+							<button class="stop"><img src="assets/stop.png" alt=""></button>
+							<button class="loop"><img src="assets/loop.png" alt=""></button>
+						</div>
+
+						<meter name="progress" class="progress" value="0" max="100"></meter>
+					</div>
+				</li>
+
+				<!-- SIngle Animation
+				<li class="single-anim ui-state-default">
+					<button class="close"><img src="assets/close.png" alt=""></button>
+					<input type="text" class="name" placeholder="Nom de l'animation">
+					<div class="anim-motors">
+						<input type="text" class="shorcut" placeholder="?">
+						
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-speed">
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-speed">
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-angle">
+
+						<div class="controls">
+							<button class="play"><img src="assets/play.png" alt=""></button>
+							<button class="stop"><img src="assets/stop.png" alt=""></button>
+							<button class="loop"><img src="assets/loop.png" alt=""></button>
+						</div>
+
+						<meter name="progress" class="progress" value="70" max="100"></meter>
+					</div>
+				</li>
+
+				<!-- SIngle Animation
+				<li class="single-anim ui-state-default">
+					<button class="close"><img src="assets/close.png" alt=""></button>
+					<input type="text" class="name" placeholder="Nom de l'animation">
+					<div class="anim-motors">
+						<input type="text" class="shorcut" placeholder="?">
+						
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-speed">
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-speed">
+						<input type="checkbox" class="motor-angle">
+						<input type="checkbox" class="motor-angle">
+
+						<div class="controls">
+							<button class="play"><img src="assets/play.png" alt=""></button>
+							<button class="stop"><img src="assets/stop.png" alt=""></button>
+							<button class="loop"><img src="assets/loop.png" alt=""></button>
+						</div>
+
+						<meter name="progress" class="progress active" value="20" max="100"></meter>
+					</div>
+				</li>
+				-->
+
+			</ul>
+		</div>
+
+
+		<div class="advDialog" title="     Dynamixel Controls" id="dialog" >
+
+			<input type="text" size="5" id="btAdvID"><label for="">[ID]</label>
+			<button id="btDxlRefresh" style="align:left;">refresh</button>
+			<br>
+			<div id="divDxlReg" >
+				<br><input type="text" size="5" name="000"><label for=""> MODEL</label>
+				<br><input type="text" size="5" name="002"><label for=""> FIRMWARE</label>
+				<br><input type="text" size="5" name="004"><label for=""> BAUDS</label>
+				<br><input type="text" size="5" name="005"><label for=""> DELAY</label>
+				<br><input type="text" size="5" name="006"><label for=""> CW LIMIT</label>
+				<br><input type="text" size="5" name="008"><label for=""> CCW LIMIT</label>
+				<br><input type="text" size="5" name="014"><label for=""> MAX TORQUE</label>
+				<br><input type="text" size="5" name="016"><label for=""> RETURN LEVEL</label>
+				<br><input type="text" size="5" name="017"><label for=""> ALARM LED</label>
+				<br><input type="text" size="5" name="018"><label for=""> ALARM SHUTDOWN</label>
+				<br><input type="text" size="5" name="024"><label for=""> TORQUE ENABLE</label>
+				<br><input type="text" size="5" name="025"><label for=""> LED</label>
+				<br><input type="text" size="5" name="026"><label for=""> PID 1</label>
+				<br><input type="text" size="5" name="027"><label for=""> PID 2</label>
+				<br><input type="text" size="5" name="028"><label for=""> PID 3</label>
+				<br><input type="text" size="5" name="029"><label for=""> PID 4</label>
+				<br><input type="text" size="5" name="030"><label for=""> GOAL</label>
+				<br><input type="text" size="5" name="032"><label for=""> SPEED</label>
+				<br><input type="text" size="5" name="034"><label for=""> TORQUE</label>
+				<br><input type="text" size="5" name="036"><label for=""> POSITION</label>
+				<br><input type="text" size="5" name="043"><label for=""> TEMPERATURE</label>
+			</div>
+		</div>
+
+		<!-- Sans Electron-->
+			<!--
+		<script src="libs/jquery-2.2.3.min.js"></script>
+		<script src="libs/d3.v3.min.js"></script>
+		<script src="js/jquery-ui-1.11.4/jquery-ui.js"></script>
+		-->
+			<script src="js/_defines_.js"></script>
+		<!-- Electron -->
+			<script>window.$ = window.jQuery = require('./libs/jquery-2.2.3.min.js');</script>
+			<script src="js/jquery-ui-1.11.4/jquery-ui.js"></script>
+			<script src="libs/jquery.blockUI.js"></script>
+
+			<script src="js/SerialClass.js"></script>
+			<script src="js/MidiPort.js"></script>
+			<script src="js/UdpSocket.js"></script>
+
+			<script src="js/Messages.js"></script>
+			<script src="libs/d3.v3.min.js"></script>
+			<script src="js/alex.js"></script>
+			<script src="js/Animations.js"></script>
+			<script src="js/WidgetD3.js"></script>
+			<script src="js/DxlMotor.js"></script>
+			<script src="js/DxlManager.js"></script>
+			<script src="js/MisGUI.js"></script>
+			<script src="js/index.js"></script>
+    </body>
+</html>
