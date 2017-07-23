@@ -1,9 +1,9 @@
 {
   "serialPort": "",
-  "midiPort": "misbkit_midi Bus 1",
+  "midiPort": "nanoKONTROL2 SLIDER/KNOB",
   "oscHost": "none",
   "webSocket": "none",
-  "animFolder": "/Users/Didier/Documents/Anims/",
+  "animFolder": "",
   "anims": [],
   "motors": [
     {

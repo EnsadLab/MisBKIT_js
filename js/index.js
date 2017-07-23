@@ -19,7 +19,7 @@ var fs = null;
 
 var dxlManager = null;
 var misGUI     = null; //cf MisGui.js
-var midiPort   = null; //cf MidiPort.js
+var midiPortManager = null; //cf MidiPortManager.js
 var cm9Com     = null;
 var oscCm9     = null;
 
@@ -141,7 +141,7 @@ window.onload = function() {
     $(".toggleShow").on("click",toggleShow);
     */
 
-    try{ midiPort = new MidiPort(); }catch(e){console.log(e);}
+    try{ midiPortManager = new MidiPortManager(); }catch(e){console.log(e);}
     //try{ cm9Com = new SerialClass(); }catch(e){}
     //try{ oscCm9 = new OSCcm9(); cm9Com.open();}catch(e){}
     //try{ cm9Com = new CM9_UDP(); cm9Com.open();}catch(e){}

@@ -98,7 +98,8 @@ else {
     DxlManager.prototype.saveSettings = function () {
         var s = {}; //settings
         s.serialPort = cm9Com.serialName;
-        s.midiPort = midiPort.getPortName();
+        //s.midiPort = midiPort.getPortName();
+        s.midiPort = midiPortManager.getCurrentPortName();
         s.oscHost = "none";
         s.webSocket = "none";
         s.animFolder = this.animFolder;
@@ -147,9 +148,13 @@ else {
                     anim.load(s.anims[i].name);
                 }
             }
-            midiPort.open(this.midiPort);
-            console.log("midiport:",midiPort.getPortNum(this.midiPort));
-            misGUI.midiPort(this.midiPort);
+            //midiPort.open(this.midiPort);
+            //console.log("midiport:",midiPort.getPortNum(this.midiPort));
+            //misGUI.midiPort(this.midiPort);
+            //TODO: taking it out for now.
+            //midiPortManager.open(this.midiPort);
+
+            misGUI.midiPortManager(this.midiPort); //TODO: what does it do?
 
             misGUI.openSerial(this.serialPort);
 

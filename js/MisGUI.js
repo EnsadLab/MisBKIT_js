@@ -54,10 +54,10 @@ function MisGUI(){
         var cl = $(this).prop("class");
         if(cl=="connected"){
             $(this).prop("class","disconnected").text("OFF");
-            midiPort.open(-1); //disable
+            midiPortManager.close($('#selectMidi').val());
         }
         else {
-            if( midiPort.open($('#selectMidi').val()) )
+            if(midiPortManager.open($('#selectMidi').val()) )
                 $(this).prop("class","connected").text("ON");
             else
                 $('#btMidi').prop("class","disconnected").text("OFF");
@@ -72,10 +72,14 @@ function MisGUI(){
             self.scanMidiPorts();
         }
         else {
-            if( midiPort.open(this.value) )
+            /*
+            // take away for now the automatic connection when selecting a new port
+            if( midiPortManager.open(this.value) )
                 $('#btMidi').prop("class","connected").text("ON");
             else
                 $('#btMidi').prop("class","disconnected").text("OFF");
+            */
+            $('#btMidi').prop("class","disconnected").text("OFF");
         }
     });
 
@@ -213,8 +217,15 @@ MisGUI.prototype.oscState=function(state){
 }
 
 
-
+/*
 MisGUI.prototype.midiPort = function(name) {
+    $('#selectMidi').val(name);
+    var bt = $("#btMidi");
+};
+*/
+
+// TODO: what was the use of this?
+MisGUI.prototype.midiPortManager = function(name) {
     $('#selectMidi').val(name);
     var bt = $("#btMidi");
 };
@@ -882,18 +893,18 @@ MisGUI.prototype.scanMidiPorts = function(){
     var self = this;
     var selector = $("#selectMidi");
     selector.empty();
-    //selector.append($("<option value=-1 >OFF</option>"));
-    if(midiPort){
+    if(midiPortManager){  
         for(var i=0;i<100;i++){
-            var n = midiPort.getPortName(i);
-            if(n)
+            var n = midiPortManager.getPortName(i);
+            if(n){
+                console.log("Found midi port: " + n);
+                midiPortManager.addMidiPort(n,i);
                 selector.append($("<option value=" + "'" + n + "'>" + n + "</option>"));
-            else
+            }else
                 break;
         }
         selector.append($("<option value='scan' >scan</option>"));
     }
-
 };
 
 MisGUI.prototype.scanIPv4 = function(){

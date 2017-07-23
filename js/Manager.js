@@ -405,7 +405,8 @@ else {
     MisBK.prototype.saveSettings = function () {
         var s = {};
         s.serialPort = cm9Com.serialName;
-        s.midiPort   = midiPort.getPortName();
+        //s.midiPort   = midiPort.getPortName();
+        s.midiPort = midiPortManager.getCurrentPortName();
         s.oscHost    = "none";
         s.webSocket  = "none";
         s.animFolder = this.animFolder;
