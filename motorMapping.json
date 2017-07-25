@@ -1,0 +1,36 @@
+{
+  "motorMappings": [
+    {
+      "motorID": 0,
+      "port": "nanoKONTROL2 SLIDER/KNOB",
+      "type": "CC",
+      "nbID": 4,
+      "valMin": 1,
+      "valMax": -1
+    },
+    {
+      "motorID": 1,
+      "port": "nanoKONTROL2 SLIDER/KNOB",
+      "type": "CC",
+      "nbID": 5,
+      "valMin": 1,
+      "valMax": -1
+    },
+     {
+      "motorID": 2,
+      "port": "nanoKONTROL2 SLIDER/KNOB",
+      "type": "CC",
+      "nbID": 5,
+      "valMin": 1,
+      "valMax": -1
+    },
+         {
+      "motorID": 4,
+      "port": "nanoKONTROL2 SLIDER/KNOB",
+      "type": "CC",
+      "nbID": 5,
+      "valMin": 1,
+      "valMax": -1
+    }
+  ]
+}

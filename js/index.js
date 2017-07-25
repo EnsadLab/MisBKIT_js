@@ -20,6 +20,7 @@ var fs = null;
 var dxlManager = null;
 var misGUI     = null; //cf MisGui.js
 var midiPortManager = null; //cf MidiPortManager.js
+var motorMappingManager = null; //cf MotorMappingManager.js
 var cm9Com     = null;
 var oscCm9     = null;
 
@@ -148,6 +149,8 @@ window.onload = function() {
     cm9Com = new CM9_UDP();//cm9Com.open();
 
 
+    motorMappingManager = new MotorMappingManager();
+    motorMappingManager.loadMappingSettings();
     dxlManager = new DxlManager();
     misGUI     = new MisGUI();
     misGUI.init();

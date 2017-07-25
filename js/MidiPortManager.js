@@ -39,9 +39,14 @@ MidiPortManager.prototype.open = function (p) {
             console.log("MidiPortManager::close -> portname " + p + " has not been founded. Should not happen");
         }
     }
+    // TODO: careful.. in previous version it was possible to open with IP. Still needed?
+    else if((p>=0)&&(p<n)){
+        console.log("TODO:midi found num -> imlementation not finished!",p);
+    }
     return found;
-}
+};
 
+//TODO: try to close ports properly as well??
 MidiPortManager.prototype.close = function(portName){
     var found = false;
     for(var i=0; i<this.midiPorts.length; i++){
@@ -53,13 +58,12 @@ MidiPortManager.prototype.close = function(portName){
     if(!found){
         console.log("MidiPortManager::close -> portname " + portName + " has not been founded. Should not happen");
     }
-}
+};
 
 MidiPortManager.prototype.addMidiPort = function(portName, portID){
     
     var found = false;
     for(var i=0; i<this.midiPorts.length; i++){
-        console.log("?? " + this.midiPorts[i] + " " + portName)
         if(this.midiPorts[i].portName == portName){
             console.log("Midiport " + portName + " has already been added");
             found = true;
@@ -72,12 +76,11 @@ MidiPortManager.prototype.addMidiPort = function(portName, portID){
             var midiPortNew = new MidiPort(); 
             midiPortNew.portName = portName;
             midiPortNew.portID = portID;
-        }catch(e){console.log(e);}//null;
-
-        this.midiPorts.push(midiPortNew);
+            this.midiPorts.push(midiPortNew);
+        }catch(e){console.log(e);}
     }
     
-}
+};
 
 MidiPortManager.prototype.getPortName = function(index) {
     if(index >= 0 && index < this.midiIn.getPortCount() ){
@@ -95,7 +98,7 @@ MidiPortManager.prototype.getPortNum = function(name) {
     return -1;
 };
 
-MidiPortManager.prototype.getCurrentPortName() = function()
+MidiPortManager.prototype.getCurrentPortName = function()
 {
     for(var i=0; i<this.midiPorts.length; i++){
         if(this.midiPorts[i].enabled){
@@ -103,4 +106,4 @@ MidiPortManager.prototype.getCurrentPortName() = function()
         }
     }
     return ""; // TODO: or return null?
-}
+};

@@ -517,6 +517,7 @@ DxlManager.prototype.rcvCM9 = function(datas){ //from parser
 DxlManager.prototype.onMidi = function(index,cmd,arg){
     //console.log("dxl-midi:",index," arg:",arg);
     if(index<this.motors.length){
+        console.log("index " + index + " " + this.motors.length);
         var dxl = this.motors[index];
         if(dxl.m.mode==0) {
             misGUI.angle(index,   dxl.nAngle(arg/127));
