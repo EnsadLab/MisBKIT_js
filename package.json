@@ -4,8 +4,12 @@
   "author": "Didier Bouchon",
   "description": "",
   "main": "main.js",
+  "dependencies": {
+    "midi": "^0.9.5",
+    "osc-min": "^1.1.1"
+  },
   "devDependencies": {
-    "electron-prebuilt": "^0.35.2"
+    "electron": "^1.6.11"
   }
 
 }
