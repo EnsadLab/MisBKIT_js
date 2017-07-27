@@ -1,33 +1,41 @@
 {
   "motorMappings": [
     {
+      "type": "midi",
+      "enabled": true,
       "motorID": 0,
       "port": "nanoKONTROL2 SLIDER/KNOB",
-      "type": "CC",
+      "cmd": "CC",
       "nbID": 4,
       "valMin": 1,
       "valMax": -1
     },
     {
+      "type": "midi",
+      "enabled": true,
       "motorID": 1,
       "port": "nanoKONTROL2 SLIDER/KNOB",
-      "type": "CC",
+      "cmd": "CC",
       "nbID": 5,
       "valMin": 1,
       "valMax": -1
     },
      {
+      "type": "midi",
+      "enabled": false,
       "motorID": 2,
       "port": "nanoKONTROL2 SLIDER/KNOB",
-      "type": "CC",
+      "cmd": "CC",
       "nbID": 5,
       "valMin": 1,
       "valMax": -1
     },
-         {
+    {
+      "type": "midi",
+      "enabled": true,
       "motorID": 4,
       "port": "nanoKONTROL2 SLIDER/KNOB",
-      "type": "CC",
+      "cmd": "CC",
       "nbID": 5,
       "valMin": 1,
       "valMax": -1

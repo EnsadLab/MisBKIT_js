@@ -5,15 +5,15 @@
 MotorMapping = function () {
     
     this.m = { //settings
+        type:"",
+        enabled: true,
         motorID:-1,
         port:-1,
-        type:"", 
+        cmd:"", 
         nbID:-1,
         valMin: -1,
         valMax: -1
     };
-
-    this.enabled = true;
 
 };
 

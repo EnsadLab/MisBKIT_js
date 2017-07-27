@@ -25,8 +25,9 @@ MidiPortManager.prototype.open = function (p) {
     for(var i=0; i<this.midiPorts.length; i++){
         this.midiPorts[i].close();
     }
+
     if(isNaN(p)){
-        console.log("OPENING midi by name",p);
+        //console.log("OPENING midi by name",p);
         var found = false;
         for(var i=0; i<this.midiPorts.length; i++){
             if(this.midiPorts[i].portName == p){
@@ -38,10 +39,18 @@ MidiPortManager.prototype.open = function (p) {
         if(!found){
             console.log("MidiPortManager::close -> portname " + p + " has not been founded. Should not happen");
         }
-    }
-    // TODO: careful.. in previous version it was possible to open with IP. Still needed?
-    else if((p>=0)&&(p<n)){
-        console.log("TODO:midi found num -> imlementation not finished!",p);
+    }else if((p>=0)&&(p<this.midiPorts.length)){
+        var found = false;
+        for(var i=0; i<this.midiPorts.length; i++){
+            if(this.midiPorts[i].portID == p){
+                this.midiPorts[i].open();
+                found = true;
+                break;
+            }
+        }
+        if(!found){
+            console.log("MidiPortManager::close -> portID " + p + " has not been founded. Should not happen");
+        }
     }
     return found;
 };

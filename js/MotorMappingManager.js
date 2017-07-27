@@ -28,32 +28,29 @@ MotorMappingManager.prototype.loadMappingSettings = function () {
         }
 
         for (var i = 0; i < s.motorMappings.length; i++) {
-            //console.log(s.motorMappings[i]);
             this.motorMappings[i].copySettings(s.motorMappings[i]);
-            /*
-            console.log(this.motorMappings[i].m.motorID);
-            console.log(this.motorMappings[i].m.port);
-            console.log(this.motorMappings[i].m.type);
-            console.log(this.motorMappings[i].m.nbID);
-            console.log(this.motorMappings[i].m.valMin);
-            console.log(this.motorMappings[i].m.valMax);
-            */
+            //console.log(s.motorMappings[i]);
+            //console.log(this.motorMappings[i]);
         }
 
     }
 
 }
 
-MotorMappingManager.prototype.isMapped = function(port,type,nbID){
+MotorMappingManager.prototype.isMapped = function(type,port,cmd,nbID){
 
     for(var i=0; i<this.motorMappings.length; i++){
 
-        //console.log(this.motorMappings[i].m.port + " = " + port);
+        //console.log("enabled: " + this.motorMappings[i].m.enabled);
         //console.log(this.motorMappings[i].m.type + " = " + type);
+        //console.log(this.motorMappings[i].m.port + " = " + port);
+        //console.log(this.motorMappings[i].m.cmd + " = " + cmd);
         //console.log(this.motorMappings[i].m.nbID + " = " + nbID);
 
-        if( this.motorMappings[i].m.port == port &&
+        if( this.motorMappings[i].m.enabled &&
             this.motorMappings[i].m.type == type &&
+            this.motorMappings[i].m.port == port &&
+            this.motorMappings[i].m.cmd == cmd &&
             this.motorMappings[i].m.nbID == nbID)
         {
             return true;
@@ -62,11 +59,13 @@ MotorMappingManager.prototype.isMapped = function(port,type,nbID){
     return false;
 };
 
-MotorMappingManager.prototype.getMotorID = function(port,type,nbID){
+MotorMappingManager.prototype.getMotorID = function(type,port,cmd,nbID){
     var motorIDs = new Array();
     for(var i=0; i<this.motorMappings.length; i++){
-        if( this.motorMappings[i].m.port == port &&
+        if( this.motorMappings[i].m.enabled && 
             this.motorMappings[i].m.type == type &&
+            this.motorMappings[i].m.port == port &&
+            this.motorMappings[i].m.cmd == cmd &&
             this.motorMappings[i].m.nbID == nbID)
         {
             motorIDs.push(this.motorMappings[i].m.motorID);

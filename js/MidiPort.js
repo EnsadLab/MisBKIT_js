@@ -33,22 +33,33 @@ MidiPort = function () {
 
     this.midiIn.on('message', function (dt, msg) {
         if(self.enabled) {
+
+            /*
+            http://computermusicresource.com/MIDI.Commands.html
+            m[0] : status (128-255) -> (128-159):notes, (176-191): CC (176=CC chanel 1, 177=CC chanel 2...), ...
+            m[1] : data 1 (0-127) 
+            m[2] : data 2 (0-127)
+            */
             
             //console.log("midi CC:", msg[1], " val:", msg[2] / 127, " dt:", dt);
+            //console.log("Message " + msg);
 
-            if(motorMappingManager.isMapped(self.portName,"CC",msg[1])){
-                var motorIDs = motorMappingManager.getMotorID(self.portName,"CC",msg[1]);
+            var cmd = "";
+            if(msg[0] >= 128 && msg[0] <= 159) cmd = "note"; // TODO: off and on can also be distinguished in data2, right?
+            else if(msg[0] >= 176 && msg[0] <= 191) cmd = "CC";
+            else console.log("New MIDI command with number " + msg[0] + " -> needs to be added in code");
+            
+            if(motorMappingManager.isMapped("midi",self.portName,cmd,msg[1])){
+                var motorIDs = motorMappingManager.getMotorID("midi",self.portName,cmd,msg[1]);
                 for(var i=0; i<motorIDs.length; i++){
                     dxlManager.onMidi(motorIDs[i], "midi", msg[2]); //quick n dirty
                 }
             }else{
                 dxlManager.onMidi(msg[1], "midi", msg[2]); //quick n dirty
             }
-            
-            //TODO: this returns undefined.. shouldn't we use self.callback instead?
-            //console.log("this.callback " + this.callback);
-            if (this.callback)
-                this.callback(msg[1], msg[2] / 127);
+
+            if (self.callback)
+                self.callback(msg[1], msg[2] / 127);
         }
     });
 

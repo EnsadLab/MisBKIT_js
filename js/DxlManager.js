@@ -513,11 +513,11 @@ DxlManager.prototype.rcvCM9 = function(datas){ //from parser
     this.serialRcvTime = Date.now();
 };
 
-
+//TODO: change the name of the function to make it more global
 DxlManager.prototype.onMidi = function(index,cmd,arg){
     //console.log("dxl-midi:",index," arg:",arg);
     if(index<this.motors.length){
-        console.log("index " + index + " " + this.motors.length);
+        //console.log("index " + index + " " + this.motors.length);
         var dxl = this.motors[index];
         if(dxl.m.mode==0) {
             misGUI.angle(index,   dxl.nAngle(arg/127));
