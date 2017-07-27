@@ -73,3 +73,44 @@ MotorMappingManager.prototype.getMotorID = function(type,port,cmd,nbID){
     }
     return motorIDs;
 };
+
+//TODO: test this function when we have the CC mapping input in the GUI
+MotorMappingManager.prototype.setMotorMapping = function(type,port,cmd,motorID,nbID){
+    var found = false;
+    for(var i=0; i<this.motorMappings.length; i++){
+        if( this.motorMappings[i].m.type == type &&
+            this.motorMappings[i].m.port == port &&
+            this.motorMappings[i].m.cmd == cmd &&
+            this.motorMappings[i].m.motorID == motorID)
+        {
+            this.motorMappings[i].m.nbID = nbID;
+            found = true;
+        }
+    }
+    if(!found){
+        var motorMapping = new MotorMapping();
+        motorMapping.m.enabled = true;
+        motorMapping.m.type = type;
+        motorMapping.m.port = port;
+        motorMapping.m.cmd = cmd;
+        motorMapping.m.motorID = motorID;
+        motorMapping.m.nbID = nbID;
+        this.motorMappings.push(motorMapping);
+    }
+};
+
+//TODO: test this function when we have the CC mapping input in the GUI
+MotorMappingManager.prototype.saveMappingSettings = function () {
+        
+        var s = {}; //settings
+        s.motorMappings = [];
+
+        var nbm = this.motorMappings.length;
+        for (var i = 0; i < nbm; i++) {
+            s.motorMappings.push(this.motorMappings[i].getSettings());
+        }
+
+        var json = JSON.stringify(s, null, 2);
+        fs.writeFileSync(__dirname + "/motorMapping.json", json);
+        //console.log(json);
+};

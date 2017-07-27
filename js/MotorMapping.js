@@ -23,3 +23,7 @@ MotorMapping.prototype.copySettings = function(s){
         this.m[e]=s[e];
     }
 }
+
+MotorMapping.prototype.getSettings = function(){
+    return this.m;
+}
