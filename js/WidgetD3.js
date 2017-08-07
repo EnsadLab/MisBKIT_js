@@ -50,9 +50,11 @@ DUI.Toggle = function(svg,params){
         .attr("text-anchor", "middle")
         .attr("font-size","14")
         .attr("font-family","sans-serif")
+        .attr("contentEditable", true)
         .style("fill","#FFFFFF")
         .text(self.togs[0].t)
         .style("cursor", "default")
+
         ;
 
 };//Toggle
@@ -153,6 +155,7 @@ DUI.Slider_V = function(svg,params) {
         .attr("text-anchor", "end")
         .attr("font-family","sans-serif")
         .attr("font-size","12")
+        .attr("contentEditable", true)
         .style("fill", "#792d3e")
         .text("0")
 };
@@ -262,11 +265,13 @@ DUI.Rotary = function(svg,params){
         .attr("x",self.cx)
         .attr("y",self.cy+self.ray+10)
         .attr("dy", "5px")
+        .attr("contentEditable", true)
         .attr("font-family","sans-serif")
         .attr("text-anchor", "middle")
         .attr("font-size","16")
         .style("fill","black") // this.color)
         .text("0");
+
 
     this.setValue(0);
     this.setNeedle(0);

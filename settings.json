@@ -1,41 +1,46 @@
 {
   "serialPort": "",
-  "midiPort": "nanoKONTROL2 SLIDER/KNOB",
+  "midiPort": "",
   "oscHost": "none",
   "webSocket": "none",
-  "animFolder": "",
-  "anims": [],
+  "animFolder": "/Users/alexandredechosal/Desktop/anim misbkit/",
+  "anims": [
+    {
+      "name": "2017-07-26-11h04-13",
+      "key": "\u0000"
+    }
+  ],
   "motors": [
     {
-      "id": 0,
-      "enabled": false,
-      "model": 12,
-      "clockwise": true,
-      "mode": 0,
-      "angleMin": -150,
-      "angleMax": 150,
-      "speedMin": -100,
-      "speedMax": 100,
-      "torqueMax": 1023
-    },
-    {
-      "id": 0,
-      "enabled": false,
-      "model": 12,
-      "clockwise": true,
-      "mode": 0,
-      "angleMin": -150,
-      "angleMax": 150,
-      "speedMin": -100,
-      "speedMax": 100,
-      "torqueMax": 1023
-    },
-    {
-      "id": 0,
+      "id": 99,
       "enabled": false,
       "model": 12,
       "clockwise": true,
       "mode": 1,
+      "angleMin": -150,
+      "angleMax": 150,
+      "speedMin": -100,
+      "speedMax": 10,
+      "torqueMax": 1023
+    },
+    {
+      "id": 10000,
+      "enabled": false,
+      "model": 12,
+      "clockwise": true,
+      "mode": 1,
+      "angleMin": -150,
+      "angleMax": 150,
+      "speedMin": -100,
+      "speedMax": 100,
+      "torqueMax": 1023
+    },
+    {
+      "id": 0,
+      "enabled": false,
+      "model": 12,
+      "clockwise": true,
+      "mode": 0,
       "angleMin": -150,
       "angleMax": 150,
       "speedMin": -100,
