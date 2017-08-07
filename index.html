@@ -4,14 +4,14 @@
         <meta charset="utf-8">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>misB KIT WIFI</title>
+        <title>misB KIT WIFI 2</title>
         <link rel="stylesheet" href="css/jquery-ui.css">
         <link rel="stylesheet" href="css/style.css">
         <link rel="author" href="humans.txt">
 
     </head>
     <body>
-        <button class="btn-connexions">Connexions</button>
+		<button class="btn-connexions">Connexions CM9</button>
 		<div class="wapper">
 			
 			<div class="connexions">
@@ -20,13 +20,20 @@
 				<div class="plug">
 					<!--button class="gear"><img src="assets/settings.png"></button-->
 					<p>
-						USB : <span class="status" id="serialText"></span>
+						CM9 : <span class="status" id="serialText">ERROR</span>
 					</p>
+					<br>
+					<button class="disconnected" id="btcm9">Off</button>
+					<br>
+					<input type="checkbox"  name ="glou">SINGLE<br>
+					<br>
+					<input type="checkbox"  >CM9_1<br>
+					<input type="checkbox"  >CM9_2<br>
+					<input type="checkbox"  >CM9_3<br>
+					<input type="checkbox"  >CM9_4<br>
+					<input type="checkbox"  >CM9_5<br>
+					<input type="checkbox"  >CM9_6<br>
 
-					<select name="" id="selectSerial" title="select serial port">
-						<option value="">Scan</option>
-					</select>
-					<button class="error" id="btSerial">Off</button>
 				</div>
 
 				<div class="plug">
@@ -104,6 +111,9 @@
 							<img src="assets/thermometer.png" class="ico-thermo" alt="">
 							<div class="thermo">76°</div>
 						</div>
+						<!--Didier: essai d'ajout d'un input number-->
+						<input type="number" placeholder="?" name="">
+						
 					</div>
 
 				</div>

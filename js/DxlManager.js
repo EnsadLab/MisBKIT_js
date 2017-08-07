@@ -156,7 +156,7 @@ else {
 
             misGUI.midiPortManager(this.midiPort); //TODO: what does it do?
 
-            misGUI.openSerial(this.serialPort);
+            //misGUI.openSerial(this.serialPort); /*Didier*>
 
             //misGUI.alert(this.animFolder);
 

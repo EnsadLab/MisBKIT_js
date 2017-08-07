@@ -260,7 +260,7 @@ DUI.Rotary = function(svg,params){
         .attr('y2',self.cy-self.ray)
         .style("stroke", "yellow")
         .style("stroke-width", 2)
-
+    /*Didier
     this.text = this.mainGroup.append("text")
         .attr("x",self.cx)
         .attr("y",self.cy+self.ray+10)
@@ -271,7 +271,7 @@ DUI.Rotary = function(svg,params){
         .attr("font-size","16")
         .style("fill","black") // this.color)
         .text("0");
-
+        */
 
     this.setValue(0);
     this.setNeedle(0);
@@ -329,7 +329,8 @@ DUI.Rotary.prototype.setValue = function(v,propagate) {
     this.cursor
         .attr("x2",this.cx+Math.sin(rad)*this.ray)
         .attr("y2",this.cy-Math.cos(rad)*this.ray);
-    this.text.text( this.value.toFixed(1) );
+    /*Didier*/
+    //this.text.text( this.value.toFixed(1) );
 
     if( (this.callback)&&(propagate) ){
         this.callback( v,this );

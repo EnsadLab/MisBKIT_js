@@ -22,6 +22,7 @@ function MisGUI(){
 
     $( "#dialog" ).dialog( "close" );
 
+    /*Didier
     $('#btSerial').on('click',function(){
         var cl = $(this).prop("class");
         console.log("GUI-cm9Com:",cl);
@@ -33,7 +34,9 @@ function MisGUI(){
             self.openSerial();
         }
     });
+    */
 
+    /*Didier
     $('#selectSerial').change(function(){
         console.log("serialPort:",this.value);
         var bt = $("#btSerial");
@@ -48,7 +51,7 @@ function MisGUI(){
         }
         self.openSerial();
     });
-
+    */
 
     $('#btMidi').on('click',function(){
         var cl = $(this).prop("class");
@@ -84,7 +87,7 @@ function MisGUI(){
     });
 
 
-    $('#btOSC').on('click',function(){
+    $('#btcm9').on('click',function(){
         var cl = $(this).prop("class");
         if(cl=="connected"){
             cm9Com.close();
@@ -136,6 +139,7 @@ MisGUI.prototype.cmd = function(cmd,index,args) {
     }
 }
 
+/*Didier
 MisGUI.prototype.serialState=function(state){
     var bt = $("#btSerial");
     if(state=='OFF')
@@ -147,6 +151,7 @@ MisGUI.prototype.serialState=function(state){
     bt.prop('disabled',false);
     this.blockUI(false);
 }
+*/
 
 
 //TODO cm9Com.open --> manager
@@ -180,6 +185,8 @@ MisGUI.prototype.openSerial = function(port) {
     });
 };
 */
+
+/*Didier
 MisGUI.prototype.openSerial = function(port) {
     if(port==undefined)port = $('#selectSerial').val();
     else{
@@ -198,14 +205,14 @@ MisGUI.prototype.openSerial = function(port) {
     this.blockUI(true);
     dxlManager.serialOnOff(true,port);
 };
-
+*/
 
 MisGUI.prototype.openOSC = function(remoteAddr,remotePort) {
     dxlManager.openOSC(remoteAddr,remotePort);
 };
 
 MisGUI.prototype.oscState=function(state){
-    var bt = $("#btOSC");
+    var bt = $("#btcm9");
     if(state=='OFF')
         bt.prop("class","disconnected").text("OFF");
     else if(state=='ON')
@@ -634,7 +641,7 @@ MisGUI.prototype.init =function(){
         $("#btAdvID").change();
     });
 
-    this.scanSerial();
+    //this.scanSerial();    /*Didier*/
     this.scanMidiPorts();
     this.scanIPv4();
 
@@ -866,6 +873,7 @@ MisGUI.prototype.track=function(animId,v) {
     }
 }
 
+/*Didier
 MisGUI.prototype.scanSerial = function(){
     var self = this;
     var selector = $("#selectSerial");
@@ -887,7 +895,7 @@ MisGUI.prototype.scanSerial = function(){
             $("#selectSerial").val(self.serialPort);
     });
 };
-
+*/
 
 MisGUI.prototype.scanMidiPorts = function(){
     var self = this;
@@ -908,6 +916,7 @@ MisGUI.prototype.scanMidiPorts = function(){
 };
 
 MisGUI.prototype.scanIPv4 = function(){
+    /*Didier
     var self = this;
     var selector = $("#selectOSC");
     selector.empty();
@@ -923,6 +932,7 @@ MisGUI.prototype.scanIPv4 = function(){
         }
     }catch(e){}
     selector.append($("<option value='scan' >scan</option>"));
+    */
 }
 
 
