@@ -79,6 +79,7 @@ function MisGUI(){
             else
                 $('#btMidi').prop("class","disconnected").text("OFF");
             */
+            //TODO: perhaps we should now close all ports and not when a new entry is activated..
             $('#btMidi').prop("class","disconnected").text("OFF");
         }
     });
@@ -892,6 +893,7 @@ MisGUI.prototype.scanSerial = function(){
 MisGUI.prototype.scanMidiPorts = function(){
     var self = this;
     var selector = $("#selectMidi");
+    console.log("Scanning midi ports");
     selector.empty();
     if(midiPortManager){  
         for(var i=0;i<100;i++){

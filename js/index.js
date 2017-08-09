@@ -17,10 +17,12 @@ const OS = require('os');
 var fs = null;
 
 
+var settingsManager = null; //cf SettingsManager.js
 var dxlManager = null;
 var misGUI     = null; //cf MisGui.js
 var midiPortManager = null; //cf MidiPortManager.js
 var motorMappingManager = null; //cf MotorMappingManager.js
+var sensorManager = null; //cf SensorManager.js
 var cm9Com     = null;
 var oscCm9     = null;
 
@@ -128,6 +130,7 @@ window.onbeforeunload=function(){
         //cm9Com.close();
         dxlManager.serialOnOff(false);
         dxlManager.saveSettings();
+        settingsManager.saveSettings();
     }
 }
 
@@ -142,19 +145,25 @@ window.onload = function() {
     $(".toggleShow").on("click",toggleShow);
     */
 
+    // TODO: ordering had to be changed -> @Didier: is it a problem how it is now?
+    settingsManager = new SettingsManager();
+    cm9Com = new CM9_UDP();//cm9Com.open();
+    dxlManager = new DxlManager();
     try{ midiPortManager = new MidiPortManager(); }catch(e){console.log(e);}
+    misGUI     = new MisGUI();
+    misGUI.init();
+    settingsManager.loadSettings();
+    //dxlManager.loadSettings(); //-> now called from settingsManager when directories are ready
+    
     //try{ cm9Com = new SerialClass(); }catch(e){}
     //try{ oscCm9 = new OSCcm9(); cm9Com.open();}catch(e){}
     //try{ cm9Com = new CM9_UDP(); cm9Com.open();}catch(e){}
-    cm9Com = new CM9_UDP();//cm9Com.open();
-
-
+    
     motorMappingManager = new MotorMappingManager();
     motorMappingManager.loadMappingSettings();
-    dxlManager = new DxlManager();
-    misGUI     = new MisGUI();
-    misGUI.init();
-    dxlManager.loadSettings();
+    
+    sensorManager = new SensorManager();
+    sensorManager.loadSensorSettings();
 
     $(".rotAngle").on("mousewheel",function(e){e.preventDefault();});
     $(".rotSpeed").on("mousewheel",function(e){e.preventDefault();});
@@ -166,7 +175,11 @@ window.onload = function() {
         //console.log("down target:", e.target);
 
         if(e.metaKey || e.ctrlKey){
-            if(e.keyCode==83){dxlManager.saveSettings();return false;} //ctrl s
+            if(e.keyCode==83){
+                settingsManager.saveSettings();
+                dxlManager.saveSettings();
+            }else
+                return false; //ctrl s
             if(e.keyCode==9) {
                 console.log("CTRL TAB");
                 var dlg = $("#dialog");

@@ -1,13 +1,12 @@
 {
   "serialPort": "",
-  "midiPort": "nanoKONTROL2 SLIDER/KNOB",
+  "midiPort": "",
   "oscHost": "none",
   "webSocket": "none",
-  "animFolder": "",
   "anims": [],
   "motors": [
     {
-      "id": 0,
+      "id": 1,
       "enabled": false,
       "model": 12,
       "clockwise": true,
@@ -23,7 +22,7 @@
       "enabled": false,
       "model": 12,
       "clockwise": true,
-      "mode": 0,
+      "mode": 1,
       "angleMin": -150,
       "angleMax": 150,
       "speedMin": -100,

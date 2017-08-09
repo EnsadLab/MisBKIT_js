@@ -5,6 +5,7 @@
 MotorMappingManager = function () {
 
     this.motorMappings = new Array();
+    this.configurationFolder = "";
 
 };
 
@@ -32,10 +33,54 @@ MotorMappingManager.prototype.loadMappingSettings = function () {
             //console.log(s.motorMappings[i]);
             //console.log(this.motorMappings[i]);
         }
+        this.updateGUI();
+    }
+}
 
+
+// Method called when user has modified the motorMapping.json file
+MotorMappingManager.prototype.loadUserMappingSettings = function () {
+    var json;
+    try{
+        json = fs.readFileSync(this.configurationFolder + "/motorMapping.json", 'utf8');
+    }catch(err){
+        if (err.code === 'ENOENT') {
+            console.log("File " + this.configurationFolder+ "/motorMapping.json not found!");
+        }else{
+            console.log("Problem loading motorMaping.json file");
+        }
+    }
+    if (json) {
+        
+        var s = JSON.parse(json);
+
+        //TODO: check if it works
+        for (var i = this.motorMappings.length-1; i >= 0; i--) {
+           // if (this.motorMappings.[i].id == X) {
+                this.motorMappings.splice(i, 1);
+                break;
+           // }
+        }
+        console.log("TAB EMPTY " + motorMappings.length);
+        //console.log("PARSING motorMapping.json");
+        for(var i=0;i<s.motorMappings.length;i++){
+            this.motorMappings.push( new MotorMapping() );
+        }
+
+        for (var i = 0; i < s.motorMappings.length; i++) {
+            this.motorMappings[i].copySettings(s.motorMappings[i]);
+
+            //TODO: update the CC in the GUI!!
+
+            //console.log(s.motorMappings[i]);
+            //console.log(this.motorMappings[i]);
+        }
+        settingsManager.copyPasteFromUserFolder("/motorMapping.json");
+        this.updateGUI();
     }
 
 }
+
 
 MotorMappingManager.prototype.isMapped = function(type,port,cmd,nbID){
 
@@ -84,6 +129,7 @@ MotorMappingManager.prototype.setMotorMapping = function(type,port,cmd,motorID,n
             this.motorMappings[i].m.motorID == motorID)
         {
             this.motorMappings[i].m.nbID = nbID;
+            //TODO: change CC in GUI
             found = true;
         }
     }
@@ -96,8 +142,20 @@ MotorMappingManager.prototype.setMotorMapping = function(type,port,cmd,motorID,n
         motorMapping.m.motorID = motorID;
         motorMapping.m.nbID = nbID;
         this.motorMappings.push(motorMapping);
+        //TODO: change CC in GUI
     }
+
+    // save changes into the file
+    saveMappingSettings();
+
 };
+
+
+MotorMappingManager.prototype.updateGUI = function () {
+
+    //TODO: update the CC in the GUI
+}
+
 
 //TODO: test this function when we have the CC mapping input in the GUI
 MotorMappingManager.prototype.saveMappingSettings = function () {
@@ -112,5 +170,15 @@ MotorMappingManager.prototype.saveMappingSettings = function () {
 
         var json = JSON.stringify(s, null, 2);
         fs.writeFileSync(__dirname + "/motorMapping.json", json);
+        settingsManager.copyPasteToUserFolder("/motorMapping.json");
         //console.log(json);
 };
+
+// Simulates the reloading of the motorMapping.json file
+MotorMappingManager.prototype.onMetaKey=function(char){
+    console.log("METAKEY",+char);
+    if(char=='r'){ // reset the gui according to the changed elements in the json
+        console.log("Resetting motor mapping into GUI");
+        this.loadUserMappingSettings();
+    }
+}
