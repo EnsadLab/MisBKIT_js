@@ -392,13 +392,13 @@ Dxl.prototype.angleMax = function(val){
 };
 
 Dxl.prototype.speedMin = function(val){
-    console.log("DXL-speedMin",val);
+    //console.log("DXL-speedMin",val);
     this.m.speedMin = val;
     return this;
 };
 
 Dxl.prototype.speedMax = function(val){
-    console.log("SPEEDMAX:",val);
+    //console.log("DXL-speedMax:",val);
     this.m.speedMax = val;
     return this;
 };

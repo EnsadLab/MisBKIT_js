@@ -621,7 +621,7 @@ input:checked.rec:before{
   position: relative;
   display: inline-block;
   width: 160px;
-  height: 34px;
+  /*height: 34px;*/
 }
 
 .switch-clock input {display:none;}
@@ -713,8 +713,8 @@ input:checked.rec:before{
   display: inline-block;
   width: 160px;
   height: 34px;
-  top: 25px;
-  left: 25px;
+  /*top: 25px;  didier*/
+  /*left: 25px; didier*/
 }
 
 .switch input {display:none;}
@@ -897,6 +897,23 @@ button.close:hover{
     width: 20%;
     display: block;
 }
+
+/*Didier*/
+.num_rotary{
+	border: 2px solid grey;
+    background: none;
+    vertical-align: middle;
+    text-align: center;
+    border-radius: 20px;
+    padding: 7px;
+    font-size: 16px;
+    color: white;
+	width: 26%;
+	/*width: 160px;*/
+    display: block;
+}
+
+
 
 input.motor-none:before{
 	content:"-";

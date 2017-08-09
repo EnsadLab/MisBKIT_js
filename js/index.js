@@ -12,7 +12,7 @@
 var remote = require('electron').remote;
 //var dialog = remote.require('dialog');
 var dialog = remote.dialog;
-console.log("DIALOG:",dialog);
+//console.log("DIALOG:",dialog);
 const OS = require('os');
 var fs = null;
 
@@ -192,7 +192,7 @@ window.onload = function() {
 
 
     $('body').keypress(function(e){
-        //console.log("target:", e.target);
+        //console.log("DBG-target:", e.target);
         if($(e.target).is('input'))
             return;
 
@@ -214,5 +214,5 @@ window.onload = function() {
     //var dialog = document.getElementById("dialog");
     //var dlgBt = document.getElementById("btDialog");
     //dlgBt.onclick = function(){dialog.show();}
-    console.log("DIRNAME",__dirname);
+    //console.log("DIRNAME",__dirname);
 };

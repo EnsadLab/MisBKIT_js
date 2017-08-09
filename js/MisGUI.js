@@ -4,6 +4,7 @@ function MisGUI(){
     var self = this;
     this.rotAngles =[];
     this.rotSpeeds =[];
+    this.inputVals; //DB storage of <input> rotary values
     this.recording = false;
     this.serialPort = null;
 
@@ -273,14 +274,14 @@ MisGUI.prototype.angleMax =function(index,val){
         .setMinMax(undefined,val);
 }
 MisGUI.prototype.speedMin =function(index,val){
-    console.log("GUI.speedMin",val);
+    //console.log("GUI.speedMin",val);
     val=+val;
     dxlManager.cmd("speedMin",index,val);
     this.rotSpeeds[index]
         .setDomain(-175,175)
         .setRange(val,undefined)
         .setMinMax(val);
-    console.log("gui-SPEEDMIN:",val);
+    //console.log("gui-SPEEDMIN:",val);
 }
 MisGUI.prototype.speedMax =function(index,val){
     val=+val;
@@ -289,7 +290,7 @@ MisGUI.prototype.speedMax =function(index,val){
         .setDomain(-175,175)
         .setRange(undefined,val)
         .setMinMax(undefined,val);
-    console.log("gui-SPEEDMAX:",val);
+    //console.log("gui-SPEEDMAX:",val);
 }
 
 MisGUI.prototype.mode =function(index,value){
@@ -313,8 +314,9 @@ MisGUI.prototype.wheel =function(index){
 };
 
 MisGUI.prototype.onRotary = function(val,rot){
-    //console.log("ROTARY:",val," ",rot.userData);
-    dxlManager.cmd(rot.userData.f,rot.userData.i,val);
+    var i=rot.userData.i; 
+    dxlManager.cmd(rot.userData.f,i,val);
+    this.inputVals.eq(i).val(val.toFixed(1));
 };
 
 MisGUI.prototype.setValue = function(index,name,val){
@@ -323,13 +325,17 @@ MisGUI.prototype.setValue = function(index,name,val){
 }
 
 MisGUI.prototype.angle = function(index,val){
-    if(index<this.rotAngles.length)
-        this.rotAngles[index].setValue(+val);
+    if(index<this.rotAngles.length){
+        var v = this.rotAngles[index].setValue(+val).value;
+        this.inputVals.eq(index).val(v.toFixed(1));
+    }
 }
 
 MisGUI.prototype.speed = function(index,val){ //!!!base100
-    if(index<this.rotSpeeds.length)
-        this.rotSpeeds[index].setValue(+val);
+    if(index<this.rotSpeeds.length){
+        var v = this.rotSpeeds[index].setValue(+val).value;
+        this.inputVals.eq(index).val(v.toFixed(1));
+    }
 }
 
 MisGUI.prototype.needle = function(index,val){
@@ -339,11 +345,13 @@ MisGUI.prototype.needle = function(index,val){
     }
 }
 
+/*DB
 MisGUI.prototype.normValue=function(index,val)
 {
     if(index<this.rotAngles.length)
         this.rotAngles[index].setNormValue(+val,false);
 }
+*/
 
 MisGUI.prototype.recCheck=function(index,val)
 {
@@ -403,7 +411,7 @@ MisGUI.prototype.toggleAdvanced = function(onoff){
         for(var i=0;i<6;i++){
             var parent = this.getMotorUI(i);
             var chk = parent.find("[name=enable]").prop("checked");
-            console.log("DBG-check:",i," ",chk);
+            //console.log("DBG-check:",i," ",chk);
             if(chk)
                 dxlManager.cmd("enable",i,true);
 
@@ -489,7 +497,7 @@ MisGUI.prototype.init =function(){
 
     var slidopt  = {x:0,y:0};
 
-    var color = "#C0C0C0";
+    //var color = "#C0C0C0";
     for(var i=0;i<svgAngles.length;i++) {
         var rota = new DUI.Rotary(svgAngles[i],slidopt);
         rota.setDomain(-150,150).setRange(-150,150).setMinMax(-150,150);
@@ -505,6 +513,23 @@ MisGUI.prototype.init =function(){
         this.rotSpeeds.push(rots);
     }
     svgSpeeds.hide();
+
+    //DB
+    this.inputVals = $("#divMotors .num_rotary");
+    for(var i=0;i<6;i++) {
+        this.inputVals.eq(i).val(0);
+        $(this.inputVals[i]).data("index",i);
+    }
+    this.inputVals.on("change",function(){
+        var index = $(this).data("index");
+        var mode = dxlManager.getMode(index);
+        var val = $(this).val();
+        if(mode==0)
+            self.angle(index,val);
+        else
+            self.speed(index,val);
+    });
+    //
 
     $("#divMotorSettings .cmd").on('change',function(){
         var index = $(this).data("index");
@@ -695,11 +720,11 @@ MisGUI.prototype.setDxlReg=function(i,name,val){
 }
 
 MisGUI.prototype.recOff=function(){ //V02 ok
-    console.log("DBG misGui.recOff 1");
+    //console.log("DBG misGui.recOff 1");
     self.recording = false;
     UIstoprecording();
     self.recording = false;
-    console.log("DBG misGui.recOff 2");
+    //console.log("DBG misGui.recOff 2");
 }
 
 MisGUI.prototype.dxlEnabled = function(index,val){

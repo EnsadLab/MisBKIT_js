@@ -82,7 +82,7 @@
 
 	function UIstoprecording(){
 
-		console.log("UIstoprecording");
+		//console.log("DBG-UIstoprecording");
 
 		$("button.start-rec").css({
 			'border': '0px solid rgba(255, 24, 98, 1)'
