@@ -23,6 +23,7 @@ var midiPortManager = null; //cf MidiPortManager.js
 var motorMappingManager = null; //cf MotorMappingManager.js
 var cm9Com     = null;
 var oscCm9     = null;
+var robus      = null;
 
 
 try {
@@ -32,7 +33,7 @@ try {
     //var remote = require('electron').remote;
     //var dialog = remote.require('dialog');
     ipc.on("close",function(e,arg){
-        //dxlManager.saveSettings();
+        dxlManager.saveSettings();
         cm9Com.close();
     });
 
@@ -148,7 +149,7 @@ window.onload = function() {
     //try{ cm9Com = new CM9_UDP(); cm9Com.open();}catch(e){}
     cm9Com = new CM9_UDP();//cm9Com.open();
 
-
+    robus = new RobusBot();
     motorMappingManager = new MotorMappingManager();
     motorMappingManager.loadMappingSettings();
     dxlManager = new DxlManager();
@@ -164,6 +165,10 @@ window.onload = function() {
 
     $('body').keydown(function(e) {
         //console.log("down target:", e.target);
+        if($(e.target).is('input'))
+            return;
+        if($(e.target).is('textarea'))
+            return;
 
         if(e.metaKey || e.ctrlKey){
             if(e.keyCode==83){dxlManager.saveSettings();return false;} //ctrl s
@@ -178,8 +183,6 @@ window.onload = function() {
             }
         }
 
-        if($(e.target).is('input'))
-            return;
         //console.log("down event:",e);
         //console.log("down witch:",e.which);
         //console.log("down keyCode:", e.keyCode);
@@ -192,8 +195,10 @@ window.onload = function() {
 
 
     $('body').keypress(function(e){
-        //console.log("DBG-target:", e.target);
+        console.log("DBG-target:", e.target);
         if($(e.target).is('input'))
+            return;
+        if($(e.target).is('textarea'))
             return;
 
         //console.log("event:",e);
@@ -202,7 +207,7 @@ window.onload = function() {
         //console.log("charCode:", e.charCode);
 
         if(e.keyCode!=0) {
-            console.log("char:", String.fromCharCode(e.keyCode));
+            //console.log("char:", String.fromCharCode(e.keyCode));
             if(e.metaKey)
                 dxlManager.onMetaKey(String.fromCharCode(event.keyCode));
             else

@@ -516,7 +516,7 @@ MisGUI.prototype.init =function(){
 
     //DB
     this.inputVals = $("#divMotors .num_rotary");
-    for(var i=0;i<6;i++) {
+    for(var i=0;i<this.inputVals.length;i++) {
         this.inputVals.eq(i).val(0);
         $(this.inputVals[i]).data("index",i);
     }
@@ -665,6 +665,33 @@ MisGUI.prototype.init =function(){
     $("#btDxlRefresh").on("click",function(){
         $("#btAdvID").change();
     });
+
+    //ROBUS
+    var robs = $("#robusRobots");
+    var bt   = $("#btRobus");
+    robs.on("click",function(){
+        bt.prop("class","disconnected").text("OFF");
+    });    
+    robs.on("change",function(){
+        //console.log("DBG-ROBUSCHANGE",this.value);
+        console.log("DBG-ROBUSCHANGE",robs.val());
+        var spl = this.value.split("\n");
+        //console.log("split:["+spl[0]+"]");
+    });
+    bt.on('click',function(){
+        var cl = $(this).prop("class");
+        if(cl=="connected"){
+            $(this).prop("class","disconnected").text("OFF");
+            robus.close();
+        }
+        else {
+            var list=robs.val().split("\n");
+            console.log("DBG-ROBUSCONNECT",list[0]);
+            robus.open(list[0].trim());
+            $(this).prop("class","connected").text("ON");
+        }
+    });
+
 
     //this.scanSerial();    /*Didier*/
     this.scanMidiPorts();

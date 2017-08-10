@@ -3,7 +3,7 @@
   "midiPort": "",
   "oscHost": "none",
   "webSocket": "none",
-  "animFolder": "",
+  "animFolder": "/Users/Didier/Documents/Anims/",
   "anims": [],
   "motors": [
     {

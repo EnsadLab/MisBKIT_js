@@ -59,12 +59,14 @@
 
 				<div class="plug">
 					<p>
-						WebSocket : <span class="status"></span>
+						ROBUS : <span class="status"></span>
 					</p>
-					<select name="" id="">
-						<option value="">disabled</option>
-					</select>
-					<button class="disconnected">OFF</button>
+					<br>Robots:<br>
+					<br>
+					<!--input type="text" name="rien"-->
+					<textarea id="robusRobots" rows=6 cols=15>octo_wifi.local</textarea>
+
+					<button id="btRobus" class="disconnected" >OFF</button>
 				</div>
 
 				<!--div class="plug" >
@@ -425,6 +427,9 @@
 		</div>
 		
 		<div class="modale draggable" id="dynamixel-ctrl">
+			<input type="text" size="5" id="btAdvID"><label for="">[ID]</label>
+			<button id="btDxlRefresh" style="align:left;">refresh</button>
+			<br>
 			<div id="divDxlReg" >
 				<br><input type="text" size="5" name="000"><label for=""> MODEL</label>
 				<br><input type="text" size="5" name="002"><label for=""> FIRMWARE</label>
@@ -494,6 +499,7 @@
 			<script src="js/DxlManager.js"></script>
 			<script src="js/MisGUI.js"></script>
 			<script src="js/index.js"></script>
+			<script src="js/Robus.js"></script>
 			<script src="js/MotorMapping.js"></script>
 			<script src="js/MotorMappingManager.js"></script>
     </body>
