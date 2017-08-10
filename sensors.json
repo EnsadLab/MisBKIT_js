@@ -1,0 +1,14 @@
+{
+  "sensors": [
+    {
+        "name":"sensor_distance",
+        "enabled": true,
+        "threshold":60,
+        "tolerance":10,
+        "valMin": 0,
+        "valMax": 100,
+        "anim1": "", 
+        "anim2": ""
+    }
+  ]
+}

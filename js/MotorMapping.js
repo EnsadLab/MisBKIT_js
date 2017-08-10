@@ -7,7 +7,7 @@ MotorMapping = function () {
     this.m = { //settings
         type:"",
         enabled: true,
-        motorID:-1,
+        motorIndex:-1,
         port:-1,
         cmd:"", 
         nbID:-1,

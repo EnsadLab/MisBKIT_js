@@ -155,4 +155,15 @@ function loadSensor(){
 loadSensor();
 
 
+/*
+//clone.find("[name=animKey]")
+$(single-motor).find("[name=mapping]")
+	.val(keyCode)
+	.on("change",function(){
+		var zis = $(this);
+		//dxlManager.setKeyCode(zis.data("id"),zis.val());
+	}
+//});
+*/
+
 

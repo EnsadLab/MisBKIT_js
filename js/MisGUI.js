@@ -83,6 +83,7 @@ function MisGUI(){
             else
                 $('#btMidi').prop("class","disconnected").text("OFF");
             */
+            //TODO: perhaps we should now close all ports and not when a new entry is activated..
             $('#btMidi').prop("class","disconnected").text("OFF");
         }
     });
@@ -433,6 +434,7 @@ MisGUI.prototype.motorSettings = function(index,s){
     parent.find(".identity").text(s.id);
     parent.find("[name=enable]").prop("checked",s.enabled);
     parent.find("[name=mode]").prop("checked",(s.mode!=0));
+    //parent.find(".number-for-motor").val(33);
 
     var parent = this.getMotorStg(index);
     parent.find("[name=dxlID]").val(s.id);
@@ -451,6 +453,14 @@ MisGUI.prototype.motorSettings = function(index,s){
     this.rotSpeeds[index].show((s.mode==1));
     this.rotSpeeds[index].setValue(0);
 
+}
+
+MisGUI.prototype.setMappingNumberForMotor = function(motorIndex, nbID) {
+    if(nbID == null){ 
+        $("#divMotors .number-for-motor").eq(motorIndex).val(null); // done explicitly for now..
+    }else{
+        $("#divMotors .number-for-motor").eq(motorIndex).val(nbID);
+    }
 }
 
 MisGUI.prototype.init =function(){
@@ -488,6 +498,17 @@ MisGUI.prototype.init =function(){
         clone.data("index",i);
         clone.appendTo(parent);
     }
+
+    this.motorMappings = $("#divMotors .number-for-motor"); 
+    for(var i=0;i<this.motorMappings.length;i++) {                        
+        $(this.motorMappings[i]).data("index",i);     
+    }
+
+    this.motorMappings.on("change",function(){        
+        var index = $(this).data("index");        
+        var val = $(this).val();                
+        motorMappingManager.setMidiMotorMapping(index,parseInt(val)); // Gui only treats midi mappings for now
+    });
 
 
     //create rotaries
@@ -952,6 +973,7 @@ MisGUI.prototype.scanSerial = function(){
 MisGUI.prototype.scanMidiPorts = function(){
     var self = this;
     var selector = $("#selectMidi");
+    console.log("Scanning midi ports");
     selector.empty();
     if(midiPortManager){  
         for(var i=0;i<100;i++){

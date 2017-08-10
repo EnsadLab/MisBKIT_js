@@ -16,6 +16,8 @@ MidiPortManager = function () {
     // array of midi ports
     this.midiPorts = new Array();
 
+    console.log("MIDI");
+
 };
 
 MidiPortManager.prototype.open = function (p) {

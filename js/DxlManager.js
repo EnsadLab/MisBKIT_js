@@ -102,7 +102,7 @@ else {
         s.midiPort = midiPortManager.getCurrentPortName();
         s.oscHost = "none";
         s.webSocket = "none";
-        s.animFolder = this.animFolder;
+        
         s.anims = [];
         s.motors = [];
         //TODO GUI order
@@ -121,6 +121,7 @@ else {
     }
 
     DxlManager.prototype.loadSettings = function () {
+        console.log("loading dxl manager settings");
         var json = fs.readFileSync(__dirname + "/settings.json", 'utf8');
         if (json) {
             var s = JSON.parse(json);
@@ -131,23 +132,20 @@ else {
             this.midiPort = s.midiPort;
             this.oscHost = s.oscHost;
             this.webSocket = s.webSocket;
-            this.animFolder = s.animFolder;
+
             for (var i = 0; i < s.motors.length; i++) {
                 this.motors[i].copySettings(s.motors[i]);
                 misGUI.motorSettings(i, s.motors[i]);
             }
 
-            if(this.animFolder.length==0){
-                this.chooseRecFolder();
+
+            for (var i = 0; i < s.anims.length; i++) {
+                var id = this.animationID++;
+                var anim = new Animation("A" + id, this.animFolder, s.anims[i].name);
+                anim.keyCode = s.anims[i].key;
+                anim.load(s.anims[i].name);
             }
-            else {
-                for (var i = 0; i < s.anims.length; i++) {
-                    var id = this.animationID++;
-                    var anim = new Animation("A" + id, this.animFolder, s.anims[i].name);
-                    anim.keyCode = s.anims[i].key;
-                    anim.load(s.anims[i].name);
-                }
-            }
+
             //midiPort.open(this.midiPort);
             //console.log("midiport:",midiPort.getPortNum(this.midiPort));
             //misGUI.midiPort(this.midiPort);
@@ -158,14 +156,13 @@ else {
 
             //misGUI.openSerial(this.serialPort); /*Didier*>
 
-            //misGUI.alert(this.animFolder);
-
-
         }
-
     }
+}
 
-
+DxlManager.prototype.folderIsReady = function(animationFolder){
+    this.animFolder = animationFolder;
+    this.loadSettings();
 }
 
 /*
@@ -588,34 +585,8 @@ DxlManager.prototype.startRec=function(name){
     }
     else{ //open dialogBox ... select anim folder
         misGUI.recOff();
-        chooseRecFolder();
+        this.recording = false;
     }
-}
-
-DxlManager.prototype.chooseRecFolder = function() {
-    if(ELECTRON==true) { //needs remote.dialog
-        var self = this;
-        dialog.showOpenDialog({
-            title: "First Choose Anim Folder",
-            properties: ['openDirectory', 'createDirectory']
-        }, function (folder) {
-            if (folder) {
-                //var slash = folder.lastIndexOf('/') + 1;
-                console.log("RecFolder0:",folder);
-                var l = folder.length;
-                if(folder[l-1]!='/')
-                    folder+='/';
-                self.animFolder = folder;
-                console.log("RecFolder1:",self.animFolder);
-            }
-        });
-    }
-    //this.animFolder = __dirname+"/";
-
-    misGUI.recOff();
-    this.recording = false;
-    //misGUI.alert(this.animFolder);
-
 }
 
 DxlManager.prototype.recKey=function() {
@@ -681,8 +652,11 @@ DxlManager.prototype.startAnim=function(id){
 
 DxlManager.prototype.onMetaKey=function(char){
     console.log("METAKEY",+char);
-    if(char=='s')
+    if(char=='s'){
+        console.log("Saving all files");
         this.saveSettings();
+        settingsManager.saveSettings();
+    }
 }
 
 DxlManager.prototype.onKeyCode = function(keyCode){

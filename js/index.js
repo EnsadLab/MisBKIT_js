@@ -17,10 +17,12 @@ const OS = require('os');
 var fs = null;
 
 
+var settingsManager = null; //cf SettingsManager.js
 var dxlManager = null;
 var misGUI     = null; //cf MisGui.js
 var midiPortManager = null; //cf MidiPortManager.js
 var motorMappingManager = null; //cf MotorMappingManager.js
+var sensorManager = null; //cf SensorManager.js
 var cm9Com     = null;
 var oscCm9     = null;
 var robus      = null;
@@ -34,6 +36,8 @@ try {
     //var dialog = remote.require('dialog');
     ipc.on("close",function(e,arg){
         dxlManager.saveSettings();
+        settingsManager.saveSettings();
+        motorMappingManager.saveMappingSettings();
         cm9Com.close();
     });
 
@@ -129,6 +133,7 @@ window.onbeforeunload=function(){
         //cm9Com.close();
         dxlManager.serialOnOff(false);
         dxlManager.saveSettings();
+        settingsManager.saveSettings();
     }
 }
 
@@ -143,19 +148,28 @@ window.onload = function() {
     $(".toggleShow").on("click",toggleShow);
     */
 
+    // TODO: ordering had to be changed -> @Didier: is it a problem how it is now?
+    settingsManager = new SettingsManager();
+    cm9Com = new CM9_UDP();//cm9Com.open();
+    robus = new RobusBot();
+
+    motorMappingManager = new MotorMappingManager();
+    motorMappingManager.loadMappingSettings();
+
+    dxlManager = new DxlManager();
+    sensorManager = new SensorManager();
     try{ midiPortManager = new MidiPortManager(); }catch(e){console.log(e);}
+    misGUI     = new MisGUI();
+    misGUI.init();
+    settingsManager.loadSettings();
+    //dxlManager.loadSettings(); //-> now called from settingsManager when directories are ready
+    
     //try{ cm9Com = new SerialClass(); }catch(e){}
     //try{ oscCm9 = new OSCcm9(); cm9Com.open();}catch(e){}
     //try{ cm9Com = new CM9_UDP(); cm9Com.open();}catch(e){}
-    cm9Com = new CM9_UDP();//cm9Com.open();
-
-    robus = new RobusBot();
-    motorMappingManager = new MotorMappingManager();
-    motorMappingManager.loadMappingSettings();
-    dxlManager = new DxlManager();
-    misGUI     = new MisGUI();
-    misGUI.init();
-    dxlManager.loadSettings();
+    
+    //motorMappingManager.loadMappingSettings(); //-> now called from settingsManager when directories are ready
+    //sensorManager.loadSensorSettings(); //-> now called from settingsManager when directories are ready
 
     $(".rotAngle").on("mousewheel",function(e){e.preventDefault();});
     $(".rotSpeed").on("mousewheel",function(e){e.preventDefault();});
@@ -171,7 +185,11 @@ window.onload = function() {
             return;
 
         if(e.metaKey || e.ctrlKey){
-            if(e.keyCode==83){dxlManager.saveSettings();return false;} //ctrl s
+            if(e.keyCode==83){
+                settingsManager.saveSettings();
+                dxlManager.saveSettings();
+            }else
+                return false; //ctrl s
             if(e.keyCode==9) {
                 console.log("CTRL TAB");
                 var dlg = $("#dialog");
@@ -208,11 +226,14 @@ window.onload = function() {
 
         if(e.keyCode!=0) {
             //console.log("char:", String.fromCharCode(e.keyCode));
-            if(e.metaKey)
+            if(e.metaKey){
+                console.log("char:", String.fromCharCode(e.keyCode));
                 dxlManager.onMetaKey(String.fromCharCode(event.keyCode));
-            else
+                motorMappingManager.onMetaKey(String.fromCharCode(event.keyCode));
+            }else{
                 dxlManager.onKeyCode(String.fromCharCode(event.keyCode));
-            return false;
+                motorMappingManager.onKeyCode(String.fromCharCode(event.keyCode));
+            }return false;
         }
     });
 

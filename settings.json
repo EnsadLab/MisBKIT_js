@@ -3,23 +3,22 @@
   "midiPort": "",
   "oscHost": "none",
   "webSocket": "none",
-  "animFolder": "/Users/Didier/Documents/Anims/",
   "anims": [],
   "motors": [
     {
-      "id": 0,
+      "id": 5,
       "enabled": false,
       "model": 12,
       "clockwise": true,
       "mode": 1,
       "angleMin": -150,
-      "angleMax": 150,
+      "angleMax": 120,
       "speedMin": -100,
       "speedMax": 100,
       "torqueMax": 1023
     },
     {
-      "id": 0,
+      "id": 3,
       "enabled": false,
       "model": 12,
       "clockwise": true,
