@@ -47,15 +47,16 @@ else {
         console.log(json);
 
         // TODO: hmmm... when exactly? Each time we load something new...
-        this.copyPasteFromUserFolder('/motorMapping.json');
-        this.copyPasteFromUserFolder('/sensors.json');
+        this.copyPasteFromUserFolder('motorMapping.json');
+        this.copyPasteFromUserFolder('sensors.json');
     };
 
 }
 
 SettingsManager.prototype.chooseMisBKITFolder = function() {    
 
-    if(this.misBKITFolder.length==0){
+    //if(this.misBKITFolder.length==0){
+    if(!fs.existsSync(this.misBKITFolder)){
         if(ELECTRON==true) { //needs remote.dialog
             var self = this;
             dialog.showOpenDialog({
@@ -68,32 +69,31 @@ SettingsManager.prototype.chooseMisBKITFolder = function() {
                     var l = folder.length;
                     if(folder[l-1]!='/')
                         folder+='/';
-                    this.misBKITFolder = folder;
+                    self.misBKITFolder = folder;
 
-                    console.log("FOLDER! NEW !!! " + this.misBKITFolder);
+                    console.log("FOLDER! user " + self.misBKITFolder);
 
-                    this.animationFolder = this.misBKITFolder + "Animations";
-                    console.log("FOLDER! NEW !!! " + this.animationFolder);
-                    fs.mkdir(this.animationFolder, function (err) {
-                        if (err.code != 'EEXIST') {
+                    self.animationFolder = self.misBKITFolder + "Animations/";
+                    console.log("FOLDER! animation " + self.animationFolder);
+                    fs.mkdir(self.animationFolder, function (err) {
+                        if (err != null && err.code != 'EEXIST') {
                             console.log('failed to create Animations directory', err);
                         } else {
                             console.log('created Animations directory');
-                            dxlManager.folderIsReady(this.animationFolder);
+                            dxlManager.folderIsReady(self.animationFolder);
                         }
                     });
 
-                    this.configurationFolder = this.misBKITFolder + "Configurations";
-                    console.log("FOLDER! NEW !!! " + this.configurationFolder);
-                    fs.mkdir(this.configurationFolder, function (err) {
-                        if (err.code != 'EEXIST') {
+                    self.configurationFolder = self.misBKITFolder + "Configurations/";
+                    console.log("FOLDER! configuration " + self.configurationFolder);
+                    fs.mkdir(self.configurationFolder, function (err) {
+                        if (err != null && err.code != 'EEXIST') {
                             console.log('failed to create Configurations directory', err);
                         } else {
                             console.log('created Configurations directory');
-                            motorMappingManager.configurationFolder = this.configurationFolder;
-                            sensorsManager.configurationFolder = this.configurationFolder;
-                            
-                            this.synchroniseFiles();
+                            self.synchroniseFiles();
+                            motorMappingManager.folderIsReady(self.configurationFolder);
+                            sensorManager.folderIsReady(self.configurationFolder);
 
                         }
                     });
@@ -103,41 +103,43 @@ SettingsManager.prototype.chooseMisBKITFolder = function() {
     } else { // if directories have already been created!
         dxlManager.folderIsReady(this.animationFolder);
         this.synchroniseFiles();
+        motorMappingManager.folderIsReady(this.configurationFolder);
+        sensorManager.folderIsReady(this.configurationFolder);
     }
 };
 
 // check whether the files already exist in the user directory. If yes, use these ones as the user
 // could have changed them while not running misBKIT.
 SettingsManager.prototype.synchroniseFiles = function(){
-    fs.exists(this.configurationFolder + "/motorMapping.js",function(exists){
-        if(exists){
-            // in case the file has been changed while misbkit not running
-            settingsManager.copyPasteFromUserFolder('/motorMapping.json'); // can't reach this in callback
-        }else{
-            settingsManager.copyPasteToUserFolder('/motorMapping.json');
-        }
-    });
+    //console.log("synchronise file: " + this.configurationFolder + "motorMapping.json");
 
-    fs.exists(this.configurationFolder + "/sensors.js",function(exists){
-        if(exists){
-            // in case the file has been changed while misbkit not running
-            settingsManager.copyPasteFromUserFolder('/sensors.json');
-        }else{
-            settingsManager.copyPasteToUserFolder('/sensors.json');
-        }
-    });
+    if(fs.existsSync(this.configurationFolder + "motorMapping.json")){
+        // in case the file has been changed while misbkit not running
+        settingsManager.copyPasteFromUserFolder('motorMapping.json'); // can't reach this in callback
+    }else{
+        settingsManager.copyPasteToUserFolder('motorMapping.json');
+    }
+
+    if(fs.existsSync(this.configurationFolder + "sensors.json")){
+        // in case the file has been changed while misbkit not running
+        settingsManager.copyPasteFromUserFolder('sensors.json');
+    }else{
+        settingsManager.copyPasteToUserFolder('sensors.json');
+    }
+
 }
 
 SettingsManager.prototype.copyPasteToUserFolder = function(filename){
-
-    fs.createReadStream(__dirname + filename)
-            .pipe(fs.createWriteStream(this.configurationFolder + filename));
+    //console.log("copying from " + __dirname + "/" + filename);
+    //console.log("to " + this.configurationFolder + filename);
+   fs.writeFileSync(this.configurationFolder + filename, fs.readFileSync(__dirname + "/" + filename));
 }
 
 
 SettingsManager.prototype.copyPasteFromUserFolder = function(filename){
 
-    fs.createReadStream(this.configurationFolder + filename)
-            .pipe(fs.createWriteStream(__dirname + filename));
+    fs.writeFileSync(this.configurationFolder + filename, fs.readFileSync(__dirname + "/" + filename));
+    //fs.createReadStream(this.configurationFolder + filename)
+      //      .pipe(fs.createWriteStream(__dirname + "/" + filename));
 }
 

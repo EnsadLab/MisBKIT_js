@@ -127,7 +127,7 @@ else {
             var s = JSON.parse(json);
             this.serialPort = s.serialPort;
             cm9Com.serialName = s.serialPort;
-            console.log("SERIAL NAME:",cm9Com.serialName);
+            //console.log("SERIAL NAME:",cm9Com.serialName);
 
             this.midiPort = s.midiPort;
             this.oscHost = s.oscHost;
@@ -153,14 +153,15 @@ else {
             //midiPortManager.open(this.midiPort);
 
             misGUI.midiPortManager(this.midiPort); //TODO: what does it do?
-            misGUI.openSerial(this.serialPort);
+
+            //misGUI.openSerial(this.serialPort); /*Didier*>
 
         }
     }
 }
 
 DxlManager.prototype.folderIsReady = function(animationFolder){
-    this.animFolder.length = animationFolder;
+    this.animFolder = animationFolder;
     this.loadSettings();
 }
 
@@ -526,7 +527,6 @@ DxlManager.prototype.onMidi = function(index,cmd,arg){
 
 
 
-
 DxlManager.prototype.onPlay = function(index,val){
     if(index<this.motors.length){
         var dxl = this.motors[index];
@@ -844,6 +844,13 @@ DxlManager.prototype.writeDxlId = function(index,val){
     return true;
 }
 
+DxlManager.prototype.getMode = function(index){
+    console.log("getMode:",index);
+    if(this.motors[index])
+        return this.motors[index].m.mode;
+    return 1;
+    //0:joint 1:wheel
+};
 
 
 

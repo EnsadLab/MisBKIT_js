@@ -2,18 +2,18 @@
 
 	//$(document).tooltip();
 
-	$(document).tooltip({
-		//position:{my:"left+15 center", at:"right center"}
-		//position:{my:"center+15 bottom", at:"center top-20"}
-		track: true
-	});
+// 	$(document).tooltip({
+// 		//position:{my:"left+15 center", at:"right center"}
+// 		//position:{my:"center+15 bottom", at:"center top-20"}
+// 		track: true
+// 	});
 
-$( "#dialog" ).dialog({
-	autoOpen: false,
-	closeOnEscape: true,
-	closeText: "X"
-});
-$( "#dialog" ).dialog('close');
+// $( "#dialog" ).dialog({
+// 	autoOpen: false,
+// 	closeOnEscape: true,
+// 	closeText: "X"
+// });
+// $( "#dialog" ).dialog('close');
 
 
 /*
@@ -29,8 +29,10 @@ $( "#dialog" ).dialog('close');
 
 	var toggleAdvanced = false;
 	// Sortable Elements
-	$( "#sortable" ).sortable();
-    $( "#sortable" ).disableSelection();
+	$( "#sortable-anim" ).sortable();
+    $( "#sortable-anim" ).disableSelection();
+    $( "#sortable-sens" ).sortable();
+	$( "#sortable-sens" ).disableSelection();
 
 
     //cf MisGUI  $("button.start-rec").bind("click", UIstartRec);
@@ -80,7 +82,7 @@ $( "#dialog" ).dialog('close');
 
 	function UIstoprecording(){
 
-		console.log("UIstoprecording");
+		//console.log("DBG-UIstoprecording");
 
 		$("button.start-rec").css({
 			'border': '0px solid rgba(255, 24, 98, 1)'

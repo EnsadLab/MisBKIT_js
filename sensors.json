@@ -1,34 +1,14 @@
 {
   "sensors": [
     {
-      "name":"capteur_distance",
-      "enabled": true,
-      "threshold": 64,
-      "tolerance": 10,
-      "valMin": 0,
-      "valMax": 100,
-      "anim1": "animation_1.json",
-      "anim2": "animation_2.json"
-    },
-    {
-      "name":"capteur_photo",
-      "enabled": true,
-      "threshold": 64,
-      "tolerance": 10,
-      "valMin": 0,
-      "valMax": 100,
-      "anim1": "animation_1.json",
-      "anim2": "animation_2.json"
-    },
-     {
-      "name":"capteur_orientation",
-      "enabled": true,
-      "threshold": 64,
-      "tolerance": 10,
-      "valMin": 0,
-      "valMax": 100,
-      "anim1": "animation_1.json",
-      "anim2": "animation_2.json"
+        "name":"sensor_distance",
+        "enabled": true,
+        "threshold":60,
+        "tolerance":10,
+        "valMin": 0,
+        "valMax": 100,
+        "anim1": "", 
+        "anim2": ""
     }
   ]
 }

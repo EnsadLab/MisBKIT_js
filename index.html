@@ -4,27 +4,37 @@
         <meta charset="utf-8">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>misB KIT WIFI</title>
+        <title>misB KIT WIFI 2</title>
+        <link rel="stylesheet" href="css/jquery-ui.css">
         <link rel="stylesheet" href="css/style.css">
         <link rel="author" href="humans.txt">
 
     </head>
     <body>
-        
+		<button class="btn-connexions">Connexions</button>
 		<div class="wapper">
+			
 			<div class="connexions">
 				<h2>Connexions</h2>
 
 				<div class="plug">
 					<!--button class="gear"><img src="assets/settings.png"></button-->
 					<p>
-						USB : <span class="status" id="serialText"></span>
+						CM9 : <span class="status" id="serialText"></span>
 					</p>
+					<button class="gear" data-id="pasglop"><img src="assets/settings.png"></button>
+					<br>
+					<button class="disconnected" id="btcm9">Off</button>
+					<br>
+					<input type="checkbox"  name ="glou">SINGLE<br>
+					<br>
+					<input type="checkbox"  >CM9_1<br>
+					<input type="checkbox"  >CM9_2<br>
+					<input type="checkbox"  >CM9_3<br>
+					<input type="checkbox"  >CM9_4<br>
+					<input type="checkbox"  >CM9_5<br>
+					<input type="checkbox"  >CM9_6<br>
 
-					<select name="" id="selectSerial" title="select serial port">
-						<option value="">Scan</option>
-					</select>
-					<button class="error" id="btSerial">Off</button>
 				</div>
 
 				<div class="plug">
@@ -79,22 +89,35 @@
 					<!-- SINGLE MOTOR -->
 					<div class="single-motor">
 						<div class="left-col">
-							<div class="identity">10</div>
+														
 							<input type="checkbox" class="power cmdTog" name ="enable"
 								   title="enable/disable">
 							<input type="checkbox" class="rec cmdTog"   name="recCheck"
 								   title="check for next record">
+
+							<div class="identity">10</div>
+							<input type="number" class="number-for-motor" placeholder="?" name="mapping">
 						</div>
 						<div class="circle">
 							<svg class="rotAngle" ></svg>
 							<svg class="rotSpeed" ></svg>
 						</div>
+
 						<div class="properties">
 							<label class="switch">
 							  <input type="checkbox" class="cmdTog" name="mode">
 							  <div class="slider round"></div>
 							</label>
+							<!--label class="switch-clock">
+							  <input type="checkbox" class="cmdTog" name="clockwise">
+							  <div class="slider round"></div>
+							</label-->
+							<img src="assets/thermometer.png" class="ico-thermo" alt="">
+							<div class="thermo">26°</div>
 						</div>
+						<!--Didier: essai d'ajout d'un input number-->
+						<input type="number" class="num_rotary" placeholder="?" name="">
+						
 					</div>
 
 				</div>
@@ -104,7 +127,7 @@
 				<div id="divMotorSettings" class="settings">
 					<!-- AREVOIR : bouton tools ...  -->
 					<!--div-->
-					<button class="gear" id="opener"><img src="assets/settings.png"></button>
+					<button class="gear" id="opener" data-id="dynamixel-ctrl"><img src="assets/settings.png"></button>
 					<button class="disconnected" id="btScan" name="startScan" style="color:white;">Scan</button>
 					<!--div id="scanProgress"></div-->
 					<progress id="scanProgress" value="0" max="254"></progress>
@@ -119,10 +142,17 @@
 							<input type="text" class="name cmd" name="dxlID" placeholder="01">
 						</div>
 						<div class="properties">
-							<label class="switch-clock">
+							<!--label class="switch-clock">
 							  <input type="checkbox" class="cmdTog" name="clockwise">
+							  <input type="checkbox" class="cmdTog" name="mode">
+
+							  <div class="slider round"></div>
+							</label-->
+							<label class="switch">
+							  <input type="checkbox" class="cmdTog" name="mode">
 							  <div class="slider round"></div>
 							</label>
+
 						</div>
 						<div class="advanced">
 							<ul>
@@ -250,278 +280,151 @@
 
 			</div>
 
+			<div class="left-side">
+				<h2 id="anims">Animations</h2>
+					<button class="load"><img src="assets/open.png" alt="" id="loadAnim"></button>
 
-			<div-- class="animations" id="divAnims">
-				<h2>Animations</h2>
-				<button class="load"><img src="assets/open.png" alt="" id="loadAnim"></button>
+				<h2 id="sens">Sensors <sub><button class="gear" data-id="option-sensors"><img src="assets/settings.png"></button> </sub></h2>
 				
-				<!--div class="single-anim ui-state-default">
-					<input type="text" class="shorcut" disabled>
-					<input type="checkbox" class="rec cmdTog" name="rec0">
-					<input type="checkbox" class="rec cmdTog" name="rec1">
-					<input type="checkbox" class="rec cmdTog" name="rec2">
-					<input type="checkbox" class="rec cmdTog" name="rec3">
-					<input type="checkbox" class="rec cmdTog" name="rec4">
-					<input type="checkbox" class="rec cmdTog" name="rec5">
-					<!--button class="disconnected">Record</button-- >
-					<button class="start-rec">Start RECording</button>
-				</div-->
 
-			<ul id="sortable" name="listAnims">
-				<!-- SIngle Animation -->
-				<li class="single-anim ui-state-default">
-					<button class="close"><img src="assets/close.png" alt=""></button>
-					<input type="text" class="name" placeholder="Nom de l'animation" name="animName" size="30">
-					<div class="anim-motors">
-						<input type="text" class="shorcut" placeholder="?" name="animKey">
+				<div class="animations" id="divAnims">
 						
-						<input type="checkbox" class="motor-none" name="track">
-						<input type="checkbox" class="motor-none" name="track">
-						<input type="checkbox" class="motor-none" name="track">
-						<input type="checkbox" class="motor-none" name="track">
-						<input type="checkbox" class="motor-none" name="track">
-						<input type="checkbox" class="motor-none" name="track">
+					<!--div class="single-anim ui-state-default">
+						<input type="text" class="shorcut" disabled>
+						<input type="checkbox" class="rec cmdTog" name="rec0">
+						<input type="checkbox" class="rec cmdTog" name="rec1">
+						<input type="checkbox" class="rec cmdTog" name="rec2">
+						<input type="checkbox" class="rec cmdTog" name="rec3">
+						<input type="checkbox" class="rec cmdTog" name="rec4">
+						<input type="checkbox" class="rec cmdTog" name="rec5">
+						<!--button class="disconnected">Record</button-- >
+						<button class="start-rec">Start RECording</button>
+					</div-->
 
-						<div class="controls">
-							<button class="play"><img src="assets/play.png" alt="" name="play"></button>
-							<button class="stop"><img src="assets/stop.png" alt="" name="stop"></button>
-							<button class="loop"><img src="assets/loop.png" alt="" name="loop"></button>
+				<ul id="sortable-anim" name="listAnims">
+					<!-- SIngle Animation -->
+					<li class="single-anim ui-state-default">
+						<button class="close"><img src="assets/close.png" alt=""></button>
+						<input type="text" class="name" placeholder="Nom de l'animation" name="animName" size="30">
+						<div class="anim-motors">
+							<input type="text" class="shorcut" placeholder="?" name="animKey">
+							
+							<input type="checkbox" class="motor-none" name="track">
+							<input type="checkbox" class="motor-none" name="track">
+							<input type="checkbox" class="motor-none" name="track">
+							<input type="checkbox" class="motor-none" name="track">
+							<input type="checkbox" class="motor-none" name="track">
+							<input type="checkbox" class="motor-none" name="track">
+
+							<div class="controls">
+								<button class="play"><img src="assets/play.png" alt="" name="play"></button>
+								<button class="stop"><img src="assets/stop.png" alt="" name="stop"></button>
+								<button class="loop"><img src="assets/loop.png" alt="" name="loop"></button>
+							</div>
+
+							<meter name="progress" class="progress" value="70" max="100"></meter>
+
+						</div>
+					</li>
+
+				</ul>
+			</div>
+			<div class="sensors">
+				<ul id="sortable-sens" name="listAnims">
+				<!-- SIngle Sensors -->
+					<li class="single-sensor ui-state-default">
+
+						<button class="close"><img src="assets/close.png" alt=""></button>
+						<input type="checkbox" class="power cmdTog" name ="enable"
+								   title="enable/disable">
+						<input type="text" class="name" placeholder="Sensor name" name="" size="30">
+						<input type="number" class="tolerance" placeholder="?" name="">
+
+						<div class="live-value">76</div>
+						<div class="sensor-setting">
+							<div class="select-anim">
+								<!-- animation 1 -->
+								<select name="" id="">
+									<option value="">Animation 1</option>
+									<option value="">Animation 2</option>
+									<option value="">Animation 3</option>
+									<option value="">Animation 4</option>
+								</select>
+							</div>
+
+							<div class="sensor-range">
+								 <!-- <input class="range-txt amount" type="text"  readonly> -->
+								 <div class="minV">...</div>
+								 <div class="currentV">...</div>
+								 <div class="maxV">...</div>
+								 <div class="slider-range" data-min="0" data-max="100" data-default= "50" ></div>
+							</div>
+
+
+							<div class="select-anim">
+								<!-- animation 2 -->
+								<select name="" id="">
+									<option value="">Animation 1</option>
+									<option value="">Animation 2</option>
+									<option value="">Animation 3</option>
+									<option value="">Animation 4</option>
+								</select>
+							</div>
+
+						
 						</div>
 
-						<meter name="progress" class="progress" value="70" max="100"></meter>
-
-					</div>
-				</li>
+					</li>
 
 
-				<!-- SIngle Animation
-				<li class="single-anim ui-state-default">
-					<button class="close"><img src="assets/close.png" alt=""></button>
-					<input type="text" class="name" placeholder="Nom de l'animation">
-					<div class="anim-motors">
-						<input type="text" class="shorcut" placeholder="?">
-						
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-speed">
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-speed">
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-angle">
+				<!-- SIngle Sensors -->
+					<li class="single-sensor ui-state-default">
+						<button class="close"><img src="assets/close.png" alt=""></button>
+						<input type="checkbox" class="power cmdTog" name ="enable"
+								   title="enable/disable">
+						<input type="text" class="name" placeholder="Sensor name" name="" size="30">
+						<input type="number" class="tolerance" placeholder="?" name="">
+						<div class="live-value">548</div>
+						<div class="sensor-setting">
+							<div class="select-anim">
+								<!-- animation 1 -->
+								<select name="" id="">
+									<option value="">Animation 1</option>
+									<option value="">Animation 2</option>
+									<option value="">Animation 3</option>
+									<option value="">Animation 4</option>
+								</select>
+							</div>
 
-						<div class="controls">
-							<button class="play"><img src="assets/play.png" alt=""></button>
-							<button class="stop"><img src="assets/stop.png" alt=""></button>
-							<button class="loop"><img src="assets/loop.png" alt=""></button>
+							<div class="sensor-range">
+								 <!-- <input class="range-txt amount" type="text"  readonly> -->
+								 <div class="minV">...</div>
+								 <div class="currentV">...</div>
+								 <div class="maxV">...</div>
+								 <div class="slider-range" data-min="38" data-max="1000" data-default= "50" ></div>
+							</div>
+
+
+							<div class="select-anim">
+								<!-- animation 2 -->
+								<select name="" id="">
+									<option value="">Animation 1</option>
+									<option value="">Animation 2</option>
+									<option value="">Animation 3</option>
+									<option value="">Animation 4</option>
+								</select>
+							</div>
 						</div>
 
-						<meter name="progress" class="progress" value="70" max="100"></meter>
-					</div>
-				</li>
-
-				<!-- SIngle Animation
-				<li class="single-anim ui-state-default">
-					<button class="close"><img src="assets/close.png" alt=""></button>
-					<input type="text" class="name" placeholder="Nom de l'animation">
-					<div class="anim-motors">
-						<input type="text" class="shorcut" placeholder="?">
-						
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-speed">
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-speed">
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-angle">
-
-						<div class="controls">
-							<button class="play"><img src="assets/play.png" alt=""></button>
-							<button class="stop"><img src="assets/stop.png" alt=""></button>
-							<button class="loop"><img src="assets/loop.png" alt=""></button>
-						</div>
-
-						<meter name="progress" class="progress" value="60" max="100"></meter>
-					</div>
-				</li>
+					</li>
 
 
-				<!-- SIngle Animation
-				<li class="single-anim ui-state-default">
-					<button class="close"><img src="assets/close.png" alt=""></button>
-					<input type="text" class="name" placeholder="Nom de l'animation">
-					<div class="anim-motors">
-						<input type="text" class="shorcut" placeholder="?">
-						
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-speed">
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-speed">
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-angle">
-
-						<div class="controls">
-							<button class="play"><img src="assets/play.png" alt=""></button>
-							<button class="stop"><img src="assets/stop.png" alt=""></button>
-							<button class="loop"><img src="assets/loop.png" alt=""></button>
-						</div>
-
-						<meter name="progress" class="progress" value="100" max="100"></meter>
-					</div>
-				</li>
-
-
-				<!-- SIngle Animation
-				<li class="single-anim ui-state-default">
-					<button class="close"><img src="assets/close.png" alt=""></button>
-					<input type="text" class="name" placeholder="Nom de l'animation">
-					<div class="anim-motors">
-						<input type="text" class="shorcut" placeholder="?">
-						
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-speed">
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-speed">
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-angle">
-
-						<div class="controls">
-							<button class="play"><img src="assets/play.png" alt=""></button>
-							<button class="stop"><img src="assets/stop.png" alt=""></button>
-							<button class="loop"><img src="assets/loop.png" alt=""></button>
-						</div>
-
-						<meter name="progress" class="progress" value="80" max="100"></meter>
-					</div>
-				</li>
-
-				<!-- SIngle Animation
-				<li class="single-anim ui-state-default">
-					<button class="close"><img src="assets/close.png" alt=""></button>
-					<input type="text" class="name" placeholder="Nom de l'animation">
-					<div class="anim-motors">
-						<input type="text" class="shorcut" placeholder="?">
-						
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-speed">
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-speed">
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-angle">
-
-						<div class="controls">
-							<button class="play"><img src="assets/play.png" alt=""></button>
-							<button class="stop"><img src="assets/stop.png" alt=""></button>
-							<button class="loop"><img src="assets/loop.png" alt=""></button>
-						</div>
-
-						<meter name="progress" class="progress" value="50" max="100"></meter>
-					</div>
-				</li>
-
-				<!-- SIngle Animation
-				<li class="single-anim ui-state-default">
-					<button class="close"><img src="assets/close.png" alt=""></button>
-					<input type="text" class="name" placeholder="Nom de l'animation">
-					<div class="anim-motors">
-						<input type="text" class="shorcut" placeholder="?">
-						
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-speed">
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-speed">
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-angle">
-
-						<div class="controls">
-							<button class="play"><img src="assets/play.png" alt=""></button>
-							<button class="stop"><img src="assets/stop.png" alt=""></button>
-							<button class="loop"><img src="assets/loop.png" alt=""></button>
-						</div>
-
-						<meter name="progress" class="progress" value="20" max="100"></meter>
-					</div>
-				</li>
-
-				<!-- SIngle Animation
-				<li class="single-anim ui-state-default">
-					<button class="close"><img src="assets/close.png" alt=""></button>
-					<input type="text" class="name" placeholder="Nom de l'animation">
-					<div class="anim-motors">
-						<input type="text" class="shorcut" placeholder="?">
-						
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-speed">
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-speed">
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-angle">
-
-						<div class="controls">
-							<button class="play"><img src="assets/play.png" alt=""></button>
-							<button class="stop"><img src="assets/stop.png" alt=""></button>
-							<button class="loop"><img src="assets/loop.png" alt=""></button>
-						</div>
-
-						<meter name="progress" class="progress" value="0" max="100"></meter>
-					</div>
-				</li>
-
-				<!-- SIngle Animation
-				<li class="single-anim ui-state-default">
-					<button class="close"><img src="assets/close.png" alt=""></button>
-					<input type="text" class="name" placeholder="Nom de l'animation">
-					<div class="anim-motors">
-						<input type="text" class="shorcut" placeholder="?">
-						
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-speed">
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-speed">
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-angle">
-
-						<div class="controls">
-							<button class="play"><img src="assets/play.png" alt=""></button>
-							<button class="stop"><img src="assets/stop.png" alt=""></button>
-							<button class="loop"><img src="assets/loop.png" alt=""></button>
-						</div>
-
-						<meter name="progress" class="progress" value="70" max="100"></meter>
-					</div>
-				</li>
-
-				<!-- SIngle Animation
-				<li class="single-anim ui-state-default">
-					<button class="close"><img src="assets/close.png" alt=""></button>
-					<input type="text" class="name" placeholder="Nom de l'animation">
-					<div class="anim-motors">
-						<input type="text" class="shorcut" placeholder="?">
-						
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-speed">
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-speed">
-						<input type="checkbox" class="motor-angle">
-						<input type="checkbox" class="motor-angle">
-
-						<div class="controls">
-							<button class="play"><img src="assets/play.png" alt=""></button>
-							<button class="stop"><img src="assets/stop.png" alt=""></button>
-							<button class="loop"><img src="assets/loop.png" alt=""></button>
-						</div>
-
-						<meter name="progress" class="progress active" value="20" max="100"></meter>
-					</div>
-				</li>
-				-->
-
-			</ul>
+							
+				</ul>
+			</div>
 		</div>
-
-
-		<div class="advDialog" title="     Dynamixel Controls" id="dialog" >
-
-			<input type="text" size="5" id="btAdvID"><label for="">[ID]</label>
-			<button id="btDxlRefresh" style="align:left;">refresh</button>
-			<br>
+		
+		<div class="modale draggable" id="dynamixel-ctrl">
 			<div id="divDxlReg" >
 				<br><input type="text" size="5" name="000"><label for=""> MODEL</label>
 				<br><input type="text" size="5" name="002"><label for=""> FIRMWARE</label>
@@ -545,6 +448,23 @@
 				<br><input type="text" size="5" name="036"><label for=""> POSITION</label>
 				<br><input type="text" size="5" name="043"><label for=""> TEMPERATURE</label>
 			</div>
+			
+		</div>
+
+
+
+		<!-- MODELE MODALE  -->
+		<!-- 
+		sur n'importe quel élément du DOM : div, img, li ... n'importe quelle balise
+		on met la classe "gear" 
+		et l'attribut data-id="option-sensors" (on met ce qu'on veut comme id)
+		puis on crée la modale comme ci-dessous, où on répéte l'id 
+		Ensuite on peut mettre ce qu'on veut entre les balise de la div "modale draggable"
+		-->
+
+		<div class="modale draggable" id="option-sensors">
+			Modale des sensors
+			
 		</div>
 
 		<!-- Sans Electron-->
@@ -568,6 +488,7 @@
 			<script src="js/Messages.js"></script>
 			<script src="libs/d3.v3.min.js"></script>
 			<script src="js/alex.js"></script>
+			<script src="js/ui.js"></script>
 			<script src="js/Animations.js"></script>
 			<script src="js/WidgetD3.js"></script>
 			<script src="js/DxlMotor.js"></script>

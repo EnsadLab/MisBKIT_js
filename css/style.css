@@ -55,23 +55,58 @@ h2{
 	width:100%;
 	height:100%;
 	min-width: 1280px;
+	top:1%;
+}
+
+.btn-connexions{
+	transform: rotate(-90deg);
+    position: fixed;
+    left: -49.3%;
+    width: 100%;
+    top: 50%;
+	z-index: 2000;
+	color: white;
+    -webkit-appearance: none;
+    border: 0px;
+    background: #3D4158;
+    cursor: pointer;
+    /*border: 2px solid #FFF;*/
+    border-radius: 3px;
+    padding: 5px;
 }
 
 .connexions{
-	float: left;
-	/*background: grey;*/
+	position : absolute;
+	background: #232532;
+	background: -webkit-linear-gradient(-45deg, rgba(35,37,50,1) 0%,rgba(35,37,50,1) 14%,rgba(35,37,50,0.65) 100%);
 	padding:1%;
-	width:14.66%;
+	width:100%;
 	height:100%;
+	z-index:1000; 
+	display:none;
+	padding-left: 4%
+}
+
+
+
+.ui-helper-hidden-accessible{
+	background: black;
+	color:yellow;
+	position: fixed;
+    bottom: 0%;
+    width: 100%;
+    opacity: 0.8;
+    padding:1%;
 }
 
 .motors{
 	float:left;
 	/*background:black;*/
-	padding:1%;
-	padding-right: 0%;
-	width:31.33%;
+	padding: 1% 0% 0% 2%;
+	width:43%;
+	margin-left: 2%;
 	height:100%;
+	overflow:auto;
 }
 
 .animations{
@@ -84,19 +119,22 @@ h2{
 	overflow:auto;
 }
 
+
+
+
+
 button.gear{
-	display:block;
+	display:inline-block;
 	color:white;
 	-webkit-appearance: none;
 	border:0px;
 	background:none;
 	opacity: 0.6;
-	width:20px;
-	height:20px;
+	width:32px;
+	height:32px;
 	vertical-align: middle;
 	cursor:pointer;
 	/*overflow:auto;*/
-	float:left;
 }
 
 button.gear img{
@@ -116,15 +154,17 @@ button.gear:hover{
 	/*border:dashed white 2px;*/
 	background:rgba(255, 255, 255, 0.1);
 	border-radius: 10px;
-	padding:10%;
-	margin:5% 0 5% 0;
+	padding: 3%;
+    width: 10%;
+    display: inline-block;
+    margin: 0% 0 5% 1%;
 }
 
 .connexions p{
 	margin:0;
 }
 
-.connexions select{
+select{
 	color:white;
 	-webkit-appearance: none;
 	display: block;
@@ -284,14 +324,14 @@ button.start-rec:after{
 	padding:3% 0 2% 3%;
 	margin:1% 0 1% -3%;
 	clear: both;
-	width: 100%;
+	width: 99%;
     float: inherit;
     background:rgba(255, 255, 255, 0.2);
 	border-radius: 10px;
 }
 
 .single-motor:last-child{
-	margin-bottom: -3%;
+	margin-bottom: 10%;
 }
 
 
@@ -308,8 +348,23 @@ button.start-rec:after{
 .identity{
 	font-size:20px;
 	padding-left: 5px;
-	margin-bottom: 5px;
+    margin-left: 110px;
 	font-weight: 100;
+}
+
+
+.ico-thermo{
+	width:16px;
+	float:right;
+	margin-right:3%;
+}
+
+
+.thermo{
+	margin-bottom: 10px;
+	color:#99FF00;
+	font-size: 12px;
+	float:right;
 }
 
 
@@ -409,6 +464,7 @@ input:checked.rec:before{
 .single-motor .circle{
 	float:left;
 	width:28.5%;
+	margin-left:3%;
 }
 
 
@@ -466,7 +522,7 @@ input:checked.rec:before{
 
 .single-motor .properties{
 	float:left;
-	width:42.9%;
+	width:39.9%;
 }
 
 .normal{
@@ -565,7 +621,7 @@ input:checked.rec:before{
   position: relative;
   display: inline-block;
   width: 160px;
-  height: 34px;
+  /*height: 34px;*/
 }
 
 .switch-clock input {display:none;}
@@ -657,6 +713,8 @@ input:checked.rec:before{
   display: inline-block;
   width: 160px;
   height: 34px;
+  /*top: 25px;  didier*/
+  /*left: 25px; didier*/
 }
 
 .switch input {display:none;}
@@ -731,13 +789,24 @@ input:checked + .slider:after{
 
 
 
+/*left side*/
 
+.left-side h2{
+	display:inline-block;
+	cursor:pointer;
+	margin-right:1%;
+	margin-left: 1%;
+}
+
+#sens{
+	opacity:0.3;
+}
 
 /*Animation*/
-
-.animations h2{
-	width:49%;
-	display:inline-block;
+.animations{
+	position:relative;
+	left:0;
+	top:0;
 }
 
 .animations ul{
@@ -803,7 +872,7 @@ button.close:hover{
 	display:block;
 }
 
-.shorcut{
+.shorcut {
 	border:2px solid white;
 	background:none;
 	vertical-align: middle;
@@ -815,6 +884,36 @@ button.close:hover{
 	width:3%;
 	display:inline-block;
 }
+
+.number-for-motor{
+	border: 2px solid black;
+    background: none;
+    vertical-align: middle;
+    text-align: center;
+    border-radius: 5px;
+    padding: 7px;
+    font-size: 16px;
+    color: black;
+    width: 20%;
+    display: block;
+}
+
+/*Didier*/
+.num_rotary{
+	border: 2px solid grey;
+    background: none;
+    vertical-align: middle;
+    text-align: center;
+    border-radius: 20px;
+    padding: 7px;
+    font-size: 16px;
+    color: white;
+	width: 26%;
+	/*width: 160px;*/
+    display: block;
+}
+
+
 
 input.motor-none:before{
 	content:"-";
@@ -864,7 +963,7 @@ input.motor-speed{
 }
 
 meter{
-	-webkit-appearance:none;
+	/*-webkit-appearance:none;*/
 	height:20px;
 	vertical-align: middle;
 	width:25%;
@@ -950,6 +1049,214 @@ meter.active::-webkit-meter-bar{
 .no-close .ui-dialog-titlebar-close{
 	display: none;
 }
+
+
+
+
+/*SENSORS*/
+
+.sensors{
+	position:relative;
+	left:0;
+	/*top:0;*/	
+	display:none;
+	float: left;
+    left: 46.99%;
+    padding: 1%;
+    padding-top: 0px;
+    width: 48.99%;
+    height: 100%;
+    max-height: 100%;
+    overflow: auto;
+    position: absolute;
+}
+
+.sensors .power{
+	float:left;
+
+}
+
+.sensors ul{
+	padding:0px;
+}
+
+.sensors .name{
+	float:left;
+}
+
+.single-sensor{
+	cursor:move;
+	width:97%;
+	float:left;
+	margin-left:0%;
+	background:rgba(0,0,0,0.7);
+	padding:2%;
+	margin-bottom:1%;
+	background:rgba(255, 255, 255, 0.1);
+	border-radius: 10px;
+}
+
+.single-sensor:nth-child(2n+1){
+	background:rgba(0,0,0,0.3);
+}
+
+.single-sensor:last-child{
+	margin-bottom:100px;
+}
+
+
+.sensor-setting{
+	width:100%;
+	padding: 2% 0 2% 0;
+	clear:both;
+}
+
+.select-anim{
+	float:left;
+	width:25%;
+}
+
+.sensor-range{
+	float:left;
+	width: 46%;
+    padding: 2%;
+    padding-top:0%;
+}
+
+.tolerance{
+	border: 2px solid black;
+    background: none;
+    vertical-align: middle;
+    text-align: center;
+    border-radius: 5px;
+    padding: 7px;
+    font-size: 16px;
+    color: black;
+    width:10%;
+    display: block;
+    float:right;
+}
+
+.tolerance{
+	border: 2px solid black;
+    background: none;
+    vertical-align: middle;
+    text-align: center;
+    border-radius: 5px;
+    padding: 7px;
+    font-size: 16px;
+    color: black;
+    width:10%;
+    display: block;
+    float:right;
+}
+
+.live-value{
+	display:block;
+	width:100%;
+	float:left;
+	color:rgba(0,255,153,1);
+	padding:1% 0 1% 0;
+	font-size: 32px;
+	font-weight: 100;
+	text-align: center;
+
+}
+
+/*slider*/
+.slider-range{
+	clear:both;
+}
+
+.ui-slider .ui-slider-handle {
+    background: white;
+    box-shadow: 0px 1px 2px black;
+    border-radius: 100px;
+    top: -.2em;
+}
+
+.ui-widget-content{
+	background:rgba(255,255,255,0);
+	border:white 2px solid;
+	border-radius: 100px;
+}
+
+.ui-widget-header{
+	background: rgba(255,255,255,0.3);
+}
+
+
+.ui-state-active{
+	background:rgba(0,255,153,1);
+}
+
+
+.minV{
+	float:left;
+	width:25%;
+	font-size: 12px;
+	color:white;
+	font-weight: 100;
+}
+.currentV{
+	float:left;
+	width:50%;
+	font-size: 12px;
+	color:white;
+	font-weight: 700;
+	text-align: center
+}
+.maxV{
+	float:right;
+	width:25%;
+	font-size: 12px;
+	color:white;
+	font-weight: 100;
+	text-align: right;
+}
+
+
+input.range-txt{
+	-webkit-appearance: none;
+	border:none;
+	background:transparent;
+	color:white;
+	margin-bottom: 5px;
+    width: 100%;
+
+}
+
+/*MODALE*/
+
+.modale{
+	background:rgba(49, 52, 71, 0.9);
+	border:white 1px solid;
+	z-index:3000;
+	position:absolute;
+	width:500px;
+	height: 600px;
+	padding:1%;
+	color:white;
+}
+
+.close-modale{
+	-webkit-appearance: none;
+	border:0px;
+	background:none;
+	opacity: 0.6;
+	width:20px;
+	height:20px;
+	vertical-align: middle;
+	cursor:pointer;
+	position: absolute;
+    top: 0px;
+    right: 0px;
+}
+
+.close-modale img{
+	width:100%;
+}
+
 
 /*
 .ui-widget-header.advDialog {

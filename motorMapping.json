@@ -3,41 +3,21 @@
     {
       "type": "midi",
       "enabled": true,
-      "motorID": 0,
+      "motorIndex": 1,
       "port": "nanoKONTROL2 SLIDER/KNOB",
       "cmd": "CC",
-      "nbID": 4,
+      "nbID": 3,
       "valMin": 1,
       "valMax": -1
     },
     {
       "type": "midi",
       "enabled": true,
-      "motorID": 1,
-      "port": "nanoKONTROL2 SLIDER/KNOB",
-      "cmd": "CC",
-      "nbID": 5,
-      "valMin": 1,
-      "valMax": -1
-    },
-     {
-      "type": "midi",
-      "enabled": false,
-      "motorID": 2,
-      "port": "nanoKONTROL2 SLIDER/KNOB",
-      "cmd": "CC",
-      "nbID": 5,
-      "valMin": 1,
-      "valMax": -1
-    },
-    {
-      "type": "midi",
-      "enabled": true,
-      "motorID": 4,
-      "port": "nanoKONTROL2 SLIDER/KNOB",
-      "cmd": "CC",
-      "nbID": 5,
-      "valMin": 1,
+      "motorIndex": 0,
+      "port": "",
+      "cmd": "",
+      "nbID": 2,
+      "valMin": -1,
       "valMax": -1
     }
   ]

@@ -50,7 +50,7 @@ MidiPort = function () {
             else console.log("New MIDI command with number " + msg[0] + " -> needs to be added in code");
             
             if(motorMappingManager.isMapped("midi",self.portName,cmd,msg[1])){
-                var motorIDs = motorMappingManager.getMotorID("midi",self.portName,cmd,msg[1]);
+                var motorIDs = motorMappingManager.getMotorIndex("midi",self.portName,cmd,msg[1]);
                 for(var i=0; i<motorIDs.length; i++){
                     dxlManager.onMidi(motorIDs[i], "midi", msg[2]); //quick n dirty
                 }

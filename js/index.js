@@ -12,7 +12,7 @@
 var remote = require('electron').remote;
 //var dialog = remote.require('dialog');
 var dialog = remote.dialog;
-console.log("DIALOG:",dialog);
+//console.log("DIALOG:",dialog);
 const OS = require('os');
 var fs = null;
 
@@ -34,7 +34,9 @@ try {
     //var remote = require('electron').remote;
     //var dialog = remote.require('dialog');
     ipc.on("close",function(e,arg){
-        //dxlManager.saveSettings();
+        dxlManager.saveSettings();
+        settingsManager.saveSettings();
+        motorMappingManager.saveMappingSettings();
         cm9Com.close();
     });
 
@@ -149,6 +151,8 @@ window.onload = function() {
     settingsManager = new SettingsManager();
     cm9Com = new CM9_UDP();//cm9Com.open();
     dxlManager = new DxlManager();
+    motorMappingManager = new MotorMappingManager();
+    sensorManager = new SensorManager();
     try{ midiPortManager = new MidiPortManager(); }catch(e){console.log(e);}
     misGUI     = new MisGUI();
     misGUI.init();
@@ -159,11 +163,8 @@ window.onload = function() {
     //try{ oscCm9 = new OSCcm9(); cm9Com.open();}catch(e){}
     //try{ cm9Com = new CM9_UDP(); cm9Com.open();}catch(e){}
     
-    motorMappingManager = new MotorMappingManager();
-    motorMappingManager.loadMappingSettings();
-    
-    sensorManager = new SensorManager();
-    sensorManager.loadSensorSettings();
+    //motorMappingManager.loadMappingSettings(); //-> now called from settingsManager when directories are ready
+    //sensorManager.loadSensorSettings(); //-> now called from settingsManager when directories are ready
 
     $(".rotAngle").on("mousewheel",function(e){e.preventDefault();});
     $(".rotSpeed").on("mousewheel",function(e){e.preventDefault();});
@@ -205,7 +206,7 @@ window.onload = function() {
 
 
     $('body').keypress(function(e){
-        //console.log("target:", e.target);
+        //console.log("DBG-target:", e.target);
         if($(e.target).is('input'))
             return;
 
@@ -216,16 +217,20 @@ window.onload = function() {
 
         if(e.keyCode!=0) {
             console.log("char:", String.fromCharCode(e.keyCode));
-            if(e.metaKey)
+            if(e.metaKey){
+                //console.log("yeeha 1");
                 dxlManager.onMetaKey(String.fromCharCode(event.keyCode));
-            else
+                motorMappingManager.onMetaKey(String.fromCharCode(event.keyCode));
+            }else{
+                //console.log("yeeha else 1");
                 dxlManager.onKeyCode(String.fromCharCode(event.keyCode));
-            return false;
+                motorMappingManager.onKeyCode(String.fromCharCode(event.keyCode));
+            }return false;
         }
     });
 
     //var dialog = document.getElementById("dialog");
     //var dlgBt = document.getElementById("btDialog");
     //dlgBt.onclick = function(){dialog.show();}
-    console.log("DIRNAME",__dirname);
+    //console.log("DIRNAME",__dirname);
 };

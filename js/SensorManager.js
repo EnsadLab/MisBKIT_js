@@ -9,6 +9,11 @@ SensorManager = function () {
 
 };
 
+SensorManager.prototype.folderIsReady = function(configurationFolder){
+    this.configurationFolder = configurationFolder;
+    this.loadSensorSettings();
+}
+
 SensorManager.prototype.loadSensorSettings = function () {
     var json;
     try{
@@ -44,10 +49,10 @@ SensorManager.prototype.loadSensorSettings = function () {
 SettingsManager.prototype.loadUserSensorsSettings = function () {
     var json;
     try{
-        json = fs.readFileSync(this.configurationFolder + "/sensors.json", 'utf8');
+        json = fs.readFileSync(this.configurationFolder + "sensors.json", 'utf8');
     }catch(err){
         if (err.code === 'ENOENT') {
-            console.log("File " + this.configurationFolder+ "/sensors.json not found!");
+            console.log("File " + this.configurationFolder+ "sensors.json not found!");
         }else{
             console.log("Problem loading sensors.json file");
         }
@@ -77,7 +82,7 @@ SettingsManager.prototype.loadUserSensorsSettings = function () {
             //console.log(s.sensors[i]);
             //console.log(this.sensors[i]);
         }
-        settingsManager.copyPasteFromUserFolder("/sensors.json");
+        settingsManager.copyPasteFromUserFolder("sensors.json");
         this.updateGUI();
     }
 
@@ -102,7 +107,7 @@ SensorManager.prototype.saveMappingSettings = function () {
 
         var json = JSON.stringify(s, null, 2);
         fs.writeFileSync(__dirname + "/sensors.json", json);
-        settingsManager.copyPasteToUserFolder("/sensors.json");
+        settingsManager.copyPasteToUserFolder("sensors.json");
         //console.log(json);
 };
 

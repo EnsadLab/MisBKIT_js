@@ -4,6 +4,7 @@ function MisGUI(){
     var self = this;
     this.rotAngles =[];
     this.rotSpeeds =[];
+    this.inputVals; //DB storage of <input> rotary values
     this.recording = false;
     this.serialPort = null;
 
@@ -22,6 +23,7 @@ function MisGUI(){
 
     $( "#dialog" ).dialog( "close" );
 
+    /*Didier
     $('#btSerial').on('click',function(){
         var cl = $(this).prop("class");
         console.log("GUI-cm9Com:",cl);
@@ -33,7 +35,9 @@ function MisGUI(){
             self.openSerial();
         }
     });
+    */
 
+    /*Didier
     $('#selectSerial').change(function(){
         console.log("serialPort:",this.value);
         var bt = $("#btSerial");
@@ -48,7 +52,7 @@ function MisGUI(){
         }
         self.openSerial();
     });
-
+    */
 
     $('#btMidi').on('click',function(){
         var cl = $(this).prop("class");
@@ -85,7 +89,7 @@ function MisGUI(){
     });
 
 
-    $('#btOSC').on('click',function(){
+    $('#btcm9').on('click',function(){
         var cl = $(this).prop("class");
         if(cl=="connected"){
             cm9Com.close();
@@ -137,6 +141,7 @@ MisGUI.prototype.cmd = function(cmd,index,args) {
     }
 }
 
+/*Didier
 MisGUI.prototype.serialState=function(state){
     var bt = $("#btSerial");
     if(state=='OFF')
@@ -148,6 +153,7 @@ MisGUI.prototype.serialState=function(state){
     bt.prop('disabled',false);
     this.blockUI(false);
 }
+*/
 
 
 //TODO cm9Com.open --> manager
@@ -181,6 +187,8 @@ MisGUI.prototype.openSerial = function(port) {
     });
 };
 */
+
+/*Didier
 MisGUI.prototype.openSerial = function(port) {
     if(port==undefined)port = $('#selectSerial').val();
     else{
@@ -199,14 +207,14 @@ MisGUI.prototype.openSerial = function(port) {
     this.blockUI(true);
     dxlManager.serialOnOff(true,port);
 };
-
+*/
 
 MisGUI.prototype.openOSC = function(remoteAddr,remotePort) {
     dxlManager.openOSC(remoteAddr,remotePort);
 };
 
 MisGUI.prototype.oscState=function(state){
-    var bt = $("#btOSC");
+    var bt = $("#btcm9");
     if(state=='OFF')
         bt.prop("class","disconnected").text("OFF");
     else if(state=='ON')
@@ -267,14 +275,14 @@ MisGUI.prototype.angleMax =function(index,val){
         .setMinMax(undefined,val);
 }
 MisGUI.prototype.speedMin =function(index,val){
-    console.log("GUI.speedMin",val);
+    //console.log("GUI.speedMin",val);
     val=+val;
     dxlManager.cmd("speedMin",index,val);
     this.rotSpeeds[index]
         .setDomain(-175,175)
         .setRange(val,undefined)
         .setMinMax(val);
-    console.log("gui-SPEEDMIN:",val);
+    //console.log("gui-SPEEDMIN:",val);
 }
 MisGUI.prototype.speedMax =function(index,val){
     val=+val;
@@ -283,7 +291,7 @@ MisGUI.prototype.speedMax =function(index,val){
         .setDomain(-175,175)
         .setRange(undefined,val)
         .setMinMax(undefined,val);
-    console.log("gui-SPEEDMAX:",val);
+    //console.log("gui-SPEEDMAX:",val);
 }
 
 MisGUI.prototype.mode =function(index,value){
@@ -307,8 +315,9 @@ MisGUI.prototype.wheel =function(index){
 };
 
 MisGUI.prototype.onRotary = function(val,rot){
-    //console.log("ROTARY:",val," ",rot.userData);
-    dxlManager.cmd(rot.userData.f,rot.userData.i,val);
+    var i=rot.userData.i; 
+    dxlManager.cmd(rot.userData.f,i,val);
+    this.inputVals.eq(i).val(val.toFixed(1));
 };
 
 MisGUI.prototype.setValue = function(index,name,val){
@@ -317,13 +326,17 @@ MisGUI.prototype.setValue = function(index,name,val){
 }
 
 MisGUI.prototype.angle = function(index,val){
-    if(index<this.rotAngles.length)
-        this.rotAngles[index].setValue(+val);
+    if(index<this.rotAngles.length){
+        var v = this.rotAngles[index].setValue(+val).value;
+        this.inputVals.eq(index).val(v.toFixed(1));
+    }
 }
 
 MisGUI.prototype.speed = function(index,val){ //!!!base100
-    if(index<this.rotSpeeds.length)
-        this.rotSpeeds[index].setValue(+val);
+    if(index<this.rotSpeeds.length){
+        var v = this.rotSpeeds[index].setValue(+val).value;
+        this.inputVals.eq(index).val(v.toFixed(1));
+    }
 }
 
 MisGUI.prototype.needle = function(index,val){
@@ -333,11 +346,13 @@ MisGUI.prototype.needle = function(index,val){
     }
 }
 
+/*DB
 MisGUI.prototype.normValue=function(index,val)
 {
     if(index<this.rotAngles.length)
         this.rotAngles[index].setNormValue(+val,false);
 }
+*/
 
 MisGUI.prototype.recCheck=function(index,val)
 {
@@ -397,7 +412,7 @@ MisGUI.prototype.toggleAdvanced = function(onoff){
         for(var i=0;i<6;i++){
             var parent = this.getMotorUI(i);
             var chk = parent.find("[name=enable]").prop("checked");
-            console.log("DBG-check:",i," ",chk);
+            //console.log("DBG-check:",i," ",chk);
             if(chk)
                 dxlManager.cmd("enable",i,true);
 
@@ -419,6 +434,7 @@ MisGUI.prototype.motorSettings = function(index,s){
     parent.find(".identity").text(s.id);
     parent.find("[name=enable]").prop("checked",s.enabled);
     parent.find("[name=mode]").prop("checked",(s.mode!=0));
+    //parent.find(".number-for-motor").val(33);
 
     var parent = this.getMotorStg(index);
     parent.find("[name=dxlID]").val(s.id);
@@ -437,6 +453,14 @@ MisGUI.prototype.motorSettings = function(index,s){
     this.rotSpeeds[index].show((s.mode==1));
     this.rotSpeeds[index].setValue(0);
 
+}
+
+MisGUI.prototype.setMappingNumberForMotor = function(motorIndex, nbID) {
+    if(nbID == null){ 
+        $("#divMotors .number-for-motor").eq(motorIndex).val(null); // done explicitly for now..
+    }else{
+        $("#divMotors .number-for-motor").eq(motorIndex).val(nbID);
+    }
 }
 
 MisGUI.prototype.init =function(){
@@ -475,6 +499,17 @@ MisGUI.prototype.init =function(){
         clone.appendTo(parent);
     }
 
+    this.motorMappings = $("#divMotors .number-for-motor"); 
+    for(var i=0;i<this.motorMappings.length;i++) {                        
+        $(this.motorMappings[i]).data("index",i);     
+    }
+
+    this.motorMappings.on("change",function(){        
+        var index = $(this).data("index");        
+        var val = $(this).val();                
+        motorMappingManager.setMidiMotorMapping(index,parseInt(val)); // Gui only treats midi mappings for now
+    });
+
 
     //create rotaries
     var svgAngles = $(".rotAngle");
@@ -483,7 +518,7 @@ MisGUI.prototype.init =function(){
 
     var slidopt  = {x:0,y:0};
 
-    var color = "#C0C0C0";
+    //var color = "#C0C0C0";
     for(var i=0;i<svgAngles.length;i++) {
         var rota = new DUI.Rotary(svgAngles[i],slidopt);
         rota.setDomain(-150,150).setRange(-150,150).setMinMax(-150,150);
@@ -499,6 +534,23 @@ MisGUI.prototype.init =function(){
         this.rotSpeeds.push(rots);
     }
     svgSpeeds.hide();
+
+    //DB
+    this.inputVals = $("#divMotors .num_rotary");
+    for(var i=0;i<6;i++) {
+        this.inputVals.eq(i).val(0);
+        $(this.inputVals[i]).data("index",i);
+    }
+    this.inputVals.on("change",function(){
+        var index = $(this).data("index");
+        var mode = dxlManager.getMode(index);
+        var val = $(this).val();
+        if(mode==0)
+            self.angle(index,val);
+        else
+            self.speed(index,val);
+    });
+    //
 
     $("#divMotorSettings .cmd").on('change',function(){
         var index = $(this).data("index");
@@ -635,7 +687,7 @@ MisGUI.prototype.init =function(){
         $("#btAdvID").change();
     });
 
-    this.scanSerial();
+    //this.scanSerial();    /*Didier*/
     this.scanMidiPorts();
     this.scanIPv4();
 
@@ -689,11 +741,11 @@ MisGUI.prototype.setDxlReg=function(i,name,val){
 }
 
 MisGUI.prototype.recOff=function(){ //V02 ok
-    console.log("DBG misGui.recOff 1");
+    //console.log("DBG misGui.recOff 1");
     self.recording = false;
     UIstoprecording();
     self.recording = false;
-    console.log("DBG misGui.recOff 2");
+    //console.log("DBG misGui.recOff 2");
 }
 
 MisGUI.prototype.dxlEnabled = function(index,val){
@@ -867,6 +919,7 @@ MisGUI.prototype.track=function(animId,v) {
     }
 }
 
+/*Didier
 MisGUI.prototype.scanSerial = function(){
     var self = this;
     var selector = $("#selectSerial");
@@ -888,7 +941,7 @@ MisGUI.prototype.scanSerial = function(){
             $("#selectSerial").val(self.serialPort);
     });
 };
-
+*/
 
 MisGUI.prototype.scanMidiPorts = function(){
     var self = this;
@@ -910,6 +963,7 @@ MisGUI.prototype.scanMidiPorts = function(){
 };
 
 MisGUI.prototype.scanIPv4 = function(){
+    /*Didier
     var self = this;
     var selector = $("#selectOSC");
     selector.empty();
@@ -925,6 +979,7 @@ MisGUI.prototype.scanIPv4 = function(){
         }
     }catch(e){}
     selector.append($("<option value='scan' >scan</option>"));
+    */
 }
 
 
