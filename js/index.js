@@ -154,7 +154,6 @@ window.onload = function() {
     robus = new RobusBot();
 
     motorMappingManager = new MotorMappingManager();
-    motorMappingManager.loadMappingSettings();
 
     dxlManager = new DxlManager();
     sensorManager = new SensorManager();
