@@ -1,4 +1,3 @@
-console.log("ROBUS");
 
 var WebSocket = require('websocket').w3cwebsocket;
 const dns = require('dns');
@@ -12,6 +11,8 @@ function RobusBot(){
     this.state = {};
     this.msgsToPub = {};
     this.onupdate = null;
+    //this.onError = null;
+
 
 };
 
@@ -21,6 +22,7 @@ RobusBot.prototype.close = function(n) {
         this.ws.close();
 
     }
+    misGUI.robusOnOff(false);
 }
 
 RobusBot.prototype.open = function(addr) {
@@ -32,7 +34,7 @@ RobusBot.prototype.open = function(addr) {
     this.initialized = false;
     var url = `ws://${addr}:${this.port}`;
     this.ws = new WebSocket(url);
-    console.log('!conectingTo:',url);
+    console.log('Robus conectingTo:',url);
     this.ws.onopen = function(){
         console.log(`Robus Connected to "${url}"!`);
     };
