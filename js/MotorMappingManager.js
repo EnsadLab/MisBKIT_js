@@ -30,7 +30,7 @@ MotorMappingManager.prototype.loadMappingSettings = function () {
     if (json) {
          
         var s = JSON.parse(json);
-
+        //console.log(s);
         // copy old versions to see if some motor mappings had been erased
         var oldMotorMappings = JSON.parse(JSON.stringify(this.motorMappings))
 
@@ -163,7 +163,7 @@ MotorMappingManager.prototype.setMotorMapping = function(type,port,cmd,motorInde
 
 
 MotorMappingManager.prototype.updateGUI = function () {
-
+    
     for(var i=0; i<this.motorMappings.length; i++){
         //console.log(this.motorMappings[i]);
         // for now, we only consider midi mapping in the gui

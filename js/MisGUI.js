@@ -455,6 +455,7 @@ MisGUI.prototype.motorSettings = function(index,s){
 
 }
 
+
 MisGUI.prototype.setMappingNumberForMotor = function(motorIndex, nbID) {
     if(nbID == null){ 
         $("#divMotors .number-for-motor").eq(motorIndex).val(null); // done explicitly for now..
