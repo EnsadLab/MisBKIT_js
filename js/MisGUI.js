@@ -1,4 +1,4 @@
-
+console.log("-------MISGUI-glop--------");
 
 function MisGUI(){
     var self = this;
@@ -131,6 +131,10 @@ function MisGUI(){
 
 
 }; //MisGUI
+
+MisGUI.prototype.glou = function(){
+    console.log("--------GLOU----------");
+};
 
 
 
@@ -702,14 +706,14 @@ MisGUI.prototype.init =function(){
     bt.on('click',function(){
         var cl = $(this).prop("class");
         if(cl=="connected"){
-            $(this).prop("class","disconnected").text("OFF");
+            //$(this).prop("class","disconnected").text("OFF");
             robus.close();
         }
         else {
             var list=robs.val().split("\n");
             console.log("DBG-ROBUSCONNECT",list[0]);
             robus.open(list[0].trim());
-            $(this).prop("class","connected").text("ON");
+            //$(this).prop("class","connected").text("ON");
         }
     });
 
@@ -1008,6 +1012,17 @@ MisGUI.prototype.scanIPv4 = function(){
     selector.append($("<option value='scan' >scan</option>"));
     */
 }
+
+MisGUI.prototype.robusOnOff = function(onoff){
+    console.log("--------robuson----------",onoff);
+    if(onoff)
+        $(btRobus).prop("class","connected").text("ON");
+    else
+        $(btRobus).prop("class","disconnected").text("OFF");
+};
+MisGUI.prototype.robusWait = function(text){
+        $(btRobus).prop("class","disconnected").text("WAIT");
+};
 
 
 

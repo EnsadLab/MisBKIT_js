@@ -26,7 +26,6 @@ RobusBot.prototype.close = function(n) {
 }
 
 RobusBot.prototype.open = function(addr) {
-    console.log("robus.open:",addr);
     var self = this;
     if(this.ws != null){
         this.ws.close();
@@ -35,12 +34,19 @@ RobusBot.prototype.open = function(addr) {
     var url = `ws://${addr}:${this.port}`;
     this.ws = new WebSocket(url);
     console.log('Robus conectingTo:',url);
+    misGUI.robusWait();
     this.ws.onopen = function(){
         console.log(`Robus Connected to "${url}"!`);
+        misGUI.robusOnOff(true);        
     };
+    this.ws.onerror=function(e){
+        misGUI.robusOnOff(false);
+        alert("ROBUS ERROR\n"+addr);
+        //console.log("roberr:",e);
+    }
     this.ws.onclose = () => {
-        console.log("Robus Closed");
         self.ws=null;
+        misGUI.robusOnOff(false);
     };
     this.ws.onmessage = () => {
         console.log("Robus message");
