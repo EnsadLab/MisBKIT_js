@@ -9,6 +9,19 @@
         "valMax": 100,
         "anim1": "", 
         "anim2": ""
-    }
+    },
+    {
+      "device": "Robus",
+      "name":"octo_wifi:distance2",
+      "enabled": true,
+      "threshold":60,
+      "tolerance":10,
+      "valMin": 0,
+      "valMax": 1300,
+      "anim1": "", 
+      "anim2": ""
+  }
+
   ]
 }
+

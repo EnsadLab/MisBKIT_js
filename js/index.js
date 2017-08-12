@@ -160,8 +160,7 @@ window.onload = function() {
     try{ midiPortManager = new MidiPortManager(); }catch(e){console.log(e);}
     misGUI     = new MisGUI();
     misGUI.init();
-    console.log("---------INDEX-------");
-    misGUI.glou();
+
     settingsManager.loadSettings();
     //dxlManager.loadSettings(); //-> now called from settingsManager when directories are ready
     

@@ -5,8 +5,8 @@
 Sensor = function () {
 
     this.s = { //settings
-        device: "", //Didier Midi,CM9,Robus,OSC,Mike ...
-        name:"",
+        device: "",      //(Didier) Midi,CM9,Robus,OSC,Mike ...
+        name:"",         //(Didier) example Pour robus "octo_wifi:octo_portard2"
         enabled: true,
         threshold:-1,
         tolerance:-1,
@@ -18,6 +18,7 @@ Sensor = function () {
 
     this.currValue = -1;
 
+
 };
 
 Sensor.prototype.copySettings = function(s){
@@ -28,4 +29,15 @@ Sensor.prototype.copySettings = function(s){
 
 Sensor.prototype.getSettings = function(){
     return this.s;
+}
+
+Sensor.prototype.onRobusValue = function(val){
+    this.currValue = val;
+
+}
+
+Sensor.prototype.initRobus = function(){
+    var spl = this.name.split[":"];
+    //Todo? spl à verifier
+    robusManager.setCallback(spl[0],spl[1],this.onRobusValue.bind(this));
 }
