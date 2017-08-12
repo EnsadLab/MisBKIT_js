@@ -1,4 +1,3 @@
-console.log("-------MISGUI-glop--------");
 
 function MisGUI(){
     var self = this;
@@ -459,7 +458,6 @@ MisGUI.prototype.motorSettings = function(index,s){
 
 }
 
-
 MisGUI.prototype.setMappingNumberForMotor = function(motorIndex, nbID) {
     if(nbID == null){ 
         $("#divMotors .number-for-motor").eq(motorIndex).val(null); // done explicitly for now..
@@ -694,30 +692,37 @@ MisGUI.prototype.init =function(){
 
     //ROBUS
     var robs = $("#robusRobots");
-    var bt   = $("#btRobus");
+    var bt   = $("#robusOnOff");
     robs.on("click",function(){
         bt.prop("class","disconnected").text("OFF");
     });    
     robs.on("change",function(){
-        //console.log("DBG-ROBUSCHANGE",this.value);
-        console.log("DBG-ROBUSCHANGE",robs.val());
-        var spl = this.value.split("\n");
-        //console.log("split:["+spl[0]+"]");
+        //console.log("DBG-ROBUSCHANGE",robs.val());
+        //var spl = this.value.split("\n");
     });
     bt.on('click',function(){
         var cl = $(this).prop("class");
         if(cl=="connected"){
-            //$(this).prop("class","disconnected").text("OFF");
-            robus.close();
+            robusManager.close();
         }
         else {
             var list=robs.val().split("\n");
-            console.log("DBG-ROBUSCONNECT",list[0]);
-            robus.open(list[0].trim());
-            //$(this).prop("class","connected").text("ON");
+            for (var i = 0; i < list.length; i++){
+                var n = list[i].trim();
+                if(n.length>1)
+                    robusManager.connect(list[i].trim());                
+            }
         }
     });
-
+    $("#robusInfo").on('click',function(){
+        var txt = robusManager.getInfo();
+        $("#robusTxt").val(txt);        
+    });
+    $("#robusReset").on('click',function(){
+        robusManager.reset();
+        $(robusOnOff).prop("class","disconnected").text("OFF");        
+        $("#robusTxt").val("");        
+    });
 
     //this.scanSerial();    /*Didier*/
     this.scanMidiPorts();
@@ -1015,14 +1020,20 @@ MisGUI.prototype.scanIPv4 = function(){
 }
 
 MisGUI.prototype.robusOnOff = function(onoff){
-    console.log("--------robuson----------",onoff);
-    if(onoff)
-        $(btRobus).prop("class","connected").text("ON");
+    if(onoff){
+        $(robusOnOff).prop("class","connected").text("ON");
+        var txt = robusManager.getInfo();
+        $("#robusTxt").val(txt);        
+    }
     else
-        $(btRobus).prop("class","disconnected").text("OFF");
+        $(robusOnOff).prop("class","disconnected").text("OFF");
 };
 MisGUI.prototype.robusWait = function(text){
-        $(btRobus).prop("class","disconnected").text("WAIT");
+        $(robusOnOff).prop("class","disconnected").text("WAIT");
+};
+MisGUI.prototype.robusInfo = function(text){
+    //$(btRobus).prop("class","disconnected").text("WAIT");
+    $("#robusTxt").val(text);
 };
 
 

@@ -25,7 +25,7 @@ var motorMappingManager = null; //cf MotorMappingManager.js
 var sensorManager = null; //cf SensorManager.js
 var cm9Com     = null;
 var oscCm9     = null;
-var robus      = null;
+var robusManager = null;
 
 
 try {
@@ -151,7 +151,7 @@ window.onload = function() {
     // TODO: ordering had to be changed -> @Didier: is it a problem how it is now?
     settingsManager = new SettingsManager();
     cm9Com = new CM9_UDP();//cm9Com.open();
-    robus = new RobusBot();
+    robusManager = new RobusManager();
 
     motorMappingManager = new MotorMappingManager();
 
@@ -215,7 +215,7 @@ window.onload = function() {
 
 
     $('body').keypress(function(e){
-        console.log("DBG-target:", e.target);
+        //console.log("DBG-keytarget:", e.target);
         if($(e.target).is('input'))
             return;
         if($(e.target).is('textarea'))

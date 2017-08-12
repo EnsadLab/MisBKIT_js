@@ -160,9 +160,28 @@ else {
     }
 }
 
+/*test
+DxlManager.prototype.robusCB = function(val){
+    console.log("!robusCB:",val);
+    index = 0;
+    if(index<this.motors.length){
+        //console.log("index " + index + " " + this.motors.length);
+        var dxl = this.motors[index];
+        if(dxl.m.mode==0) {
+            misGUI.angle(index,   dxl.nAngle(val/300));
+        }
+        else {
+            misGUI.speed(index,   dxl.nSpeed(val/300));
+        }
+    }
+   
+}
+*/
+
 DxlManager.prototype.folderIsReady = function(animationFolder){
     this.animFolder = animationFolder;
     this.loadSettings();
+    //test robusManager.setCallback("octo_wifi","octo_potard2",this.robusCB.bind(this));
 }
 
 /*

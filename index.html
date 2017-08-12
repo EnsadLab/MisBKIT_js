@@ -64,9 +64,13 @@
 					<br>Robots:<br>
 					<br>
 					<!--input type="text" name="rien"-->
-					<textarea id="robusRobots" rows=6 cols=15>octo_wifi.local</textarea>
+					<textarea id="robusRobots" rows=6 cols=15>octo_wifi</textarea>
 
-					<button id="btRobus" class="disconnected" >OFF</button>
+					<button id="robusOnOff" class="disconnected" >OFF</button>
+					<button id="robusReset" class="disconnected" >RESET</button>
+					<br>
+					<button id="robusInfo"  class="disconnected" >info</button>
+					<textarea id="robusTxt" rows=18 cols=15>message</textarea>
 				</div>
 
 				<!--div class="plug" >
@@ -501,10 +505,10 @@
 			<script src="js/MisGUI.js"></script>
 			<script src="js/index.js"></script>
 			<script src="js/Robus.js"></script>
+			<script src="js/RobusManager.js"></script>
 			<script src="js/MotorMapping.js"></script>
 			<script src="js/MotorMappingManager.js"></script>
 			<script src="js/Sensor.js"></script>
 			<script src="js/SensorManager.js"></script>
-			<script src="js/OscManager.js"></script>
     </body>
 </html>

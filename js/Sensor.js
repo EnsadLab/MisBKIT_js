@@ -5,6 +5,7 @@
 Sensor = function () {
 
     this.s = { //settings
+        device: "", //Didier Midi,CM9,Robus,OSC,Mike ...
         name:"",
         enabled: true,
         threshold:-1,
@@ -12,7 +13,7 @@ Sensor = function () {
         valMin: -1,
         valMax: -1,
         anim1: "", //TODO: change later in an array or not?
-        anim2: "",
+        anim2: "",        
     };
 
     this.currValue = -1;
