@@ -58,7 +58,7 @@ OscManager.prototype.handleAnimMessage = function(rcv){
     var arg = rcv.args[0].value;
 
     if(adr == "/mbk/anims/start"){
-        //TODO: est-ce qu'on envoie l'index de l'anim ou le nom???
+        //TODO: est-ce qu'on envoie l'index de l'anim ou le nom ds les arguments OSC
         var divAnim = misGUI.divAnim(arg);
         divAnim.find(".play").click();
     }else if(adr == "/mbk/anims/stop"){
