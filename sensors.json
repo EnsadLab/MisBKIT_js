@@ -13,12 +13,12 @@
     {
       "device": "Robus",
       "address": "octo_wifi",
-      "name": "octo_lidar3",
+      "name": "octo_potard2",
       "enabled": true,
       "threshold":60,
       "tolerance":10,
       "valMin": 0,
-      "valMax": 1300,
+      "valMax": 300,
       "anim1": "", 
       "anim2": ""
   }

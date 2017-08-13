@@ -15,7 +15,9 @@ SensorManager.prototype.folderIsReady = function(configurationFolder){
 }
 
 SensorManager.prototype.loadSensorSettings = function () {
-    console.log("!------loadSensorSettings");
+    console.log("!------loadSensorSettings"); //DB
+    robusManager.reset(); //DB
+
     var json;
     try{
         json = fs.readFileSync(__dirname + "/sensors.json", 'utf8');
@@ -29,14 +31,13 @@ SensorManager.prototype.loadSensorSettings = function () {
     if (json) {
         
         var s = JSON.parse(json);
-        console.log("PARSING sensorMapping.json");
+        //console.log("PARSING sensorMapping.json");
         for(var i=0;i<s.sensors.length;i++){
             this.sensors.push( new Sensor() );
         }
 
         for (var i = 0; i < s.sensors.length; i++) {
             this.sensors[i].copySettings(s.sensors[i]);
-            console.log("!------sensors[i].copySettings");
             this.sensors[i].init(); //DB
             //console.log(s.sensors[i]);
             //console.log(this.sensors[i]);

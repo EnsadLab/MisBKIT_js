@@ -34,12 +34,13 @@ Sensor.prototype.getSettings = function(){
 
 Sensor.prototype.onValue = function(val){
     this.currValue = val;
-    console.log("sensor:",this.name,val);
-
+    var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin)
+    dxlManager.onNormControl(0,nv); //test 'mapping direct sur moteur 0
+    console.log("sensor:",this.s.name,nv);
+    
 }
 
 Sensor.prototype.init = function(){
-    console.log("!------sensors[i].init");    
     switch(this.s.device){
         case "Midi":
             //TODO

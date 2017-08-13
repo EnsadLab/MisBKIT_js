@@ -538,6 +538,21 @@ DxlManager.prototype.onMidi = function(index,cmd,arg){
     }
 };
 
+DxlManager.prototype.onNormControl = function(index,val){
+    if(index<this.motors.length){
+        var dxl = this.motors[index];
+        if(val<0)val=0;
+        if(val>1)val=1;
+        if(dxl.m.mode==0) {
+            misGUI.angle(index, dxl.nAngle(val) );
+        }
+        else {
+            misGUI.speed(index, dxl.nSpeed(val) );
+        }
+    }
+};
+
+
 
 
 DxlManager.prototype.onPlay = function(index,val){
