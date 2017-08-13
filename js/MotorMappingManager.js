@@ -62,6 +62,7 @@ MotorMappingManager.prototype.loadMappingSettings = function () {
             }
         }
 
+        settingsManager.copyPasteFromUserFolder("motorMapping.json"); // TODO: to check!
         this.updateGUI();
     }
 }

@@ -59,6 +59,8 @@ OscManager.prototype.handleAnimMessage = function(rcv){
 
     if(adr == "/mbk/anims/start"){
         //TODO: recuperer le bouton play de l'anim pour l'envoyer en param
+        // misGUI.divAnim(arg) ... devrait renvoyer le div de l'anim
+        // puis find(".play").setValue ???
         // ou encore mieux... mettre le bouton play à ON.
         UIplayAnim(null);
         //TODO: est-ce qu'on envoie l'index de l'anim ou le nom???

@@ -23,6 +23,7 @@ var misGUI     = null; //cf MisGui.js
 var midiPortManager = null; //cf MidiPortManager.js
 var motorMappingManager = null; //cf MotorMappingManager.js
 var sensorManager = null; //cf SensorManager.js
+var oscManager = null; //cf OscManager.js
 var cm9Com     = null;
 var oscCm9     = null;
 var robus      = null;
@@ -161,6 +162,9 @@ window.onload = function() {
     misGUI     = new MisGUI();
     misGUI.init();
     settingsManager.loadSettings();
+
+    oscManager = new OscManager();
+    oscManager.init();
     //dxlManager.loadSettings(); //-> now called from settingsManager when directories are ready
     
     //try{ cm9Com = new SerialClass(); }catch(e){}

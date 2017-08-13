@@ -947,6 +947,49 @@ MisGUI.prototype.track=function(animId,v) {
     }
 }
 
+MisGUI.prototype.divSensor = function(sensorIndex){
+    return $('.single-sensor[data-id='+sensorIndex+']');
+}
+
+MisGUI.prototype.addSensor = function(settings, index){
+    console.log("MisGUI:addSensor " + settings.name);
+    var self = this;
+    //var parent = $("#divAnims");
+    var parent = $("#sensors").find("[name=listSensors]");
+    var model = parent.find(".single-sensor:first");
+    var clone = model.clone();
+    clone.attr('data-id', index); //select only find attr
+    clone.children().data("id", index); //only first level !!! !!! !!!
+
+    clone.find("input").attr('data-id', index);
+    clone.find("button").attr('data-id', index);
+    // and also select/option in this case no???
+
+    clone.find(".power cmdTog").on("click", function () {
+        var onoff = UIloopAnim(this);
+        dxlManager.loopAnim($(this).data("id"), onoff);
+    });
+
+    clone.find(".close").on("click", function () {
+        //killSensor
+        console.log("sensor button close");
+        var sensorIndex = $(this).data("id");
+        var sensor = self.divSensor(sensorIndex);
+        if (sensor.length > 0) {
+            sensor.remove();
+            //sensorManager.removeSensor(sensorIndex);
+        }
+    });
+
+    clone.insertAfter(model);
+    clone.show();
+
+}
+
+MisGUI.prototype.setSensorValue = function(sensorIndex, sensorValue){
+    $("#sensors .live-value").eq(sensorIndex).val(sensorValue);
+}
+
 /*Didier
 MisGUI.prototype.scanSerial = function(){
     var self = this;

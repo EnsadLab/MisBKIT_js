@@ -14,39 +14,9 @@ SensorManager.prototype.folderIsReady = function(configurationFolder){
     this.loadSensorSettings();
 }
 
-SensorManager.prototype.loadSensorSettings = function () {
-    var json;
-    try{
-        json = fs.readFileSync(__dirname + "/sensors.json", 'utf8');
-    }catch(err){
-        if (err.code === 'ENOENT') {
-            console.log("File " + __dirname + "/sensors.json not found!");
-        }else{
-            console.log("Problem loading sensors.json file");
-        }
-    }
-    if (json) {
-        
-        var s = JSON.parse(json);
-        //console.log("PARSING sensorMapping.json");
-        for(var i=0;i<s.sensors.length;i++){
-            this.sensors.push( new Sensor() );
-        }
 
-        for (var i = 0; i < s.sensors.length; i++) {
-            this.sensors[i].copySettings(s.sensors[i]);
-            //console.log(s.sensors[i]);
-            //console.log(this.sensors[i]);
-        }
 
-        this.updateGUI();
-
-    }
-
-}
-
-// Method called when user has modified the sensors.json file
-SettingsManager.prototype.loadUserSensorsSettings = function () {
+SensorManager.prototype.loadSensorSettings = function() {
     var json;
     try{
         json = fs.readFileSync(this.configurationFolder + "sensors.json", 'utf8');
@@ -61,27 +31,26 @@ SettingsManager.prototype.loadUserSensorsSettings = function () {
         
         var s = JSON.parse(json);
 
-        //TODO: check if it works
+        // copy old versions to see if some motor mappings had been erased
+        var oldSensors = JSON.parse(JSON.stringify(this.sensors))
+
+        // empty current sensors array
         for (var i = this.sensors.length-1; i >= 0; i--) {
-           // if (this.motorMappings.[i].id == X) {
-                this.sensors.splice(i, 1);
-                break;
-           // }
+            this.sensors.splice(i, 1);
         }
-        console.log("TAB EMPTY " + sensors.length);
-        //console.log("PARSING motorMapping.json");
+
+        // create new sensors from the json file
         for(var i=0;i<s.sensors.length;i++){
             this.sensors.push( new Sensor() );
         }
 
         for (var i = 0; i < s.sensors.length; i++) {
             this.sensors[i].copySettings(s.sensors[i]);
-
-            //TODO: update the CC in the GUI!!
-
-            //console.log(s.sensors[i]);
-            //console.log(this.sensors[i]);
         }
+
+        // Check whether some sensors had been erased
+        // ...
+
         settingsManager.copyPasteFromUserFolder("sensors.json");
         this.updateGUI();
     }
@@ -92,6 +61,12 @@ SettingsManager.prototype.loadUserSensorsSettings = function () {
 SensorManager.prototype.updateGUI = function () {
 
     //TODO: update the sensors panel in the GUI
+    for(var i=0; i < this.sensors.length; i++){
+        misGUI.addSensor(this.sensors[i].s,i);
+    }
+
+    // test ...
+    misGUI.setSensorValue(0,66);
 }
 
 //TODO: test this function when we have the sensor panel in the GUI
