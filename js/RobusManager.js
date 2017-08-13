@@ -8,10 +8,17 @@ class RobusManager{
     }
 
     connect(robname){
-        if( !(robname in this.robots) ){
-            this.robots[robname]=new RobusBot();
+        if(robname==undefined){
+            $.each(this.robots, function(i,rob) {
+                rob.open();
+            });    
         }
-        this.robots[robname].open(robname);
+        else{
+            if( !(robname in this.robots) ){
+                this.robots[robname]=new RobusBot(robname);
+            }
+            this.robots[robname].open(robname);
+        }
     }
 
     /*
@@ -51,11 +58,12 @@ class RobusManager{
 
     //example  robusManager.setCallback("octo-wifi","distance3",this.myfunc.bind(this));
     setCallback(rob,module,cb){
+        console.log("robAddr:",rob);
         if( rob in this.robots ){
             this.robots[rob].setCallback(module,cb);
         }
         else{ //allow registration before connect (by settings for example)
-            this.robots[rob]=new RobusBot();
+            this.robots[rob]=new RobusBot(rob);
             this.robots[rob].setCallback(module,cb);
             //... connect automatically ? 
         }                   

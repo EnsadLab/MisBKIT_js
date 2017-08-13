@@ -81,9 +81,9 @@ class RobusButton extends RobusModule{
 
 
 
-function RobusBot(){
+function RobusBot(name){
     this.initialized = false;
-    this.name = "";
+    this.name = name;
     this.port = 9342;
     this.detectionInterval = 1000;
     this.ws = null;
@@ -111,7 +111,11 @@ RobusBot.prototype.open = function(addr) {
     }
     misGUI.robusWait();
     this.initialized = false;
-    this.name = addr;
+    if( addr===undefined )
+        addr = this.name;
+    else
+        this.name = addr;
+    
     if(addr.indexOf('.')<0)
         addr+=".local";
     var url = `ws://${addr}:${this.port}`;

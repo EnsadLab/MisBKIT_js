@@ -24,7 +24,7 @@ var midiPortManager = null; //cf MidiPortManager.js
 var motorMappingManager = null; //cf MotorMappingManager.js
 var sensorManager = null; //cf SensorManager.js
 var cm9Com     = null;
-var oscCm9     = null;
+//var oscCm9     = null;
 var robusManager = null;
 
 
@@ -38,6 +38,7 @@ try {
         dxlManager.saveSettings();
         settingsManager.saveSettings();
         motorMappingManager.saveMappingSettings();
+        robusManager.reset();
         cm9Com.close();
     });
 

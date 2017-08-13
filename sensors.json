@@ -12,7 +12,8 @@
     },
     {
       "device": "Robus",
-      "name":"octo_wifi:distance2",
+      "address": "octo_wifi",
+      "name": "octo_lidar3",
       "enabled": true,
       "threshold":60,
       "tolerance":10,

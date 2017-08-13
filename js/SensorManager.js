@@ -15,6 +15,7 @@ SensorManager.prototype.folderIsReady = function(configurationFolder){
 }
 
 SensorManager.prototype.loadSensorSettings = function () {
+    console.log("!------loadSensorSettings");
     var json;
     try{
         json = fs.readFileSync(__dirname + "/sensors.json", 'utf8');
@@ -28,18 +29,22 @@ SensorManager.prototype.loadSensorSettings = function () {
     if (json) {
         
         var s = JSON.parse(json);
-        //console.log("PARSING sensorMapping.json");
+        console.log("PARSING sensorMapping.json");
         for(var i=0;i<s.sensors.length;i++){
             this.sensors.push( new Sensor() );
         }
 
         for (var i = 0; i < s.sensors.length; i++) {
             this.sensors[i].copySettings(s.sensors[i]);
+            console.log("!------sensors[i].copySettings");
+            this.sensors[i].init(); //DB
             //console.log(s.sensors[i]);
             //console.log(this.sensors[i]);
         }
 
         this.updateGUI();
+
+        robusManager.connect(); //DB
 
     }
 
@@ -47,6 +52,7 @@ SensorManager.prototype.loadSensorSettings = function () {
 
 // Method called when user has modified the sensors.json file
 SettingsManager.prototype.loadUserSensorsSettings = function () {
+    console.log("!------loadUserSensorSettings");
     var json;
     try{
         json = fs.readFileSync(this.configurationFolder + "sensors.json", 'utf8');
@@ -60,7 +66,7 @@ SettingsManager.prototype.loadUserSensorsSettings = function () {
     if (json) {
         
         var s = JSON.parse(json);
-
+        
         //TODO: check if it works
         for (var i = this.sensors.length-1; i >= 0; i--) {
            // if (this.motorMappings.[i].id == X) {
@@ -76,7 +82,7 @@ SettingsManager.prototype.loadUserSensorsSettings = function () {
 
         for (var i = 0; i < s.sensors.length; i++) {
             this.sensors[i].copySettings(s.sensors[i]);
-
+            
             //TODO: update the CC in the GUI!!
 
             //console.log(s.sensors[i]);
