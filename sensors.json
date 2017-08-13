@@ -1,6 +1,8 @@
 {
   "sensors": [
     {
+        "device": "CM9",
+        "address": "7",
         "name":"sensor_distance",
         "enabled": true,
         "threshold":60,
@@ -9,6 +11,20 @@
         "valMax": 100,
         "anim1": "", 
         "anim2": ""
-    }
+    },
+    {
+      "device": "Robus",
+      "address": "octo_wifi",
+      "name": "octo_potard2",
+      "enabled": true,
+      "threshold":60,
+      "tolerance":10,
+      "valMin": 0,
+      "valMax": 300,
+      "anim1": "", 
+      "anim2": ""
+  }
+
   ]
 }
+

@@ -3,14 +3,19 @@
   "midiPort": "",
   "oscHost": "none",
   "webSocket": "none",
-  "anims": [],
+  "anims": [
+    {
+      "name": "2017-08-10-17h04-32",
+      "key": "\u0000"
+    }
+  ],
   "motors": [
     {
-      "id": 0,
+      "id": 23,
       "enabled": false,
       "model": 12,
       "clockwise": true,
-      "mode": 1,
+      "mode": 0,
       "angleMin": -150,
       "angleMax": 150,
       "speedMin": -100,

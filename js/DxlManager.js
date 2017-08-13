@@ -90,79 +90,92 @@ function DxlManager(){
 
 };
 
-if(NODE==false){ //needs fs midi
-    DxlManager.prototype.saveSettings = function(){}
-    DxlManager.prototype.loadSettings = function(){}
-}
-else {
-    DxlManager.prototype.saveSettings = function () {
-        var s = {}; //settings
-        s.serialPort = cm9Com.serialName;
-        //s.midiPort = midiPort.getPortName();
-        s.midiPort = midiPortManager.getCurrentPortName();
-        s.oscHost = "none";
-        s.webSocket = "none";
-        
-        s.anims = [];
-        s.motors = [];
-        //TODO GUI order
-        for (var k in this.animations) {
-            s.anims.push({name: this.animations[k].fileName, key: this.animations[k].keyCode});
-        }
-
-        var nbm = this.motors.length;
-        for (var i = 0; i < nbm; i++) {
-            s.motors.push(this.motors[i].getSettings());
-        }
-
-        var json = JSON.stringify(s, null, 2);
-        fs.writeFileSync(__dirname + "/settings.json", json);
-        console.log(json);
+DxlManager.prototype.saveSettings = function () {
+    var s = {}; //settings
+    s.serialPort = cm9Com.serialName;
+    //s.midiPort = midiPort.getPortName();
+    s.midiPort = midiPortManager.getCurrentPortName();
+    s.oscHost = "none";
+    s.webSocket = "none";
+    
+    s.anims = [];
+    s.motors = [];
+    //TODO GUI order
+    for (var k in this.animations) {
+        s.anims.push({name: this.animations[k].fileName, key: this.animations[k].keyCode});
     }
 
-    DxlManager.prototype.loadSettings = function () {
-        console.log("loading dxl manager settings");
-        var json = fs.readFileSync(__dirname + "/settings.json", 'utf8');
-        if (json) {
-            var s = JSON.parse(json);
-            this.serialPort = s.serialPort;
-            cm9Com.serialName = s.serialPort;
-            //console.log("SERIAL NAME:",cm9Com.serialName);
+    var nbm = this.motors.length;
+    for (var i = 0; i < nbm; i++) {
+        s.motors.push(this.motors[i].getSettings());
+    }
 
-            this.midiPort = s.midiPort;
-            this.oscHost = s.oscHost;
-            this.webSocket = s.webSocket;
+    var json = JSON.stringify(s, null, 2);
+    fs.writeFileSync(__dirname + "/settings.json", json);
+    console.log(json);
+}
 
-            for (var i = 0; i < s.motors.length; i++) {
-                this.motors[i].copySettings(s.motors[i]);
-                misGUI.motorSettings(i, s.motors[i]);
-            }
+DxlManager.prototype.loadSettings = function () {
+    console.log("loading dxl manager settings");
+    var json = fs.readFileSync(__dirname + "/settings.json", 'utf8');
+    if (json) {
+        var s = JSON.parse(json);
+        this.serialPort = s.serialPort;
+        cm9Com.serialName = s.serialPort;
+        //console.log("SERIAL NAME:",cm9Com.serialName);
 
+        this.midiPort = s.midiPort;
+        this.oscHost = s.oscHost;
+        this.webSocket = s.webSocket;
 
-            for (var i = 0; i < s.anims.length; i++) {
-                var id = this.animationID++;
-                var anim = new Animation("A" + id, this.animFolder, s.anims[i].name);
-                anim.keyCode = s.anims[i].key;
-                anim.load(s.anims[i].name);
-            }
-
-            //midiPort.open(this.midiPort);
-            //console.log("midiport:",midiPort.getPortNum(this.midiPort));
-            //misGUI.midiPort(this.midiPort);
-            //TODO: taking it out for now.
-            //midiPortManager.open(this.midiPort);
-
-            misGUI.midiPortManager(this.midiPort); //TODO: what does it do?
-
-            //misGUI.openSerial(this.serialPort); /*Didier*>
-
+        for (var i = 0; i < s.motors.length; i++) {
+            this.motors[i].copySettings(s.motors[i]);
+            misGUI.motorSettings(i, s.motors[i]);
         }
+
+
+        for (var i = 0; i < s.anims.length; i++) {
+            var id = this.animationID++;
+            var anim = new Animation("A" + id, this.animFolder, s.anims[i].name);
+            anim.keyCode = s.anims[i].key;
+            anim.load(s.anims[i].name);
+        }
+
+        //midiPort.open(this.midiPort);
+        //console.log("midiport:",midiPort.getPortNum(this.midiPort));
+        //misGUI.midiPort(this.midiPort);
+        //TODO: taking it out for now.
+        //midiPortManager.open(this.midiPort);
+
+        misGUI.midiPortManager(this.midiPort); //TODO: what does it do?
+
+        //misGUI.openSerial(this.serialPort); /*Didier*>
+
     }
 }
+
+/*test
+DxlManager.prototype.robusCB = function(val){
+    console.log("!robusCB:",val);
+    index = 0;
+    if(index<this.motors.length){
+        //console.log("index " + index + " " + this.motors.length);
+        var dxl = this.motors[index];
+        if(dxl.m.mode==0) {
+            misGUI.angle(index,   dxl.nAngle(val/300));
+        }
+        else {
+            misGUI.speed(index,   dxl.nSpeed(val/300));
+        }
+    }
+   
+}
+*/
 
 DxlManager.prototype.folderIsReady = function(animationFolder){
     this.animFolder = animationFolder;
     this.loadSettings();
+    //test robusManager.setCallback("octo_wifi","octo_potard2",this.robusCB.bind(this));
 }
 
 /*
@@ -524,6 +537,21 @@ DxlManager.prototype.onMidi = function(index,cmd,arg){
         }
     }
 };
+
+DxlManager.prototype.onNormControl = function(index,val){
+    if(index<this.motors.length){
+        var dxl = this.motors[index];
+        if(val<0)val=0;
+        if(val>1)val=1;
+        if(dxl.m.mode==0) {
+            misGUI.angle(index, dxl.nAngle(val) );
+        }
+        else {
+            misGUI.speed(index, dxl.nSpeed(val) );
+        }
+    }
+};
+
 
 
 

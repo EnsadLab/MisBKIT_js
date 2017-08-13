@@ -25,8 +25,8 @@ var motorMappingManager = null; //cf MotorMappingManager.js
 var sensorManager = null; //cf SensorManager.js
 var oscManager = null; //cf OscManager.js
 var cm9Com     = null;
-var oscCm9     = null;
-var robus      = null;
+//var oscCm9     = null;
+var robusManager = null;
 
 
 try {
@@ -39,6 +39,7 @@ try {
         dxlManager.saveSettings();
         settingsManager.saveSettings();
         motorMappingManager.saveMappingSettings();
+        robusManager.reset();
         cm9Com.close();
     });
 
@@ -152,7 +153,7 @@ window.onload = function() {
     // TODO: ordering had to be changed -> @Didier: is it a problem how it is now?
     settingsManager = new SettingsManager();
     cm9Com = new CM9_UDP();//cm9Com.open();
-    robus = new RobusBot();
+    robusManager = new RobusManager();
 
     motorMappingManager = new MotorMappingManager();
 
@@ -161,6 +162,7 @@ window.onload = function() {
     try{ midiPortManager = new MidiPortManager(); }catch(e){console.log(e);}
     misGUI     = new MisGUI();
     misGUI.init();
+
     settingsManager.loadSettings();
 
     oscManager = new OscManager();
@@ -212,11 +214,12 @@ window.onload = function() {
             dxlManager.stopAll();
             return false;
         }
+
     });
 
 
     $('body').keypress(function(e){
-        console.log("DBG-target:", e.target);
+        //console.log("DBG-keytarget:", e.target);
         if($(e.target).is('input'))
             return;
         if($(e.target).is('textarea'))

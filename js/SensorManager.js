@@ -15,8 +15,10 @@ SensorManager.prototype.folderIsReady = function(configurationFolder){
 }
 
 
-
-SensorManager.prototype.loadSensorSettings = function() {
+// Method called when user has modified the sensors.json file
+SensorManager.prototype.loadSensorSettings = function () {
+    console.log("!------loadUserSensorSettings");
+    robusManager.reset(); //DB
     var json;
     try{
         json = fs.readFileSync(this.configurationFolder + "sensors.json", 'utf8');
@@ -53,6 +55,7 @@ SensorManager.prototype.loadSensorSettings = function() {
 
         settingsManager.copyPasteFromUserFolder("sensors.json");
         this.updateGUI();
+        robusManager.connect(); //DB
     }
 
 }
@@ -88,7 +91,7 @@ SensorManager.prototype.saveMappingSettings = function () {
 
 
 // Simulates the reloading of the sensors.json file
-SensorManager.prototype.onMetaKey=function(char){
+SensorManager.prototype.onMetaKey = function(char){
     console.log("METAKEY",+char);
     if(char=='m'){ // reset the gui according to the changed elements in the json
         console.log("Resetting sensor settings into GUI");
