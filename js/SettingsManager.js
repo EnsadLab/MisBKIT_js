@@ -10,96 +10,96 @@ function SettingsManager(){
 
 };
 
-// TODO: why is that necessary?
-if(NODE==false){ //needs fs midi
+// TODO: why is that necessary? ... c'était au début pour tester le html hors NODE
+/*if(NODE==false){ //needs fs midi
     SettingsManager.prototype.saveSettings = function(){}
     SettingsManager.prototype.loadSettings = function(){}
 }
-else {    
-    SettingsManager.prototype.loadSettings = function(){
-        console.log("DIR NAME " + __dirname + "" + "/pathSettings.json");
-        var json = fs.readFileSync(__dirname + "/pathSettings.json", 'utf8');
-        if (json) {
-            var s = JSON.parse(json);
+else {
+*/        
+SettingsManager.prototype.loadSettings = function(){
+    console.log("DIR NAME " + __dirname + "" + "/pathSettings.json");
+    var json = fs.readFileSync(__dirname + "/pathSettings.json", 'utf8');
+    if (json) {
+        var s = JSON.parse(json);
 
-            this.misBKITFolder = s.misBKITFolder;
-            this.animationFolder = s.animationFolder;
-            this.configurationFolder = s.configurationFolder;
+        this.misBKITFolder = s.misBKITFolder;
+        this.animationFolder = s.animationFolder;
+        this.configurationFolder = s.configurationFolder;
 
-            this.chooseMisBKITFolder();
-            
-        }
-    };
-    SettingsManager.prototype.saveSettings = function () {
-        console.log("entering settings manager save");
-        var s = {}; //settings
-
-        s.misBKITFolder = this.misBKITFolder;
-        s.animationFolder = this.animationFolder;
-        s.configurationFolder = this.configurationFolder;
+        this.chooseMisBKITFolder();
         
-        //console.log(this.misBKITFolder);
-        //console.log(this.animationFolder);
-        //console.log(this.configurationFolder);
+    }
+};
+SettingsManager.prototype.saveSettings = function () {
+    console.log("entering settings manager save");
+    var s = {}; //settings
 
-        var json = JSON.stringify(s, null, 2);
-        fs.writeFileSync(__dirname + "/pathSettings.json", json);
-        console.log(json);
+    s.misBKITFolder = this.misBKITFolder;
+    s.animationFolder = this.animationFolder;
+    s.configurationFolder = this.configurationFolder;
+    
+    //console.log(this.misBKITFolder);
+    //console.log(this.animationFolder);
+    //console.log(this.configurationFolder);
 
-        // TODO: hmmm... when exactly? Each time we load something new...
-        this.copyPasteFromUserFolder('motorMapping.json');
-        this.copyPasteFromUserFolder('sensors.json');
-    };
+    var json = JSON.stringify(s, null, 2);
+    fs.writeFileSync(__dirname + "/pathSettings.json", json);
+    console.log(json);
 
-}
+    // TODO: hmmm... when exactly? Each time we load something new...
+    this.copyPasteFromUserFolder('motorMapping.json');
+    this.copyPasteFromUserFolder('sensors.json');
+};
+
+
 
 SettingsManager.prototype.chooseMisBKITFolder = function() {    
 
     //if(this.misBKITFolder.length==0){
     if(!fs.existsSync(this.misBKITFolder)){
-        if(ELECTRON==true) { //needs remote.dialog
-            var self = this;
-            dialog.showOpenDialog({
-                title: "First Choose MisBKIT Folder",
-                properties: ['openDirectory', 'createDirectory']
-            }, function (folder) {
-                if (folder) {
-                    //var slash = folder.lastIndexOf('/') + 1;
-                    console.log("RecFolder0:",folder);
-                    var l = folder.length;
-                    if(folder[l-1]!='/')
-                        folder+='/';
-                    self.misBKITFolder = folder;
+        //if(ELECTRON==true) { //needs remote.dialog //didier removed ELECTRON
+        var self = this;
+        dialog.showOpenDialog({
+            title: "First Choose MisBKIT Folder",
+            properties: ['openDirectory', 'createDirectory']
+        }, function (folder) {
+            if (folder) {
+                //var slash = folder.lastIndexOf('/') + 1;
+                console.log("RecFolder0:",folder);
+                var l = folder.length;
+                if(folder[l-1]!='/')
+                    folder+='/';
+                self.misBKITFolder = folder;
 
-                    console.log("FOLDER! user " + self.misBKITFolder);
+                console.log("FOLDER! user " + self.misBKITFolder);
 
-                    self.animationFolder = self.misBKITFolder + "Animations/";
-                    console.log("FOLDER! animation " + self.animationFolder);
-                    fs.mkdir(self.animationFolder, function (err) {
-                        if (err != null && err.code != 'EEXIST') {
-                            console.log('failed to create Animations directory', err);
-                        } else {
-                            console.log('created Animations directory');
-                            dxlManager.folderIsReady(self.animationFolder);
-                        }
-                    });
+                self.animationFolder = self.misBKITFolder + "Animations/";
+                console.log("FOLDER! animation " + self.animationFolder);
+                fs.mkdir(self.animationFolder, function (err) {
+                    if (err != null && err.code != 'EEXIST') {
+                        console.log('failed to create Animations directory', err);
+                    } else {
+                        console.log('created Animations directory');
+                        dxlManager.folderIsReady(self.animationFolder);
+                    }
+                });
 
-                    self.configurationFolder = self.misBKITFolder + "Configurations/";
-                    console.log("FOLDER! configuration " + self.configurationFolder);
-                    fs.mkdir(self.configurationFolder, function (err) {
-                        if (err != null && err.code != 'EEXIST') {
-                            console.log('failed to create Configurations directory', err);
-                        } else {
-                            console.log('created Configurations directory');
-                            self.synchroniseFiles();
-                            motorMappingManager.folderIsReady(self.configurationFolder);
-                            sensorManager.folderIsReady(self.configurationFolder);
+                self.configurationFolder = self.misBKITFolder + "Configurations/";
+                console.log("FOLDER! configuration " + self.configurationFolder);
+                fs.mkdir(self.configurationFolder, function (err) {
+                    if (err != null && err.code != 'EEXIST') {
+                        console.log('failed to create Configurations directory', err);
+                    } else {
+                        console.log('created Configurations directory');
+                        self.synchroniseFiles();
+                        motorMappingManager.folderIsReady(self.configurationFolder);
+                        sensorManager.folderIsReady(self.configurationFolder);
 
-                        }
-                    });
-                }
-            });
-        }
+                    }
+                });
+            }
+        });
     } else { // if directories have already been created!
         dxlManager.folderIsReady(this.animationFolder);
         this.synchroniseFiles();
