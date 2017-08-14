@@ -2,6 +2,7 @@
 * Created by Cecile on 27/07/17.
 */
 
+
 Sensor = function () {
 
     this.s = { //settings
@@ -19,7 +20,9 @@ Sensor = function () {
     };
 
     this.currValue = -1;
-
+    this.ID = -1;
+    this.area = -1; // -1:nowhere, 0:before the threshold, 1:after the threshold
+    this.oldArea = -1;
 
 };
 

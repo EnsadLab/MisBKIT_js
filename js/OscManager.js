@@ -33,11 +33,12 @@ OscManager.prototype.initUserReceiver = function(){
     var error, error1;
     try {
         var rcv = osc.fromBuffer(msg);
-        console.log("osc msg:",rcv.address,rcv.args[0].value);
         var adr = rcv.address;
         if(adr.startsWith("/mbk/anims")){
+            console.log("osc msg:",rcv.address,rcv.args[0].value);
             oscManager.handleAnimMessage(rcv); //le self. ne marchait pas!!!
         }else if(rcv.address.startsWith("/mbk/motors")){
+            console.log("osc msg:",rcv.address);
             oscManager.handleMotorMessage(rcv);
         }else{
             console.log("invalid OSC message: " + rcv);
@@ -112,9 +113,9 @@ OscManager.prototype.initCm9Receiver = function(){
     var error, error1;
     try {
         var rcv = osc.fromBuffer(msg);
-        console.log("osc msg:",rcv.address,rcv.args[0].value);
         var adr = rcv.address;
         if(adr.startsWith("/mbk/sensors")){
+            console.log("osc msg:",rcv.address,rcv.args[0].value,rcv.args[1].value);
             oscManager.handleSensorMessage(rcv); //le self. ne marchait pas!!!
         }else{
             console.log("invalid OSC message: " + rcv);
@@ -140,12 +141,13 @@ OscManager.prototype.handleSensorMessage = function(rcv){
     var sensorVal = rcv.args[1].value;
 
     console.log("handling sensor message");
+    
     // updates the gui according to the values received from OSC
-    // ....
+    sensorManager.setSensorValue(sensorPin,sensorVal);
 
     // forwards the message to the user applications
     // /mbk/sensors sensorName sensorValue sensorMin sensorMax
-    var sensor = sensorManager.getSensor(sensorPin);
+    var sensor = sensorManager.getSensorWithPin(sensorPin);
     buf = osc.toBuffer({
         address: "/mbk/sensors",
         args: [sensor.s.name,sensorVal,sensor.s.valMin,sensor.s.valMax] 

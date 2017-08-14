@@ -995,8 +995,8 @@ MisGUI.prototype.addSensor = function(settings, index){
 
 }
 
-MisGUI.prototype.setSensorValue = function(sensorIndex, sensorValue){
-    $("#sensors .live-value").eq(sensorIndex).val(sensorValue);
+MisGUI.prototype.setSensorValue = function(sensorID, sensorValue){
+    $("#sensors .live-value").eq(sensorID).val(sensorValue);
 }
 
 /*Didier
