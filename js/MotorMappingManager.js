@@ -17,14 +17,14 @@ MotorMappingManager.prototype.folderIsReady = function(configurationFolder){
 MotorMappingManager.prototype.loadMappingSettings = function () {
     
     var json;
-   
+    
     try{
-        json = fs.readFileSync(this.configurationFolder+ "motorMapping.json", 'utf8');
+        json = fs.readFileSync(this.configurationFolder+ "midiMotorMapping.json", 'utf8');
     }catch(err){
         if (err.code === 'ENOENT') {
-            console.log("File " + this.configurationFolder + "motorMapping.json not found!");
+            console.log("File " + this.configurationFolder + "midiMotorMapping.json not found!");
         }else{
-            console.log("Problem loading motorMaping.json file");
+            console.log("Problem loading midiMotorMaping.json file");
         }
     }
     if (json) {
@@ -52,7 +52,8 @@ MotorMappingManager.prototype.loadMappingSettings = function () {
         for(var i=0; i < oldMotorMappings.length; i++){
             var found = false;
             for(var j=0; j<this.motorMappings.length; j++){
-                if(oldMotorMappings[i].m.motorIndex == this.motorMappings[j].m.motorIndex){
+                if( this.motorMappings[j].m.cmd == "CC" && 
+                    oldMotorMappings[i].m.motorIndex == this.motorMappings[j].m.motorIndex){
                     found = true;
                     break;
                 }
@@ -61,8 +62,7 @@ MotorMappingManager.prototype.loadMappingSettings = function () {
                 misGUI.setMappingNumberForMotor(oldMotorMappings[i].m.motorIndex, null);
             }
         }
-
-        settingsManager.copyPasteFromUserFolder("motorMapping.json"); // TODO: to check!
+        settingsManager.copyPasteFromUserFolder("midiMotorMapping.json"); // TODO: to check!
         this.updateGUI();
     }
 }
@@ -79,9 +79,9 @@ MotorMappingManager.prototype.isMapped = function(type,port,cmd,nbID){
         //console.log(this.motorMappings[i].m.nbID + " = " + nbID);
 
         if( this.motorMappings[i].m.enabled &&
-            this.motorMappings[i].m.type == type &&
+            //this.motorMappings[i].m.type == type &&
             //this.motorMappings[i].m.port == port &&
-            //this.motorMappings[i].m.cmd == cmd &&
+            this.motorMappings[i].m.cmd == cmd &&
             this.motorMappings[i].m.nbID == nbID)
         {
             return true;
@@ -94,9 +94,9 @@ MotorMappingManager.prototype.getMotorIndex = function(type,port,cmd,nbID){
     var motorIDs = new Array();
     for(var i=0; i<this.motorMappings.length; i++){
         if( this.motorMappings[i].m.enabled && 
-            this.motorMappings[i].m.type == type &&
+            //this.motorMappings[i].m.type == type &&
             //this.motorMappings[i].m.port == port &&
-            //this.motorMappings[i].m.cmd == cmd &&
+            this.motorMappings[i].m.cmd == cmd &&
             this.motorMappings[i].m.nbID == nbID)
         {
             motorIDs.push(this.motorMappings[i].m.motorIndex);
@@ -106,12 +106,12 @@ MotorMappingManager.prototype.getMotorIndex = function(type,port,cmd,nbID){
 };
 
 //called when a CC entry has changed in the GUI
-MotorMappingManager.prototype.setMidiMotorMapping = function(motorIndex,nbID){
+MotorMappingManager.prototype.setMidiMotorMapping = function(motorIndex,nbID,cmd){
     var found = false;
     for(var i=0; i<this.motorMappings.length; i++){
-        if( this.motorMappings[i].m.type == "midi" &&
+        if( // this.motorMappings[i].m.type == "midi" &&
            // this.motorMappings[i].m.port == port &&
-           // this.motorMappings[i].m.cmd == cmd &&
+            this.motorMappings[i].m.cmd == cmd &&
             this.motorMappings[i].m.motorIndex == motorIndex)
         {
             this.motorMappings[i].m.nbID = nbID;
@@ -121,9 +121,9 @@ MotorMappingManager.prototype.setMidiMotorMapping = function(motorIndex,nbID){
     if(!found){
         var motorMapping = new MotorMapping();
         motorMapping.m.enabled = true;
-        motorMapping.m.type = "midi";
-        motorMapping.m.port = "";
-        motorMapping.m.cmd = "";
+        //motorMapping.m.type = "midi";
+        //motorMapping.m.port = "";
+        motorMapping.m.cmd = "CC"; // when changed from the gui, we assume it is CC
         motorMapping.m.motorIndex = motorIndex;
         motorMapping.m.nbID = nbID;
         this.motorMappings.push(motorMapping);
@@ -167,9 +167,10 @@ MotorMappingManager.prototype.updateGUI = function () {
     
     for(var i=0; i<this.motorMappings.length; i++){
         //console.log(this.motorMappings[i]);
-        // for now, we only consider midi mapping in the gui
-        if(this.motorMappings[i].m.type == "midi" && this.motorMappings[i].m.enabled){
-            misGUI.setMappingNumberForMotor(this.motorMappings[i].m.motorIndex, this.motorMappings[i].m.nbID);
+        // for now, we only consider midi CC mapping in the gui
+        if(/*this.motorMappings[i].m.type == "midi" &&*/ 
+            this.motorMappings[i].m.cmd == "CC" && this.motorMappings[i].m.enabled){
+                misGUI.setMappingNumberForMotor(this.motorMappings[i].m.motorIndex, this.motorMappings[i].m.nbID);
         }
     }
 }
@@ -188,17 +189,20 @@ MotorMappingManager.prototype.saveMappingSettings = function () {
         }
 
         var json = JSON.stringify(s, null, 2);
-        fs.writeFileSync(__dirname + "/motorMapping.json", json);
-        settingsManager.copyPasteToUserFolder("motorMapping.json");
+        fs.writeFileSync(__dirname + "/midiMotorMapping.json", json);
+        settingsManager.copyPasteToUserFolder("midiMotorMapping.json");
         //console.log(json);
 };
 
-// Simulates the reloading of the motorMapping.json file
+// Simulates the reloading of the midiMotorMapping.json file
 MotorMappingManager.prototype.onMetaKey=function(char){
     console.log("METAKEY",+char);
     if(char=='r'){ // reset the gui according to the changed elements in the json
         console.log("Resetting motor mapping into GUI");
         this.loadMappingSettings();
+        // Bug... the copyying file does not work.. why? because we call it from a key event?
+        // for now, we do this... a bit weird I know but it works so.
+        this.saveMappingSettings();
     }
 }
 
@@ -207,5 +211,8 @@ MotorMappingManager.prototype.onKeyCode = function(keyCode){
     if(keyCode=='r'){ // reset the gui according to the changed elements in the json
         console.log("Resetting motor mapping into GUI");
         this.loadMappingSettings();
+        // Bug... the copyying file does not work.. why? because we call it from a key event?
+        // for now, we do this... a bit weird I know but it works so.
+        this.saveMappingSettings();
     }
 }

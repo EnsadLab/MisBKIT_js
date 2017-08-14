@@ -10,8 +10,8 @@
         "tolerance":10,
         "valMin": 0,
         "valMax": 100,
-        "anim1": "", 
-        "anim2": ""
+        "anim1": "anim1", 
+        "anim2": "anim2"
     },
     {
       "device": "Robus",

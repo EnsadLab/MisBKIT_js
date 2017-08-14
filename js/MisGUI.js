@@ -510,7 +510,7 @@ MisGUI.prototype.init =function(){
     this.motorMappings.on("change",function(){        
         var index = $(this).data("index");        
         var val = $(this).val();                
-        motorMappingManager.setMidiMotorMapping(index,parseInt(val)); // Gui only treats midi mappings for now
+        motorMappingManager.setMidiMotorMapping(index,parseInt(val),"CC"); // Gui only treats CC midi mappings for now
     });
 
 
@@ -995,8 +995,8 @@ MisGUI.prototype.addSensor = function(settings, index){
 
 }
 
-MisGUI.prototype.setSensorValue = function(sensorIndex, sensorValue){
-    $("#sensors .live-value").eq(sensorIndex).val(sensorValue);
+MisGUI.prototype.setSensorValue = function(sensorID, sensorValue){
+    $("#sensors .live-value").eq(sensorID).val(sensorValue);
 }
 
 /*Didier
@@ -1041,6 +1041,11 @@ MisGUI.prototype.scanMidiPorts = function(){
         selector.append($("<option value='scan' >scan</option>"));
     }
 };
+
+MisGUI.prototype.simSelectPort = function(portName){
+    $('#selectMidi').val(portName);
+    $('#btMidi').click();
+}
 
 MisGUI.prototype.scanIPv4 = function(){
     /*Didier

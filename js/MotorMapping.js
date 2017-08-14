@@ -5,14 +5,14 @@
 MotorMapping = function () {
     
     this.m = { //settings
-        type:"",
+        //type:"",
         enabled: true,
         motorIndex:-1,
-        port:-1,
+        //port:-1,
         cmd:"", 
-        nbID:-1,
-        valMin: -1,
-        valMax: -1
+        nbID:-1
+        //valMin: -1,
+        //valMax: -1
     };
 
 };

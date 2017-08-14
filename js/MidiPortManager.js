@@ -57,6 +57,12 @@ MidiPortManager.prototype.open = function (p) {
     return found;
 };
 
+MidiPortManager.prototype.openAtStart = function(portName){
+    if(this.isValidMidiPort(portName)){
+        misGUI.simSelectPort(portName);
+    }
+}
+
 //TODO: try to close ports properly as well??
 MidiPortManager.prototype.close = function(portName){
     var found = false;
@@ -118,3 +124,12 @@ MidiPortManager.prototype.getCurrentPortName = function()
     }
     return ""; // TODO: or return null?
 };
+
+MidiPortManager.prototype.isValidMidiPort = function(portName){
+    for(var i=0; i<this.midiPorts.length; i++){
+        if(this.midiPorts[i].portName == portName){
+            return true;
+        }
+    }
+    return false;
+}
