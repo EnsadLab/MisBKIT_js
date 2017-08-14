@@ -7,6 +7,7 @@ class RobusManager{
         this.robots = {};
     }
 
+    // connect() : connect all 'robots'
     connect(robname){
         if(robname==undefined){
             $.each(this.robots, function(i,rob) {

@@ -27,6 +27,7 @@ Sensor.prototype.copySettings = function(s){
     for(var e in s){
         this.s[e]=s[e];
     }
+    this.init();
 }
 
 Sensor.prototype.getSettings = function(){
@@ -53,7 +54,7 @@ Sensor.prototype.init = function(){
             //TODO
             break;
         case "Robus":
-            console.log("addr:",this.s.address);
+            console.log("addcallback");
             robusManager.setCallback(this.s.address,this.s.name,this.onValue.bind(this));
             break;
         case "":
