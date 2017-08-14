@@ -48,7 +48,7 @@ SettingsManager.prototype.saveSettings = function () {
     console.log(json);
 
     // TODO: hmmm... when exactly? Each time we load something new...
-    this.copyPasteFromUserFolder('motorMapping.json');
+    this.copyPasteFromUserFolder('midiMotorMapping.json');
     this.copyPasteFromUserFolder('sensors.json');
 };
 
@@ -111,13 +111,13 @@ SettingsManager.prototype.chooseMisBKITFolder = function() {
 // check whether the files already exist in the user directory. If yes, use these ones as the user
 // could have changed them while not running misBKIT.
 SettingsManager.prototype.synchroniseFiles = function(){
-    //console.log("synchronise file: " + this.configurationFolder + "motorMapping.json");
+    //console.log("synchronise file: " + this.configurationFolder + "midiMotorMapping.json");
 
-    if(fs.existsSync(this.configurationFolder + "motorMapping.json")){
+    if(fs.existsSync(this.configurationFolder + "midiMotorMapping.json")){
         // in case the file has been changed while misbkit not running
-        settingsManager.copyPasteFromUserFolder('motorMapping.json'); // can't reach this in callback
+        settingsManager.copyPasteFromUserFolder('midiMotorMapping.json'); // can't reach this in callback
     }else{
-        settingsManager.copyPasteToUserFolder('motorMapping.json');
+        settingsManager.copyPasteToUserFolder('midiMotorMapping.json');
     }
 
     if(fs.existsSync(this.configurationFolder + "sensors.json")){

@@ -19,10 +19,10 @@ MotorMappingManager.prototype.loadMappingSettings = function () {
     var json;
    
     try{
-        json = fs.readFileSync(this.configurationFolder+ "motorMapping.json", 'utf8');
+        json = fs.readFileSync(this.configurationFolder+ "midiMotorMapping.json", 'utf8');
     }catch(err){
         if (err.code === 'ENOENT') {
-            console.log("File " + this.configurationFolder + "motorMapping.json not found!");
+            console.log("File " + this.configurationFolder + "midiMotorMapping.json not found!");
         }else{
             console.log("Problem loading motorMaping.json file");
         }
@@ -62,7 +62,7 @@ MotorMappingManager.prototype.loadMappingSettings = function () {
             }
         }
 
-        settingsManager.copyPasteFromUserFolder("motorMapping.json"); // TODO: to check!
+        settingsManager.copyPasteFromUserFolder("midiMotorMapping.json"); // TODO: to check!
         this.updateGUI();
     }
 }
@@ -188,12 +188,12 @@ MotorMappingManager.prototype.saveMappingSettings = function () {
         }
 
         var json = JSON.stringify(s, null, 2);
-        fs.writeFileSync(__dirname + "/motorMapping.json", json);
-        settingsManager.copyPasteToUserFolder("motorMapping.json");
+        fs.writeFileSync(__dirname + "/midiMotorMapping.json", json);
+        settingsManager.copyPasteToUserFolder("midiMotorMapping.json");
         //console.log(json);
 };
 
-// Simulates the reloading of the motorMapping.json file
+// Simulates the reloading of the midiMotorMapping.json file
 MotorMappingManager.prototype.onMetaKey=function(char){
     console.log("METAKEY",+char);
     if(char=='r'){ // reset the gui according to the changed elements in the json

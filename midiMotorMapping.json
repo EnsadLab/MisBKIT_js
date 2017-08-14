@@ -6,7 +6,7 @@
       "motorIndex": 1,
       "port": "nanoKONTROL2 SLIDER/KNOB",
       "cmd": "CC",
-      "nbID": 3,
+      "nbID": 5,
       "valMin": 1,
       "valMax": -1
     },
