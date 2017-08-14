@@ -141,11 +141,8 @@ DxlManager.prototype.loadSettings = function () {
             anim.load(s.anims[i].name);
         }
 
-        //midiPort.open(this.midiPort);
-        //console.log("midiport:",midiPort.getPortNum(this.midiPort));
-        //misGUI.midiPort(this.midiPort);
-        //TODO: taking it out for now.
-        //midiPortManager.open(this.midiPort);
+        console.log("trying to open midiport:",this.midiPort);
+        midiPortManager.openAtStart(this.midiPort);
 
         misGUI.midiPortManager(this.midiPort); //TODO: what does it do?
 

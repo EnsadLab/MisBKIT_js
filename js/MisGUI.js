@@ -1042,6 +1042,11 @@ MisGUI.prototype.scanMidiPorts = function(){
     }
 };
 
+MisGUI.prototype.simSelectPort = function(portName){
+    $('#selectMidi').val(portName);
+    $('#btMidi').click();
+}
+
 MisGUI.prototype.scanIPv4 = function(){
     /*Didier
     var self = this;
