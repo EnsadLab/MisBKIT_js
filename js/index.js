@@ -10,10 +10,12 @@
 
 
 var remote = require('electron').remote;
-//var dialog = remote.require('dialog');
 var dialog = remote.dialog;
-//console.log("DIALOG:",dialog);
 const OS = require('os');
+
+const udp  = require('dgram');
+const osc  = require('osc-min'); 
+
 var fs = null;
 
 

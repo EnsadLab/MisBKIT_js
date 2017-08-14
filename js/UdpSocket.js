@@ -1,6 +1,6 @@
 
-const dgram  = require('dgram');
-const oscMin = require('osc-min');
+//const dgram  = require('dgram');
+//const oscMin = require('osc-min');
 
 var getIPv4 = function(){
     var interfaces = OS.networkInterfaces();
@@ -56,7 +56,7 @@ CM9_UDP.prototype.open = function( inaddr,inport,incb) {
         this.socket.close();
     }
 
-    this.socket = dgram.createSocket('udp4');
+    this.socket = udp.createSocket('udp4');
     //this.socket.setBroadcast(0); //error
 
     //this.socket.bind({ address:this.remoteIP, port:this.remotePort });
@@ -73,7 +73,7 @@ CM9_UDP.prototype.open = function( inaddr,inport,incb) {
     });
     this.socket.on('message',function(datas,info){
         if(datas[0]==47){  //'/'
-            var rcv = oscMin.fromBuffer(datas);
+            var rcv = osc.fromBuffer(datas);
             //console.log('osc rcv:',info.address,info.port,'len',msg.length);
             console.log("osc msg:",rcv.address,rcv.args[0].value);
             //console.log("  datas:",rcv.args);
@@ -110,7 +110,7 @@ CM9_UDP.prototype.open = function( inaddr,inport,incb) {
 
 CM9_UDP.prototype.sendCmd = function(cmd,vals){
     var addr = "/mbk/"+cmd;
-    var buf = oscMin.toBuffer({address: addr, args: vals });
+    var buf = osc.toBuffer({address: addr, args: vals });
     console.log(" send Length:",buf.length);
 };
 
@@ -163,7 +163,7 @@ OSCcm9.prototype.open = function() {// addr,port,cb) {
         this.socket.close();
     }
 
-    this.socket = dgram.createSocket('udp4');
+    this.socket = udp.createSocket('udp4');
     this.socket.bind({ address:this.remoteIP, port:this.remotePort });
     this.socket.on('error',function(err){
         console.log("***",err);
@@ -174,7 +174,7 @@ OSCcm9.prototype.open = function() {// addr,port,cb) {
     });
     this.socket.on('message',function(msg,info){
         console.log('udp rcv:',info.address,info.port,'len',msg.length);
-        var datas = oscMin.fromBuffer(msg);
+        var datas = osc.fromBuffer(msg);
         console.log(" address:",datas.address);
         //console.log(" datas  :",datas.args);
     });
