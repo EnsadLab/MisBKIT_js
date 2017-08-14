@@ -2,6 +2,7 @@
 * Created by Cecile on 27/07/17.
 */
 
+
 SensorManager = function () {
 
     this.sensors = new Array();

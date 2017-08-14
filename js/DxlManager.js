@@ -663,9 +663,9 @@ DxlManager.prototype.animLoaded=function(anim){
     misGUI.animTracks(id,anim.channels);
     this.recAnim = null; //TOTHINK ???
 
-
+ 
     for (var k in this.animations) {
-        console.log("ANIMS:",k,this.animations[k].fileName);
+        console.log("ANIMS: ",k,this.animations[k].fileName);
     }
 
 };
@@ -676,6 +676,16 @@ DxlManager.prototype.startAnim=function(id){
         anim.startPlay();
         this.animPlaying[id]=anim; //ok not twice
     }
+}
+
+DxlManager.prototype.getAnimID=function(animName){
+    var anims = []; // in case there are multiple anims with same name
+    for(var k in this.animations){
+        if(this.animations[k].fileName == animName){
+            anims.push(this.animations[k].id);
+        }
+    }
+    return anims;
 }
 
 DxlManager.prototype.onMetaKey=function(char){

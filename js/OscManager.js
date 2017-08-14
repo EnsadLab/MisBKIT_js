@@ -8,8 +8,8 @@ const osc = require('osc-min');
 
 OscManager = function () {
 
-    this.oscUserReceiver = null; // reads values from user
-    this.oscCm9Receiver = null; // reads commands from CM9
+    this.oscUserReceiver = null; // reads values from user on port 4444
+    this.oscCm9Receiver = null; // reads commands from CM9 on port ? 5555
     this.outportUser = 6666; // forward sensor values to user
     this.outportCm9 = 7777; //TODO: à parler avec Didier....
 
@@ -58,13 +58,23 @@ OscManager.prototype.handleAnimMessage = function(rcv){
     var arg = rcv.args[0].value;
 
     if(adr == "/mbk/anims/start"){
-        //TODO: est-ce qu'on envoie l'index de l'anim ou le nom ds les arguments OSC
-        var divAnim = misGUI.divAnim(arg);
-        divAnim.find(".play").click();
+        var animIDs = dxlManager.getAnimID(arg);
+        for(var i=0; i<animIDs.length; i++){ // in case multiple anims with same name
+            var divAnim = misGUI.divAnim(animIDs[i]);
+            divAnim.find(".play").click();
+        }
     }else if(adr == "/mbk/anims/stop"){
-
+        var animIDs = dxlManager.getAnimID(arg);
+        for(var i=0; i<animIDs.length; i++){ // in case multiple anims with same name
+            var divAnim = misGUI.divAnim(animIDs[i]);
+            divAnim.find(".stop").click();
+        }
     }else if(adr == "/mbk/anims/loop"){
-
+        var animIDs = dxlManager.getAnimID(arg);
+        for(var i=0; i<animIDs.length; i++){ // in case multiple anims with same name
+            var divAnim = misGUI.divAnim(animIDs[i]);
+            divAnim.find(".loop").click();
+        }
     }
 
 }
@@ -110,7 +120,7 @@ OscManager.prototype.initCm9Receiver = function(){
 
 //TODO: Didier... Tu reçois deja des sensor messages j'imagine.. ceux de robus
 // qui reçoit les autres messages des capteurs? ICI??
-OscManager.prototype.handleSensorMessage = function(){
+OscManager.prototype.handleSensorMessage = function(rcv){
 
     var adr = rcv.address;
     var arg = rcv.args[0].value;
@@ -120,16 +130,20 @@ OscManager.prototype.handleSensorMessage = function(){
     // ....
 
     // forwards the message to the user applications
-    var outport = 6666;
+    // /mbk/sensors sensorName sensorValue sensorMin sensorMax
     buf = osc.toBuffer({
-    address: "/mbk/sensors",
-    args: [ // not sure yet how datas are added to the message... to check
+        address: "/mbk/sensors",
+        //args: ["sensor_distance",40,0,100] 
+        args: [40]
+    });
+    /*args: [ // not sure yet how datas are added to the message... to check
         12, "sttttring", new Buffer("beat"), {
         type: "integer",
         value: 7
         }
         ]
-    });
+    });*/
+    
     udp.send(buf, 0, buf.length, this.outportUserSender, "localhost");
 
 }
