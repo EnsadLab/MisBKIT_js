@@ -5,7 +5,15 @@
   "webSocket": "none",
   "anims": [
     {
-      "name": "2017-08-10-17h04-32",
+      "name": "anim1",
+      "key": "\u0000"
+    },
+    {
+      "name": "anim2",
+      "key": "\u0000"
+    },
+    {
+      "name": "anim3",
       "key": "\u0000"
     }
   ],

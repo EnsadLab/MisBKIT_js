@@ -10,7 +10,10 @@ OscManager = function () {
 
     this.oscUserReceiver = null; // reads values from user on port 4444
     this.oscCm9Receiver = null; // reads commands from CM9 on port ? 5555
+    
     this.outportUser = 6666; // forward sensor values to user
+    this.udpUserSender = dgram.createSocket("udp4");
+
     this.outportCm9 = 7777; //TODO: à parler avec Didier....
 
 };
@@ -69,10 +72,20 @@ OscManager.prototype.handleAnimMessage = function(rcv){
             var divAnim = misGUI.divAnim(animIDs[i]);
             divAnim.find(".stop").click();
         }
-    }else if(adr == "/mbk/anims/loop"){
+    }else if(adr.startsWith("/mbk/anims/loop")){
         var animIDs = dxlManager.getAnimID(arg);
         for(var i=0; i<animIDs.length; i++){ // in case multiple anims with same name
             var divAnim = misGUI.divAnim(animIDs[i]);
+            // TODO: doesn't work.. why??? no button val()?
+            var bt = divAnim.find(".loop");
+            var test = bt.val();
+            if(adr == "/mbk/anims/loopOn"){
+                console.log("TEST:   " + test);
+                if(!divAnim.find(".loop").val()) divAnim.find(".loop").click();
+            } else if(adr == "/mbk/anims/loopOff"){
+                console.log("TEST:   " + test);
+                if(divAnim.find(".loop").val()) divAnim.find(".loop").click();
+            }
             divAnim.find(".loop").click();
         }
     }
@@ -118,12 +131,13 @@ OscManager.prototype.initCm9Receiver = function(){
 }
 
 
-//TODO: Didier... Tu reçois deja des sensor messages j'imagine.. ceux de robus
-// qui reçoit les autres messages des capteurs? ICI??
+// TODO: Simulation pour l'instant...
+// on aura par la suite une méthode onCm9Sensors appelée depuis cm9Com
 OscManager.prototype.handleSensorMessage = function(rcv){
 
     var adr = rcv.address;
-    var arg = rcv.args[0].value;
+    var sensorPin = rcv.args[0].value;
+    var sensorVal = rcv.args[1].value;
 
     console.log("handling sensor message");
     // updates the gui according to the values received from OSC
@@ -131,20 +145,13 @@ OscManager.prototype.handleSensorMessage = function(rcv){
 
     // forwards the message to the user applications
     // /mbk/sensors sensorName sensorValue sensorMin sensorMax
+    var sensor = sensorManager.getSensor(sensorPin);
     buf = osc.toBuffer({
         address: "/mbk/sensors",
-        //args: ["sensor_distance",40,0,100] 
-        args: [40]
+        args: [sensor.s.name,sensorVal,sensor.s.valMin,sensor.s.valMax] 
     });
-    /*args: [ // not sure yet how datas are added to the message... to check
-        12, "sttttring", new Buffer("beat"), {
-        type: "integer",
-        value: 7
-        }
-        ]
-    });*/
     
-    udp.send(buf, 0, buf.length, this.outportUserSender, "localhost");
+    this.udpUserSender.send(buf, 0, buf.length, this.outportUser, "localhost");
 
 }
 

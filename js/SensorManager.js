@@ -73,6 +73,14 @@ SensorManager.prototype.updateGUI = function () {
     misGUI.setSensorValue(0,66);
 }
 
+SensorManager.prototype.getSensor = function(sensorPin){
+    for(var i=0; i<this.sensors.length; i++){
+        if(this.sensors[i].s.pin == sensorPin){
+            return this.sensors[i];
+        }
+    }
+}
+
 //TODO: test this function when we have the sensor panel in the GUI
 SensorManager.prototype.saveMappingSettings = function () {
         

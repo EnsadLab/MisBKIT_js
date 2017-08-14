@@ -8,6 +8,7 @@ Sensor = function () {
         device: "",      //(Didier) Midi,CM9,Robus,OSC,Mike ...
         address: "",     //(Didier) example for Robus "octo_wifi"
         name:"",         //(Didier) example Pour robus "octo_portard2"
+        pin:-1,
         enabled: true,
         threshold:-1,
         tolerance:-1,
