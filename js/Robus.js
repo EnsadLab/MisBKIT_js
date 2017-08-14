@@ -87,7 +87,7 @@ function RobusBot(name){
     this.port = 9342;
     this.detectionInterval = 1000;
     this.ws = null;
-    this.state = {};
+    //this.state = {};
     this.msgsToPub = {};
     this.onupdate = null;
     //this.onError = null;
@@ -127,7 +127,7 @@ RobusBot.prototype.open = function(addr) {
     };
     this.ws.onerror=function(e){
         misGUI.robusOnOff(false);
-        alert("ROBUS ERROR\n"+addr);
+        //alert("ROBUS ERROR\n"+addr);
     }
     this.ws.onclose = () => {
         self.ws=null;
