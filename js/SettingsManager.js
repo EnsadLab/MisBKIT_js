@@ -138,6 +138,7 @@ SettingsManager.prototype.copyPasteToUserFolder = function(filename){
 
 SettingsManager.prototype.copyPasteFromUserFolder = function(filename){
 
+    console.log("should copy to programm folder from ",this.configurationFolder + filename );
     fs.writeFileSync(this.configurationFolder + filename, fs.readFileSync(__dirname + "/" + filename));
     //fs.createReadStream(this.configurationFolder + filename)
       //      .pipe(fs.createWriteStream(__dirname + "/" + filename));

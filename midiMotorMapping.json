@@ -1,24 +1,22 @@
 {
   "motorMappings": [
     {
-      "type": "midi",
       "enabled": true,
       "motorIndex": 1,
-      "port": "nanoKONTROL2 SLIDER/KNOB",
       "cmd": "CC",
-      "nbID": 5,
-      "valMin": 1,
-      "valMax": -1
+      "nbID": 5
     },
     {
-      "type": "midi",
       "enabled": true,
       "motorIndex": 0,
-      "port": "",
-      "cmd": "",
-      "nbID": 2,
-      "valMin": -1,
-      "valMax": -1
+      "cmd": "CC",
+      "nbID": 2
+    },
+    {
+      "enabled": true,
+      "motorIndex": 2,
+      "cmd": "note",
+      "nbID": 3
     }
   ]
 }

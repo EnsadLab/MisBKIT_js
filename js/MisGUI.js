@@ -510,7 +510,7 @@ MisGUI.prototype.init =function(){
     this.motorMappings.on("change",function(){        
         var index = $(this).data("index");        
         var val = $(this).val();                
-        motorMappingManager.setMidiMotorMapping(index,parseInt(val)); // Gui only treats midi mappings for now
+        motorMappingManager.setMidiMotorMapping(index,parseInt(val),"CC"); // Gui only treats CC midi mappings for now
     });
 
 
