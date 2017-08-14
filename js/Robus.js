@@ -128,6 +128,8 @@ RobusBot.prototype.open = function(addr) {
     this.ws.onerror=function(e){
         misGUI.robusOnOff(false);
         //alert("ROBUS ERROR\n"+addr);
+        //var redo = confirm("confirm box");console.log("REDO?",redo);
+        //var addr = prompt("ROBUS error",self.name); console.log("prompt:",addr); NOT SUPPORTED
     }
     this.ws.onclose = () => {
         self.ws=null;
