@@ -3,7 +3,20 @@
   "midiPort": "",
   "oscHost": "none",
   "webSocket": "none",
-  "anims": [],
+  "anims": [
+    {
+      "name": "anim1",
+      "key": "\u0000"
+    },
+    {
+      "name": "anim2",
+      "key": "\u0000"
+    },
+    {
+      "name": "anim3",
+      "key": "\u0000"
+    }
+  ],
   "motors": [
     {
       "id": 23,
