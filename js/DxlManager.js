@@ -234,8 +234,8 @@ DxlManager.prototype.serialOnOff= function(onoff,name){
     }
 }
 
-DxlManager.prototype.oscOnOff= function(onoff,name){
-    console.log("OSC_ONOFF:",onoff);
+DxlManager.prototype.cm9OnOff= function(onoff,name){
+    console.log("CM9_ONOFF:",onoff);
     var self = this;
     this.serialRcvTime=0;
     if(onoff){
@@ -324,7 +324,7 @@ DxlManager.prototype.update = function(){
         if ((Date.now() - this.serialRcvTime) > 3000) {
             console.log("cm9Com TIMEOUT");
             this.serialRcvTime = 0;
-            this.oscOnOff(false);
+            this.cm9OnOff(false);
             misGUI.serialState("ERROR");
         }
     }
@@ -536,6 +536,7 @@ DxlManager.prototype.onMidi = function(index,cmd,arg){
 };
 
 DxlManager.prototype.onNormControl = function(index,val){
+    //console.log("norm:",index,val);
     if(index<this.motors.length){
         var dxl = this.motors[index];
         if(val<0)val=0;

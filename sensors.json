@@ -11,8 +11,9 @@
         "valMin": 0,
         "valMax": 100,
         "anim1": "anim1", 
-        "anim2": "anim2"
-    },
+        "anim2": "anim2",
+        "motorIndex": -1
+      },
     {
       "device": "Robus",
       "address": "octo_wifi",
@@ -24,7 +25,8 @@
       "valMin": 0,
       "valMax": 300,
       "anim1": "", 
-      "anim2": ""
+      "anim2": "",
+      "motorIndex": 2
   }
 
   ]

@@ -924,26 +924,9 @@ MisGUI.prototype.animTracks=function(animId,tracks){
         $(bts[im]).prop("checked",true);
     }
 
-/*V02
-    var bts = $('.divAnim[data-id='+animId+']').find('[name="track"]');
-    var nbt = bts.length;
-    //console.log("showTracks nbt:",nbt," t",tracks.length);
-    for(var i=0;i<nbt;i++){
-        setToggleBt.call(bts[i],0);
-        $(bts[i]).text("");
-    }
-    var nt = tracks.length;
-    for(var i=0;i<nt;i++){
-        var im = tracks[i].i; //!!! test nbm
-        if(tracks[i].f=="angle")$(bts[im]).text("A");
-        if(tracks[i].f=="speed")$(bts[im]).text("S");
-        setToggleBt.call(bts[im],1);
-    }
-    */
-
 };
 
-//V02
+
 MisGUI.prototype.track=function(animId,v) {
     var parent = $('.single-anim[data-id='+animId+']')
     var bts = parent.find('[name="track"]');
@@ -958,33 +941,46 @@ MisGUI.prototype.divSensor = function(sensorIndex){
     return $('.single-sensor[data-id='+sensorIndex+']');
 }
 
-MisGUI.prototype.addSensor = function(settings, index){
+MisGUI.prototype.addSensor = function(settings, id){
     console.log("MisGUI:addSensor " + settings.name);
     var self = this;
-    //var parent = $("#divAnims");
-    var parent = $("#sensors").find("[name=listSensors]");
+    var parent = $(".sensors").find("[name=listSensors]");
     var model = parent.find(".single-sensor:first");
+    model.hide();
     var clone = model.clone();
-    clone.attr('data-id', index); //select only find attr
-    clone.children().data("id", index); //only first level !!! !!! !!!
+    clone.attr('data-id', id); //select only find attr
+    clone.children().data("id", id); //only first level !!! !!! !!!
 
-    clone.find("input").attr('data-id', index);
-    clone.find("button").attr('data-id', index);
+    clone.find("input").attr('data-id', id);
+    clone.find("button").attr('data-id', id);
     // and also select/option in this case no???
+
+    var nm = clone.find("[name=sensorName]");
+    console.log("sensorName:",nm.length);
+
+    clone.find(".name")
+    .val(settings.name)
+    .on("change", function () {
+        var zis = $(this);
+        //dxlManager.renameAnim(zis.data("id"), zis.val());
+        //TODO
+    });
+
 
     clone.find(".power cmdTog").on("click", function () {
         var onoff = UIloopAnim(this);
         //??? dxlManager.loopAnim($(this).data("id"), onoff);
+        //TODO
     });
 
     clone.find(".close").on("click", function () {
         //killSensor
         console.log("sensor button close");
-        var sensorIndex = $(this).data("id");
-        var sensor = self.divSensor(sensorIndex);
+        var sensorId = $(this).data("id");
+        var sensor = self.divSensor(sensorId);
         if (sensor.length > 0) {
             sensor.remove();
-            //sensorManager.removeSensor(sensorIndex);
+            //TODO sensorManager.removeSensor(sensorIndex);
         }
     });
 

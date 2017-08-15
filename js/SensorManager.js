@@ -5,7 +5,8 @@
 
 SensorManager = function () {
 
-    this.sensors = new Array();
+    //this.sensors = new Array();
+    this.sensors = {};
     this.configurationFolder = "";
     this.sensorID = 0;
 };
@@ -19,7 +20,8 @@ SensorManager.prototype.folderIsReady = function(configurationFolder){
 // Method called when user has modified the sensors.json file
 SensorManager.prototype.loadSensorSettings = function () {
     console.log("!------loadUserSensorSettings");
-    robusManager.reset(); //DB
+    robusManager.reset(); //DB important: remove allcallbacks
+
     var json;
     try{
         json = fs.readFileSync(this.configurationFolder + "sensors.json", 'utf8');
@@ -38,21 +40,28 @@ SensorManager.prototype.loadSensorSettings = function () {
         var oldSensors = JSON.parse(JSON.stringify(this.sensors))
 
         // empty current sensors array
+        /*
         for (var i = this.sensors.length-1; i >= 0; i--) {
             this.sensors.splice(i, 1);
         }
+        */
+        this.sensors = {};
 
         // create new sensors from the json file
+        this.sensorID = 0;
         for(var i=0;i<s.sensors.length;i++){
-            this.sensors.push( new Sensor() );
+            //this.sensors.push( new Sensor() );
+            var id = "S"+this.sensorID++; 
+            this.sensors[id]= new Sensor(); //TODO? new Sensor(id) 
+            this.sensors[id].ID = id;
+            this.sensors[id].copySettings(s.sensors[i]);
         }
 
-        this.sensorID = 0;
+        /*
         for (var i = 0; i < s.sensors.length; i++) {
             this.sensors[i].copySettings(s.sensors[i]);
-            this.sensors[i].ID = this.sensorID;
-            this.sensorID++;
         }
+        */
 
         // Check whether some sensors had been erased
         // ...
@@ -68,12 +77,18 @@ SensorManager.prototype.loadSensorSettings = function () {
 SensorManager.prototype.updateGUI = function () {
 
     //TODO: update the sensors panel in the GUI
+    /*
     for(var i=0; i < this.sensors.length; i++){
         misGUI.addSensor(this.sensors[i].s,i);
     }
+    */
+    $.each(this.sensors, function(i,sensor) {
+        misGUI.addSensor(sensor.s,sensor.ID);        
+    });    
+
 
     // test ...
-    misGUI.setSensorValue(0,66);
+    misGUI.setSensorValue("S0",66);
 }
 
 SensorManager.prototype.setSensorValue = function(sensorPin, sensorValue){
@@ -88,8 +103,9 @@ SensorManager.prototype.setSensorValue = function(sensorPin, sensorValue){
 }
 
 // called from the GUI when the sensor value has been changed
-SensorManager.prototype.handleSensorValue = function(sensorID, sensorValue){
-    var sensor = this.getSensorWithID(sensorID); // hmmm.. or just use the pin to identify...
+SensorManager.prototype.handleSensorValue = function(sensorId, sensorValue){
+    //var sensor = this.getSensorWithID(sensorId); // hmmm.. or just use the pin to identify...
+    var sensor = this.sensors[sensorID];
     if(sensorValue >= sensor.s.valMin && sensorValue < (sensor.s.threshold-sensor.s.tolerance)){ 
         sensor.area = 0;
         if(sensor.oldArea != sensor.area){
@@ -125,13 +141,22 @@ SensorManager.prototype.startAnim = function(animPlaying, animStopping){
 }
 
 SensorManager.prototype.getSensorWithPin = function(sensorPin){
+    /*
     for(var i=0; i<this.sensors.length; i++){
         if(this.sensors[i].s.pin == sensorPin){
             return this.sensors[i];
         }
     }
+    */
+    $.each(this.sensors, function(i,sensor) {
+        if( sensor.s.pin == sensorPin){
+            return sensor;
+        }
+    });    
+    return undefined;
 }
 
+/*
 SensorManager.prototype.getSensorWithID = function(sensorID){
     for(var i=0; i<this.sensors.length; i++){
         if(this.sensors[i].ID == sensorID){
@@ -139,6 +164,7 @@ SensorManager.prototype.getSensorWithID = function(sensorID){
         }
     }
 }
+*/
 
 //TODO: test this function when we have the sensor panel in the GUI
 SensorManager.prototype.saveSensorSettings = function () {
@@ -146,11 +172,16 @@ SensorManager.prototype.saveSensorSettings = function () {
         var s = {}; //settings
         s.sensors = [];
 
+        /*
         var nbm = this.sensors.length;
         for (var i = 0; i < nbm; i++) {
             s.sensors.push(this.sensors[i].getSettings());
         }
-
+        */
+        $.each(this.sensors, function(i,sensor) {
+            s.sensors.push(sensor[i].getSettings());
+        });    
+    
         var json = JSON.stringify(s, null, 2);
         fs.writeFileSync(__dirname + "/sensors.json", json);
         settingsManager.copyPasteToUserFolder("sensors.json");

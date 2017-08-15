@@ -16,7 +16,8 @@ Sensor = function () {
         valMin: -1,
         valMax: -1,
         anim1: "", //TODO: change later in an array or not?
-        anim2: "",        
+        anim2: "",
+        motorIndex: 2,      
     };
 
     this.currValue = -1;
@@ -38,11 +39,12 @@ Sensor.prototype.getSettings = function(){
 }
 
 Sensor.prototype.onValue = function(val){
+    //console.log("sensor:",this.s.name,val);
     this.currValue = val;
-    var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin)
-    dxlManager.onNormControl(0,nv); //test 'mapping direct sur moteur 0
-    console.log("sensor:",this.s.name,nv);
-    
+    if(this.s.motorIndex>=0){
+        var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin)
+        dxlManager.onNormControl(this.s.motorIndex,nv);
+    }
 }
 
 Sensor.prototype.init = function(){

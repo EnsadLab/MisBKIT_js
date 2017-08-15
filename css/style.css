@@ -621,7 +621,7 @@ input:checked.rec:before{
   position: relative;
   display: inline-block;
   width: 160px;
-  /*height: 34px;*/
+  height: 34px;
 }
 
 .switch-clock input {display:none;}

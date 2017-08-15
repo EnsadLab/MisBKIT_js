@@ -64,12 +64,12 @@ CM9_UDP.prototype.open = function( inaddr,inport,incb) {
     //this.socket.bind(this.localPort);
     this.socket.on('error',function(err){
         console.log("***UDP",err);
-        dxlManager.oscOnOff(false);
+        dxlManager.cm9OnOff(false);
     });
     this.socket.on('listening',function(){
         var addr = self.socket.address();
         console.log("LISTENING addr:",addr.address,addr.port,addr.family);
-        dxlManager.oscOnOff(true);
+        dxlManager.cm9OnOff(true);
     });
     this.socket.on('message',function(datas,info){
         if(datas[0]==47){  //'/'
