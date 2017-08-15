@@ -3,8 +3,8 @@
 */
 
 // TODO: use the variable from UdpSocket.js or not?
-const udp  = require('dgram');
-const osc = require('osc-min'); 
+//const udp  = require('dgram'); //Didier -> index.js
+//const osc = require('osc-min'); //Didier -> index.js
 
 OscManager = function () {
 
@@ -12,7 +12,7 @@ OscManager = function () {
     this.oscCm9Receiver = null; // reads commands from CM9 on port ? 5555
     
     this.outportUser = 6666; // forward sensor values to user
-    this.udpUserSender = dgram.createSocket("udp4");
+    this.udpUserSender = udp.createSocket("udp4");
 
     this.outportCm9 = 7777; //TODO: à parler avec Didier....
 
@@ -156,4 +156,3 @@ OscManager.prototype.handleSensorMessage = function(rcv){
     this.udpUserSender.send(buf, 0, buf.length, this.outportUser, "localhost");
 
 }
-
