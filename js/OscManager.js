@@ -64,6 +64,7 @@ OscManager.prototype.handleAnimMessage = function(rcv){
     if(adr == "/mbk/anims/start"){
         var animIDs = dxlManager.getAnimID(arg);
         for(var i=0; i<animIDs.length; i++){ // in case multiple anims with same name
+            console.log("anim ids.. starting play " + animIDs[i]);
             var divAnim = misGUI.divAnim(animIDs[i]);
             divAnim.find(".play").click();
         }
@@ -81,11 +82,15 @@ OscManager.prototype.handleAnimMessage = function(rcv){
             var bt = divAnim.find(".loop");
             var test = bt.val();
             if(adr == "/mbk/anims/loopOn"){
-                console.log("TEST:   " + test);
-                if(!divAnim.find(".loop").val()) divAnim.find(".loop").click();
+                console.log("should loop on -> TEST:   " + test + " on id " + animIDs[i]);
+                dxlManager.loopAnim(animIDs[i],true);
+                //misGUI.animLoopOnOff(animIDs[i],true);
+                //if(!divAnim.find(".loop").val()) divAnim.find(".loop").click();
             } else if(adr == "/mbk/anims/loopOff"){
-                console.log("TEST:   " + test);
-                if(divAnim.find(".loop").val()) divAnim.find(".loop").click();
+                console.log("should loop off -> TEST:   " + test + " on id " + animIDs[i]);
+                dxlManager.loopAnim(animIDs[i],false);
+                //misGUI.animLoopOnOff(animIDs[i],false);
+                //if(divAnim.find(".loop").val()) divAnim.find(".loop").click();
             }
             divAnim.find(".loop").click();
         }
