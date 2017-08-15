@@ -197,10 +197,7 @@ window.onload = function() {
                 dxlManager.saveSettings();
             }else
                 return false; //ctrl s
-
-            console.log("Control... ");
             if(e.keyCode == 82){
-                console.log("Control... r ");
                 motorMappingManager.onKeyCode();
             }
             
@@ -244,8 +241,10 @@ window.onload = function() {
             if(e.metaKey){
                 console.log("char:", String.fromCharCode(e.keyCode));
                 dxlManager.onMetaKey(String.fromCharCode(event.keyCode));
+                motorMappingManager.onMetaKey(String.fromCharCode(event.keyCode));
             }else{
                 dxlManager.onKeyCode(String.fromCharCode(event.keyCode));
+                motorMappingManager.onKeyCode(String.fromCharCode(event.keyCode));
             }return false;
         }
     });

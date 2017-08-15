@@ -8,13 +8,19 @@
     },
     {
       "enabled": true,
-      "motorIndex": 0,
+      "motorIndex": 4,
+      "cmd": "CC",
+      "nbID": 5
+    },
+    {
+      "enabled": true,
+      "motorIndex": 3,
       "cmd": "note",
       "nbID": 2
     },
     {
       "enabled": true,
-      "motorIndex": 0,
+      "motorIndex": 2,
       "cmd": "CC",
       "nbID": 4
     }
