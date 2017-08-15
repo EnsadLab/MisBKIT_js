@@ -1,0 +1,94 @@
+{
+  "serialPort": "",
+  "midiPort": "",
+  "oscHost": "none",
+  "webSocket": "none",
+  "anims": [
+    {
+      "name": "anim1",
+      "key": "\u0000"
+    },
+    {
+      "name": "anim2",
+      "key": "\u0000"
+    },
+    {
+      "name": "anim3",
+      "key": "\u0000"
+    }
+  ],
+  "motors": [
+    {
+      "id": 0,
+      "enabled": false,
+      "model": 12,
+      "clockwise": true,
+      "mode": 1,
+      "angleMin": -150,
+      "angleMax": 150,
+      "speedMin": -100,
+      "speedMax": 100,
+      "torqueMax": 1023
+    },
+    {
+      "id": 0,
+      "enabled": false,
+      "model": 12,
+      "clockwise": true,
+      "mode": 1,
+      "angleMin": -150,
+      "angleMax": 150,
+      "speedMin": -100,
+      "speedMax": 100,
+      "torqueMax": 1023
+    },
+    {
+      "id": 0,
+      "enabled": false,
+      "model": 12,
+      "clockwise": true,
+      "mode": 1,
+      "angleMin": -150,
+      "angleMax": 150,
+      "speedMin": -100,
+      "speedMax": 100,
+      "torqueMax": 1023
+    },
+    {
+      "id": 0,
+      "enabled": false,
+      "model": 12,
+      "clockwise": true,
+      "mode": 1,
+      "angleMin": -150,
+      "angleMax": 150,
+      "speedMin": -100,
+      "speedMax": 100,
+      "torqueMax": 1023
+    },
+    {
+      "id": 0,
+      "enabled": false,
+      "model": 12,
+      "clockwise": true,
+      "mode": 1,
+      "angleMin": -150,
+      "angleMax": 150,
+      "speedMin": -100,
+      "speedMax": 100,
+      "torqueMax": 1023
+    },
+    {
+      "id": 0,
+      "enabled": false,
+      "model": 12,
+      "clockwise": true,
+      "mode": 1,
+      "angleMin": -150,
+      "angleMax": 150,
+      "speedMin": -100,
+      "speedMax": 100,
+      "torqueMax": 1023
+    }
+  ]
+}

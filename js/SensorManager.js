@@ -83,7 +83,7 @@ SensorManager.prototype.setSensorValue = function(sensorPin, sensorValue){
     // misGUI.setSensorValue(...);
 
     // For now... we just call directly handleSensorValue to test the function
-    this.handleSensorValue(sensor.ID,sensorValue);
+    //this.handleSensorValue(sensor.ID,sensorValue);
 
 }
 

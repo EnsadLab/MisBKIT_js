@@ -699,6 +699,13 @@ DxlManager.prototype.onKeyCode = function(keyCode){
     if(keyCode==" "){
         this.stopAll();
     }
+    if(keyCode=='l'){
+        console.log("should loop A0");
+        this.loopAnim("A0",true);
+    }else if(keyCode == 'n'){
+        console.log("should NOT loop A0");
+        this.loopAnim("A0",false);
+    }
     /*TEST else if(keyCode=="?"){
         //this.motors[0]._regRead=0;
     }
