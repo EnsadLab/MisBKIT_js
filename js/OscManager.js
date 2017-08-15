@@ -2,9 +2,6 @@
 * Created by Cecile on 05/08/17.
 */
 
-// TODO: use the variable from UdpSocket.js or not?
-//const udp  = require('dgram'); //Didier -> index.js
-//const osc = require('osc-min'); //Didier -> index.js
 
 OscManager = function () {
 
@@ -77,17 +74,13 @@ OscManager.prototype.handleAnimMessage = function(rcv){
         var animIDs = dxlManager.getAnimID(arg);
         for(var i=0; i<animIDs.length; i++){ // in case multiple anims with same name
             var divAnim = misGUI.divAnim(animIDs[i]);
-            // TODO: doesn't work.. why??? no button val()?
             var bt = divAnim.find(".loop");
             var test = bt.val();
             if(adr == "/mbk/anims/loopOn"){
-                console.log("TEST:   " + test);
-                if(!divAnim.find(".loop").val()) divAnim.find(".loop").click();
+                dxlManager.loopAnim(animIDs[i],true);
             } else if(adr == "/mbk/anims/loopOff"){
-                console.log("TEST:   " + test);
-                if(divAnim.find(".loop").val()) divAnim.find(".loop").click();
+                dxlManager.loopAnim(animIDs[i],false);
             }
-            divAnim.find(".loop").click();
         }
     }
 
@@ -156,4 +149,3 @@ OscManager.prototype.handleSensorMessage = function(rcv){
     this.udpUserSender.send(buf, 0, buf.length, this.outportUser, "localhost");
 
 }
-

@@ -47,9 +47,6 @@ SettingsManager.prototype.saveSettings = function () {
     fs.writeFileSync(__dirname + "/pathSettings.json", json);
     console.log(json);
 
-    // TODO: hmmm... when exactly? Each time we load something new...
-    this.copyPasteFromUserFolder('midiMotorMapping.json');
-    this.copyPasteFromUserFolder('sensors.json');
 };
 
 

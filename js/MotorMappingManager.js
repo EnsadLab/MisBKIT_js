@@ -196,19 +196,19 @@ MotorMappingManager.prototype.saveMappingSettings = function () {
 
 // Simulates the reloading of the midiMotorMapping.json file
 MotorMappingManager.prototype.onMetaKey=function(char){
-    console.log("METAKEY",+char);
+    /*console.log("METAKEY",+char);
     if(char=='r'){ // reset the gui according to the changed elements in the json
         console.log("Resetting motor mapping into GUI");
         this.loadMappingSettings();
         // Bug... the copyying file does not work.. why? because we call it from a key event?
         // for now, we do this... a bit weird I know but it works so.
         this.saveMappingSettings();
-    }
+    }*/
 }
 
 
 MotorMappingManager.prototype.onKeyCode = function(keyCode){
-    if(keyCode=='r'){ // reset the gui according to the changed elements in the json
+    if(keyCode=='R'){ // reset the gui according to the changed elements in the json
         console.log("Resetting motor mapping into GUI");
         this.loadMappingSettings();
         // Bug... the copyying file does not work.. why? because we call it from a key event?
@@ -216,3 +216,4 @@ MotorMappingManager.prototype.onKeyCode = function(keyCode){
         this.saveMappingSettings();
     }
 }
+

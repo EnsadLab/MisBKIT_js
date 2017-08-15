@@ -197,6 +197,10 @@ window.onload = function() {
                 dxlManager.saveSettings();
             }else
                 return false; //ctrl s
+            if(e.keyCode == 82){
+                motorMappingManager.onKeyCode();
+            }
+            
             if(e.keyCode==9) {
                 console.log("CTRL TAB");
                 var dlg = $("#dialog");
