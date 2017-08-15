@@ -11,6 +11,12 @@
       "motorIndex": 0,
       "cmd": "note",
       "nbID": 2
+    },
+    {
+      "enabled": true,
+      "motorIndex": 0,
+      "cmd": "CC",
+      "nbID": 4
     }
   ]
 }
