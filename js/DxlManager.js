@@ -695,14 +695,17 @@ DxlManager.prototype.onMetaKey=function(char){
 }
 
 DxlManager.prototype.onKeyCode = function(keyCode){
+    console.log("KEYCODE:",keyCode);
     if(keyCode==" "){
         this.stopAll();
     }
-    else if(keyCode=="?"){ //TEST
-        this.motors[0]._regRead=0;
+    /*TEST else if(keyCode=="?"){
+        //this.motors[0]._regRead=0;
     }
+    */
     else {
         for (var k in this.animations) {
+            console.log("animK:",k,this.animations[k].keyCode);
             if (this.animations[k].keyCode.indexOf(keyCode)>=0) {
                 this.startAnim(k);
                 misGUI.animCheck(k, 1);
@@ -790,9 +793,12 @@ DxlManager.prototype.stopAnim=function(id){
     }
 }
 
-DxlManager.prototype.loopAnim=function(id,v){ //set anim.loop 0 1 //?loop count?
+DxlManager.prototype.loopAnim=function(id,onoff){ //set anim.loop true/false //?loop count?
     var anim = this.animations[id];
-    if(anim)anim.loop = v;
+    if(anim){
+        anim.loop = onoff;
+        misGUI.animLoopOnOff(id,onoff);
+    }
 }
 
 DxlManager.prototype.animChannel=function(id,num,onoff){

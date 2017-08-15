@@ -141,7 +141,7 @@
 	  	if(onoff){
 	  		$(witch).css("opacity", 1);
 	  	}else{
-	  		$(witch).css("opacity", 0.6);
+			$(witch).css("opacity", 0.6);
 	  	}
 	  	return onoff;
 	  }

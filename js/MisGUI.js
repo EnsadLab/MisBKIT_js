@@ -885,12 +885,15 @@ MisGUI.prototype.playAnim=function(id,v){
 MisGUI.prototype.animCheck=function(animId,v){
     if(v)UIplayAnim(this.divAnim(animId).find(".play"));
     else UIstopAnim(this.divAnim(animId).find(".stop"));
-/*V01
-    console.log("DBGanimCheck");
-    var bt = $('.divAnim[data-id='+animId+']:first').find('[name="playAnim"]:first');
-    if(bt.length>0)setToggleBt.call(bt[0],v);
-*/
 }
+
+MisGUI.prototype.animLoopOnOff=function(animId,onoff){
+    var bt = this.divAnim(animId).find(".loop:first");
+    if(bt){
+        UIloopAnim(bt,onoff);
+    }
+}
+
 
 MisGUI.prototype.animProgress=function(animId,v) {
     //$('.divAnim[data-id=' + animId + ']:first').find('[name="progress"]:first').val(v);
@@ -898,11 +901,6 @@ MisGUI.prototype.animProgress=function(animId,v) {
     parent.find('[name="progress"]:first').val(v);
 }
 
-/* V01
-MisGUI.prototype.loopAnim=function(id,v){
-    dxlManager.loopAnim(id,v);
-};
-*/
 
 /**
  *
@@ -976,7 +974,7 @@ MisGUI.prototype.addSensor = function(settings, index){
 
     clone.find(".power cmdTog").on("click", function () {
         var onoff = UIloopAnim(this);
-        dxlManager.loopAnim($(this).data("id"), onoff);
+        //??? dxlManager.loopAnim($(this).data("id"), onoff);
     });
 
     clone.find(".close").on("click", function () {
