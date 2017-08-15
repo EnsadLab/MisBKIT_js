@@ -2,9 +2,6 @@
 * Created by Cecile on 05/08/17.
 */
 
-// TODO: use the variable from UdpSocket.js or not?
-//const udp  = require('dgram'); //Didier -> index.js
-//const osc = require('osc-min'); //Didier -> index.js
 
 OscManager = function () {
 
