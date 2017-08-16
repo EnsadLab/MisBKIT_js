@@ -661,10 +661,13 @@ DxlManager.prototype.animLoaded=function(anim){
     misGUI.animTracks(id,anim.channels);
     this.recAnim = null; //TOTHINK ???
 
- 
+    /*
+    var names = [];
     for (var k in this.animations) {
+        names.push(this.animations[k].fileName);
         console.log("ANIMS: ",k,this.animations[k].fileName);
     }
+    */
 
 };
 

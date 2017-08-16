@@ -88,7 +88,9 @@ SensorManager.prototype.updateGUI = function () {
 
 
     // test ...
-    misGUI.setSensorValue("S0",66);
+    misGUI.setSensorValue("S0",100);
+    misGUI.setSensorRange("S0",50,150,100);
+    misGUI.setSensorTolerance("S0",42);
 }
 
 SensorManager.prototype.setSensorValue = function(sensorPin, sensorValue){
@@ -197,3 +199,28 @@ SensorManager.prototype.onMetaKey = function(char){
         this.loadUserSensorsSettings();
     }
 }
+
+SensorManager.prototype.sensorEnable = function(id,onoff){
+    this.sensors[id].enabled = onoff;    
+    console.log("sensor enable:",id,onoff);
+    //...
+}
+
+SensorManager.prototype.onName = function(id,val){
+    this.sensors[id].name = val;
+    console.log("changeName:",id,val);
+    //...
+}
+
+SensorManager.prototype.onTolerance = function(id,val){
+    this.sensors[id].tolerance = val;
+    console.log("changeTolerance:",id,val);
+    //...
+}
+
+SensorManager.prototype.onChangeAnim = function(id,witch,txt){
+    this.sensors[id][witch]=txt;    
+    console.log("changed anim:",id,witch,txt);
+    //...
+}
+

@@ -108,18 +108,18 @@ function loadSensor(){
 		var defaultVal = target.data('default');
 		// var targetAmount = $("#"+target.data('id')+"");
 
-		console.log(minVal, maxVal, defaultVal);
+		console.log("UI loadSensor:",minVal, maxVal, defaultVal);
 
 
 
 		target.slider({
-		  range: "min",
+		  //range: "min",
 		  min: minVal,
 		  max: maxVal,
-		  value: defaultVal,
+		  value: 0,
 		  
 		  slide: function( event, ui ) {
-
+				console.log("???slide???");
 		  		var minVal = $(this).data('min');
 				var maxVal = $(this).data('max');
 				var defaultVal = $(this).data('default');
@@ -129,12 +129,14 @@ function loadSensor(){
 				$(this).parent().find(".currentV").html($(this).slider("value"));
 
 
-
 		  },
 		  create: function( event, ui ) {
-		  		var minVal = $(this).data('min');
+			var minVal = $(this).data('min');
 				var maxVal = $(this).data('max');
 				var defaultVal = $(this).data('default');
+
+				$(this).slider("value",120);
+				
 
 				$(this).parent().find(".minV").html(minVal);
 				$(this).parent().find(".maxV").html(maxVal);

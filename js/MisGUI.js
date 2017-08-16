@@ -575,34 +575,6 @@ MisGUI.prototype.init =function(){
             dxlManager.cmd(cmd,index,v);
     });
 
-
-    /*V02
-    $(".showParams").on("click",function(){
-        console.log("showParams");
-        var div = $("#dxlConfig:first");
-        if(div.css("display")=="none"){
-            div.show();
-            $("#MotorControls:first").hide();
-        }
-        else {
-            div.hide();
-            $("#MotorControls:first").show();
-        }
-    });
-    */
-
-    /* V02
-    $("#toggleREC").on("click",function(){
-        var onoff = this.value|0;
-        if(onoff>0) {
-            //misGUI.cloneAnim();
-            dxlManager.startRec();
-        }
-        else
-            dxlManager.stopRec();
-    });
-    */
-
     $("button.start-rec").on("click",function() {
         if(self.recording){
             self.recording = false;
@@ -830,6 +802,7 @@ MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
             a.remove();
             dxlManager.removeAnim(animId);
         }
+        self.setSensorAnims();        
     });
 
     clone.find(".play").on("click", function () {
@@ -875,6 +848,8 @@ MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
     clone.insertAfter(model);
     clone.show();
 
+    this.setSensorAnims();
+    
 }
 
 MisGUI.prototype.playAnim=function(id,v){
@@ -937,8 +912,8 @@ MisGUI.prototype.track=function(animId,v) {
     }
 }
 
-MisGUI.prototype.divSensor = function(sensorIndex){
-    return $('.single-sensor[data-id='+sensorIndex+']');
+MisGUI.prototype.divSensor = function(sensorId){
+    return $('.single-sensor[data-id='+sensorId+']');
 }
 
 MisGUI.prototype.addSensor = function(settings, id){
@@ -953,28 +928,44 @@ MisGUI.prototype.addSensor = function(settings, id){
 
     clone.find("input").attr('data-id', id);
     clone.find("button").attr('data-id', id);
+    //clone.find("button").attr('data-id', id);
     // and also select/option in this case no???
 
+    clone.find(".cmdTog")
+        .attr('data-id', id)
+        .on("click",function(){
+            var v = this.checked ? true : false;
+            var id = $(this).data("id");
+            sensorManager.sensorEnable(id,v);
+            //console.log("sensorEnable:",id,v);    
+        });
+    
     var nm = clone.find("[name=sensorName]");
-    console.log("sensorName:",nm.length);
+    console.log("------sensorName:",nm.length);
 
     clone.find(".name")
-    .val(settings.name)
-    .on("change", function () {
-        var zis = $(this);
-        //dxlManager.renameAnim(zis.data("id"), zis.val());
-        //TODO
+        .val(settings.name)
+        .on("change", function () {
+            sensorManager.onName($(this).data("id"), $(this).val());
     });
 
+    clone.find(".tolerance")
+        .val(settings.tolerance)
+        .on("change",function(){
+            sensorManager.onTolerance($(this).data("id"), $(this).val());
+        });
 
+    /*
     clone.find(".power cmdTog").on("click", function () {
         var onoff = UIloopAnim(this);
         //??? dxlManager.loopAnim($(this).data("id"), onoff);
         //TODO
     });
+    */
 
     clone.find(".close").on("click", function () {
         //killSensor
+        /* TODO
         console.log("sensor button close");
         var sensorId = $(this).data("id");
         var sensor = self.divSensor(sensorId);
@@ -982,15 +973,104 @@ MisGUI.prototype.addSensor = function(settings, id){
             sensor.remove();
             //TODO sensorManager.removeSensor(sensorIndex);
         }
+        */
     });
 
-    clone.insertAfter(model);
+    clone.find(".listAnims").change(function(){
+        var id = $(this).parent().parent().data("id"); //!!!parent.parent!!!
+        //console.log("animselect:",id,this.name,this.value);
+        sensorManager.onChangeAnim(id,this.name,this.value);
+    });
+
+    //clone.insertAfter(model);
+    parent.append(clone);
     clone.show();
 
+    this.setSensorAnims();
+    
 }
 
 MisGUI.prototype.setSensorValue = function(sensorID, sensorValue){
-    $("#sensors .live-value").eq(sensorID).val(sensorValue);
+    var div = this.divSensor(sensorID);
+    div.find(".live-value").html(sensorValue);
+}
+
+MisGUI.prototype.getSensorTolerance = function(sensorID){
+    var div = this.divSensor(sensorID);
+    return div.find(".tolerance").value();
+}
+MisGUI.prototype.setSensorTolerance = function(sensorID,val){
+    var div = this.divSensor(sensorID);
+}
+
+MisGUI.prototype.selectSensorAnim = function(sensorID,witch,name){
+    var div = this.divSensor(sensorID);
+    var sel = div.find("[name="+witch+"]");
+    sel.val("toto");
+}
+    
+
+MisGUI.prototype.setSensorAnims = function(names){
+    var parent = $(".sensors").find("[name=listSensors]");
+    var sel = $(".single-sensor .listAnims");
+    if(names==undefined){
+        var qnames = $("[name=animName]");
+        names = [];    
+        qnames.each(function() {
+            names.push($(this).val());
+        });
+    }
+    console.log("setSensorAnims:",names.length);
+    console.log("select anims:",sel.length);
+
+    sel.empty();
+    sel.append($("<option value=" + "'" + "none" + "'>" + "none" + "</option>"));
+    for(var i=0;i<names.length;i++){
+        if(names[i].length>0)
+            sel.append($("<option value=" + "'" + names[i] + "'>" + names[i] + "</option>"));
+    }
+
+    /*
+    sel = $(".single-sensor");
+    console.log("ids:----",sel.length);        
+    for( var i=0;i<sel.length; i++){
+        var id = sel.eq(i).data("id");
+        sel.find(".listAnim").attr('data-id', id);
+        console.log("ids:",sel.eq(i).data("id"));        
+    }
+    */
+
+}
+
+MisGUI.prototype.setSensorRange = function(sensorID,min,max,val){
+    //GRRRRRR
+    var div = this.divSensor(sensorID).find(".sensor-range");
+    div.find(".minV").html(min);
+    div.find(".currentV").html(val);
+    div.find(".maxV").html(max);
+    //div.find(".slider-range").val(val);
+    var slid = div.find(".slider-range:first");
+    //console.log("slider-range:",min,max,val);
+    slid.data("min",min);
+    slid.data("max",max);
+    slid.data("value",0);
+    console.log("slider-range:",slid);
+    //GRRRR
+    //slid.slider( "value", val );
+    //slid.slider( "option", "value", val );
+    //$(slid).data( "value", val );
+    //$(".slider-range").slider( "value", val );
+    //var v = slid.slider("value");
+    //console.log("slider-range:",slid);
+    
+}
+
+
+
+MisGUI.prototype.getSensorThres = function(sensorID){
+    var div = this.divSensor(sensorID);
+    div.find(".live-value").html(sensorValue);
+
 }
 
 /*Didier

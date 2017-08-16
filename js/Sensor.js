@@ -40,6 +40,7 @@ Sensor.prototype.getSettings = function(){
 
 Sensor.prototype.onValue = function(val){
     //console.log("sensor:",this.s.name,val);
+    misGUI.setSensorValue(this.ID,val);
     this.currValue = val;
     if(this.s.motorIndex>=0){
         var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin)
