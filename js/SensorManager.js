@@ -212,6 +212,11 @@ SensorManager.prototype.onName = function(id,val){
     //...
 }
 
+SensorManager.prototype.getSensorField = function(id,witch){
+    return this.sensors[id][witch];
+}
+
+
 SensorManager.prototype.onTolerance = function(id,val){
     this.sensors[id].tolerance = val;
     console.log("changeTolerance:",id,val);

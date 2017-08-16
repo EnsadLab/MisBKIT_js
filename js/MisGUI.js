@@ -924,10 +924,11 @@ MisGUI.prototype.addSensor = function(settings, id){
     model.hide();
     var clone = model.clone();
     clone.attr('data-id', id); //select only find attr
-    clone.children().data("id", id); //only first level !!! !!! !!!
-
-    clone.find("input").attr('data-id', id);
-    clone.find("button").attr('data-id', id);
+    //clone.children().data("id", id); //only first level !!! !!! !!!
+    clone.find('*').data("id", id); //only first level !!! !!! !!!
+    
+    //clone.find("input").attr('data-id', id);
+    //clone.find("button").attr('data-id', id);
     //clone.find("button").attr('data-id', id);
     // and also select/option in this case no???
 
@@ -940,8 +941,8 @@ MisGUI.prototype.addSensor = function(settings, id){
             //console.log("sensorEnable:",id,v);    
         });
     
-    var nm = clone.find("[name=sensorName]");
-    console.log("------sensorName:",nm.length);
+    //var nm = clone.find("[name=sensorName]");
+    //console.log("------sensorName:",nm.length);
 
     clone.find(".name")
         .val(settings.name)
@@ -954,14 +955,6 @@ MisGUI.prototype.addSensor = function(settings, id){
         .on("change",function(){
             sensorManager.onTolerance($(this).data("id"), $(this).val());
         });
-
-    /*
-    clone.find(".power cmdTog").on("click", function () {
-        var onoff = UIloopAnim(this);
-        //??? dxlManager.loopAnim($(this).data("id"), onoff);
-        //TODO
-    });
-    */
 
     clone.find(".close").on("click", function () {
         //killSensor
@@ -976,6 +969,8 @@ MisGUI.prototype.addSensor = function(settings, id){
         */
     });
 
+    clone.find("[name=anim1]").val(settings.amim1);
+    clone.find("[name=anim2]").val(settings.amim2);    
     clone.find(".listAnims").change(function(){
         var id = $(this).parent().parent().data("id"); //!!!parent.parent!!!
         //console.log("animselect:",id,this.name,this.value);
@@ -990,6 +985,16 @@ MisGUI.prototype.addSensor = function(settings, id){
     
 }
 
+// witch = "anim1" or "anim2" cf html 
+//MisGUI.prototype.MisGUI.selectSensorAnim = function(sensorID,witch,name){
+MisGUI.prototype.selectSensorAnim = function(sensorID, witch, name){        
+    var div = this.divSensor(sensorID);
+    var sel = div.find(".listAnims [name="+witch+"]");
+    if( (name==undefined)||(name.length<1) )
+        name = "none";
+    sel.val(name);
+}
+
 MisGUI.prototype.setSensorValue = function(sensorID, sensorValue){
     var div = this.divSensor(sensorID);
     div.find(".live-value").html(sensorValue);
@@ -1002,13 +1007,6 @@ MisGUI.prototype.getSensorTolerance = function(sensorID){
 MisGUI.prototype.setSensorTolerance = function(sensorID,val){
     var div = this.divSensor(sensorID);
 }
-
-MisGUI.prototype.selectSensorAnim = function(sensorID,witch,name){
-    var div = this.divSensor(sensorID);
-    var sel = div.find("[name="+witch+"]");
-    sel.val("toto");
-}
-    
 
 MisGUI.prototype.setSensorAnims = function(names){
     var parent = $(".sensors").find("[name=listSensors]");
@@ -1030,15 +1028,17 @@ MisGUI.prototype.setSensorAnims = function(names){
             sel.append($("<option value=" + "'" + names[i] + "'>" + names[i] + "</option>"));
     }
 
-    /*
-    sel = $(".single-sensor");
-    console.log("ids:----",sel.length);        
-    for( var i=0;i<sel.length; i++){
-        var id = sel.eq(i).data("id");
-        sel.find(".listAnim").attr('data-id', id);
-        console.log("ids:",sel.eq(i).data("id"));        
-    }
-    */
+    //restore current selection
+    sel.each(function(){
+        var id = $(this).data("id");
+        if(id!=undefined){
+            var nm = $(this).attr("name");
+            var n = sensorManager.getSensorField(id,nm);
+            //console.log("------eachsel:",id,nm,n);
+            $(this).val(n);
+        }
+
+    })
 
 }
 
