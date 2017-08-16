@@ -826,6 +826,7 @@ MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
         .on("change", function () {
             var zis = $(this);
             dxlManager.renameAnim(zis.data("id"), zis.val());
+            self.setSensorAnims();
         });
 
     clone.find("[name=animKey]")
@@ -934,6 +935,7 @@ MisGUI.prototype.addSensor = function(settings, id){
 
     clone.find(".cmdTog")
         .attr('data-id', id)
+        .attr('checked',settings.enabled)
         .on("click",function(){
             var v = this.checked ? true : false;
             var id = $(this).data("id");
@@ -972,13 +974,15 @@ MisGUI.prototype.addSensor = function(settings, id){
     clone.find("[name=anim1]").val(settings.amim1);
     clone.find("[name=anim2]").val(settings.amim2);    
     clone.find(".listAnims").change(function(){
-        var id = $(this).parent().parent().data("id"); //!!!parent.parent!!!
-        //console.log("animselect:",id,this.name,this.value);
+        var id = $(this).parent().data("id"); //!!!parent.parent!!!
+        console.log("animselect:",id,this.name,this.value);
         sensorManager.onChangeAnim(id,this.name,this.value);
     });
 
+    parent.append(clone); //
+    this.setSensorRange(id,settings.valMin,settings.valMax);//after append
+
     //clone.insertAfter(model);
-    parent.append(clone);
     clone.show();
 
     this.setSensorAnims();
@@ -1033,7 +1037,7 @@ MisGUI.prototype.setSensorAnims = function(names){
         var id = $(this).data("id");
         if(id!=undefined){
             var nm = $(this).attr("name");
-            var n = sensorManager.getSensorField(id,nm);
+            var n = sensorManager.getSensorSetting(id,nm);
             //console.log("------eachsel:",id,nm,n);
             $(this).val(n);
         }
@@ -1043,27 +1047,33 @@ MisGUI.prototype.setSensorAnims = function(names){
 }
 
 MisGUI.prototype.setSensorRange = function(sensorID,min,max,val){
-    //GRRRRRR
+
     var div = this.divSensor(sensorID).find(".sensor-range");
-    div.find(".minV").html(min);
-    div.find(".currentV").html(val);
-    div.find(".maxV").html(max);
     //div.find(".slider-range").val(val);
     var slid = div.find(".slider-range:first");
-    //console.log("slider-range:",min,max,val);
+
+    div.find(".minV").html(min);
+    div.find(".maxV").html(max);
+
+    hmin = div.find(".minV");
+    console.log("rangediv:",hmin);
+    
+    console.log("slider-range:",sensorID,min,max,val);
     slid.data("min",min);
     slid.data("max",max);
-    slid.data("value",0);
-    console.log("slider-range:",slid);
+    if(val != undefined){
+        div.find(".currentV").html(val);
+        slid.data("value",val); //???
+    }
+    //console.log("slider-range:",slid);
     //GRRRR
     //slid.slider( "value", val );
     //slid.slider( "option", "value", val );
     //$(slid).data( "value", val );
     //$(".slider-range").slider( "value", val );
     //var v = slid.slider("value");
-    //console.log("slider-range:",slid);
-    
-}
+    //console.log("slider-range:",slid);  
+};
 
 
 

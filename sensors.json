@@ -5,11 +5,11 @@
         "address": "7",
         "name":"sensor_distance",
         "pin": 7,
-        "enabled": true,
+        "enabled": false,
         "threshold":60,
         "tolerance":10,
         "valMin": 0,
-        "valMax": 100,
+        "valMax": 123,
         "anim1": "anim1", 
         "anim2": "anim2",
         "motorIndex": -1
@@ -20,12 +20,12 @@
       "name": "octo_potard2",
       "pin":-1,
       "enabled": true,
-      "threshold":60,
-      "tolerance":10,
+      "threshold":42,
+      "tolerance":42,
       "valMin": 0,
       "valMax": 300,
-      "anim1": "", 
-      "anim2": "",
+      "anim1": "none", 
+      "anim2": "none",
       "motorIndex": 2
   }
 
