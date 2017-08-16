@@ -979,10 +979,9 @@ MisGUI.prototype.addSensor = function(settings, id){
         sensorManager.onChangeAnim(id,this.name,this.value);
     });
 
-    parent.append(clone); //
-    this.setSensorRange(id,settings.valMin,settings.valMax);//after append
+    parent.append(clone); 
 
-    //clone.insertAfter(model);
+    this.setSensorRange(id,settings.valMin,settings.valMax);//after append
     clone.show();
 
     this.setSensorAnims();

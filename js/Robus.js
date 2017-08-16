@@ -3,7 +3,7 @@ const readDefault=function(e){
     return 0;
 }
 const readPotard=function(e){
-    return e.position;
+    return Math.round(e.position);//float too noisy
 }
 const readLidar=function(e){
     return e.distance;
