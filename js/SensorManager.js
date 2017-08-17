@@ -101,6 +101,7 @@ SensorManager.prototype.handleSensorValue = function(sensorID, sensorValue){
             this.startAnim(sensor.s.anim2, sensor.s.anim1);
         }
     }
+
     sensor.oldArea = sensor.area;
 }
 
@@ -119,6 +120,7 @@ SensorManager.prototype.startAnim = function(animPlaying, animStopping){
         var divAnim = misGUI.divAnim(animIDs[i]);
         divAnim.find(".stop").click();
     }
+    
 
 }
 

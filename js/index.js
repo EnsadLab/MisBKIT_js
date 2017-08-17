@@ -190,8 +190,44 @@ window.onload = function() {
             return;
         if($(e.target).is('textarea'))
             return;
-
+        
         if(e.metaKey || e.ctrlKey){
+            console.log("meta:",e.keyCode);
+            switch(e.keyCode){
+                case 83: //ctrl s
+                    settingsManager.saveSettings();
+                    dxlManager.saveSettings();
+                    break;
+                case 82: //ctrl r   
+                    motorMappingManager.onKeyCode();
+                    break;
+                /*    
+                case 9: //tab
+                    //console.log("CTRL TAB");
+                    /*
+                    var dlg = $("#dialog");
+                    if (dlg.dialog('isOpen'))
+                        dlg.dialog('close');
+                    else {
+                        //dxlManager.stopAll();
+                        dlg.dialog('open');
+                    }
+                    
+                    break;
+                */
+                case 65: //ctrl a :selectionne la page
+                    break;
+                   
+                default: // <ctl q><ctl tab> .... 
+                    console.log("< default >");
+                    return; //default behavior
+            }
+            return false; //handled
+            
+        }
+        
+            /*
+                
             if(e.keyCode==83){
                 settingsManager.saveSettings();
                 dxlManager.saveSettings();
@@ -204,14 +240,16 @@ window.onload = function() {
             if(e.keyCode==9) {
                 console.log("CTRL TAB");
                 var dlg = $("#dialog");
-                if (dlg.dialog('isOpen'))dlg.dialog('close');
+                if (dlg.dialog('isOpen'))
+                    dlg.dialog('close');
                 else {
                     //dxlManager.stopAll();
                     dlg.dialog('open');
                 }
             }
         }
-
+        */
+        
         //console.log("down event:",e);
         //console.log("down witch:",e.which);
         //console.log("down keyCode:", e.keyCode);
