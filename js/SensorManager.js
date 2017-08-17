@@ -90,7 +90,8 @@ SensorManager.prototype.updateGUI = function () {
     // test ...
     //misGUI.setSensorValue("S0",42);
     //misGUI.setSensorRange("S1",50,133,100);
-    misGUI.setSensorTolerance("S0",42);
+    //misGUI.setSensorTolerance("S0",42);
+    console.log("getPin:",this.getSensorWithPin(7));
 }
 
 SensorManager.prototype.setSensorValue = function(sensorPin, sensorValue){
@@ -143,19 +144,15 @@ SensorManager.prototype.startAnim = function(animPlaying, animStopping){
 }
 
 SensorManager.prototype.getSensorWithPin = function(sensorPin){
-    /*
-    for(var i=0; i<this.sensors.length; i++){
-        if(this.sensors[i].s.pin == sensorPin){
-            return this.sensors[i];
-        }
-    }
-    */
+    var result = undefined;  
     $.each(this.sensors, function(i,sensor) {
+        //console.log("pin:",sensorPin,sensor.s.pin);
         if( sensor.s.pin == sensorPin){
-            return sensor;
+            result = sensor;
+            return false; //break
         }
     });    
-    return undefined;
+    return result;
 }
 
 /*
