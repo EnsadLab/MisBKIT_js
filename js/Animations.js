@@ -155,7 +155,11 @@ Animation.prototype.load = function(fname){ //sync
     if(datas){
         console.log("DBG LoadAnim length:",datas.length);
         //console.log("DBG KeyCode:",datas.readInt8(1));
-        this.keyCode = String.fromCharCode(datas.readInt8(1));
+        if(datas.readInt8(1)!=0)
+            this.keyCode = String.fromCharCode(datas.readInt8(1));
+        else
+            this.keyCode = "";
+        
         var nbm = datas.readInt16LE(2); //nbChannels
         console.log("DBG LoadAnim nb motors:",nbm);
         this.nbChannels = nbm;

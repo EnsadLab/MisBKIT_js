@@ -73,3 +73,7 @@ Sensor.prototype.init = function(){
             alert("Sensor device unknown\n",this.s.device);
     }
 }
+
+Sensor.prototype.discard = function(){
+    robusManager.setCallback(this.s.address,this.s.name);    
+}

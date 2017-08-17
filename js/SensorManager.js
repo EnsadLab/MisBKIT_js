@@ -40,7 +40,8 @@ SensorManager.prototype.loadSensorSettings = function () {
         var oldSensors = JSON.parse(JSON.stringify(this.sensors))
 
         // empty current sensors array
-        this.sensors = {};
+        //this.sensors = {};
+        this.removeAllSensors();
 
         // create new sensors from the json file
         this.sensorID = 0;
@@ -164,6 +165,26 @@ SensorManager.prototype.onKeyCode = function(char){
         this.loadUserSensorsSettings();
         this.saveSensorSettings(); // weird but works like this... bug..
     }
+}
+
+SensorManager.prototype.removeAllSensors = function(){
+    robusManager.reset();
+    for( id in this.sensors ){
+        this.removeSensor(id);        
+    }
+}
+
+SensorManager.prototype.removeSensor = function(id){
+    console.log("removing:",id);
+    if( id in this.sensors){
+        misGUI.removeSensor(id);
+        this.sensors[id].discard();
+        delete this.sensors[id];
+    }
+    for( id in this.sensors ){
+        console.log("afterRemove:",id);
+    }
+
 }
 
 SensorManager.prototype.getSensorSetting = function(id,witch){

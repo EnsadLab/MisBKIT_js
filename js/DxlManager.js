@@ -138,6 +138,7 @@ DxlManager.prototype.loadSettings = function () {
             var id = this.animationID++;
             var anim = new Animation("A" + id, this.animFolder, s.anims[i].name);
             anim.keyCode = s.anims[i].key;
+            console.log("animkey:",anim.keycode);
             anim.load(s.anims[i].name);
         }
 
@@ -661,14 +662,6 @@ DxlManager.prototype.animLoaded=function(anim){
     misGUI.animTracks(id,anim.channels);
     this.recAnim = null; //TOTHINK ???
 
-    /*
-    var names = [];
-    for (var k in this.animations) {
-        names.push(this.animations[k].fileName);
-        console.log("ANIMS: ",k,this.animations[k].fileName);
-    }
-    */
-
 };
 
 DxlManager.prototype.startAnim=function(id){
@@ -769,13 +762,13 @@ DxlManager.prototype.dxlID = function(index,id){
 DxlManager.prototype.setKeyCode = function(id,keyCode){
     var anim = this.animations[id];
     if(anim){
-        console.log("setkeycode: keyCode0:",keyCode.charCodeAt(0));
-        if(keyCode.charCodeAt(0)==0) { //?!!!
-            keyCode.slice(1);
-            console.log("setkeycode: slice0:",keyCode.charCodeAt(0));
-            console.log("setkeycode: slice1:",keyCode.charCodeAt(1));
+        if( keyCode==undefined){
+            keyCode = "";
         }
+        keyCode = keyCode.replace(/\u0000/g,'');
+        keyCode = keyCode.replace(/ /g,'');
 
+        console.log("setkeycode:",keyCode.length,keyCode);
 
         if(anim.keyCode != keyCode){
             anim.keyCode = keyCode;

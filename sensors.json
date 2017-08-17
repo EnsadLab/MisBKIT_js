@@ -1,6 +1,21 @@
 {
   "sensors": [
     {
+      "device": "Midi",
+      "address": "7",
+      "name": "test",
+      "pin": 9,
+      "enabled": true,
+      "threshold": 60,
+      "tolerance": "30",
+      "valMin": 0,
+      "valMax": 123,
+      "anim1": "anim2",
+      "anim2": "anim3",
+      "motorIndex": -1
+    },
+    
+    {
       "device": "CM9",
       "address": "7",
       "name": "sensor_distance",

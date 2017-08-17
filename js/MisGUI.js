@@ -959,22 +959,15 @@ MisGUI.prototype.addSensor = function(settings, id){
         });
 
     clone.find(".close").on("click", function () {
-        //killSensor
-        /* TODO
-        console.log("sensor button close");
-        var sensorId = $(this).data("id");
-        var sensor = self.divSensor(sensorId);
-        if (sensor.length > 0) {
-            sensor.remove();
-            //TODO sensorManager.removeSensor(sensorIndex);
-        }
-        */
+        //self.removeSensor($(this).data("id"));
+        console.log("guiremove:",$(this).data("id"));
+        sensorManager.removeSensor($(this).data("id"));
     });
 
     clone.find("[name=anim1]").val(settings.amim1);
     clone.find("[name=anim2]").val(settings.amim2);    
     clone.find(".listAnims").change(function(){
-        var id = $(this).parent().data("id"); //!!!parent.parent!!!
+        var id = $(this).data("id"); //!!!parent.parent!!!
         console.log("animselect:",id,this.name,this.value);
         sensorManager.onChangeAnim(id,this.name,this.value);
     });
@@ -1074,13 +1067,19 @@ MisGUI.prototype.setSensorRange = function(sensorID,min,max,val){
     //console.log("slider-range:",slid);  
 };
 
-
-
+/*
 MisGUI.prototype.getSensorThres = function(sensorID){
-    var div = this.divSensor(sensorID);
-    div.find(".live-value").html(sensorValue);
-
+    //GRRRRRRRR
 }
+*/
+//MisGUI.prototype.removeSensor = function(sensorID){
+MisGUI.prototype.removeSensor = function(sensorID){
+    var div = this.divSensor(sensorID);
+    console.log("remove:",div);
+    div.remove();
+};   
+
+
 
 /*Didier
 MisGUI.prototype.scanSerial = function(){
@@ -1163,8 +1162,10 @@ MisGUI.prototype.robusWait = function(text){
         $(robusOnOff).prop("class","disconnected").text("WAIT");
 };
 MisGUI.prototype.robusInfo = function(text){
-    //$(btRobus).prop("class","disconnected").text("WAIT");
     $("#robusTxt").val(text);
+};
+MisGUI.prototype.robusAppendInfo = function(text){
+    $("#robusTxt").val($("#robusTxt").val()+text);
 };
 
 

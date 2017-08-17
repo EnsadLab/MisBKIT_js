@@ -6,15 +6,23 @@
   "anims": [
     {
       "name": "anim1",
-      "key": "\u0000"
+      "key": "k"
+    },
+    {
+      "name": "2017-08-09-15h46-14",
+      "key": "x"
     },
     {
       "name": "anim2",
-      "key": "\u0000"
+      "key": "a"
     },
     {
-      "name": "anim3",
-      "key": "\u0000"
+      "name": "2017-06-02-19h40-13",
+      "key": ""
+    },
+    {
+      "name": "2017-08-09-15h46-23",
+      "key": ""
     }
   ],
   "motors": [
@@ -35,7 +43,7 @@
       "enabled": false,
       "model": 12,
       "clockwise": true,
-      "mode": 1,
+      "mode": 0,
       "angleMin": -150,
       "angleMax": 150,
       "speedMin": -100,
@@ -47,7 +55,7 @@
       "enabled": false,
       "model": 12,
       "clockwise": true,
-      "mode": 1,
+      "mode": 0,
       "angleMin": -150,
       "angleMax": 150,
       "speedMin": -100,
@@ -59,7 +67,7 @@
       "enabled": false,
       "model": 12,
       "clockwise": true,
-      "mode": 1,
+      "mode": 0,
       "angleMin": -150,
       "angleMax": 150,
       "speedMin": -100,
