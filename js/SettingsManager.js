@@ -10,13 +10,7 @@ function SettingsManager(){
 
 };
 
-// TODO: why is that necessary? ... c'était au début pour tester le html hors NODE
-/*if(NODE==false){ //needs fs midi
-    SettingsManager.prototype.saveSettings = function(){}
-    SettingsManager.prototype.loadSettings = function(){}
-}
-else {
-*/        
+    
 SettingsManager.prototype.loadSettings = function(){
     console.log("DIR NAME " + __dirname + "" + "/pathSettings.json");
     var json = fs.readFileSync(__dirname + "/pathSettings.json", 'utf8');

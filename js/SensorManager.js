@@ -68,12 +68,7 @@ SensorManager.prototype.loadSensorSettings = function () {
 
 SensorManager.prototype.updateGUI = function () {
 
-    //TODO: update the sensors panel in the GUI
-    /*
-    for(var i=0; i < this.sensors.length; i++){
-        misGUI.addSensor(this.sensors[i].s,i);
-    }
-    */
+    // update the sensors panel in the GUI
     $.each(this.sensors, function(i,sensor) {
         misGUI.addSensor(sensor.s,sensor.ID);       
     });    
@@ -82,15 +77,9 @@ SensorManager.prototype.updateGUI = function () {
     // test ...
     //misGUI.setSensorValue("S0",42);
     //misGUI.setSensorRange("S1",50,133,100);
-    misGUI.setSensorTolerance("S0",42);
+    //misGUI.setSensorTolerance("S0",42);
 }
 
-/*
-SensorManager.prototype.setSensorValue = function(sensorPin, sensorValue){
-    var sensor = this.getSensorWithPin(sensorPin);
-    if(sensor) sensor.test(sensorValue);
-    //sensor.onValue(sensorValue); // TODO... check!!
-}*/
 
 // called from the GUI when the sensor value has been changed
 SensorManager.prototype.handleSensorValue = function(sensorID, sensorValue){
@@ -144,24 +133,15 @@ SensorManager.prototype.getSensorWithPin = function(sensorPin){
     return result;
 }
 
-/*
-SensorManager.prototype.getSensorWithID = function(sensorID){
-    for(var i=0; i<this.sensors.length; i++){
-        if(this.sensors[i].ID == sensorID){
-            return this.sensors[i];
-        }
-    }
-}
-*/
 
-//TODO: test this function when we have the sensor panel in the GUI
+//method called when a gui entry has been changed
 SensorManager.prototype.saveSensorSettings = function () {
         
         var s = {}; //settings
         s.sensors = [];
 
         $.each(this.sensors, function(i,sensor) {
-            s.sensors.push(sensor[i].getSettings());
+            s.sensors.push(sensor.getSettings());
         });    
     
         var json = JSON.stringify(s, null, 2);
@@ -182,8 +162,7 @@ SensorManager.prototype.onKeyCode = function(char){
     if(char=='M'){ // reset the gui according to the changed elements in the json
         console.log("Resetting sensor settings into GUI");
         this.loadUserSensorsSettings();
-    }else if(char=='t'){
-        this.getSensorWithPin(7);
+        this.saveSensorSettings(); // weird but works like this... bug..
     }
 }
 
@@ -194,13 +173,13 @@ SensorManager.prototype.getSensorSetting = function(id,witch){
 SensorManager.prototype.sensorEnable = function(id,onoff){
     this.sensors[id].s.enabled = onoff;    
     console.log("sensor enable:",id,onoff);
-    //...
+    this.saveSensorSettings();
 }
 
 SensorManager.prototype.onName = function(id,val){
     this.sensors[id].s.name = val;
     console.log("changeName:",id,val);
-    //...
+    this.saveSensorSettings();
 }
 
 
@@ -208,12 +187,12 @@ SensorManager.prototype.onName = function(id,val){
 SensorManager.prototype.onTolerance = function(id,val){
     this.sensors[id].s.tolerance = val;
     console.log("changeTolerance:",id,val);
-    //...
+    this.saveSensorSettings();
 }
 
 SensorManager.prototype.onChangeAnim = function(id,witch,txt){
     this.sensors[id].s[witch]=txt;    
     console.log("changed anim:",id,witch,txt);
-    //...
+    this.saveSensorSettings();
 }
 
