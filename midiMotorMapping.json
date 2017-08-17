@@ -1,3 +1,22 @@
 {
-  "motorMappings": []
+  "motorMappings": [
+    {
+      "enabled": true,
+      "motorIndex": 1,
+      "cmd": "CC",
+      "nbID": 3
+    },
+    {
+      "enabled": true,
+      "motorIndex": 2,
+      "cmd": "CC",
+      "nbID": 5
+    },
+    {
+      "enabled": true,
+      "motorIndex": 0,
+      "cmd": "note",
+      "nbID": 2
+    }
+  ]
 }

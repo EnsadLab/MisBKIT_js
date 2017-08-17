@@ -245,6 +245,7 @@ window.onload = function() {
             }else{
                 dxlManager.onKeyCode(String.fromCharCode(event.keyCode));
                 motorMappingManager.onKeyCode(String.fromCharCode(event.keyCode));
+                sensorManager.onKeyCode(String.fromCharCode(event.keyCode));
             }return false;
         }
     });

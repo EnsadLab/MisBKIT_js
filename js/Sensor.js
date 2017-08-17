@@ -39,7 +39,7 @@ Sensor.prototype.getSettings = function(){
 }
 
 Sensor.prototype.onValue = function(val){
-    //console.log("sensor:",this.s.name,val);
+    console.log("sensor:",this.s.name,val);
     misGUI.setSensorValue(this.ID,val);
     this.currValue = val;
     if(this.s.enabled){
@@ -48,6 +48,7 @@ Sensor.prototype.onValue = function(val){
             dxlManager.onNormControl(this.s.motorIndex,nv);
         }
         //TODO anims
+        sensorManager.handleSensorValue(this.ID,val); 
     }
 }
 
