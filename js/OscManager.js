@@ -136,11 +136,12 @@ OscManager.prototype.handleSensorMessage = function(rcv){
     console.log("handling sensor message");
     
     // updates the gui according to the values received from OSC
-    sensorManager.setSensorValue(sensorPin,sensorVal);
+    var sensor = sensorManager.getSensorWithPin(sensorPin);
+    sensor.onValue(sensorVal);
+    
 
     // forwards the message to the user applications
-    // /mbk/sensors sensorName sensorValue sensorMin sensorMax
-    var sensor = sensorManager.getSensorWithPin(sensorPin);
+    // /mbk/sensors sensorName sensorValue sensorMin sensorMax   
     buf = osc.toBuffer({
         address: "/mbk/sensors",
         args: [sensor.s.name,sensorVal,sensor.s.valMin,sensor.s.valMax] 

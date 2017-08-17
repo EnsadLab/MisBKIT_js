@@ -5,7 +5,7 @@
         "address": "7",
         "name":"sensor_distance",
         "pin": 7,
-        "enabled": false,
+        "enabled": true,
         "threshold":60,
         "tolerance":10,
         "valMin": 0,
