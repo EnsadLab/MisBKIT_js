@@ -9,8 +9,8 @@ pour installer electron simplement:
 * installer electron:
     dans le terminal (Spotlight terminal)
 
-    npm install electron --save-dev
-    npm install electron -g
+    - npm install electron --save-dev
+    - npm install electron -g
 
     (en fait je ne sais pas si celui avec --save-dev est indipensable)
 
