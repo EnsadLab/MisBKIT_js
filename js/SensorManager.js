@@ -42,6 +42,8 @@ SensorManager.prototype.loadSensorSettings = function () {
         // empty current sensors array
         this.sensors = {};
 
+        //TODO: delete all gui sensor elements
+
         // create new sensors from the json file
         this.sensorID = 0;
         for(var i=0;i<s.sensors.length;i++){
@@ -54,12 +56,9 @@ SensorManager.prototype.loadSensorSettings = function () {
             console.log("s... ",this.sensors[id].s.pin);
         }
 
-        // Check whether some sensors had been erased
-        // ...
-
         settingsManager.copyPasteFromUserFolder("sensors.json");
         this.updateGUI();
-        robusManager.connect(); //DB
+        robusManager.connect(); 
 
     }
 
@@ -161,7 +160,7 @@ SensorManager.prototype.onKeyCode = function(char){
     console.log("METAKEY",+char);
     if(char=='M'){ // reset the gui according to the changed elements in the json
         console.log("Resetting sensor settings into GUI");
-        this.loadUserSensorsSettings();
+        this.loadSensorSettings();
         this.saveSensorSettings(); // weird but works like this... bug..
     }
 }
