@@ -40,7 +40,8 @@ SensorManager.prototype.loadSensorSettings = function () {
         var oldSensors = JSON.parse(JSON.stringify(this.sensors))
 
         // empty current sensors array
-        this.sensors = {};
+        //this.sensors = {};
+        this.removeAllSensors();
 
         //TODO: delete all gui sensor elements
 
@@ -77,6 +78,7 @@ SensorManager.prototype.updateGUI = function () {
     //misGUI.setSensorValue("S0",42);
     //misGUI.setSensorRange("S1",50,133,100);
     //misGUI.setSensorTolerance("S0",42);
+    console.log("getPin:",this.getSensorWithPin(7));
 }
 
 
@@ -120,8 +122,7 @@ SensorManager.prototype.startAnim = function(animPlaying, animStopping){
 }
 
 SensorManager.prototype.getSensorWithPin = function(sensorPin){
-
-    var result = undefined;
+    var result = undefined;  
     $.each(this.sensors, function(i,sensor) {
         //console.log("pin:",sensorPin,sensor.s.pin);
         if( sensor.s.pin == sensorPin){
@@ -163,6 +164,26 @@ SensorManager.prototype.onKeyCode = function(char){
         this.loadSensorSettings();
         this.saveSensorSettings(); // weird but works like this... bug..
     }
+}
+
+SensorManager.prototype.removeAllSensors = function(){
+    robusManager.reset();
+    for( id in this.sensors ){
+        this.removeSensor(id);        
+    }
+}
+
+SensorManager.prototype.removeSensor = function(id){
+    console.log("removing:",id);
+    if( id in this.sensors){
+        misGUI.removeSensor(id);
+        this.sensors[id].discard();
+        delete this.sensors[id];
+    }
+    for( id in this.sensors ){
+        console.log("afterRemove:",id);
+    }
+
 }
 
 SensorManager.prototype.getSensorSetting = function(id,witch){
