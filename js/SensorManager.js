@@ -189,33 +189,37 @@ SensorManager.prototype.removeSensor = function(id){
 
 }
 
-SensorManager.prototype.getSensorSetting = function(id,witch){
-    return this.sensors[id].s[witch];
+SensorManager.prototype.getSensorSetting = function(id,wich){
+    return this.sensors[id].s[wich];
 }
 
 SensorManager.prototype.sensorEnable = function(id,onoff){
     this.sensors[id].s.enabled = onoff;    
     console.log("sensor enable:",id,onoff);
-    this.saveSensorSettings();
+    //this.saveSensorSettings();
 }
 
 SensorManager.prototype.onName = function(id,val){
     this.sensors[id].s.name = val;
     console.log("changeName:",id,val);
-    this.saveSensorSettings();
+    //this.saveSensorSettings();
 }
-
-
 
 SensorManager.prototype.onTolerance = function(id,val){
     this.sensors[id].s.tolerance = val;
     console.log("changeTolerance:",id,val);
-    this.saveSensorSettings();
+    //this.saveSensorSettings();
 }
 
-SensorManager.prototype.onChangeAnim = function(id,witch,txt){
-    this.sensors[id].s[witch]=txt;    
-    console.log("changed anim:",id,witch,txt);
-    this.saveSensorSettings();
+SensorManager.prototype.onThreshold = function(id,val){
+    this.sensors[id].s.tolerance = val;
+    console.log("changeTheshold:",id,val);
+    //this.saveSensorSettings();
+}
+
+SensorManager.prototype.onChangeAnim = function(id,wich,txt){
+    this.sensors[id].s[wich]=txt;    
+    console.log("changed anim:",id,wich,txt);
+    //this.saveSensorSettings();
 }
 

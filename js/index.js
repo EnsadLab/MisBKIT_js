@@ -18,7 +18,6 @@ const osc  = require('osc-min');
 
 var fs = null;
 
-
 var settingsManager = null; //cf SettingsManager.js
 var dxlManager = null;
 var misGUI     = null; //cf MisGui.js
@@ -133,12 +132,11 @@ function showConfig(show){
 
 
 window.onbeforeunload=function(){
-    if(dxlManager) {
         //cm9Com.close();
-        dxlManager.serialOnOff(false);
+        //dxlManager.serialOnOff(false);
         dxlManager.saveSettings();
+        sensorManager.saveSensorSettings();
         settingsManager.saveSettings();
-    }
 }
 
 
@@ -196,6 +194,7 @@ window.onload = function() {
             switch(e.keyCode){
                 case 83: //ctrl s
                     settingsManager.saveSettings();
+                    SensorManager.saveSensorSettings();
                     dxlManager.saveSettings();
                     break;
                 case 82: //ctrl r   
@@ -215,7 +214,7 @@ window.onload = function() {
                     
                     break;
                 */
-                case 65: //ctrl a :selectionne la page
+                case 65: //ctrl a :selectionne la page (berk)
                     break;
                    
                 default: // <ctl q><ctl tab> .... 
