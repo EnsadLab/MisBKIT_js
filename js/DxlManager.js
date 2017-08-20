@@ -201,7 +201,6 @@ DxlManager.prototype.timedSerial= function(){
 }
 
 
-
 DxlManager.prototype.serialOnOff= function(onoff,name){
     console.log("SERIAL_ONOFF:",onoff);
     var self = this;
@@ -240,7 +239,7 @@ DxlManager.prototype.cm9OnOff= function(onoff,name){
     var self = this;
     this.serialRcvTime=0;
     if(onoff){
-        misGUI.oscState("ON");
+        misGUI.cm9State("ON");
         self.serialRcvTime = Date.now();
         self.cm9Msg("version\n");
         for (var i = 0; i < self.motors.length; i++) {
@@ -253,7 +252,7 @@ DxlManager.prototype.cm9OnOff= function(onoff,name){
             //cm9Com.flush();
         }
         cm9Com.close();
-        misGUI.oscState("OFF");
+        misGUI.cm9State("OFF");
         this.serialRcvTime=0;
     }
 }
@@ -326,7 +325,7 @@ DxlManager.prototype.update = function(){
             console.log("cm9Com TIMEOUT");
             this.serialRcvTime = 0;
             this.cm9OnOff(false);
-            misGUI.serialState("ERROR");
+            misGUI.cm9State("ERROR");
         }
     }
 

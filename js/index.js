@@ -18,7 +18,6 @@ const osc  = require('osc-min');
 
 var fs = null;
 
-
 var settingsManager = null; //cf SettingsManager.js
 var dxlManager = null;
 var misGUI     = null; //cf MisGui.js
@@ -133,12 +132,11 @@ function showConfig(show){
 
 
 window.onbeforeunload=function(){
-    if(dxlManager) {
         //cm9Com.close();
-        dxlManager.serialOnOff(false);
+        //dxlManager.serialOnOff(false);
         dxlManager.saveSettings();
+        sensorManager.saveSensorSettings();
         settingsManager.saveSettings();
-    }
 }
 
 
@@ -190,8 +188,45 @@ window.onload = function() {
             return;
         if($(e.target).is('textarea'))
             return;
-
+        
         if(e.metaKey || e.ctrlKey){
+            console.log("meta:",e.keyCode);
+            switch(e.keyCode){
+                case 83: //ctrl s
+                    settingsManager.saveSettings();
+                    SensorManager.saveSensorSettings();
+                    dxlManager.saveSettings();
+                    break;
+                case 82: //ctrl r   
+                    motorMappingManager.onKeyCode();
+                    break;
+                /*    
+                case 9: //tab
+                    //console.log("CTRL TAB");
+                    /*
+                    var dlg = $("#dialog");
+                    if (dlg.dialog('isOpen'))
+                        dlg.dialog('close');
+                    else {
+                        //dxlManager.stopAll();
+                        dlg.dialog('open');
+                    }
+                    
+                    break;
+                */
+                case 65: //ctrl a :selectionne la page (berk)
+                    break;
+                   
+                default: // <ctl q><ctl tab> .... 
+                    console.log("< default >");
+                    return; //default behavior
+            }
+            return false; //handled
+            
+        }
+        
+            /*
+                
             if(e.keyCode==83){
                 settingsManager.saveSettings();
                 dxlManager.saveSettings();
@@ -204,14 +239,16 @@ window.onload = function() {
             if(e.keyCode==9) {
                 console.log("CTRL TAB");
                 var dlg = $("#dialog");
-                if (dlg.dialog('isOpen'))dlg.dialog('close');
+                if (dlg.dialog('isOpen'))
+                    dlg.dialog('close');
                 else {
                     //dxlManager.stopAll();
                     dlg.dialog('open');
                 }
             }
         }
-
+        */
+        
         //console.log("down event:",e);
         //console.log("down witch:",e.which);
         //console.log("down keyCode:", e.keyCode);
