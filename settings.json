@@ -1,27 +1,19 @@
 {
   "serialPort": "",
-  "midiPort": "",
+  "midiPort": "misB Bus 1",
   "oscHost": "none",
   "webSocket": "none",
   "anims": [
     {
       "name": "anim1",
-      "key": "k"
-    },
-    {
-      "name": "2017-08-09-15h46-14",
-      "key": "x"
-    },
-    {
-      "name": "anim2",
-      "key": "a"
-    },
-    {
-      "name": "2017-06-02-19h40-13",
       "key": ""
     },
     {
-      "name": "2017-08-09-15h46-23",
+      "name": "anim2",
+      "key": ""
+    },
+    {
+      "name": "anim3",
       "key": ""
     }
   ],
