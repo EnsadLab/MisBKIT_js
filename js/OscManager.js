@@ -149,4 +149,12 @@ OscManager.prototype.handleSensorMessage = function(rcv){
     
     this.udpUserSender.send(buf, 0, buf.length, this.outportUser, "localhost");
 
+    // concat messages into the adress for programs that handle osc messages only with one parameter
+    buf = osc.toBuffer({
+        address: "/mbk/sensors/" + sensorVal + "/" + sensor.s.valMin + "/" + sensor.s.valMax,
+        args: [sensor.s.name]
+    });
+
+    this.udpUserSender.send(buf, 0, buf.length, this.outportUser, "localhost");
+
 }
