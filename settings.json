@@ -31,7 +31,7 @@
       "torqueMax": 1023
     },
     {
-      "id": 0,
+      "id": 4,
       "enabled": false,
       "model": 12,
       "clockwise": true,

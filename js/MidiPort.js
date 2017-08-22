@@ -47,7 +47,7 @@ MidiPort = function () {
             else if(msg[0] >= 176 && msg[0] <= 191)
                 console.log("midi CC:", msg[0], msg[1], msg[2]);
             */
-            
+
             //!! when sending from the midi controller, the distinction between
             // the different sliders is not made in the channel selection
             // but it is stored in the control value -> msg[1]
@@ -64,10 +64,12 @@ MidiPort = function () {
                 if(motorMappingManager.isMapped("midi",self.portName,cmd,msg[1])){
                     var motorIDs = motorMappingManager.getMotorIndex("midi",self.portName,cmd,msg[1]);
                     for(var i=0; i<motorIDs.length; i++){
-                        dxlManager.onMidi(motorIDs[i], "midi", msg[2]); //quick n dirty
+                        if(dxlManager.isEnabled(motorIDs[i]))
+                            dxlManager.onMidi(motorIDs[i], "midi", msg[2]); //quick n dirty
                     }
                 }else{
-                    dxlManager.onMidi(msg[1], "midi", msg[2]); //quick n dirty
+                    if(dxlManager.isEnabled(msg[1]))
+                        dxlManager.onMidi(msg[1], "midi", msg[2]); //quick n dirty
                 }
             } else if(cmd == "note"){
                 var channel;
@@ -77,7 +79,8 @@ MidiPort = function () {
                 if(motorMappingManager.isMapped("midi",self.portName,cmd,channel)){
                     var motorIDs = motorMappingManager.getMotorIndex("midi",self.portName,cmd,channel);
                     for(var i=0; i<motorIDs.length; i++){
-                        dxlManager.onMidi(motorIDs[i], "midi", msg[1]); //quick n dirty
+                        if(dxlManager.isEnabled(motorIDs[i]))
+                            dxlManager.onMidi(motorIDs[i], "midi", msg[1]); //quick n dirty
                     }
                 }
             }
