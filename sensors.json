@@ -19,7 +19,7 @@
       "address": "7",
       "name": "sensor_distance",
       "pin": 7,
-      "enabled": true,
+      "enabled": false,
       "threshold": 42,
       "tolerance": 30,
       "valMin": 10,

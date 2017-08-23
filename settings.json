@@ -19,7 +19,7 @@
   ],
   "motors": [
     {
-      "id": 0,
+      "id": 1,
       "enabled": false,
       "model": 12,
       "clockwise": true,
@@ -43,7 +43,7 @@
       "torqueMax": 1023
     },
     {
-      "id": 0,
+      "id": 5,
       "enabled": false,
       "model": 12,
       "clockwise": true,
