@@ -195,30 +195,30 @@ SensorManager.prototype.getSensorSetting = function(id,wich){
 SensorManager.prototype.sensorEnable = function(id,onoff){
     this.sensors[id].s.enabled = onoff;    
     console.log("sensor enable:",id,onoff);
-    //this.saveSensorSettings();
+    this.saveSensorSettings();
 }
 
 SensorManager.prototype.onName = function(id,val){
     this.sensors[id].s.name = val;
     console.log("changeName:",id,val);
-    //this.saveSensorSettings();
+    this.saveSensorSettings();
 }
 
 SensorManager.prototype.onTolerance = function(id,val){
     this.sensors[id].s.tolerance = val;
     console.log("changeTolerance:",id,val);
-    //this.saveSensorSettings();
+    this.saveSensorSettings();
 }
 
 SensorManager.prototype.onThreshold = function(id,val){
-    this.sensors[id].s.tolerance = val;
+    this.sensors[id].s.threshold = val;
     console.log("changeTheshold:",id,val);
-    //this.saveSensorSettings();
+    this.saveSensorSettings();
 }
 
 SensorManager.prototype.onChangeAnim = function(id,wich,txt){
     this.sensors[id].s[wich]=txt;    
     console.log("changed anim:",id,wich,txt);
-    //this.saveSensorSettings();
+    this.saveSensorSettings();
 }
 
