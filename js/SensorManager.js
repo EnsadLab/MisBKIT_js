@@ -43,6 +43,8 @@ SensorManager.prototype.loadSensorSettings = function () {
         //this.sensors = {};
         this.removeAllSensors();
 
+        //TODO: delete all gui sensor elements
+
         // create new sensors from the json file
         this.sensorID = 0;
         for(var i=0;i<s.sensors.length;i++){
@@ -55,12 +57,9 @@ SensorManager.prototype.loadSensorSettings = function () {
             console.log("s... ",this.sensors[id].s.pin);
         }
 
-        // Check whether some sensors had been erased
-        // ...
-
         settingsManager.copyPasteFromUserFolder("sensors.json");
         this.updateGUI();
-        robusManager.connect(); //DB
+        robusManager.connect(); 
 
     }
 
@@ -164,7 +163,7 @@ SensorManager.prototype.onKeyCode = function(char){
     console.log("METAKEY",+char);
     if(char=='M'){ // reset the gui according to the changed elements in the json
         console.log("Resetting sensor settings into GUI");
-        this.loadUserSensorsSettings();
+        this.loadSensorSettings();
         this.saveSensorSettings(); // weird but works like this... bug..
     }
 }
@@ -196,30 +195,30 @@ SensorManager.prototype.getSensorSetting = function(id,wich){
 SensorManager.prototype.sensorEnable = function(id,onoff){
     this.sensors[id].s.enabled = onoff;    
     console.log("sensor enable:",id,onoff);
-    //this.saveSensorSettings();
+    this.saveSensorSettings();
 }
 
 SensorManager.prototype.onName = function(id,val){
     this.sensors[id].s.name = val;
     console.log("changeName:",id,val);
-    //this.saveSensorSettings();
+    this.saveSensorSettings();
 }
 
 SensorManager.prototype.onTolerance = function(id,val){
     this.sensors[id].s.tolerance = val;
     console.log("changeTolerance:",id,val);
-    //this.saveSensorSettings();
+    this.saveSensorSettings();
 }
 
 SensorManager.prototype.onThreshold = function(id,val){
-    this.sensors[id].s.tolerance = val;
+    this.sensors[id].s.threshold = val;
     console.log("changeTheshold:",id,val);
-    //this.saveSensorSettings();
+    this.saveSensorSettings();
 }
 
 SensorManager.prototype.onChangeAnim = function(id,wich,txt){
     this.sensors[id].s[wich]=txt;    
     console.log("changed anim:",id,wich,txt);
-    //this.saveSensorSettings();
+    this.saveSensorSettings();
 }
 

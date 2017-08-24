@@ -41,21 +41,50 @@ MidiPort = function () {
             m[2] : data 2 (0-127)
             */
             
-            //console.log("midi CC:", msg[1], " val:", msg[2] / 127, " dt:", dt);
-            //console.log("Message " + msg);
+            /*
+            if(msg[0] >= 128 && msg[0] <= 159)
+                console.log("midi note:", msg[0], msg[1], msg[2]);
+            else if(msg[0] >= 176 && msg[0] <= 191)
+                console.log("midi CC:", msg[0], msg[1], msg[2]);
+            */
+
+            //!! when sending from the midi controller, the distinction between
+            // the different sliders is not made in the channel selection
+            // but it is stored in the control value -> msg[1]
+
 
             var cmd = "";
-            if(msg[0] >= 128 && msg[0] <= 159) cmd = "note"; // TODO: off and on can also be distinguished in data2, right?
-            else if(msg[0] >= 176 && msg[0] <= 191) cmd = "CC";
+            
+            if(msg[0] >= 128 && msg[0] <= 159){
+                cmd = "note"; // TODO: off and on can also be distinguished in data2, right?
+            }else if(msg[0] >= 176 && msg[0] <= 191) cmd = "CC";
             else console.log("New MIDI command with number " + msg[0] + " -> needs to be added in code");
             
-            if(motorMappingManager.isMapped("midi",self.portName,cmd,msg[1])){
-                var motorIDs = motorMappingManager.getMotorIndex("midi",self.portName,cmd,msg[1]);
-                for(var i=0; i<motorIDs.length; i++){
-                    dxlManager.onMidi(motorIDs[i], "midi", msg[2]); //quick n dirty
+            if(cmd == "CC"){
+                if(motorMappingManager.isMapped("midi",self.portName,cmd,msg[1])){
+                    var motorIDs = motorMappingManager.getMotorIndex("midi",self.portName,cmd,msg[1]);
+                    for(var i=0; i<motorIDs.length; i++){
+                        //if(dxlManager.isEnabled(motorIDs[i]))
+                            dxlManager.onMidi(motorIDs[i], "midi", msg[2]); //quick n dirty
+                    }
+                }else{
+                    //if(dxlManager.isEnabled(msg[1]))
+                        dxlManager.onMidi(msg[1], "midi", msg[2]); //quick n dirty
                 }
-            }else{
-                dxlManager.onMidi(msg[1], "midi", msg[2]); //quick n dirty
+            } else if(cmd == "note"){
+                var channel;
+                
+                if(msg[0] <= 143) channel = msg[0] - 128 + 1; // notes OFF
+                else channel = msg[0] - 144 + 1; // notes ON
+                if(motorMappingManager.isMapped("midi",self.portName,cmd,channel)){
+                    var motorIDs = motorMappingManager.getMotorIndex("midi",self.portName,cmd,channel);
+                    for(var i=0; i<motorIDs.length; i++){
+                        //if(dxlManager.isEnabled(motorIDs[i]))
+                            dxlManager.onMidi(motorIDs[i], "midi", msg[1]); //quick n dirty
+                    }
+                }else{
+                    dxlManager.onMidi(channel-1, "midi", msg[1]); 
+                }
             }
 
             if (self.callback)

@@ -73,9 +73,6 @@ OscManager.prototype.handleAnimMessage = function(rcv){
     }else if(adr.startsWith("/mbk/anims/loop")){
         var animIDs = dxlManager.getAnimID(arg);
         for(var i=0; i<animIDs.length; i++){ // in case multiple anims with same name
-            var divAnim = misGUI.divAnim(animIDs[i]);
-            var bt = divAnim.find(".loop");
-            var test = bt.val();
             if(adr == "/mbk/anims/loopOn"){
                 dxlManager.loopAnim(animIDs[i],true);
             } else if(adr == "/mbk/anims/loopOff"){
@@ -90,13 +87,54 @@ OscManager.prototype.handleAnimMessage = function(rcv){
 OscManager.prototype.handleMotorMessage = function(rcv){
 
     var adr = rcv.address;
-    var arg = rcv.args[0].value;
+    var arg;
+    if(!adr.startsWith("/mbk/motors/stopAll")){
+        arg = rcv.args[0].value;
+    }
+    
+    //console.log("arg: " + arg);
+    //console.log("handling motor message " + adr);
 
-    console.log("handling motor message");
-    // TODO: ... est-ce qu'on veut vraiment implémenter ça...? A-t-on le temps?
-    // /mbk/motors/velocity/50 & etc....
-    // pour pouvoir contrôler les moteurs depuis processing par exemple.
+    var motorIndex;
+    if(adr.startsWith(cmp = "/mbk/motors/wheelmode")){
+        this.setMode(arg,0);    
+    }else if(adr.startsWith(cmp = "/mbk/motors/jointmode")){
+        this.setMode(arg,1);
+    }else if(adr.startsWith(cmp = "/mbk/motors/wheel/")){
+        motorIndex = this.getArgInAdress(adr,cmp);
+        this.setMode(motorIndex,0);
+        misGUI.speed(motorIndex,arg);
+    }else if(adr.startsWith(cmp = "/mbk/motors/joint/")){
+        motorIndex = this.getArgInAdress(adr,cmp);
+        this.setMode(motorIndex,1);
+        misGUI.angle(motorIndex,arg);
+    }else if(adr.startsWith(cmp = "/mbk/motors/wheeljoint/")){
+        motorIndex = this.getArgInAdress(adr,cmp);
+        var divMotor = misGUI.getMotorUI(motorIndex);
+        //misGUI.setValue(motorIndex,"joint",arg);
+        if(divMotor.find("[name=mode]").prop('checked')) misGUI.speed(motorIndex,arg);
+        else misGUI.angle(motorIndex,arg);
+    }else if(adr.startsWith(cmp = "/mbk/motors/stopAll")){ // stops motors and anims
+        dxlManager.stopAll(); //TODO: gui....?
+    }else if(adr.startsWith(cmp = "/mbk/motors/stop")){ // only stops motor
+        var divMotor = misGUI.getMotorUI(arg);
+        if(divMotor.find("[name=mode]").prop('checked')) misGUI.speed(arg,0);
+        else misGUI.angle(arg,0);
+    }
 
+}
+
+
+OscManager.prototype.setMode = function(motorIndex, mode){
+    var divMotor = misGUI.getMotorUI(motorIndex);
+    if((mode == 0 && !divMotor.find("[name=mode]").prop('checked')) ||
+        (mode == 1 && divMotor.find("[name=mode]").prop('checked')) )
+            divMotor.find("[name=mode]").click();
+}
+
+
+OscManager.prototype.getArgInAdress = function(adrSrc,adrCmp){
+    return parseInt(adrSrc.substring(adrCmp.length));
 }
 
 OscManager.prototype.initCm9Receiver = function(){
@@ -147,6 +185,14 @@ OscManager.prototype.handleSensorMessage = function(rcv){
         args: [sensor.s.name,sensorVal,sensor.s.valMin,sensor.s.valMax] 
     });
     
+    this.udpUserSender.send(buf, 0, buf.length, this.outportUser, "localhost");
+
+    // concat messages into the adress for programs that handle osc messages only with one parameter
+    buf = osc.toBuffer({
+        address: "/mbk/sensors/" + sensorVal + "/" + sensor.s.valMin + "/" + sensor.s.valMax,
+        args: [sensor.s.name]
+    });
+
     this.udpUserSender.send(buf, 0, buf.length, this.outportUser, "localhost");
 
 }

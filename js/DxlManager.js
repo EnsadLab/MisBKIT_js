@@ -940,5 +940,11 @@ DxlManager.prototype.getMode = function(index){
     //0:joint 1:wheel
 };
 
+DxlManager.prototype.isEnabled = function(index){
+    var motor = this.servoByIndex(index);
+    if(motor )return motor.enabled;
+    else return false;
+}
+
 
 
