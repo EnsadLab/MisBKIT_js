@@ -3,15 +3,15 @@
     {
       "device": "Midi",
       "address": "7",
-      "name": "test",
-      "pin": -1,
+      "name": "sensor_distance",
+      "pin": 7,
       "enabled": true,
-      "threshold": 10,
-      "tolerance": 29,
+      "threshold": 55,
+      "tolerance": 5,
       "valMin": 0,
       "valMax": 123,
-      "anim1": "anim2",
-      "anim2": "anim3",
+      "anim1": "anim1",
+      "anim2": "anim2",
       "motorIndex": -1
     },
     {
