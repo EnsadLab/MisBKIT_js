@@ -7,6 +7,7 @@
 //var remote  = require('remote');
 //require('electron').hideInternalModules()
 //VersionHTML
+//https://github.com/EnsadLab/MisBKIT_processing.git
 
 
 var remote = require('electron').remote;
@@ -26,7 +27,6 @@ var motorMappingManager = null; //cf MotorMappingManager.js
 var sensorManager = null; //cf SensorManager.js
 var oscManager = null; //cf OscManager.js
 var cm9Com     = null;
-//var oscCm9     = null;
 var robusManager = null;
 
 
@@ -152,7 +152,8 @@ window.onload = function() {
 
     // TODO: ordering had to be changed -> @Didier: is it a problem how it is now?
     settingsManager = new SettingsManager();
-    cm9Com = new CM9_UDP();//cm9Com.open();
+    //cm9Com = new CM9_UDP();//cm9Com.open();
+    cm9Com = new CM9udp();
     robusManager = new RobusManager();
 
     motorMappingManager = new MotorMappingManager();

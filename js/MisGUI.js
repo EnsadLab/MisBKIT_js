@@ -298,7 +298,7 @@ MisGUI.prototype.speedMax =function(index,val){
 }
 
 MisGUI.prototype.mode =function(index,value){
-    console.log("SETMODE:",index," ",value);
+    //console.log("SETMODE:",index," ",value);
     switch(+value){
         case 0:this.joint(index);break;
         case 1:this.wheel(index);break;
@@ -398,14 +398,12 @@ MisGUI.prototype.changeDxlID=function(index,val){
 }
 
 MisGUI.prototype.alert = function(msg){
-    if(dialog){
-        var bt = dialog.showMessageBox({
-            type:"error",
-            //title:"change ID to "+val+" ?", //OSX: no title ???
-            message:msg,
-            buttons:["Ok"]
-        });
-    }
+    var bt = dialog.showMessageBox({
+        type:"error",
+        //title:"change ID to "+val+" ?", //OSX: no title ???
+        message:msg,
+        buttons:["Ok"]
+    });
 }
 
 
@@ -1199,4 +1197,8 @@ MisGUI.prototype.blockUI=function(block){
 
 MisGUI.prototype.scanProgress =function(val){
     $("#scanProgress").val(val);
+}
+
+MisGUI.prototype.temperature = function(index,val){
+    $(".thermo").eq(index).html(val+"°");
 }

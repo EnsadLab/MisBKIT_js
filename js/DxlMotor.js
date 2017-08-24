@@ -99,65 +99,22 @@ Dxl.prototype.onAddr=function(addr,val){
 }
 
 Dxl.prototype.pushSerialMsg = function(stack){
-    if(!this.enabled)
-        return;
+    //if(!this.enabled)
+    //    return;
 
     if(!isNaN(this.wantedMode)){
-        if(this.wantedMode==0){ //joint
-            this.wantedAngle = NaN;
-            misGUI.angle(this.index,this._curAngle);
-            //if(!isNaN(this._currPos))
-            /*
-            stack.push("EW "+this.index+","+ADDR_TORQUE_ENABLE+",1,\n");
-            stack.push("EW "+this.index+","+ADDR_SPEED+",1,\n");
-            stack.push("EW "+this.index+","+ADDR_TORQUE+",0,\n");
-            if(this._currPos>0)
-                stack.push("EW "+this.index+","+ADDR_GOAL+","+this._currPos+",\n");
-
-            //TOTHINK : dxl limits ?
-            stack.push("EW "+this.index+","+ADDR_CW_LIMIT+",0,\n");
-            stack.push("EW "+this.index+","+ADDR_CCW_LIMIT+","+this.limitCCW+",\n"); //AX_12
-            if(this._currPos>=0)
-                stack.push("EW "+this.index+","+ADDR_GOAL+","+this._currPos+",\n");
-            //this.wantedAngle = this._curAngle;
-            this.wantedTorque = this.m.torqueMax;
-            //if(this.m.clockwise) this.wantedSpeed = -this.m.speedMax;
-            //else this.wantedSpeed = this.m.speedMax;//see update
-            this.m.mode = 0;
-            //console.log("curAngle:",this._curAngle);
-            //console.log("JOINT: ",this.wantedSpeed," ",this.m.speedMax);
-            */
-            dxlManager.cm9Msg("joint "+this.index+"\n");
-            this.wantedTorque = this.m.torqueMax;
-            this.wantedSpeed = 0;
-            this.m.mode = 0;
-
-        }
-        else{ //wheel
-            //stack.push("EW "+this.index+" "+ADDR_TORQUE+" 0\n");
-            /*
-            stack.push("EW "+this.index+","+ADDR_SPEED+",0,\n");
-            stack.push("EW "+this.index+","+ADDR_CCW_LIMIT+",0,\n");
-            stack.push("EW "+this.index+","+ADDR_CW_LIMIT+",0,\n");
-            */
-            dxlManager.cm9Msg("wheel "+this.index+"\n");
-            //stack.push("EW "+this.index+" "+ADDR_SPEED+",0,\n");
-            this.wantedSpeed = 0;
-            this.wantedTorque = this.m.torqueMax;
-            this.m.mode = 1;
-            //console.log("curAngle:",this._curAngle);
-        }
+        console.log("wantedMode:",this.wantedMode);
+        this.setMode(this.wantedMode);
         this.wantedMode = NaN;
-        return; //... next'frame'
     }
-/*
+/* //speed & goal sync
     if(!isNaN(this.wantedSpeed)){
         var s = this.m.clockwise ? -this.wantedSpeed : this.wantedSpeed;
         dxlManager.cm9Msg("EW "+this.index+","+ADDR_SPEED+","+s+",\n");
         this.wantedSpeed = NaN;
     }
 */
-/*
+/* //speed & goal sync
     if(!isNaN(this.wantedAngle)){
         var a = this.m.clockwise ? -this.wantedAngle : this.wantedAngle;
         var g = this.angle2pos(a);
@@ -172,6 +129,68 @@ Dxl.prototype.pushSerialMsg = function(stack){
     }
 
 }
+
+Dxl.prototype.setMode = function(jw){ //0:joint 1:wheel
+    //dxlManager.pause = 100;
+    console.log("setMode:",this.index,jw);
+    if(jw==0){ //joint
+        misGUI.angle(this.index,this._curAngle);
+        //if(!isNaN(this._currPos))
+        /*
+        stack.push("EW "+this.index+","+ADDR_TORQUE_ENABLE+",1,\n");
+        stack.push("EW "+this.index+","+ADDR_SPEED+",1,\n");
+        stack.push("EW "+this.index+","+ADDR_TORQUE+",0,\n");
+        if(this._currPos>0)
+            stack.push("EW "+this.index+","+ADDR_GOAL+","+this._currPos+",\n");
+
+        //TOTHINK : dxl limits ?
+        stack.push("EW "+this.index+","+ADDR_CW_LIMIT+",0,\n");
+        stack.push("EW "+this.index+","+ADDR_CCW_LIMIT+","+this.limitCCW+",\n"); //AX_12
+        if(this._currPos>=0)
+            stack.push("EW "+this.index+","+ADDR_GOAL+","+this._currPos+",\n");
+        //this.wantedAngle = this._curAngle;
+        this.wantedTorque = this.m.torqueMax;
+        //if(this.m.clockwise) this.wantedSpeed = -this.m.speedMax;
+        //else this.wantedSpeed = this.m.speedMax;//see update
+        this.m.mode = 0;
+        console.log("curAngle:",this._curAngle);
+        //console.log("JOINT: ",this.wantedSpeed," ",this.m.speedMax);
+        */
+        /*
+        dxlManager.cm9Msg("EW "+this.index+","+ADDR_SPEED+",0,\n"
+            +"joint "+this.index+"\n");
+        */
+        this.wantedTorque = this.m.torqueMax;
+        this.wantedSpeed = 0;
+        this.m.mode = 0;
+        cm9Com.write("joint "+this.index+"\n");
+        //console.log("curAngle:",this._curAngle);        
+    }
+    else{ //1: wheel
+        /*
+        dxlManager.cm9Msg("EW "+this.index+","+ADDR_SPEED+",0,\n"
+        +"wheel "+this.index+"\n"
+        +"EW "+this.index+","+ADDR_CW_LIMIT+",0,\n"
+        +"EW "+this.index+","+ADDR_CCW_LIMIT+",0,\n"
+        );
+        */
+        cm9Com.write("wheel "+this.index+"\n");
+        /*
+
+        dxlManager.cm9Msg("wheel "+this.index+"\n");
+        //stack.push("EW "+this.index+" "+ADDR_TORQUE+" 0\n");
+        dxlManager.cm9Msg("EW "+this.index+","+ADDR_CCW_LIMIT+",0,\n");
+        dxlManager.cm9Msg("EW "+this.index+","+ADDR_CW_LIMIT+",0,\n");
+        */
+
+        //stack.push("EW "+this.index+" "+ADDR_SPEED+",0,\n");
+        this.wantedSpeed = 0;
+        this.wantedTorque = this.m.torqueMax;
+        this.m.mode = 1;
+        //console.log("curAngle:",this._curAngle);
+    }
+}
+
 
 Dxl.prototype.copySettings = function(s){
     for(var e in s){
@@ -261,6 +280,7 @@ Dxl.prototype.dxlID = function(id){
 };
 
 Dxl.prototype.enable = function(onoff){
+    console.log("Dxl.Enable:",this.m.id,onoff);
     if(this.m.id<1){  //no id : cannot enable (ping?)
         this.enabled = false;
         dxlManager.dxlEnabled(this.index,0);
@@ -268,8 +288,10 @@ Dxl.prototype.enable = function(onoff){
     }
 
     if(onoff){
-        dxlManager.cm9Msg("EI "+this.index+","+this.m.id+",\n");
+        //dxlManager.cm9Msg("EI "+this.index+","+this.m.id+",\n");
         //dxlManager.cm9Msg("model "+this.index+",\n"); //request model again
+        cm9Com.write("EI "+this.index+","+this.m.id+"\n"
+                     +"model "+this.index+",\n");
         this._speed = 0;
         this.wantedSpeed = 0;
         this.enabled = true;
@@ -278,7 +300,8 @@ Dxl.prototype.enable = function(onoff){
     }
     else{ //mode wheel pour "relax" AX12 //A REVOIR!!!
         this.enabled = false;
-        dxlManager.cm9Msg("EW "+this.index+","+ADDR_TORQUE+",0,\n");
+        dxlManager.cm9Msg("EI "+this.index+","+this.m.id+",\n");        
+        //dxlManager.cm9Msg("EW "+this.index+","+ADDR_TORQUE+",0,\n");
         dxlManager.cm9Msg("EW "+this.index+","+ADDR_SPEED+",0,\n");
         dxlManager.cm9Msg("EW "+this.index+","+ADDR_CW_LIMIT+",0,\n");
         dxlManager.cm9Msg("EW "+this.index+","+ADDR_CCW_LIMIT+",0,\n");
@@ -290,10 +313,11 @@ Dxl.prototype.enable = function(onoff){
 
 
 Dxl.prototype.mode=function(mod){
+    console.log("dxl.mode:",mod);
     if(mod!=undefined){
         this.wantedMode = mod;
         this.m.mode = mod;
-        console.log("SETMODE:",this.wantedMode);
+        this.setMode(mod);
     }
     return this.m.mode;
 }
@@ -310,6 +334,7 @@ Dxl.prototype.joint = function(){
 };
 
 Dxl.prototype.wheel = function(){
+    console.log("dxl.wheel!")
     this.mode(1);
     return this;
 };

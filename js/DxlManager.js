@@ -52,6 +52,7 @@ const ADDR_TEMPERATURE = 43;
 
 
 function DxlManager(){
+    this.pause = 0;   //>0 dont sync speeds & goals
     this.motors = [];
     this.recIndices = [];
     this.recording  = false;
@@ -189,6 +190,7 @@ DxlManager.prototype.timedSerial= function(){
         this.serialTimer = 0;
 }*/
 
+/*
 DxlManager.prototype.timedSerial= function(){
     if(this.serialMsgs.length>0) {
         var tmp = "";
@@ -199,6 +201,22 @@ DxlManager.prototype.timedSerial= function(){
     }
     this.serialTimer = 0;
 }
+*/
+
+DxlManager.prototype.sendCm9CB= function(){
+    if(this.serialMsgs.length>0) {
+        cm9Com.write(this.serialMsgs.shift(),this.sendCm9CB.bind(this));
+    }
+}
+
+DxlManager.prototype.timedSerial= function(){
+    if(this.serialMsgs.length>0) {
+        cm9Com.write(this.serialMsgs.shift(),this.sendCm9);
+    }
+    this.serialTimer = 0;
+}
+
+
 
 
 DxlManager.prototype.serialOnOff= function(onoff,name){
@@ -208,16 +226,16 @@ DxlManager.prototype.serialOnOff= function(onoff,name){
     if(onoff){
         if(name)
             this.serialPort=name;
-        cm9Com.open(this.serialPort,115200,function(err){
-            if(err){
-                misGUI.serialState("ERR");
-            }
-            else {
-                self.cm9Msg("version\n");
-                for (var i = 0; i < self.motors.length; i++) {
+            cm9Com.open(this.serialPort,115200,function(err){
+                if(err){
+                    misGUI.serialState("ERR");
+                }
+                else {
+                    self.cm9Msg("version\n");
+                    for (var i = 0; i < self.motors.length; i++) {
                     self.motors[i].cm9Init();
                 }
-                misGUI.serialState("ON");
+                misGUI.cm9State("ON");
                 self.serialRcvTime = Date.now();
                 //TODO send init Motors
             }
@@ -269,36 +287,41 @@ DxlManager.prototype.update = function(){
     var len=this.motors.length;
     var t  = Date.now();
 
-    //sync goals
-    var msgG = "goals ";
-    var count = 0;
-    for(var i=0;i<len;i++){
-        var g = this.motors[i].getGoal();
-        if(g>=0)
-            count++;
-        msgG += g+","; //this.motors[i].getGoal();
+    if(this.pause > 0){
+        this.pause--;
     }
-    if(count>0) {
-        //console.log("sync", msgG);
-        msgG += "\n";
-        this.serialMsgs.push(msgG);
-    }
+    else{
 
-    //sync speeds
-    var msgS = "speeds ";
-    count = 0;
-    for(var i=0;i<len;i++){
-        var s = this.motors[i].getSpeed();
-        if(s!=-1)
-            count++;
-        msgS += s+","; //this.motors[i].getGoal();
+        //sync goals
+        var msgG = "goals ";
+        var count = 0;
+        for(var i=0;i<len;i++){
+            var g = this.motors[i].getGoal();
+            if(g>=0)
+                count++;
+            msgG += g+","; //this.motors[i].getGoal();
+        }
+        if(count>0) {
+            //console.log("sync", msgG);
+            msgG += "\n";
+            this.serialMsgs.push(msgG);
+        }
+    
+        //sync speeds
+        var msgS = "speeds ";
+        count = 0;
+        for(var i=0;i<len;i++){
+            var s = this.motors[i].getSpeed();
+            if(s!=-1)
+                count++;
+            msgS += s+","; //this.motors[i].getGoal();
+        }
+        if(count>0) {
+            //console.log("syncS", msgS);
+            msgS += "\n";
+            this.serialMsgs.push(msgS);
+        }
     }
-    if(count>0) {
-        //console.log("syncS", msgS);
-        msgS += "\n";
-        this.serialMsgs.push(msgS);
-    }
-
 
 
 
@@ -319,7 +342,7 @@ DxlManager.prototype.update = function(){
         console.log("cm9Com IS NULL");
     }
 
-
+/*
     if( cm9Com.isOpen() && this.serialRcvTime!=0 ) {
         if ((Date.now() - this.serialRcvTime) > 3000) {
             console.log("cm9Com TIMEOUT");
@@ -328,7 +351,7 @@ DxlManager.prototype.update = function(){
             misGUI.cm9State("ERROR");
         }
     }
-
+*/
     if(this.recording){
         this.recKey();
     }
@@ -398,6 +421,16 @@ DxlManager.prototype.onStringCmd=function(str){
     this.serialRcvTime = Date.now();
 }
 
+DxlManager.prototype.onCm9Strings=function(args){
+    if(this[args[0]])
+        this[args[0]](args);
+    else
+        console.log("srtCmd?:",str);
+
+    this.serialRcvTime = Date.now();
+}
+
+
 DxlManager.prototype.ipos=function(array) { //stringCmd
     var n = array.length-1;
     if(n>this.motors.length)
@@ -458,6 +491,17 @@ DxlManager.prototype.writeReg=function(index,addr,val) { //
     }
 }
 
+DxlManager.prototype.temperature = function(args){
+    //console.log("temperature:",args[1],args[2]);
+    misGUI.temperature(args[1],args[2]);
+}
+
+DxlManager.prototype.analogs = function(args){
+    console.log("temperature:",args[1],args[2]);
+}
+
+
+
 
 DxlManager.prototype.version = function(arr){
     var v1 = +arr[1];
@@ -465,11 +509,10 @@ DxlManager.prototype.version = function(arr){
     console.log("VERSION",v1,".",v2);
     //if(v1<2)
     if((v1!=2)&&(v2!=9))
-        misGUI.alert("GOT VERSION "+v1+"."+v2);
+        misGUI.alert("BAD VERSION "+v1+"."+v2);
     else
         misGUI.alert("Good VERSION "+v1+"."+v2);
 }
-
 
 //Compatibilité avec ancien CM9 MV id reg value
 DxlManager.prototype.MV=function(array) {
@@ -712,8 +755,15 @@ DxlManager.prototype.onKeyCode = function(keyCode){
 }
 
 // DXL SCAN functions ---------------------
-DxlManager.prototype.ping=function(args){
-    //console.log("PING",args[1]);
+DxlManager.prototype.ping=function(args){ //oldCM9
+    console.log("ping:",args[1]);
+    misGUI.scanProgress(+args[1]);
+}
+DxlManager.prototype.pong=function(args){ //oldCM9
+    console.log("pong:",args[1]);
+    misGUI.scanProgress(+args[1]);
+}
+DxlManager.prototype.scan=function(args){ //oldCM9
     misGUI.scanProgress(+args[1]);
 }
 

@@ -61,10 +61,11 @@ Sensor.prototype.init = function(){
             //TODO
             break;
         case "CM9":
-            //TODO
+            console.log("-------CM9 addcallback---------");
+            cm9Com.setCallback(this.s.pin,this.onValue.bind(this));
             break;
         case "Robus":
-            console.log("addcallback");
+            console.log("Robus addcallback");
             robusManager.setCallback(this.s.address,this.s.name,this.onValue.bind(this));
             break;
         case "":
