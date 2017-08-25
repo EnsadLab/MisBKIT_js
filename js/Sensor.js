@@ -39,7 +39,7 @@ Sensor.prototype.getSettings = function(){
 }
 
 Sensor.prototype.onValue = function(val){
-    console.log("sensor:",this.s.name,val);
+    //console.log("sensor:",this.s.name,val);
     misGUI.setSensorValue(this.ID,val);
     this.currValue = val;
     if(this.s.enabled){
@@ -61,8 +61,8 @@ Sensor.prototype.init = function(){
             //TODO
             break;
         case "CM9":
-            console.log("-------CM9 addcallback---------");
-            cm9Com.setCallback(this.s.pin,this.onValue.bind(this));
+            //console.log("-------CM9 addcallback---------");
+            cm9Com.setCallback(+this.s.pin,this.onValue.bind(this));
             break;
         case "Robus":
             console.log("Robus addcallback");
@@ -76,5 +76,6 @@ Sensor.prototype.init = function(){
 }
 
 Sensor.prototype.discard = function(){
-    robusManager.setCallback(this.s.address,this.s.name);    
+    cm9Com.removeCallback(+this.s.pin);
+    robusManager.removeCallback(this.s.address,this.s.name);    
 }

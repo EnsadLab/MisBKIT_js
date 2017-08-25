@@ -23,20 +23,6 @@ function MisGUI(){
     $( "#dialog" ).dialog( "close" );
 
     /*Didier
-    $('#btSerial').on('click',function(){
-        var cl = $(this).prop("class");
-        console.log("GUI-cm9Com:",cl);
-        if(cl=="connected"){
-            cm9Com.close();
-            $(this).prop("class","disconnected").text("OFF");
-        }
-        else {
-            self.openSerial();
-        }
-    });
-    */
-
-    /*Didier
     $('#selectSerial').change(function(){
         console.log("serialPort:",this.value);
         var bt = $("#btSerial");
@@ -144,90 +130,32 @@ MisGUI.prototype.cmd = function(cmd,index,args) {
     }
 }
 
-/*Didier
-MisGUI.prototype.serialState=function(state){
-    var bt = $("#btSerial");
-    if(state=='OFF')
-        bt.prop("class","disconnected").text("OFF");
-    else if(state=='ON')
-        bt.prop("class", "connected").text("ON");
-    else
-        bt.prop("class", "error").text("ERROR");
-    bt.prop('disabled',false);
-    this.blockUI(false);
-}
-*/
-
-
-//TODO cm9Com.open --> manager
-/*
-MisGUI.prototype.openSerial = function(port) {
-    if(port==undefined)port = $('#selectSerial').val();
-    else{
-        this.serialPort = port;
-        $('#selectSerial').val(port);
-    }
-    this.serialPort = port;
-    var bt = $("#btSerial");
-    console.log("GUIopenserial:",port,":",bt.prop("content"));
-
-    if(port.length<3){
-        cm9Com.close();
-        this.serialClosed();
-        return;
-    }
-
-    bt.prop('disabled',true).text("WAIT"); //error may take a long time
-    cm9Com.open(port,115200,function(err) {
-        bt.prop('disabled',false);
-        if (err) {
-            bt.prop("class", "error").text("ERROR");
-            console.log("MISGUI cm9Com:", err);
-        }
-        else {
-            bt.prop("class", "connected").text("ON");
-        }
-    });
-};
-*/
-
-/*Didier
-MisGUI.prototype.openSerial = function(port) {
-    if(port==undefined)port = $('#selectSerial').val();
-    else{
-        this.serialPort = port;
-        $('#selectSerial').val(port);
-    }
-    this.serialPort = port;
-    var bt = $("#btSerial");
-
-    if(port.length<3){
-        dxlManager.serialOnOff(false);
-        return;
-    }
-
-    bt.prop('disabled',true).text("WAIT"); //error may take a long time
-    this.blockUI(true);
-    dxlManager.serialOnOff(true,port);
-};
-*/
-
 MisGUI.prototype.openOSC = function(remoteAddr,remotePort) {
     dxlManager.openOSC(remoteAddr,remotePort);
 };
 
 MisGUI.prototype.cm9State=function(state){
+    //console.log("MisGUI.prototype.cm9State",state);
     var bt = $("#btcm9");
-    if(state=='OFF')
+    if(state=='OFF'){
+        console.log("MisGUI.prototype.cm9State OFF?",state);
         bt.prop("class","disconnected").text("OFF");
+        this.cm9Info("");
+    }
     else if(state=='ON')
         bt.prop("class", "connected").text("ON");
-    else
+    else{
         bt.prop("class", "error").text("ERROR");
+        this.cm9Info("error");        
+    }
     bt.prop('disabled',false);
     //this.blockUI(false);
 }
 
+MisGUI.prototype.cm9Info=function(txt){
+    $("#cm9Text").html(txt);
+}
+    
 
 /*
 MisGUI.prototype.midiPort = function(name) {
@@ -332,6 +260,7 @@ MisGUI.prototype.angle = function(index,val){
     if(index<this.rotAngles.length){
         var v = this.rotAngles[index].setValue(+val).value;
         this.inputVals.eq(index).val(v.toFixed(1));
+        //console.log("misguiAngle:",val,v);
     }
 }
 
@@ -339,8 +268,10 @@ MisGUI.prototype.speed = function(index,val){ //!!!base100
     if(index<this.rotSpeeds.length){
         var v = this.rotSpeeds[index].setValue(+val).value;
         this.inputVals.eq(index).val(v.toFixed(1));
+        //console.log("misguiSpeed:",val,v);
     }
 }
+
 
 MisGUI.prototype.needle = function(index,val){
     if(index<this.rotAngles.length) {

@@ -20,6 +20,7 @@ SensorManager.prototype.folderIsReady = function(configurationFolder){
 // Method called when user has modified the sensors.json file
 SensorManager.prototype.loadSensorSettings = function () {
     console.log("!------loadUserSensorSettings");
+    cm9Com.removeAllCallbacks();    
     robusManager.reset(); //DB important: remove allcallbacks
 
     var json;
@@ -169,6 +170,7 @@ SensorManager.prototype.onKeyCode = function(char){
 }
 
 SensorManager.prototype.removeAllSensors = function(){
+    cm9Com.removeAllCallbacks();    
     robusManager.reset();
     for( id in this.sensors ){
         this.removeSensor(id);        

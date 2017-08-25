@@ -57,24 +57,59 @@ class Cm9Manager{
 
 class CM9udp {
     constructor(){
-        this.id = "CM00";
+        //this.id = "CM00";
+        this.index  = 0;
         this.socket = null;
         this.localIP = "192.168.4.2";
         this.localPort = 41235;
         this.remoteIP = "192.168.4.1";
         this.remotePort = 41234;
         this.rcvBuffer = new Uint8Array(1024);
+        this.flushed   = true;
+        this.sendStack = [];
         this.rcvIndex  = 0;
         this.skipCount = 0;
         this.sensorListeners = [];
+        this.versionTimer = undefined;
+        this.versionCount = 0;
     }
 
     isOpen(){
         return (this.socket != null)
     }
 
+
+    pushMessage(msg){
+        if(this.socket==null)
+            return;
+        this.sendStack.push(msg);
+        if(this.flushed){
+            this.flushed = false;
+            this.sendCallback();
+        } 
+    }
+
+    sendCallback(){
+        if(this.sendStack.length>0){
+            //this.write(this.sendStack.shift(),this.sendCallback.bind(this));
+            if(this.socket != null) {
+                let msg = this.sendStack.shift();
+                let len = msg.length;
+                //console.log("udpSend:",msg);
+                this.socket.send(msg,0,len, this.remotePort, this.remoteIP,
+                    this.sendCallback.bind(this));
+            }
+        }
+        else{
+            this.flushed = true;
+            //console.log("cm9flushed:");
+        }
+    }
+
+
     open(inaddr,inport,incb) {
         console.log("*** UDP OPEN ***");
+        this.stopVersionTimer();
         var self = this;
         if(this.socket){
             this.socket.close();
@@ -85,18 +120,19 @@ class CM9udp {
         this.socket.on('error',function(err){
             dxlManager.cm9OnOff(false);
             self.socket = null;
-            alert(this.id+"\nConnexion ERROR");
+            alert(this.id+"\nCM9 Connexion ERROR");
         });
         this.socket.on('listening',function(){
             var addr = self.socket.address();
-            console.log("LISTENING addr:",addr.address,addr.port,addr.family);
+            console.log("CM9 LISTENING:",addr.address,addr.port,addr.family);
             dxlManager.cm9OnOff(true);
+            self.versionTimer = setInterval(self.askVersion.bind(self),1000);
         });
         this.socket.on('message',function(datas,info){
             if(datas[0]==47){  //'/'
                 var rcv = osc.fromBuffer(datas);
                 //console.log('osc rcv:',info.address,info.port,'len',msg.length);
-                console.log("osc msg:",rcv.address,rcv.args[0].value);
+                //console.log("osc msg:",rcv.address,rcv.args[0].value);
                 //console.log("  datas:",rcv.args);
             }
             else{
@@ -114,6 +150,8 @@ class CM9udp {
                             var args = String.fromCharCode.apply(null,s).split(/,| /);                            
                             if(args[0]=="analogs")
                                 self.onAnalogs(args);
+                            else if(args[0]=="version")
+                                self.onVersion(args);
                             else
                                 dxlManager.onCm9Strings(args);
                                 //dxlManager.onStringCmd(String.fromCharCode.apply(null,s));
@@ -141,18 +179,21 @@ class CM9udp {
     };
     
     close() {
+        //TOTHINK remove callbacks ?
         console.log("*** CM9 close ***");
+        this.stopVersionTimer();
         if(this.socket) {
             this.socket.close();
             this.socket = null;
         }
+        dxlManager.cm9OnOff(false);
     };
 
     onAnalogs(args){
         var len = args.length-1;//args[0]="analogs"
         for(var i=0;i<len;i++){
             if( this.sensorListeners[i] ){
-                console.log("analog callback:",i,args[i+1]);
+                //console.log("analogcallback:",i,args[i+1]);
                 this.sensorListeners[i](args[i+1]);
             }    
         }
@@ -160,32 +201,48 @@ class CM9udp {
 
 
     setCallback(pin,cb) {
+        //console.log("cm9.setCallback:",pin);
         this.sensorListeners[+pin]=cb;
-/*
-        var len = this.sensorListeners.length;
-        for(var i=0;i<len;i++){
-            console.log(" *cb:",i,this.sensorListeners[i]);
-        }
-        for( pin in this.sensorListeners ){
-            console.log(" *pin:",pin);
-        }
-*/
     }
     
     removeAllCallbacks(){
         for( pin in this.sensorListeners ){
             delete this.sensorListeners[pin];
         }
+        console.log("analog clear:",this.sensorListeners.length);
         this.sensorListeners = [];        
     }
 
     removeCallback(pin){
-        if( pin in this.sensorListeners ){
+        if( +pin in this.sensorListeners ){
             delete this.sensorListeners[pin];
             this.sensorListeners[pin]=undefined;
+            console.log("analog removed:",pin);
         }
     }
-    
+
+    askVersion(){
+        if(++this.versionCount<5){
+            //console.log("ask version:",this.versionCount);
+            this.pushMessage("version \n");
+        }
+        else{
+            this.stopVersionTimer();
+            misGUI.cm9Info("---");
+        }
+    }
+
+    stopVersionTimer(){
+        clearInterval(this.versionTimer);
+        this.versionTimer = undefined;
+        this.versionCount = 0;        
+    }
+
+    onVersion(args){
+        console.log("cm9---------VERSION:",args);
+        this.stopVersionTimer();
+        misGUI.cm9Info("--OK--");
+    }
     
 
 }

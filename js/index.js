@@ -41,6 +41,7 @@ try {
         settingsManager.saveSettings();
         motorMappingManager.saveMappingSettings();
         robusManager.reset();
+        cm9Com.removeAllCallbacks();
         cm9Com.close();
     });
 
