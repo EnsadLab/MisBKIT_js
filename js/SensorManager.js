@@ -85,19 +85,21 @@ SensorManager.prototype.updateGUI = function () {
 
 // called from the GUI when the sensor value has been changed
 SensorManager.prototype.handleSensorValue = function(sensorID, sensorValue){
-    //var sensor = this.getSensorWithID(sensorId); // hmmm.. or just use the pin to identify...
     var sensor = this.sensors[sensorID];
-    //console.log("sensor",sensor.s.valMin);
     if(sensorValue >= sensor.s.valMin && sensorValue < (sensor.s.threshold-sensor.s.tolerance)){ 
         sensor.area = 0;
+        console.log("sensor area 0");
         if(sensor.oldArea != sensor.area){
             // trigger animation 1
+            //console.log("Trigger left animation ",sensor.s.anim1);
             this.startAnim(sensor.s.anim1, sensor.s.anim2);
         }
     }else if(sensorValue >= (sensor.s.threshold + sensor.s.tolerance) && sensorValue < sensor.s.valMax){
         sensor.area = 1;
+        console.log("sensor area 1");
         if(sensor.oldAra != sensor.area){
             // trigger animation 2
+            //console.log("Trigger left animation ",sensor.s.anim2);
             this.startAnim(sensor.s.anim2, sensor.s.anim1);
         }
     }
@@ -207,13 +209,13 @@ SensorManager.prototype.onName = function(id,val){
 }
 
 SensorManager.prototype.onTolerance = function(id,val){
-    this.sensors[id].s.tolerance = val;
+    this.sensors[id].s.tolerance = parseInt(val);
     console.log("changeTolerance:",id,val);
     this.saveSensorSettings();
 }
 
 SensorManager.prototype.onThreshold = function(id,val){
-    this.sensors[id].s.threshold = val;
+    this.sensors[id].s.threshold = parseInt(val);
     console.log("changeTheshold:",id,val);
     this.saveSensorSettings();
 }
