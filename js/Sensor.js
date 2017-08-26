@@ -65,7 +65,7 @@ Sensor.prototype.init = function(){
             cm9Com.setCallback(+this.s.pin,this.onValue.bind(this));
             break;
         case "Robus":
-            console.log("Robus addcallback");
+            //console.log("Robus addcallback");
             robusManager.setCallback(this.s.address,this.s.name,this.onValue.bind(this));
             break;
         case "":
@@ -75,7 +75,31 @@ Sensor.prototype.init = function(){
     }
 }
 
+Sensor.prototype.onName = function(txt){
+    var args = txt.split("/");
+    //console.log("*****************split:",args);
+    var changes = 0;
+    for(var i=0;i<args.length;i++){
+        var kv = args[i].split(":");
+        switch(kv[0]){
+            case "pin":this.s.pin=+kv[1];changes++;break;
+            case "motor":this.s.motorIndex=+kv[1];changes++;break;
+            case "min":this.s.valMin=+kv[1];changes++;break;
+            case "max":this.s.valMax=+kv[1];changes++;break;
+            case "dev":this.s.device=kv[1];changes++;break;
+            case "addr":this.s.address=kv[1];changes++;break;
+        }
+    }
+    if(changes>0){
+        //console.log("this changed",this.s);
+        //cm9Com.removeCallback(+this.s.pin);
+        //robusManager.removeCallback(this.s.address,this.s.name);
+        this.init();
+        misGUI.changeSensor(this.s,this.ID);
+    }
+}
+
 Sensor.prototype.discard = function(){
     cm9Com.removeCallback(+this.s.pin);
-    robusManager.removeCallback(this.s.address,this.s.name);    
+    robusManager.removeCallback(this.s.address,this.s.name);   
 }

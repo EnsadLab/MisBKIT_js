@@ -185,22 +185,26 @@ window.onload = function() {
 
 
     $('body').keydown(function(e) {
-        //console.log("down target:", e.target);
         if($(e.target).is('input'))
             return;
         if($(e.target).is('textarea'))
             return;
-        
+
+        console.log("keyDown-KeyCode:", e.keyCode);
+
         if(e.metaKey || e.ctrlKey){
-            console.log("meta:",e.keyCode);
+            console.log("keyDown-metaKC:",e.keyCode);
             switch(e.keyCode){
                 case 83: //ctrl s
                     settingsManager.saveSettings();
-                    SensorManager.saveSensorSettings();
+                    sensorManager.saveSensorSettings();
                     dxlManager.saveSettings();
                     break;
                 case 82: //ctrl r   
                     motorMappingManager.onKeyCode();
+                    break;
+                case 77: //ctrl m   
+                    sensorManager.onKeyCode('M'); //patch Didier
                     break;
                 /*    
                 case 9: //tab
@@ -265,6 +269,7 @@ window.onload = function() {
 
     $('body').keypress(function(e){
         //console.log("DBG-keytarget:", e.target);
+        console.log("DBG-keypress:", e.keyCode);
         if($(e.target).is('input'))
             return;
         if($(e.target).is('textarea'))

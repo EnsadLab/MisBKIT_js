@@ -719,7 +719,7 @@ MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
 
     tracks.on("click", function () {
         var v = this.checked ? 1 : 0;
-        console.log("DBG_track:", $(this).data("id"), " i:", $(this).data("index"), " ", v);
+        //console.log("DBG_track:", $(this).data("id"), " i:", $(this).data("index"), " ", v);
         self.track($(this).data("id"));
     });
 
@@ -814,7 +814,7 @@ MisGUI.prototype.animProgress=function(animId,v) {
  */
 MisGUI.prototype.animTracks=function(animId,tracks){
     var parent = $('.single-anim[data-id='+animId+']')
-    console.log("DBG_animTracks:",parent.length);
+    //console.log("DBG_animTracks:",parent.length);
     var bts = parent.find('[name="track"]');
     var nbt = bts.length;
     for(var i=0;i<nbt;i++){
@@ -929,6 +929,28 @@ MisGUI.prototype.addSensor = function(settings, id){
     this.setSensorAnims();
     
 }
+
+MisGUI.prototype.changeSensor = function(settings, id){
+    //console.log("ChangSensor:",id,settings);
+    var self = this;
+    var ssor = this.divSensor(id);
+
+    //these may be useful later ?
+    //ssor.find(".name").val(settings.name);
+    //ssor.find(".tolerance").val(settings.tolerance);
+    //ssor.find("[name=anim1]").val(settings.amim1);
+    //ssor.find("[name=anim2]").val(settings.amim2);    
+
+    var rng = ssor.find(".sensor-range");
+    rng.find(".minV").html(settings.valMin);
+    //rng.find(".currentV").html(settings.threshold);
+    rng.find(".maxV").html(settings.valMax);
+
+    ssor.find(".slider-range").slider.min = +settings.valMin;
+    ssor.find(".slider-range").slider.max = +settings.valMax;
+}
+
+
 
 // wich = "anim1" or "anim2" cf html 
 MisGUI.prototype.selectSensorAnim = function(sensorID, wich, name){        

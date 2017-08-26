@@ -147,13 +147,13 @@ Animation.prototype.save = function(fname){
    3 channels ....
  */
 Animation.prototype.load = function(fname){ //sync
-    console.log("DBG LoadAnim",fname);
+    //console.log("DBG LoadAnim",fname);
     if(fname) this.fileName = fname;
     this.playing = false;
     this.datas   = null;
     var datas = fs.readFileSync(this.fileFolder+this.fileName);
     if(datas){
-        console.log("DBG LoadAnim length:",datas.length);
+        //console.log("DBG LoadAnim length:",datas.length);
         //console.log("DBG KeyCode:",datas.readInt8(1));
         if(datas.readInt8(1)!=0)
             this.keyCode = String.fromCharCode(datas.readInt8(1));
@@ -161,7 +161,7 @@ Animation.prototype.load = function(fname){ //sync
             this.keyCode = "";
         
         var nbm = datas.readInt16LE(2); //nbChannels
-        console.log("DBG LoadAnim nb motors:",nbm);
+        //console.log("DBG LoadAnim nb motors:",nbm);
         this.nbChannels = nbm;
         this.channels = [];
         var ih = 4; //'magic16 +nbc16'
@@ -170,7 +170,7 @@ Animation.prototype.load = function(fname){ //sync
             var mode = datas.readInt8(ih++);
             if(mode==0)this.channels.push({play:true,i:imot,f:"angle"});
             else this.channels.push({play:true,i:imot,f:"speed"});
-            console.log("DBG LoadAnim motor index:",imot," mode:",mode);
+            //console.log("DBG LoadAnim motor index:",imot," mode:",mode);
             //console.log("DBG LoadAnim play:",this.channels[m].play);
         }
         this.firstIndex = ih;

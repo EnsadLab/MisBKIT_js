@@ -206,18 +206,28 @@ class CM9udp {
     }
     
     removeAllCallbacks(){
-        for( pin in this.sensorListeners ){
-            delete this.sensorListeners[pin];
-        }
-        console.log("analog clear:",this.sensorListeners.length);
+        //console.log("======== cm9removeAllCallbacks:");
+        var self = this;
+        //for( pin in this.sensorListeners ){
+        $.each(this.sensorListeners, function(i,cb) {
+            //console.log(" =cb pin:",i);//,self.sensorListeners[i]);
+            delete self.sensorListeners[i];
+        });
+        /* ok : all undefined
+        $.each(this.sensorListeners, function(i,cb) {
+            console.log(" =del?",i,self.sensorListeners[i]);
+        });
+        */
         this.sensorListeners = [];        
     }
 
+    //TODO à verifier
     removeCallback(pin){
-        if( +pin in this.sensorListeners ){
-            delete this.sensorListeners[pin];
-            this.sensorListeners[pin]=undefined;
-            console.log("analog removed:",pin);
+        let p = +pin;
+        if( p in this.sensorListeners ){
+            delete this.sensorListeners[p];
+            this.sensorListeners[p]=undefined;
+            //console.log("analog removed:",p,pin);
         }
     }
 
@@ -239,7 +249,7 @@ class CM9udp {
     }
 
     onVersion(args){
-        console.log("cm9---------VERSION:",args);
+        console.log("cm9--VERSION:",args);
         this.stopVersionTimer();
         misGUI.cm9Info("--OK--");
     }

@@ -88,7 +88,7 @@ SensorManager.prototype.handleSensorValue = function(sensorID, sensorValue){
     var sensor = this.sensors[sensorID];
     if(sensorValue >= sensor.s.valMin && sensorValue < (sensor.s.threshold-sensor.s.tolerance)){ 
         sensor.area = 0;
-        console.log("sensor area 0");
+        //console.log("sensor area 0");
         if(sensor.oldArea != sensor.area){
             // trigger animation 1
             //console.log("Trigger left animation ",sensor.s.anim1);
@@ -96,7 +96,7 @@ SensorManager.prototype.handleSensorValue = function(sensorID, sensorValue){
         }
     }else if(sensorValue >= (sensor.s.threshold + sensor.s.tolerance) && sensorValue < sensor.s.valMax){
         sensor.area = 1;
-        console.log("sensor area 1");
+        //console.log("sensor area 1");
         if(sensor.oldAra != sensor.area){
             // trigger animation 2
             //console.log("Trigger left animation ",sensor.s.anim2);
@@ -161,7 +161,8 @@ SensorManager.prototype.onMetaKey = function(char){
     console.log("METAKEY",+char);
 }
 
-// Simulates the reloading of the sensors.json file
+
+// Simulates the reloading of the sensors.json file //voir index.js keydown Didier
 SensorManager.prototype.onKeyCode = function(char){
     console.log("METAKEY",+char);
     if(char=='M'){ // reset the gui according to the changed elements in the json
@@ -204,6 +205,7 @@ SensorManager.prototype.sensorEnable = function(id,onoff){
 
 SensorManager.prototype.onName = function(id,val){
     this.sensors[id].s.name = val;
+    this.sensors[id].onName(val);
     console.log("changeName:",id,val);
     this.saveSensorSettings();
 }
