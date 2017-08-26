@@ -62,7 +62,7 @@ Sensor.prototype.init = function(){
             break;
         case "CM9":
             //console.log("-------CM9 addcallback---------");
-            cm9Com.setCallback(+this.s.pin,this.onValue.bind(this));
+            //cm9Com.setCallback(+this.s.pin,this.onValue.bind(this));
             break;
         case "Robus":
             //console.log("Robus addcallback");
@@ -100,6 +100,6 @@ Sensor.prototype.onName = function(txt){
 }
 
 Sensor.prototype.discard = function(){
-    cm9Com.removeCallback(+this.s.pin);
+    //cm9Com.removeCallback(+this.s.pin);
     robusManager.removeCallback(this.s.address,this.s.name);   
 }

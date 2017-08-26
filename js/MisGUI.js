@@ -918,9 +918,14 @@ MisGUI.prototype.addSensor = function(settings, id){
             var id = $(this).data("id");
             var v  = $(this).slider("value");
             $(this).parent().find(".currentV").html(v);        
-            sensorManager.onThreshold(id,v);
+            //sensorManager.onThreshold(id,v);
+        },
+        stop: function(ev,ui) {
+            var v  = $(this).slider("value");
+            sensorManager.onThreshold(id,v);            
         }
     });
+    
     
     parent.append(clone); 
     //this.setSensorRange(id,settings.valMin,settings.valMax,settings.threshold);//after append
@@ -946,8 +951,10 @@ MisGUI.prototype.changeSensor = function(settings, id){
     //rng.find(".currentV").html(settings.threshold);
     rng.find(".maxV").html(settings.valMax);
 
-    ssor.find(".slider-range").slider.min = +settings.valMin;
-    ssor.find(".slider-range").slider.max = +settings.valMax;
+    //ssor.find(".slider-range").slider.min = +settings.valMin;
+    //ssor.find(".slider-range").slider.max = +settings.valMax;
+    ssor.find(".slider-range").slider( "option","min",+settings.valMin );
+    ssor.find(".slider-range").slider( "option","max",+settings.valMax );
 }
 
 

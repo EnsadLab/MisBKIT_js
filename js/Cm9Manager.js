@@ -70,6 +70,7 @@ class CM9udp {
         this.rcvIndex  = 0;
         this.skipCount = 0;
         this.sensorListeners = [];
+        this.analogVals = [];
         this.versionTimer = undefined;
         this.versionCount = 0;
     }
@@ -189,14 +190,16 @@ class CM9udp {
         dxlManager.cm9OnOff(false);
     };
 
-    onAnalogs(args){
+    onAnalogs(args){ //["analog" "1" "2" ...]
         var len = args.length-1;//args[0]="analogs"
         for(var i=0;i<len;i++){
-            if( this.sensorListeners[i] ){
-                //console.log("analogcallback:",i,args[i+1]);
-                this.sensorListeners[i](args[i+1]);
-            }    
+            this.analogVals[i]=+args[i+1];
+            //if( this.sensorListeners[i] ){
+            //    this.sensorListeners[i](args[i+1]);
+            //}    
         }
+        //console.log("analogs",this.analogVals);
+        sensorManager.handlePinValues(this.analogVals);
     }
 
 

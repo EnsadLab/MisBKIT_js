@@ -20,7 +20,7 @@ SensorManager.prototype.folderIsReady = function(configurationFolder){
 // Method called when user has modified the sensors.json file
 SensorManager.prototype.loadSensorSettings = function () {
     console.log("!------loadUserSensorSettings");
-    cm9Com.removeAllCallbacks();    
+    //cm9Com.removeAllCallbacks();    
     robusManager.reset(); //DB important: remove allcallbacks
 
     var json;
@@ -107,6 +107,19 @@ SensorManager.prototype.handleSensorValue = function(sensorID, sensorValue){
     sensor.oldArea = sensor.area;
 }
 
+//called by cm9Manager
+SensorManager.prototype.handlePinValues=function(vals){
+    var nbv = vals.length;
+    $.each(this.sensors,function(i,sensor) {
+        var pin = +sensor.s.pin;
+        if( (pin>=0)&&(pin<nbv) ){
+            sensor.onValue(vals[pin]);
+            //dont break: 1 sensor, different thresholds/anims
+        }
+    });
+}
+
+
 SensorManager.prototype.startAnim = function(animPlaying, animStopping){
 
     // start playing animations
@@ -173,7 +186,7 @@ SensorManager.prototype.onKeyCode = function(char){
 }
 
 SensorManager.prototype.removeAllSensors = function(){
-    cm9Com.removeAllCallbacks();    
+    //cm9Com.removeAllCallbacks();    
     robusManager.reset();
     for( id in this.sensors ){
         this.removeSensor(id);        
