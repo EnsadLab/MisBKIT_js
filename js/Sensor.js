@@ -18,6 +18,7 @@ Sensor = function () {
         anim1: "", //TODO: change later in an array or not?
         anim2: "",
         motorIndex: 2,      
+        angleIndex: -1 
     };
 
     this.currValue = -1;
@@ -87,6 +88,7 @@ Sensor.prototype.onName = function(txt){
             case "min":this.s.valMin=+kv[1];changes++;break;
             case "max":this.s.valMax=+kv[1];changes++;break;
             case "dev":this.s.device=kv[1];changes++;break;
+            case "pos":this.s.angleIndex=+kv[1];changes++;break;
             case "addr":this.s.address=kv[1];changes++;break;
         }
     }

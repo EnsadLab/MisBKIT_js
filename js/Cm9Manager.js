@@ -57,13 +57,13 @@ class Cm9Manager{
 
 class CM9udp {
     constructor(){
-        //this.id = "CM00";
-        this.index  = 0;
+        this.name = "---";
         this.socket = null;
         this.localIP = "192.168.4.2";
         this.localPort = 41235;
         this.remoteIP = "192.168.4.1";
         this.remotePort = 41234;
+        this.rcvTime   = 0; 
         this.rcvBuffer = new Uint8Array(1024);
         this.flushed   = true;
         this.sendStack = [];
@@ -73,33 +73,43 @@ class CM9udp {
         this.analogVals = [];
         this.versionTimer = undefined;
         this.versionCount = 0;
+        this.index  = 0;
     }
 
     isOpen(){
         return (this.socket != null)
     }
 
-
     pushMessage(msg){
-        if(this.socket==null)
-            return;
-        this.sendStack.push(msg);
-        if(this.flushed){
-            this.flushed = false;
-            this.sendCallback();
-        } 
+        //console.log("push:",msg);
+        if(this.socket==null){
+            //console.log("push flushed",msg);
+            this.sendStack = [];
+            this.flushed = true;
+        }
+        else{
+            this.sendStack.push(msg);
+            if(this.flushed){
+                this.flushed = false;
+                this.sendCallback();
+            }
+        }
     }
 
-    sendCallback(){
+    sendCallback(){ //pop sendStack //TOTHINK ... ?socket null
         if(this.sendStack.length>0){
-            //this.write(this.sendStack.shift(),this.sendCallback.bind(this));
+            let msg = this.sendStack.shift();
             if(this.socket != null) {
-                let msg = this.sendStack.shift();
                 let len = msg.length;
                 //console.log("udpSend:",msg);
                 this.socket.send(msg,0,len, this.remotePort, this.remoteIP,
                     this.sendCallback.bind(this));
             }
+            else{ //forget all ????
+                this.sendStack = [];
+                this.flushed = true;
+            }
+
         }
         else{
             this.flushed = true;
@@ -107,15 +117,16 @@ class CM9udp {
         }
     }
 
-
     open(inaddr,inport,incb) {
         console.log("*** UDP OPEN ***");
         this.stopVersionTimer();
         var self = this;
         if(this.socket){
             this.socket.close();
+            this.socket = null;
         }
-    
+        misGUI.cm9Info("...wait...");        
+        this.rcvTime = 0;        
         this.socket = udp.createSocket('udp4');
         //this.socket.setBroadcast(true); //0 error
         this.socket.on('error',function(err){
@@ -126,8 +137,11 @@ class CM9udp {
         this.socket.on('listening',function(){
             var addr = self.socket.address();
             console.log("CM9 LISTENING:",addr.address,addr.port,addr.family);
-            dxlManager.cm9OnOff(true);
+            //dxlManager.cm9OnOff(true); //->askVersion
             self.versionTimer = setInterval(self.askVersion.bind(self),1000);
+        });
+        this.socket.on('close',function(){
+            console.log("CM9 CLOSED:");
         });
         this.socket.on('message',function(datas,info){
             if(datas[0]==47){  //'/'
@@ -153,6 +167,8 @@ class CM9udp {
                                 self.onAnalogs(args);
                             else if(args[0]=="version")
                                 self.onVersion(args);
+                            else if(args[0]=="name")
+                                self.onName(args);
                             else
                                 dxlManager.onCm9Strings(args);
                                 //dxlManager.onStringCmd(String.fromCharCode.apply(null,s));
@@ -163,6 +179,8 @@ class CM9udp {
                 }
     
             }
+            self.rcvTime = Date.now();;
+            
         });
 
         //this.socket.bind({ address:this.remoteIP, port:this.remotePort });
@@ -188,9 +206,10 @@ class CM9udp {
             this.socket = null;
         }
         dxlManager.cm9OnOff(false);
+        this.rcvTime = 0;
     };
 
-    onAnalogs(args){ //["analog" "1" "2" ...]
+    onAnalogs(args){ //["analogs" "1" "2" ...]
         var len = args.length-1;//args[0]="analogs"
         for(var i=0;i<len;i++){
             this.analogVals[i]=+args[i+1];
@@ -237,25 +256,37 @@ class CM9udp {
     askVersion(){
         if(++this.versionCount<5){
             //console.log("ask version:",this.versionCount);
-            this.pushMessage("version \n");
+            if(this.socket==null)
+                console.log("ask null????");
+            //this.pushMessage("version \nname \n");
+            this.pushMessage("name \nversion \n");
         }
         else{
             this.stopVersionTimer();
             misGUI.cm9Info("---");
+            //TODO no response ?
         }
     }
 
     stopVersionTimer(){
         clearInterval(this.versionTimer);
         this.versionTimer = undefined;
-        this.versionCount = 0;        
+        this.versionCount = 0;
+        dxlManager.cm9OnOff(true); //mmmm        
     }
 
     onVersion(args){
-        console.log("cm9--VERSION:",args);
+        console.log("CM9--VERSION:",args);
+        //Good version ???
         this.stopVersionTimer();
-        misGUI.cm9Info("--OK--");
+        dxlManager.cm9OnOff(true); //mmmm        
     }
     
-
+    onName(args){
+        console.log("CM9--NAME:",args);
+        this.name = args[1];
+        misGUI.cm9Info(args[1]);
+        this.stopVersionTimer();
+        dxlManager.cm9OnOff(true); //mmmm        
+    }
 }

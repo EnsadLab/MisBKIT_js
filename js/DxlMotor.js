@@ -41,6 +41,7 @@ function Dxl(index){
     this.wantedSpeed  = NaN;
     this._taskCount = 0;
     this._regRead = -1;
+    this._gotModel = false;
     this.limitCW  = 0;
     this.limitCCW = 1023; //AX12
     this.angleRef  = 300; //AX12
@@ -97,7 +98,10 @@ Dxl.prototype.angle2pos=function(a){
 Dxl.prototype.onAddr=function(addr,val){
     switch(addr){
         case ADDR_MODEL:
-            this.model(val);
+            if(val>=0){
+                this.model(val);
+                this._gotModel = true;
+            }
             break;
         case ADDR_POSITION:
             var a = this.pos2angle(val);
@@ -265,7 +269,7 @@ Dxl.prototype.cm9Init = function() {
 }
 
 Dxl.prototype.model=function(val){
-    console.log("------ model[",this.index,"]-------",val);
+    console.log("------ model:[",this.index,"]-------",val);
     switch(val){
         case -1:
             //no answer ... disable , ask again ?
@@ -279,11 +283,12 @@ Dxl.prototype.model=function(val){
             //!!!cm9 dxlManager.cm9Msg("EW "+this.index+","+ADDR_SLOPE_CCW+",128,\n");
             cm9Com.pushMessage("EW "+this.index+","+ADDR_SLOPE_CW+",128,\n");
             cm9Com.pushMessage("EW "+this.index+","+ADDR_SLOPE_CCW+",128,\n");
-
+            this._gotModel = true;
             break;
 
         //case -1: //!!!MX28 par defaut, becoz RS485
         case 29: //MX28
+            this._gotModel = true;
         default: //MX64 MX106 ..
             this.m.model = val;
             this.limitCCW = 4095;
@@ -299,11 +304,13 @@ Dxl.prototype.dxlID = function(id){
 
     this.m.id = +id;
     this.enabled = false;
+    this._gotModel = false;
     //!!!cm9 dxlManager.cm9Msg("EI " + this.index + "," + id + ",\n");
     cm9Com.pushMessage("EI " + this.index + "," + id + ",\n");
     if(this.m.id>0){
         //!!!cm9 dxlManager.cm9Msg("EM " + this.index + ",\n"); //request model
-        cm9Com.pushMessage("EM " + this.index + ",\n"); //request model
+        cm9Com.pushMessage("EM " + this.index + ",\n");    //request model
+        cm9Com.pushMessage("model " + this.index + ",\n"); //request model 2
     }
     return this;
 };
@@ -324,9 +331,11 @@ Dxl.prototype.enable = function(onoff){
         //cm9Com.pushMessage("EI "+this.index+","+this.m.id+",\n");
         //             +"model "+this.index+",\n");
         //this._speed = 0;
-        //this.wantedSpeed = 0;
+        //this.wantedSpeed = 0;     
         this.enabled = true;
         this.sendMode(this.m.mode);
+        if(this._gotModel==false)
+            cm9Com.pushMessage("model " + this.index + ",\n"); //request model 2
     }
     else{ //mode wheel pour "relax" AX12 //A REVOIR!!!
         console.log("----- Dxl.disable: -----",this.m.id);
@@ -338,10 +347,13 @@ Dxl.prototype.enable = function(onoff){
         dxlManager.cm9Msg("EW "+this.index+","+ADDR_CW_LIMIT+",0,\n");
         dxlManager.cm9Msg("EW "+this.index+","+ADDR_CCW_LIMIT+",0,\n");
         */
-        cm9Com.pushMessage(
+        cm9Com.pushMessage( // ??? wheel for relax ???
             "EI "+this.index+","+this.m.id+",\n"
             +"wheel "+this.index+"\n"
         );
+        if(this._gotModel==false)
+            cm9Com.pushMessage("model " + this.index + ",\n"); //request model 2
+
         this._speed = 0;
     }
     return onoff;

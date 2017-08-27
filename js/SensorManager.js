@@ -107,18 +107,25 @@ SensorManager.prototype.handleSensorValue = function(sensorID, sensorValue){
     sensor.oldArea = sensor.area;
 }
 
-//called by cm9Manager
+//called by cm9Manager // array of sensor values, one loop.
 SensorManager.prototype.handlePinValues=function(vals){
     var nbv = vals.length;
     $.each(this.sensors,function(i,sensor) {
         var pin = +sensor.s.pin;
         if( (pin>=0)&&(pin<nbv) ){
             sensor.onValue(vals[pin]);
-            //dont break: 1 sensor, different thresholds/anims
         }
     });
 }
 
+//Motor position -> sensor.s.angleIndex
+SensorManager.prototype.handleDxlPos=function(index,val){
+    $.each(this.sensors,function(i,sensor) {
+        if(+sensor.s.angleIndex == index){
+            sensor.onValue(val);
+        }
+    });        
+}
 
 SensorManager.prototype.startAnim = function(animPlaying, animStopping){
 
@@ -168,12 +175,10 @@ SensorManager.prototype.saveSensorSettings = function () {
         //console.log(json);
 };
 
-
 // Simulates the reloading of the sensors.json file
 SensorManager.prototype.onMetaKey = function(char){
     console.log("METAKEY",+char);
 }
-
 
 // Simulates the reloading of the sensors.json file //voir index.js keydown Didier
 SensorManager.prototype.onKeyCode = function(char){
@@ -232,7 +237,7 @@ SensorManager.prototype.onTolerance = function(id,val){
 SensorManager.prototype.onThreshold = function(id,val){
     this.sensors[id].s.threshold = parseInt(val);
     console.log("changeTheshold:",id,val);
-    this.saveSensorSettings();
+    //this.saveSensorSettings(); //done when slider stops cf MisGUI
 }
 
 SensorManager.prototype.onChangeAnim = function(id,wich,txt){

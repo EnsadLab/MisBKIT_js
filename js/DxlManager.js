@@ -263,16 +263,14 @@ DxlManager.prototype.cm9OnOff= function(onoff,name){
     this.serialRcvTime=0;
     if(onoff){
         misGUI.cm9State("ON");
-        self.serialRcvTime = Date.now();
-        self.cm9Msg("version\n");
+        //self.serialRcvTime = Date.now();
+        //self.cm9Msg("version\n");
         for (var i = 0; i < self.motors.length; i++) {
                     self.motors[i].cm9Init();
         }
     }
     else{
         if(cm9Com.isOpen()){
-            //cm9Com.write("STOP\n");
-            //cm9Com.flush();
             cm9Com.close();
         }
         misGUI.cm9State("OFF");
@@ -445,7 +443,8 @@ DxlManager.prototype.ipos=function(array) { //stringCmd
     for(var i=0;i<n;i++){
         var v = +array[i+1] //array[0]="ipos"
         if(v>=0){
-            var a=this.motors[i].currPos(v);
+            var a = +this.motors[i].currPos(v).toFixed(1);
+            sensorManager.handleDxlPos(i,a);
             misGUI.needle(i,a);
         }
     }
@@ -831,9 +830,9 @@ DxlManager.prototype.setKeyCode = function(id,keyCode){
 
         if(anim.keyCode != keyCode){
             anim.keyCode = keyCode;
-            console.log("setkeycode: len:",anim.keyCode.length);
-            console.log("setkeycode: charcode0:",anim.keyCode.charCodeAt(0));
-            console.log("setkeycode: charcode1:",anim.keyCode.charCodeAt(1));
+            //console.log("setkeycode: len:",anim.keyCode.length);
+            //console.log("setkeycode: charcode0:",anim.keyCode.charCodeAt(0));
+            //console.log("setkeycode: charcode1:",anim.keyCode.charCodeAt(1));
             anim.save();
         }
 

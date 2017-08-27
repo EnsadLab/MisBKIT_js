@@ -138,7 +138,7 @@ MisGUI.prototype.cm9State=function(state){
     //console.log("MisGUI.prototype.cm9State",state);
     var bt = $("#btcm9");
     if(state=='OFF'){
-        console.log("MisGUI.prototype.cm9State OFF?",state);
+        //console.log("MisGUI.prototype.cm9State OFF?",state);
         bt.prop("class","disconnected").text("OFF");
         this.cm9Info("");
     }
@@ -339,12 +339,12 @@ MisGUI.prototype.alert = function(msg){
 
 
 MisGUI.prototype.toggleAdvanced = function(onoff){
-    console.log("MisGUI.prototype.toggleAdvanced",onoff);
+    //console.log("MisGUI.prototype.toggleAdvanced",onoff);
     if(onoff) { //current state
         for(var i=0;i<6;i++){
             var parent = this.getMotorUI(i);
             var chk = parent.find("[name=enable]").prop("checked");
-            //console.log("DBG-check:",i," ",chk);
+            console.log("DBG-check:",i," ",chk);
             if(chk)
                 dxlManager.cmd("enable",i,true);
 
@@ -918,11 +918,12 @@ MisGUI.prototype.addSensor = function(settings, id){
             var id = $(this).data("id");
             var v  = $(this).slider("value");
             $(this).parent().find(".currentV").html(v);        
-            //sensorManager.onThreshold(id,v);
+            sensorManager.onThreshold(id,v);
         },
         stop: function(ev,ui) {
             var v  = $(this).slider("value");
-            sensorManager.onThreshold(id,v);            
+            sensorManager.onThreshold(id,v);
+            sensorManager.saveSensorSettings();            
         }
     });
     
