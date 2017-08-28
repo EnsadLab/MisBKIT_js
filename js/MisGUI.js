@@ -23,20 +23,6 @@ function MisGUI(){
     $( "#dialog" ).dialog( "close" );
 
     /*Didier
-    $('#btSerial').on('click',function(){
-        var cl = $(this).prop("class");
-        console.log("GUI-cm9Com:",cl);
-        if(cl=="connected"){
-            cm9Com.close();
-            $(this).prop("class","disconnected").text("OFF");
-        }
-        else {
-            self.openSerial();
-        }
-    });
-    */
-
-    /*Didier
     $('#selectSerial').change(function(){
         console.log("serialPort:",this.value);
         var bt = $("#btSerial");
@@ -144,90 +130,32 @@ MisGUI.prototype.cmd = function(cmd,index,args) {
     }
 }
 
-/*Didier
-MisGUI.prototype.serialState=function(state){
-    var bt = $("#btSerial");
-    if(state=='OFF')
-        bt.prop("class","disconnected").text("OFF");
-    else if(state=='ON')
-        bt.prop("class", "connected").text("ON");
-    else
-        bt.prop("class", "error").text("ERROR");
-    bt.prop('disabled',false);
-    this.blockUI(false);
-}
-*/
-
-
-//TODO cm9Com.open --> manager
-/*
-MisGUI.prototype.openSerial = function(port) {
-    if(port==undefined)port = $('#selectSerial').val();
-    else{
-        this.serialPort = port;
-        $('#selectSerial').val(port);
-    }
-    this.serialPort = port;
-    var bt = $("#btSerial");
-    console.log("GUIopenserial:",port,":",bt.prop("content"));
-
-    if(port.length<3){
-        cm9Com.close();
-        this.serialClosed();
-        return;
-    }
-
-    bt.prop('disabled',true).text("WAIT"); //error may take a long time
-    cm9Com.open(port,115200,function(err) {
-        bt.prop('disabled',false);
-        if (err) {
-            bt.prop("class", "error").text("ERROR");
-            console.log("MISGUI cm9Com:", err);
-        }
-        else {
-            bt.prop("class", "connected").text("ON");
-        }
-    });
-};
-*/
-
-/*Didier
-MisGUI.prototype.openSerial = function(port) {
-    if(port==undefined)port = $('#selectSerial').val();
-    else{
-        this.serialPort = port;
-        $('#selectSerial').val(port);
-    }
-    this.serialPort = port;
-    var bt = $("#btSerial");
-
-    if(port.length<3){
-        dxlManager.serialOnOff(false);
-        return;
-    }
-
-    bt.prop('disabled',true).text("WAIT"); //error may take a long time
-    this.blockUI(true);
-    dxlManager.serialOnOff(true,port);
-};
-*/
-
 MisGUI.prototype.openOSC = function(remoteAddr,remotePort) {
     dxlManager.openOSC(remoteAddr,remotePort);
 };
 
 MisGUI.prototype.cm9State=function(state){
+    //console.log("MisGUI.prototype.cm9State",state);
     var bt = $("#btcm9");
-    if(state=='OFF')
+    if(state=='OFF'){
+        //console.log("MisGUI.prototype.cm9State OFF?",state);
         bt.prop("class","disconnected").text("OFF");
+        this.cm9Info("");
+    }
     else if(state=='ON')
         bt.prop("class", "connected").text("ON");
-    else
+    else{
         bt.prop("class", "error").text("ERROR");
+        this.cm9Info("error");        
+    }
     bt.prop('disabled',false);
     //this.blockUI(false);
 }
 
+MisGUI.prototype.cm9Info=function(txt){
+    $("#cm9Text").html(txt);
+}
+    
 
 /*
 MisGUI.prototype.midiPort = function(name) {
@@ -332,6 +260,7 @@ MisGUI.prototype.angle = function(index,val){
     if(index<this.rotAngles.length){
         var v = this.rotAngles[index].setValue(+val).value;
         this.inputVals.eq(index).val(v.toFixed(1));
+        //console.log("misguiAngle:",val,v);
     }
 }
 
@@ -339,8 +268,10 @@ MisGUI.prototype.speed = function(index,val){ //!!!base100
     if(index<this.rotSpeeds.length){
         var v = this.rotSpeeds[index].setValue(+val).value;
         this.inputVals.eq(index).val(v.toFixed(1));
+        //console.log("misguiSpeed:",val,v);
     }
 }
+
 
 MisGUI.prototype.needle = function(index,val){
     if(index<this.rotAngles.length) {
@@ -408,12 +339,12 @@ MisGUI.prototype.alert = function(msg){
 
 
 MisGUI.prototype.toggleAdvanced = function(onoff){
-    console.log("MisGUI.prototype.toggleAdvanced",onoff);
+    //console.log("MisGUI.prototype.toggleAdvanced",onoff);
     if(onoff) { //current state
         for(var i=0;i<6;i++){
             var parent = this.getMotorUI(i);
             var chk = parent.find("[name=enable]").prop("checked");
-            //console.log("DBG-check:",i," ",chk);
+            console.log("DBG-check:",i," ",chk);
             if(chk)
                 dxlManager.cmd("enable",i,true);
 
@@ -788,7 +719,7 @@ MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
 
     tracks.on("click", function () {
         var v = this.checked ? 1 : 0;
-        console.log("DBG_track:", $(this).data("id"), " i:", $(this).data("index"), " ", v);
+        //console.log("DBG_track:", $(this).data("id"), " i:", $(this).data("index"), " ", v);
         self.track($(this).data("id"));
     });
 
@@ -883,7 +814,7 @@ MisGUI.prototype.animProgress=function(animId,v) {
  */
 MisGUI.prototype.animTracks=function(animId,tracks){
     var parent = $('.single-anim[data-id='+animId+']')
-    console.log("DBG_animTracks:",parent.length);
+    //console.log("DBG_animTracks:",parent.length);
     var bts = parent.find('[name="track"]');
     var nbt = bts.length;
     for(var i=0;i<nbt;i++){
@@ -989,8 +920,14 @@ MisGUI.prototype.addSensor = function(settings, id){
             var v  = $(this).slider("value");
             $(this).parent().find(".currentV").html(v);        
             sensorManager.onThreshold(id,v);
+        },
+        stop: function(ev,ui) {
+            var v  = $(this).slider("value");
+            sensorManager.onThreshold(id,v);
+            sensorManager.saveSensorSettings();            
         }
     });
+    
     
     parent.append(clone); 
     //this.setSensorRange(id,settings.valMin,settings.valMax,settings.threshold);//after append
@@ -999,6 +936,30 @@ MisGUI.prototype.addSensor = function(settings, id){
     this.setSensorAnims();
     
 }
+
+MisGUI.prototype.changeSensor = function(settings, id){
+    //console.log("ChangSensor:",id,settings);
+    var self = this;
+    var ssor = this.divSensor(id);
+
+    //these may be useful later ?
+    //ssor.find(".name").val(settings.name);
+    //ssor.find(".tolerance").val(settings.tolerance);
+    //ssor.find("[name=anim1]").val(settings.amim1);
+    //ssor.find("[name=anim2]").val(settings.amim2);    
+
+    var rng = ssor.find(".sensor-range");
+    rng.find(".minV").html(settings.valMin);
+    //rng.find(".currentV").html(settings.threshold);
+    rng.find(".maxV").html(settings.valMax);
+
+    //ssor.find(".slider-range").slider.min = +settings.valMin;
+    //ssor.find(".slider-range").slider.max = +settings.valMax;
+    ssor.find(".slider-range").slider( "option","min",+settings.valMin );
+    ssor.find(".slider-range").slider( "option","max",+settings.valMax );
+}
+
+
 
 // wich = "anim1" or "anim2" cf html 
 MisGUI.prototype.selectSensorAnim = function(sensorID, wich, name){        

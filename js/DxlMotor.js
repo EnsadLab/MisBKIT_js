@@ -41,13 +41,20 @@ function Dxl(index){
     this.wantedSpeed  = NaN;
     this._taskCount = 0;
     this._regRead = -1;
+    this._gotModel = false;
     this.limitCW  = 0;
     this.limitCCW = 1023; //AX12
     this.angleRef  = 300; //AX12
 }
 
 Dxl.prototype.getGoal= function(){
+    if(!this.enabled)
+        return -1;
     if(!isNaN(this.wantedAngle)){
+        if(this.wantedMode===0){
+            this.wantedMode = undefined;
+            cm9Com.pushMessage("joint "+this.index+",\n");                 
+        }
         var a = this.m.clockwise ? -this.wantedAngle : this.wantedAngle;
         this.wantedAngle = NaN;
         return this.angle2pos(a);
@@ -57,8 +64,14 @@ Dxl.prototype.getGoal= function(){
 }
 
 Dxl.prototype.getSpeed= function(){
+    if(!this.enabled)
+        return -1;
     var v = -1;
     if(!isNaN(this.wantedSpeed)){
+        if(this.wantedMode===1){
+            this.wantedMode = undefined;
+            cm9Com.pushMessage("wheel "+this.index+",\n");                 
+        }
         v = this.m.clockwise ? -this.wantedSpeed : this.wantedSpeed;
         this.wantedSpeed = NaN;
         if(v<0)
@@ -85,7 +98,10 @@ Dxl.prototype.angle2pos=function(a){
 Dxl.prototype.onAddr=function(addr,val){
     switch(addr){
         case ADDR_MODEL:
-            this.model(val);
+            if(val>=0){
+                this.model(val);
+                this._gotModel = true;
+            }
             break;
         case ADDR_POSITION:
             var a = this.pos2angle(val);
@@ -99,42 +115,59 @@ Dxl.prototype.onAddr=function(addr,val){
 }
 
 Dxl.prototype.pushSerialMsg = function(stack){
-    //if(!this.enabled)
-    //    return;
+    if(!this.enabled)
+        return;
 
+    /*
     if(!isNaN(this.wantedMode)){
-        console.log("wantedMode:",this.wantedMode);
+        console.log("pushSerialMsg:wantedMode:",this.wantedMode);
         this.setMode(this.wantedMode);
         this.wantedMode = NaN;
     }
-/* //speed & goal sync
+    */
+    /* //speed & goal sync
     if(!isNaN(this.wantedSpeed)){
         var s = this.m.clockwise ? -this.wantedSpeed : this.wantedSpeed;
         dxlManager.cm9Msg("EW "+this.index+","+ADDR_SPEED+","+s+",\n");
         this.wantedSpeed = NaN;
     }
-*/
-/* //speed & goal sync
+    */
+    /* //speed & goal sync
     if(!isNaN(this.wantedAngle)){
         var a = this.m.clockwise ? -this.wantedAngle : this.wantedAngle;
         var g = this.angle2pos(a);
         dxlManager.cm9Msg("EW "+this.index+" "+ADDR_GOAL+" "+g+"\n");
         this.wantedAngle = NaN;
     }
-*/
+    */
     if(!isNaN(this.wantedTorque)){
         stack.push("EW "+this.index+","+ADDR_TORQUE+","+this.wantedTorque+",\n");
         this.wantedTorque = NaN;
         return; //... next'frame'
     }
-
 }
 
-Dxl.prototype.setMode = function(jw){ //0:joint 1:wheel
-    //dxlManager.pause = 100;
-    console.log("setMode:",this.index,jw);
+Dxl.prototype.delayMotorON = function(){
+    var self = this;
+    misGUI.dxlEnabled(self.index,false);     
+    setTimeout(function(){
+        console.log("-----TIMED MOTOR----",self.index,self.enabled);
+        self.enable(true);
+        misGUI.dxlEnabled(self.index,true);     
+    },250);
+}
+
+Dxl.prototype.sendMode = function(jw){ //0:joint 1:wheel
+    dxlManager.setPause(5);
     if(jw==0){ //joint
-        misGUI.angle(this.index,this._curAngle);
+
+        var msg = "EI "+this.index+","+this.m.id+",\n"
+            + "joint "+this.index+",\n";
+       //cm9Com.pushMessage(msg);
+       //cm9Com.pushMessage(msg);
+       cm9Com.pushMessage("goals -1,-1,-1,-1,-1,-1,");
+       
+
         //if(!isNaN(this._currPos))
         /*
         stack.push("EW "+this.index+","+ADDR_TORQUE_ENABLE+",1,\n");
@@ -160,37 +193,29 @@ Dxl.prototype.setMode = function(jw){ //0:joint 1:wheel
         dxlManager.cm9Msg("EW "+this.index+","+ADDR_SPEED+",0,\n"
             +"joint "+this.index+"\n");
         */
-        this.wantedTorque = this.m.torqueMax;
+        //this.wantedTorque = this.m.torqueMax;
+        //this.wantedSpeed = 0;
+        this.wantedAngle = this._curAngle;
         this.wantedSpeed = 0;
+        this.wantedMode = 0;
         this.m.mode = 0;
-        cm9Com.write("joint "+this.index+"\n");
-        //console.log("curAngle:",this._curAngle);        
+        //console.log("setJOINT:",this._curAngle);
+        misGUI.angle(this.index,this._curAngle);
     }
     else{ //1: wheel
-        /*
-        dxlManager.cm9Msg("EW "+this.index+","+ADDR_SPEED+",0,\n"
-        +"wheel "+this.index+"\n"
-        +"EW "+this.index+","+ADDR_CW_LIMIT+",0,\n"
-        +"EW "+this.index+","+ADDR_CCW_LIMIT+",0,\n"
-        );
-        */
-        cm9Com.write("wheel "+this.index+"\n");
-        /*
-
-        dxlManager.cm9Msg("wheel "+this.index+"\n");
-        //stack.push("EW "+this.index+" "+ADDR_TORQUE+" 0\n");
-        dxlManager.cm9Msg("EW "+this.index+","+ADDR_CCW_LIMIT+",0,\n");
-        dxlManager.cm9Msg("EW "+this.index+","+ADDR_CW_LIMIT+",0,\n");
-        */
-
-        //stack.push("EW "+this.index+" "+ADDR_SPEED+",0,\n");
+        var msg = "EI "+this.index+","+this.m.id+",\n"
+        + "wheel "+this.index+",\n"
+        + "wheel "+this.index+",\n"
+        + "wheel "+this.index+",\n";
+        cm9Com.pushMessage(msg);
         this.wantedSpeed = 0;
-        this.wantedTorque = this.m.torqueMax;
+        //this.wantedTorque = this.m.torqueMax;
         this.m.mode = 1;
+        this.wantedMode = 1;
         //console.log("curAngle:",this._curAngle);
+        misGUI.speed(this.index,0);
     }
 }
-
 
 Dxl.prototype.copySettings = function(s){
     for(var e in s){
@@ -218,7 +243,8 @@ Dxl.prototype.update = function(t){
         if (this._regRead >= 0) {
             this._taskCount++;
             if((this._taskCount & 7)==0) {
-                dxlManager.cm9Msg("DR " + this.m.id + "," + this._regRead + ",\n");
+                //!!!cm9 dxlManager.cm9Msg("DR " + this.m.id + "," + this._regRead + ",\n");
+                cm9Com.pushMessage("DR " + this.m.id + "," + this._regRead + ",\n")
                 if (++this._regRead >= 48)
                     this._regRead = -1;
             }
@@ -233,14 +259,17 @@ Dxl.prototype.cm9Init = function() {
     if(this.m.id<1)
         return;
 
-    dxlManager.cm9Msg("EI " + this.index + "," + this.m.id + ",\n");
-    dxlManager.cm9Msg("model " + this.index + ",\n");
+    //!!!cm9 dxl Manager.cm9Msg("EI " + this.index + "," + this.m.id + ",\n");
+    //!!!cm9 dxlManager.cm9Msg("model " + this.index + ",\n");
+    cm9Com.pushMessage("EI " + this.index + "," + this.m.id + ",\n");
+    cm9Com.pushMessage("model " + this.index + ",\n");
+    
     if(this.enabled)
         this.enable(true);
 }
 
 Dxl.prototype.model=function(val){
-    console.log("model[",this.index,"]",val);
+    console.log("------ model:[",this.index,"]-------",val);
     switch(val){
         case -1:
             //no answer ... disable , ask again ?
@@ -250,20 +279,23 @@ Dxl.prototype.model=function(val){
             this.limitCCW = 1023;
             this.angleRef  = 300;
             //compliance très souple par defaut
-            dxlManager.cm9Msg("EW "+this.index+","+ADDR_SLOPE_CW+",128,\n");
-            dxlManager.cm9Msg("EW "+this.index+","+ADDR_SLOPE_CCW+",128,\n");
-
+            //!!!cm9 dxlManager.cm9Msg("EW "+this.index+","+ADDR_SLOPE_CW+",128,\n");
+            //!!!cm9 dxlManager.cm9Msg("EW "+this.index+","+ADDR_SLOPE_CCW+",128,\n");
+            cm9Com.pushMessage("EW "+this.index+","+ADDR_SLOPE_CW+",128,\n");
+            cm9Com.pushMessage("EW "+this.index+","+ADDR_SLOPE_CCW+",128,\n");
+            this._gotModel = true;
             break;
 
         //case -1: //!!!MX28 par defaut, becoz RS485
         case 29: //MX28
+            this._gotModel = true;
         default: //MX64 MX106 ..
             this.m.model = val;
             this.limitCCW = 4095;
             this.angleRef  = 380;
             break;
     }
-    this.mode(this.m.mode);
+    //this.sendMode(this.m.mode);
 }
 
 Dxl.prototype.dxlID = function(id){
@@ -272,48 +304,64 @@ Dxl.prototype.dxlID = function(id){
 
     this.m.id = +id;
     this.enabled = false;
-    dxlManager.cm9Msg("EI " + this.index + "," + id + ",\n");
+    this._gotModel = false;
+    //!!!cm9 dxlManager.cm9Msg("EI " + this.index + "," + id + ",\n");
+    cm9Com.pushMessage("EI " + this.index + "," + id + ",\n");
     if(this.m.id>0){
-        dxlManager.cm9Msg("EM " + this.index + ",\n"); //request model
+        //!!!cm9 dxlManager.cm9Msg("EM " + this.index + ",\n"); //request model
+        cm9Com.pushMessage("EM " + this.index + ",\n");    //request model
+        cm9Com.pushMessage("model " + this.index + ",\n"); //request model 2
     }
     return this;
 };
 
 Dxl.prototype.enable = function(onoff){
-    console.log("Dxl.Enable:",this.m.id,onoff);
+    //console.log("-------- Dxl.Enable(): -------",this.m.id,onoff);
     if(this.m.id<1){  //no id : cannot enable (ping?)
         this.enabled = false;
-        dxlManager.dxlEnabled(this.index,0);
+        misGUI.dxlEnabled(this.index,false);
         return false;
     }
 
     if(onoff){
+        //console.log("-------- Dxl.Enable: -------",this.m.id,onoff);
         //dxlManager.cm9Msg("EI "+this.index+","+this.m.id+",\n");
         //dxlManager.cm9Msg("model "+this.index+",\n"); //request model again
-        cm9Com.write("EI "+this.index+","+this.m.id+"\n"
-                     +"model "+this.index+",\n");
-        this._speed = 0;
-        this.wantedSpeed = 0;
+        //!!!cm9 dxlManager.cm9Msg("EI "+this.index+","+this.m.id+"\n");
+        //cm9Com.pushMessage("EI "+this.index+","+this.m.id+",\n");
+        //             +"model "+this.index+",\n");
+        //this._speed = 0;
+        //this.wantedSpeed = 0;     
         this.enabled = true;
-        this.wantedMode = this.m.mode;
-        misGUI.speed(this.index,0);
+        this.sendMode(this.m.mode);
+        if(this._gotModel==false)
+            cm9Com.pushMessage("model " + this.index + ",\n"); //request model 2
     }
     else{ //mode wheel pour "relax" AX12 //A REVOIR!!!
+        console.log("----- Dxl.disable: -----",this.m.id);
         this.enabled = false;
+        /*!!!cm9
         dxlManager.cm9Msg("EI "+this.index+","+this.m.id+",\n");        
-        //dxlManager.cm9Msg("EW "+this.index+","+ADDR_TORQUE+",0,\n");
+        dxlManager.cm9Msg("EW "+this.index+","+ADDR_TORQUE+",0,\n");
         dxlManager.cm9Msg("EW "+this.index+","+ADDR_SPEED+",0,\n");
         dxlManager.cm9Msg("EW "+this.index+","+ADDR_CW_LIMIT+",0,\n");
         dxlManager.cm9Msg("EW "+this.index+","+ADDR_CCW_LIMIT+",0,\n");
+        */
+        cm9Com.pushMessage( // ??? wheel for relax ???
+            "EI "+this.index+","+this.m.id+",\n"
+            +"wheel "+this.index+"\n"
+        );
+        if(this._gotModel==false)
+            cm9Com.pushMessage("model " + this.index + ",\n"); //request model 2
+
         this._speed = 0;
-        misGUI.speed(this.index,0);
     }
     return onoff;
 }
 
-
+/*
 Dxl.prototype.mode=function(mod){
-    console.log("dxl.mode:",mod);
+    console.log("------- dxl.mode: -------",mod);
     if(mod!=undefined){
         this.wantedMode = mod;
         this.m.mode = mod;
@@ -321,6 +369,8 @@ Dxl.prototype.mode=function(mod){
     }
     return this.m.mode;
 }
+*/
+
 
 Dxl.prototype.angleRange = function(min,max){
     this.m.angleMin = min;
@@ -329,13 +379,20 @@ Dxl.prototype.angleRange = function(min,max){
 };
 
 Dxl.prototype.joint = function(){
-    this.mode(0);
+    console.log("----- Dxl.joint: ----");
+    //wantedMode = 0; //pour delay
+    this.m.mode = 0;
+    if(this.enabled)
+        this.delayMotorON();
     return this;
 };
 
 Dxl.prototype.wheel = function(){
-    console.log("dxl.wheel!")
-    this.mode(1);
+    console.log("----- Dxl.wheel: ----");
+    //wantedMode = 1; //pour delay
+    this.m.mode = 1; 
+    if(this.enabled)
+        this.delayMotorON();
     return this;
 };
 
@@ -428,6 +485,7 @@ Dxl.prototype.speedMax = function(val){
     return this;
 };
 
+/*
 Dxl.prototype.copy = function(from){
     //this.m.enabled = from.m.enabled;
     //this.m.model  = from.m.
@@ -441,3 +499,4 @@ Dxl.prototype.copy = function(from){
 
     this.wantedMode = this.m.mode;
 }
+*/

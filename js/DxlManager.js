@@ -77,19 +77,22 @@ function DxlManager(){
     this.versionTimer = 0;
     this.cm9Version = [];
 
-    if(fs) {
-        var json = fs.readFileSync(__dirname + "/data/ax12.json", 'utf8');
-        this.ax12regs = JSON.parse(json);
-        //$.each(this.ax12regs,function(k,v){console.log(k+":"+v);}); //object[key]);
-    }
+    this.onoffMotorIndex = 0;      //TOTHINK: in DxlMotor ??? 
+    this.onoffTimer = undefined;
+
+    //-------------------------
+    //var json = fs.readFileSync(__dirname + "/data/ax12.json", 'utf8');
+    //this.ax12regs = JSON.parse(json);
+    //$.each(this.ax12regs,function(k,v){console.log(k+":"+v);}); //object[key]);
 
     for(var i=0;i<MAX_SERVOS;i++){
        this.motors.push( new Dxl(i) );
     }
 
-    this.updateTimid = setInterval(this.update.bind(this),40);
+    this.updateTimid = setInterval(this.update.bind(this),45);
 
 };
+
 
 DxlManager.prototype.saveSettings = function () {
     var s = {}; //settings
@@ -174,7 +177,6 @@ DxlManager.prototype.robusCB = function(val){
 DxlManager.prototype.folderIsReady = function(animationFolder){
     this.animFolder = animationFolder;
     this.loadSettings();
-    //test robusManager.setCallback("octo_wifi","octo_potard2",this.robusCB.bind(this));
 }
 
 /*
@@ -203,22 +205,24 @@ DxlManager.prototype.timedSerial= function(){
 }
 */
 
+/*!!!cm9Manager
 DxlManager.prototype.sendCm9CB= function(){
     if(this.serialMsgs.length>0) {
         cm9Com.write(this.serialMsgs.shift(),this.sendCm9CB.bind(this));
     }
 }
-
+*/
+/*!!!cm9Manager
 DxlManager.prototype.timedSerial= function(){
     if(this.serialMsgs.length>0) {
         cm9Com.write(this.serialMsgs.shift(),this.sendCm9);
     }
     this.serialTimer = 0;
 }
+*/
 
 
-
-
+/*
 DxlManager.prototype.serialOnOff= function(onoff,name){
     console.log("SERIAL_ONOFF:",onoff);
     var self = this;
@@ -251,31 +255,32 @@ DxlManager.prototype.serialOnOff= function(onoff,name){
         this.serialRcvTime=0;
     }
 }
+*/
 
 DxlManager.prototype.cm9OnOff= function(onoff,name){
-    console.log("CM9_ONOFF:",onoff);
+    //console.log("CM9_ONOFF:",onoff);
     var self = this;
     this.serialRcvTime=0;
     if(onoff){
         misGUI.cm9State("ON");
-        self.serialRcvTime = Date.now();
-        self.cm9Msg("version\n");
+        //self.serialRcvTime = Date.now();
+        //self.cm9Msg("version\n");
         for (var i = 0; i < self.motors.length; i++) {
                     self.motors[i].cm9Init();
         }
     }
     else{
         if(cm9Com.isOpen()){
-            //cm9Com.write("STOP\n");
-            //cm9Com.flush();
+            cm9Com.close();
         }
-        cm9Com.close();
         misGUI.cm9State("OFF");
         this.serialRcvTime=0;
     }
 }
 
-
+DxlManager.prototype.setPause = function(nframes){
+    this.pause = nframes;
+}    
 
 DxlManager.prototype.update = function(){
 
@@ -287,8 +292,10 @@ DxlManager.prototype.update = function(){
     var len=this.motors.length;
     var t  = Date.now();
 
+
     if(this.pause > 0){
         this.pause--;
+        //if(this.pause == 0)console.log("-----dxlEndPause:-------");
     }
     else{
 
@@ -304,7 +311,8 @@ DxlManager.prototype.update = function(){
         if(count>0) {
             //console.log("sync", msgG);
             msgG += "\n";
-            this.serialMsgs.push(msgG);
+            //!!!cm9this.serialMsgs.push(msgG);
+            cm9Com.pushMessage(msgG);
         }
     
         //sync speeds
@@ -319,28 +327,24 @@ DxlManager.prototype.update = function(){
         if(count>0) {
             //console.log("syncS", msgS);
             msgS += "\n";
-            this.serialMsgs.push(msgS);
+            //!!!cm9 this.serialMsgs.push(msgS);
+            cm9Com.pushMessage(msgS);
+            
         }
     }
 
-
-
-
     for(var i=0;i<len;i++){
         if(this.motors[i].update(t)) {
-            this.motors[i].pushSerialMsg(this.serialMsgs);
-            //misGUI.needle(i, this.motors[i].pos());
+            //!!!cm9 this.motors[i].pushSerialMsg(this.serialMsgs);
         }
         else
             console.log("UPDATE FALSE");
     }
 
+    /*!!!cm9
     if(this.serialTimer==0)
         this.timedSerial();
-
-    if(cm9Com == null){
-        console.log("cm9Com IS NULL");
-    }
+    */
 
 /*
     if( cm9Com.isOpen() && this.serialRcvTime!=0 ) {
@@ -407,7 +411,8 @@ DxlManager.prototype.onValue = function(index,cmd,arg){
 */
 
 DxlManager.prototype.cm9Msg=function(str){
-    this.serialMsgs.push(str);
+    //!!!cm9 this.serialMsgs.push(str);
+    cm9Com.pushMessage(str);
 }
 
 DxlManager.prototype.onStringCmd=function(str){
@@ -425,7 +430,7 @@ DxlManager.prototype.onCm9Strings=function(args){
     if(this[args[0]])
         this[args[0]](args);
     else
-        console.log("srtCmd?:",str);
+        console.log("srtCmd?:",args);
 
     this.serialRcvTime = Date.now();
 }
@@ -438,7 +443,8 @@ DxlManager.prototype.ipos=function(array) { //stringCmd
     for(var i=0;i<n;i++){
         var v = +array[i+1] //array[0]="ipos"
         if(v>=0){
-            var a=this.motors[i].currPos(v);
+            var a = +this.motors[i].currPos(v).toFixed(1);
+            sensorManager.handleDxlPos(i,a);
             misGUI.needle(i,a);
         }
     }
@@ -509,9 +515,11 @@ DxlManager.prototype.version = function(arr){
     console.log("VERSION",v1,".",v2);
     //if(v1<2)
     if((v1!=2)&&(v2!=9))
-        misGUI.alert("BAD VERSION "+v1+"."+v2);
-    else
-        misGUI.alert("Good VERSION "+v1+"."+v2);
+            //misGUI.alert("BAD VERSION "+v1+"."+v2);
+            misGUI.cm9Info("BAD VERSION ");
+        else
+            misGUI.cm9Info("- OK -");
+            //misGUI.alert("Good VERSION "+v1+"."+v2);
 }
 
 //Compatibilité avec ancien CM9 MV id reg value
@@ -615,10 +623,11 @@ DxlManager.prototype.recCheck=function(index,val){
     }
 }
 
+/*
 DxlManager.prototype.dxlEnabled=function(index,val){
     misGUI.dxlEnabled(index,val);
 }
-
+*/
 
 DxlManager.prototype.startRec=function(name){
     if(this.animFolder.length>0){
@@ -821,9 +830,9 @@ DxlManager.prototype.setKeyCode = function(id,keyCode){
 
         if(anim.keyCode != keyCode){
             anim.keyCode = keyCode;
-            console.log("setkeycode: len:",anim.keyCode.length);
-            console.log("setkeycode: charcode0:",anim.keyCode.charCodeAt(0));
-            console.log("setkeycode: charcode1:",anim.keyCode.charCodeAt(1));
+            //console.log("setkeycode: len:",anim.keyCode.length);
+            //console.log("setkeycode: charcode0:",anim.keyCode.charCodeAt(0));
+            //console.log("setkeycode: charcode1:",anim.keyCode.charCodeAt(1));
             anim.save();
         }
 

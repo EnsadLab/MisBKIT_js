@@ -20,6 +20,7 @@ SensorManager.prototype.folderIsReady = function(configurationFolder){
 // Method called when user has modified the sensors.json file
 SensorManager.prototype.loadSensorSettings = function () {
     console.log("!------loadUserSensorSettings");
+    //cm9Com.removeAllCallbacks();    
     robusManager.reset(); //DB important: remove allcallbacks
 
     var json;
@@ -87,7 +88,7 @@ SensorManager.prototype.handleSensorValue = function(sensorID, sensorValue){
     var sensor = this.sensors[sensorID];
     if(sensorValue >= sensor.s.valMin && sensorValue < (sensor.s.threshold-sensor.s.tolerance)){ 
         sensor.area = 0;
-        console.log("sensor area 0");
+        //console.log("sensor area 0");
         if(sensor.oldArea != sensor.area){
             // trigger animation 1
             //console.log("Trigger left animation ",sensor.s.anim1);
@@ -95,7 +96,7 @@ SensorManager.prototype.handleSensorValue = function(sensorID, sensorValue){
         }
     }else if(sensorValue >= (sensor.s.threshold + sensor.s.tolerance) && sensorValue < sensor.s.valMax){
         sensor.area = 1;
-        console.log("sensor area 1");
+        //console.log("sensor area 1");
         if(sensor.oldAra != sensor.area){
             // trigger animation 2
             //console.log("Trigger left animation ",sensor.s.anim2);
@@ -104,6 +105,26 @@ SensorManager.prototype.handleSensorValue = function(sensorID, sensorValue){
     }
 
     sensor.oldArea = sensor.area;
+}
+
+//called by cm9Manager // array of sensor values, one loop.
+SensorManager.prototype.handlePinValues=function(vals){
+    var nbv = vals.length;
+    $.each(this.sensors,function(i,sensor) {
+        var pin = +sensor.s.pin;
+        if( (pin>=0)&&(pin<nbv) ){
+            sensor.onValue(vals[pin]);
+        }
+    });
+}
+
+//Motor position -> sensor.s.angleIndex
+SensorManager.prototype.handleDxlPos=function(index,val){
+    $.each(this.sensors,function(i,sensor) {
+        if(+sensor.s.angleIndex == index){
+            sensor.onValue(val);
+        }
+    });        
 }
 
 SensorManager.prototype.startAnim = function(animPlaying, animStopping){
@@ -154,13 +175,12 @@ SensorManager.prototype.saveSensorSettings = function () {
         //console.log(json);
 };
 
-
 // Simulates the reloading of the sensors.json file
 SensorManager.prototype.onMetaKey = function(char){
     console.log("METAKEY",+char);
 }
 
-// Simulates the reloading of the sensors.json file
+// Simulates the reloading of the sensors.json file //voir index.js keydown Didier
 SensorManager.prototype.onKeyCode = function(char){
     console.log("METAKEY",+char);
     if(char=='M'){ // reset the gui according to the changed elements in the json
@@ -171,6 +191,7 @@ SensorManager.prototype.onKeyCode = function(char){
 }
 
 SensorManager.prototype.removeAllSensors = function(){
+    //cm9Com.removeAllCallbacks();    
     robusManager.reset();
     for( id in this.sensors ){
         this.removeSensor(id);        
@@ -202,6 +223,7 @@ SensorManager.prototype.sensorEnable = function(id,onoff){
 
 SensorManager.prototype.onName = function(id,val){
     this.sensors[id].s.name = val;
+    this.sensors[id].onName(val);
     console.log("changeName:",id,val);
     this.saveSensorSettings();
 }
@@ -214,8 +236,8 @@ SensorManager.prototype.onTolerance = function(id,val){
 
 SensorManager.prototype.onThreshold = function(id,val){
     this.sensors[id].s.threshold = parseInt(val);
-    console.log("changeThreshold:",id,val);
-    this.saveSensorSettings();
+    console.log("changeTheshold:",id,val);
+    //this.saveSensorSettings(); //done when slider stops cf MisGUI
 }
 
 SensorManager.prototype.onChangeAnim = function(id,wich,txt){
