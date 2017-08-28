@@ -497,7 +497,7 @@ MisGUI.prototype.init =function(){
         var v = this.checked ? 1 : 0;
         var index = $(this).data("index");
         var cmd = this.name;
-        console.log("toggle:",index," ",cmd," ",v);
+        //console.log("toggle:",index," ",cmd," ",v);
         if(self[this.name])
             self[cmd](index,v);
         else

@@ -151,7 +151,7 @@ Dxl.prototype.delayMotorON = function(){
     var self = this;
     misGUI.dxlEnabled(self.index,false);     
     setTimeout(function(){
-        console.log("-----TIMED MOTOR----",self.index,self.enabled);
+        //console.log("-----TIMED MOTOR----",self.index,self.enabled);
         self.enable(true);
         misGUI.dxlEnabled(self.index,true);     
     },250);
@@ -163,9 +163,9 @@ Dxl.prototype.sendMode = function(jw){ //0:joint 1:wheel
 
         var msg = "EI "+this.index+","+this.m.id+",\n"
             + "joint "+this.index+",\n";
+       cm9Com.pushPause(500,msg);
        //cm9Com.pushMessage(msg);
-       //cm9Com.pushMessage(msg);
-       cm9Com.pushMessage("goals -1,-1,-1,-1,-1,-1,");
+       //cm9Com.pushMessage("goals -1,-1,-1,-1,-1,-1,");
        
 
         //if(!isNaN(this._currPos))
@@ -204,10 +204,9 @@ Dxl.prototype.sendMode = function(jw){ //0:joint 1:wheel
     }
     else{ //1: wheel
         var msg = "EI "+this.index+","+this.m.id+",\n"
-        + "wheel "+this.index+",\n"
-        + "wheel "+this.index+",\n"
         + "wheel "+this.index+",\n";
-        cm9Com.pushMessage(msg);
+        cm9Com.pushPause(500,msg);
+
         this.wantedSpeed = 0;
         //this.wantedTorque = this.m.torqueMax;
         this.m.mode = 1;
@@ -261,8 +260,8 @@ Dxl.prototype.cm9Init = function() {
 
     //!!!cm9 dxl Manager.cm9Msg("EI " + this.index + "," + this.m.id + ",\n");
     //!!!cm9 dxlManager.cm9Msg("model " + this.index + ",\n");
-    cm9Com.pushMessage("EI " + this.index + "," + this.m.id + ",\n");
-    cm9Com.pushMessage("model " + this.index + ",\n");
+    cm9Com.pushPause(100,"EI " + this.index + "," + this.m.id + ",\n");
+    cm9Com.pushPause(100,"model " + this.index + ",\n");
     
     if(this.enabled)
         this.enable(true);
@@ -281,8 +280,8 @@ Dxl.prototype.model=function(val){
             //compliance très souple par defaut
             //!!!cm9 dxlManager.cm9Msg("EW "+this.index+","+ADDR_SLOPE_CW+",128,\n");
             //!!!cm9 dxlManager.cm9Msg("EW "+this.index+","+ADDR_SLOPE_CCW+",128,\n");
-            cm9Com.pushMessage("EW "+this.index+","+ADDR_SLOPE_CW+",128,\n");
-            cm9Com.pushMessage("EW "+this.index+","+ADDR_SLOPE_CCW+",128,\n");
+            //cm9Com.pushMessage("EW "+this.index+","+ADDR_SLOPE_CW+",128,\n");
+            //cm9Com.pushMessage("EW "+this.index+","+ADDR_SLOPE_CCW+",128,\n");
             this._gotModel = true;
             break;
 
@@ -299,18 +298,19 @@ Dxl.prototype.model=function(val){
 }
 
 Dxl.prototype.dxlID = function(id){
-    if(this.m.id>=0)
-        this.enable(false);
 
+    if(+id != this.m.id){
+        this.enable(false);
+        this._gotModel = false;
+    }
     this.m.id = +id;
-    this.enabled = false;
-    this._gotModel = false;
-    //!!!cm9 dxlManager.cm9Msg("EI " + this.index + "," + id + ",\n");
-    cm9Com.pushMessage("EI " + this.index + "," + id + ",\n");
+    cm9Com.pushPause(200,"EI " + this.index + "," + id + ",\n");
     if(this.m.id>0){
+        if( this._gotModel == false){
         //!!!cm9 dxlManager.cm9Msg("EM " + this.index + ",\n"); //request model
-        cm9Com.pushMessage("EM " + this.index + ",\n");    //request model
-        cm9Com.pushMessage("model " + this.index + ",\n"); //request model 2
+        //cm9Com.pushMessage("EM " + this.index + ",\n");    //request model
+        cm9Com.pushPause(200,"model " + this.index + ",\n"); //request model 2
+        }
     }
     return this;
 };
@@ -347,12 +347,14 @@ Dxl.prototype.enable = function(onoff){
         dxlManager.cm9Msg("EW "+this.index+","+ADDR_CW_LIMIT+",0,\n");
         dxlManager.cm9Msg("EW "+this.index+","+ADDR_CCW_LIMIT+",0,\n");
         */
+        cm9Com.pushPause(500);
         cm9Com.pushMessage( // ??? wheel for relax ???
             "EI "+this.index+","+this.m.id+",\n"
             +"wheel "+this.index+"\n"
         );
-        if(this._gotModel==false)
-            cm9Com.pushMessage("model " + this.index + ",\n"); //request model 2
+        if(this._gotModel==false){
+            cm9Com.pushPause(200,"model " + this.index + ",\n"); //request model 2
+        }
 
         this._speed = 0;
     }

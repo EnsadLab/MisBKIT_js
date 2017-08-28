@@ -289,36 +289,37 @@ DxlManager.prototype.update = function(){
             misGUI.animProgress(k,100-p);
     }
 
-    var len=this.motors.length;
+    var nbm=this.motors.length;
     var t  = Date.now();
 
-
+    /*
     if(this.pause > 0){
         this.pause--;
-        //if(this.pause == 0)console.log("-----dxlEndPause:-------");
-    }
-    else{
+        if(this.pause == 0)console.log("-----dxlEndPause:-------");
+        return;
+    }else
+    */
+    if(cm9Com.isReady()){
 
         //sync goals
         var msgG = "goals ";
         var count = 0;
-        for(var i=0;i<len;i++){
+        for(var i=0;i<nbm;i++){
             var g = this.motors[i].getGoal();
             if(g>=0)
-                count++;
+                count++; //at least one goal
             msgG += g+","; //this.motors[i].getGoal();
         }
         if(count>0) {
             //console.log("sync", msgG);
-            msgG += "\n";
             //!!!cm9this.serialMsgs.push(msgG);
-            cm9Com.pushMessage(msgG);
+            cm9Com.pushMessage(msgG+"\n");
         }
     
         //sync speeds
         var msgS = "speeds ";
         count = 0;
-        for(var i=0;i<len;i++){
+        for(var i=0;i<nbm;i++){
             var s = this.motors[i].getSpeed();
             if(s!=-1)
                 count++;
@@ -326,20 +327,27 @@ DxlManager.prototype.update = function(){
         }
         if(count>0) {
             //console.log("syncS", msgS);
-            msgS += "\n";
             //!!!cm9 this.serialMsgs.push(msgS);
-            cm9Com.pushMessage(msgS);
-            
+            cm9Com.pushMessage(msgS+"\n");            
         }
-    }
 
-    for(var i=0;i<len;i++){
-        if(this.motors[i].update(t)) {
-            //!!!cm9 this.motors[i].pushSerialMsg(this.serialMsgs);
+        for(var i=0;i<nbm;i++){
+            this.motors[i].update(t);
         }
-        else
-            console.log("UPDATE FALSE");
-    }
+    
+        //read dxl regiters
+        if( this.refreshID >= 0 ) {
+            if( this.refreshAddr<48 ){
+                cm9Com.pushMessage("DR " + this.refreshID + "," + this.refreshAddr + ",\n");
+                //cm9Com.pushPause(500,"DR " + this.refreshID + "," + this.refreshAddr + ",\n");
+                this.refreshAddr++;
+            }
+            else
+                this.refreshID = -1;
+        }
+
+    }//cm9 is ready
+
 
     /*!!!cm9
     if(this.serialTimer==0)
@@ -360,14 +368,6 @@ DxlManager.prototype.update = function(){
         this.recKey();
     }
 
-    if( this.refreshID >= 0 ) {
-        if( this.refreshAddr<48 ){
-            this.cm9Msg("DR " + this.refreshID + "," + this.refreshAddr + ",\n");
-            this.refreshAddr++;
-        }
-        else
-            this.refreshID = -1;
-    }
 
     //setTimeout(this.update.bind(this),50);
 }
@@ -479,20 +479,18 @@ DxlManager.prototype.readRegs=function(index) { //
 
 DxlManager.prototype.dxlRead=function(dxlid,addr) { //
     console.log("dxlRead:",+dxlid,+addr);
-    this.cm9Msg("DR "+dxlid+","+addr+",\n");
+    cm9Com.pushMessage("DR "+dxlid+","+addr+",\n");
 }
 
 DxlManager.prototype.dxlWrite=function(dxlid,addr,val) { //
         console.log("dxlWrite:",+dxlid,+addr,+val);
-        this.cm9Msg("DW "+dxlid+","+addr+","+val+",\n");
+        cm9Com.pushMessage("DW "+dxlid+","+addr+","+val+",\n");
 }
-
-
 
 DxlManager.prototype.writeReg=function(index,addr,val) { //
     if((index>=0)&&(index<this.motors.length)){
         console.log("WriteReg:",+index,+addr,+val);
-        this.cm9Msg("EW "+index+","+addr+","+val+",\n");
+        cm9Com.pushMessage("EW "+index+","+addr+","+val+",\n");
 
     }
 }
@@ -781,12 +779,13 @@ DxlManager.prototype.startScan=function(){
         console.log("STARTSCAN");
         misGUI.scanProgress(0);
         //misGUI.blockUI(true);
-        this.stopAll();
+        //this.stopAll();
         for (var i = 0; i < this.motors.length; i++) {
             this.motors[i].dxlID(0);
-            misGUI.motorSettings(i, this.motors[i].m);
+            misGUI.motorSettings(i,this.motors[i].m);
         }
-        this.cm9Msg("scan\n");
+        this.setPause(50);
+        cm9Com.pushPause(500,"scan ,\n");
     }
 }
 
