@@ -214,7 +214,7 @@ SensorManager.prototype.onTolerance = function(id,val){
 
 SensorManager.prototype.onThreshold = function(id,val){
     this.sensors[id].s.threshold = parseInt(val);
-    console.log("changeTheshold:",id,val);
+    console.log("changeThreshold:",id,val);
     this.saveSensorSettings();
 }
 

@@ -984,6 +984,7 @@ MisGUI.prototype.addSensor = function(settings, id){
         max: max,
         value: thres,
         slide: function( ev, ui ) {
+            console.log("ev:",ev);
             var id = $(this).data("id");
             var v  = $(this).slider("value");
             $(this).parent().find(".currentV").html(v);        
