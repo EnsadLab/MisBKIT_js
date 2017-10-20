@@ -1,4 +1,8 @@
 //UI
+
+
+
+
 $(".btn-connexions").bind('click', showConnexion);
 
 function showConnexion(){
@@ -35,6 +39,7 @@ function showSensors(){
 	$(".animations ").css("z-index", -1);
 	$(".animations ").css("display", "none");
 	$(".load").css("display", "none");
+	$(".addSensors").css("display", "block");
 
 	$(this).css("opacity", 1);
 	$("#anims").css("opacity", 0.3);
@@ -50,6 +55,8 @@ function showAnimations(){
 	$(".sensors ").css("display", "none");
 
 	$(".load").css("display", "block");
+	$(".addSensors").css("display", "none");
+
 
 
 	$(this).css("opacity", 1);
@@ -151,6 +158,8 @@ function loadSensor(){
 
 
 }
+
+
 
 
 // Function to call for indexing sensors

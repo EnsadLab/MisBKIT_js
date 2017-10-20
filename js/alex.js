@@ -153,6 +153,21 @@
 	  	$(witch).parent().next(".progress").removeClass('active');
 	  }
 
+	
+	// function fakeSensor(){
+	// 	var maxValue = 100;
+	// 	var val = Math.random()*maxValue;
+	// 	console.log(val);
+	// 	$(".live-value").html(Math.round(val)+"%");
+	// 	$(".live-value-ui").css("left", val+"%");
+	// 	return val;
+	// }
+
+	// function timer(){
+	// 	varTimer = setInterval(fakeSensor, 3000);
+	// }
+
+	// timer();
 
 
 

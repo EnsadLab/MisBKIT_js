@@ -857,7 +857,10 @@ MisGUI.prototype.addSensor = function(settings, id){
     clone.attr('data-id', id); //select only find attr
     //clone.children().data("id", id); //only first level !!! !!! !!!
     clone.find('*').data("id", id); //only first level !!! !!! !!!
-    
+
+    toleranceUI(clone.find(".tolerance-ui"), settings.tolerance, settings.threshold, settings.valMin, settings.valMax);
+    sensorAnimWidth(clone.find(".sensor-range"), settings.valMin, settings.valMax, settings.threshold, settings.tolerance);
+
     //clone.find("input").attr('data-id', id);
     //clone.find("button").attr('data-id', id);
     //clone.find("button").attr('data-id', id);
@@ -886,6 +889,8 @@ MisGUI.prototype.addSensor = function(settings, id){
         .val(settings.tolerance)
         .on("change",function(){
             sensorManager.onTolerance($(this).data("id"), $(this).val());
+            toleranceUI(clone.find(".tolerance-ui"), settings.tolerance, settings.threshold, settings.valMin, settings.valMax);
+
         });
 
     clone.find(".close").on("click", function () {
@@ -915,11 +920,16 @@ MisGUI.prototype.addSensor = function(settings, id){
         max: max,
         value: thres,
         slide: function( ev, ui ) {
-            console.log("ev:",ev);
+            // console.log("ev:",ev);
             var id = $(this).data("id");
             var v  = $(this).slider("value");
             $(this).parent().find(".currentV").html(v);        
             sensorManager.onThreshold(id,v);
+            // sensorAnimWidth(ev, min, max, v);
+            sensorAnimWidth(clone.find(".sensor-range"), min, max, v, settings.tolerance);
+
+
+
         },
         stop: function(ev,ui) {
             var v  = $(this).slider("value");
@@ -932,6 +942,8 @@ MisGUI.prototype.addSensor = function(settings, id){
     parent.append(clone); 
     //this.setSensorRange(id,settings.valMin,settings.valMax,settings.threshold);//after append
     clone.show();
+
+    clone.find(".moreSensorSetting").bind('click', sensorSettings);
     
     this.setSensorAnims();
     
@@ -1164,3 +1176,77 @@ MisGUI.prototype.scanProgress =function(val){
 MisGUI.prototype.temperature = function(index,val){
     $(".thermo").eq(index).html(val+"°");
 }
+
+
+
+
+function sensorAnimWidth(element, min, max, cur, tolVal){
+
+    var total = max+Math.abs(min)
+
+    selec = element.parent();
+
+    percent = Math.abs(min-cur)*100/total;
+
+
+    var anim1 = selec.find(".select-anim-1");
+    var anim2 = selec.find(".select-anim-2");
+    var curentVal = selec.find(".currentV");
+    var tol_ui = selec.find(".tolerance-ui");
+    var tol_Val = parseInt(tolVal);
+    var til_Val_input = selec.find(".tolerance");
+
+
+    anim1.width(parseInt(percent)+"%");
+    anim2.width(parseInt(100-percent)+"%");
+
+    curentVal.css("left", percent-50+"%");
+    til_Val_input.css("left", percent-10+"%");
+
+
+    toleranceUI(tol_ui, tolVal, cur, min, max);
+
+}
+
+
+
+function toleranceUI(element, val, cur, min, max){
+
+    var total = max+Math.abs(min)
+    element.width(val*100/total + "%");
+
+    percent = Math.abs(min-cur)*100/total;
+
+    
+    var half_w = parseInt(element[0].style.width)/2;
+    console.log(percent);
+
+
+    element.css("left", percent - half_w +"%");
+
+}
+
+
+
+
+
+function sensorSettings(){
+
+    var target = $(this).parent().parent().children();
+    target.addClass('blury')
+    var settings = $(this).parent().parent().find(".sensor-setting-more")
+    settings.removeClass('blury')
+    settings.css("display", "block");
+
+    $(this).parent().parent().find("button.set").bind("click", function(event) {
+        settings.css("display", "none");        
+        target.removeClass('blury');
+
+    });
+}
+
+
+
+
+
+
