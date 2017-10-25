@@ -800,12 +800,14 @@ DxlManager.prototype.dxlID = function(index,id){
     console.log("DxlManager.setIndexID:",index," ",id);
     var nid = +id;
     var previous = null;
-    for(var i=0;i<this.motors.length;i++){
-        if(this.motors[i].m.id == nid){
-            previous = this.motors[i];
-            console.log("DxlManager.setIndexID:DUPLICATE",i," ",id);
-            this.motors[i].dxlID(0);
-            misGUI.motorSettings(i,this.getMotorSettings(i));
+    if( nid>0 ){
+        for(var i=0;i<this.motors.length;i++){
+            if(this.motors[i].m.id == nid){
+                previous = this.motors[i];
+                console.log("DxlManager.setIndexID:DUPLICATE",i," ",id);
+                this.motors[i].dxlID(0);
+                misGUI.motorSettings(i,this.getMotorSettings(i));
+            }
         }
     }
     this.motors[index].dxlID(nid);
