@@ -186,23 +186,28 @@ Animation.prototype.load = function(fname){ //sync
 };
 
 Animation.prototype.startPlay = function() {
-    console.log("startPlay:");
-    this.playing  = false;
-    if(this.datas==null)return;
-    console.log("StartPlay:",this.datas.length);
-    console.log("channels:",this.channels);
+    //console.log("startPlay:");
+    if(this.datas==null){
+        this.playing  = false;
+        return;
+    }
+    //console.log("StartPlay:",this.datas.length);
+    //console.log("channels:",this.channels);
     this.keyIndex = this.firstIndex;
-    this.playing  = true;
-    for(var c=0;c<this.nbChannels;c++){
-        if(this.channels[c].play){ //TOTHINK
-            if( this.channels[c].f=="angle" )
-                dxlManager.cmd("joint",this.channels[c].i);
-            else
-                dxlManager.cmd("wheel",this.channels[c].i);
+    if(this.playing == false){  //prevent joint/wheel each loop
+        for(var c=0;c<this.nbChannels;c++){
+            if(this.channels[c].play){ //TOTHINK
+                if( this.channels[c].f=="angle" )
+                    dxlManager.cmd("joint",this.channels[c].i);
+                else
+                    dxlManager.cmd("wheel",this.channels[c].i);
+            }
         }
     }
+    this.playing  = true;
     //setTimeout(testPlay,100);//!!!!!id
 }
+
 
 Animation.prototype.channelEnable=function(num,onoff){
     for(var i=0;i<this.channels.length;i++){
@@ -250,6 +255,17 @@ Animation.prototype.playKey = function() {
 Animation.prototype.stopPlay = function() {
     this.playing  = false;
     dxlManager.stopAnim(this.id);
+    //stop motor if mode speed
+    for(var c=0;c<this.nbChannels;c++){
+        if(this.channels[c].play) {
+            //console.log("anim.stopPlay:channel:",c," i:",this.channels[c].i," f:",this.channels[c].f);
+            if(this.channels[c].f=="speed"){
+                dxlManager.playKey(this.channels[c].f,this.channels[c].i,0.0);
+                //console.log("----speed:",0);               
+            }
+        }
+    }
+    
 }
 
 
