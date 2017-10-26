@@ -475,8 +475,6 @@ MisGUI.prototype.init =function(){
     //CHECK angle min and max..
     //for now use the name "mapping" for selecting
     this.motorMappings = $("#divMotorSettings").find("[name=mapping]");
-    var divTest = $("#divMotorSettings");
-    console.log("divTEst", divTest);
     for(var i=0;i<this.motorMappings.length;i++) {                      
         $(this.motorMappings[i]).data("index",i);     
     }
