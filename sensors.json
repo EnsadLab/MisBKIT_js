@@ -1,3 +1,23 @@
 {
-  "sensors": []
+  "sensors": [
+    {
+      "device": "CM9",
+      "address": "",
+      "name": "POTARD /pin:0/motor:0/min:20/max:4050",
+      "enabled": true,
+      "threshold": 1681,
+      "tolerance": 100,
+      "valMin": 20,
+      "valMax": 4050,
+      "anim1": "none",
+      "anim2": "none",
+      "cm9enabled": false,
+      "cm9Pin": 1,
+      "motorIndex": 0,
+      "angleIndex": -1,
+      "pin": 0,
+      "cm9": false,
+      "cm9Enabled": true
+    }
+  ]
 }

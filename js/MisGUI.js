@@ -919,14 +919,15 @@ MisGUI.prototype.addSensor = function(settings, id){
     //clone.find("button").attr('data-id', id);
     // and also select/option in this case no???
 
-    clone.find(".cmdTog")
+    //clone.find(".cmdTog") //GRRRRRRRRRRRR 
+    clone.find("[name=sensorOnOff]")
         .attr('data-id', id)
         .attr('checked',settings.enabled)
         .on("click",function(){
+            //console.log("sensorOnOff:",id,v);    
             var v = this.checked ? true : false;
             var id = $(this).data("id");
             sensorManager.sensorEnable(id,v);
-            console.log("sensor TOG:",id,v);    
         });
     
     //var nm = clone.find("[name=sensorName]");
@@ -1003,15 +1004,20 @@ MisGUI.prototype.addSensor = function(settings, id){
     clone.find(".moreSensorSetting").bind('click', sensorSettings);
 
     //Didier ...
+    clone.find("[name=cm9Enabled]")
+        .attr('data-id', id)
+        .attr('checked',settings.cm9Enabled)
+        .on("click",function(){
+        //var v = this.checked ? true : false;
+        sensorManager.changeSetting(id,"cm9Enabled",this.checked ? true : false);
+    });
 
-
-
-    clone.find("[name=cm9pin]").val(0);
-    clone.find("[name=cm9pin]").change(function(){
-        console.log("cm9pin:changed:");
-    })
+    clone.find("[name=cm9Pin]").change(function(){
+        sensorManager.changeSetting(id,"cm9Pin",parseInt($(this).val()));
+    });
 
     this.setSensorAnims();
+    this.changeSensor(settings,id);
     
 }
 
@@ -1035,8 +1041,9 @@ MisGUI.prototype.changeSensor = function(settings, id){
     ssor.find(".slider-range").slider( "option","min",+settings.valMin );
     ssor.find(".slider-range").slider( "option","max",+settings.valMax );
 
-    console.log("cm9pin:",settings.pin);
-    ssor.find("[name=cm9pin]").val(settings.pin);
+    //Didier
+    ssor.find("[name=cm9Enabled]").attr('checked',settings.cm9Enabled)
+    ssor.find("[name=cm9Pin]").val(settings.cm9Pin);
 
 }
 

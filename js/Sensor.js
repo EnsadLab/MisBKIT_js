@@ -9,7 +9,6 @@ Sensor = function () {
         device: "",      //(Didier) Midi,CM9,Robus,OSC,Mike ...
         address: "",     //(Didier) example for Robus "octo_wifi"
         name:"",         //(Didier) example Pour robus "octo_portard2"
-        pin:-1,
         enabled: true,
         threshold:-1,
         tolerance:-1,
@@ -17,9 +16,15 @@ Sensor = function () {
         valMax: -1,
         anim1: "", //TODO: change later in an array or not?
         anim2: "",
+        //pin:-1,
+        cm9enabled: false,
+        cm9Pin: 0,        
         motorIndex: 2,      
         angleIndex: -1 
     };
+    //Suggestion:
+    //   cm9:{ enabled:false , val:7 }, 
+
 
     this.currValue = -1;
     this.ID = -1;
@@ -84,7 +89,7 @@ Sensor.prototype.onName = function(txt){
     for(var i=0;i<args.length;i++){
         var kv = args[i].split(":");
         switch(kv[0]){
-            case "pin":this.s.pin=+kv[1];changes++;break;
+            case "pin":this.s.cm9Pin=+kv[1];changes++;break;
             case "motor":this.s.motorIndex=+kv[1];changes++;break;
             case "min":this.s.valMin=+kv[1];changes++;break;
             case "max":this.s.valMax=+kv[1];changes++;break;

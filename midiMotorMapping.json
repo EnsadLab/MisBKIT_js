@@ -9,7 +9,7 @@
       "nbID": 5
     },
     {
-      "type": "",
+      "type": "CC",
       "enabled": true,
       "motorIndex": 1,
       "port": "",
@@ -17,7 +17,7 @@
       "nbID": 5
     },
     {
-      "type": "",
+      "type": "CC",
       "enabled": true,
       "motorIndex": 2,
       "port": "",
@@ -25,7 +25,7 @@
       "nbID": 8
     },
     {
-      "type": "",
+      "type": "CC",
       "enabled": true,
       "motorIndex": 3,
       "port": "",
@@ -33,7 +33,7 @@
       "nbID": 3
     },
     {
-      "type": "",
+      "type": "CC",
       "enabled": true,
       "motorIndex": 4,
       "port": "",
@@ -41,7 +41,7 @@
       "nbID": 5
     },
     {
-      "type": "",
+      "type": "CC",
       "enabled": true,
       "motorIndex": 5,
       "port": "",

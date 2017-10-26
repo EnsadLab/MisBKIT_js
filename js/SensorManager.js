@@ -55,7 +55,7 @@ SensorManager.prototype.loadSensorSettings = function () {
             this.sensors[id].ID = id;
             this.sensors[id].copySettings(s.sensors[i]);
             //console.log("s... ",this.sensors[id].s);
-            console.log("s... ",this.sensors[id].s.pin);
+            console.log("s... ",this.sensors[id].s.cm9Pin);
         }
 
         settingsManager.copyPasteFromUserFolder("sensors.json");
@@ -79,7 +79,16 @@ SensorManager.prototype.updateGUI = function () {
     //misGUI.setSensorValue("S0",42);
     //misGUI.setSensorRange("S1",50,133,100);
     //misGUI.setSensorTolerance("S0",42);
-    console.log("getPin:",this.getSensorWithPin(7));
+    //console.log("getPin:",this.getSensorWithPin(7));
+}
+
+SensorManager.prototype.changeSetting = function(sensorID,name,value){
+    console.log("SensorManager.changeSetting:",sensorID,name,value);
+    var sensor = this.sensors[sensorID];
+    if(sensor){
+        sensor.s[name]=value;
+        console.log("sensorSetting:",sensor.s);
+    }    
 }
 
 
@@ -111,7 +120,7 @@ SensorManager.prototype.handleSensorValue = function(sensorID, sensorValue){
 SensorManager.prototype.handlePinValues=function(vals){
     var nbv = vals.length;
     $.each(this.sensors,function(i,sensor) {
-        var pin = +sensor.s.pin;
+        var pin = +sensor.s.cm9Pin;
         if( (pin>=0)&&(pin<nbv) ){
             sensor.onValue(vals[pin]);
         }
@@ -150,7 +159,7 @@ SensorManager.prototype.getSensorWithPin = function(sensorPin){
     var result = undefined;  
     $.each(this.sensors, function(i,sensor) {
         //console.log("pin:",sensorPin,sensor.s.pin);
-        if( sensor.s.pin == sensorPin){
+        if( sensor.s.cm9Pin == sensorPin){
             result = sensor;
             return false; //break
         }
