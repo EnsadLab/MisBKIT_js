@@ -97,13 +97,21 @@ function DxlManager(){
 DxlManager.prototype.saveSettings = function () {
     var s = {}; //settings
     s.serialPort = cm9Com.serialName;
-    //s.midiPort = midiPort.getPortName();
-    s.midiPort = midiPortManager.getCurrentPortName();
+    //s.midiPort = midiPortManager.getCurrentPortName();
     s.oscHost = "none";
     s.webSocket = "none";
     
+    s.midiPorts = [];
     s.anims = [];
     s.motors = [];
+
+    for(var p=0; p<midiPortManager.midiPorts.length; p++){
+        console.log(midiPortManager.midiPorts[p].portName);
+        if(midiPortManager.midiPorts[p].enabled){
+            s.midiPorts.push(midiPortManager.midiPorts[p].portName);
+        }
+    }
+
     //TODO GUI order
     for (var k in this.animations) {
         s.anims.push({name: this.animations[k].fileName, key: this.animations[k].keyCode});
@@ -128,9 +136,15 @@ DxlManager.prototype.loadSettings = function () {
         cm9Com.serialName = s.serialPort;
         //console.log("SERIAL NAME:",cm9Com.serialName);
 
-        this.midiPort = s.midiPort;
+        //this.midiPort = s.midiPort;
         this.oscHost = s.oscHost;
         this.webSocket = s.webSocket;
+
+        // scan has already been called by misgui when we enter here.
+        for(var i=0; i<s.midiPorts.length; i++){
+            console.log("opening midi port ", s.midiPorts[i]);
+            midiPortManager.open(s.midiPorts[i]);
+        }
 
         for (var i = 0; i < s.motors.length; i++) {
             this.motors[i].copySettings(s.motors[i]);
@@ -147,7 +161,7 @@ DxlManager.prototype.loadSettings = function () {
         }
 
         console.log("trying to open midiport:",this.midiPort);
-        midiPortManager.openAtStart(this.midiPort);
+        midiPortManager.openMidiAtStart();
 
         misGUI.midiPortManager(this.midiPort); //TODO: what does it do?
 

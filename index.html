@@ -51,13 +51,13 @@
 						<br>Midi :<br>
 						<button class="disconnected" id="btMidi">scan</button>
 						<br>
-						<div class="midi-available">
-							<input class="styled-checkbox" type="checkbox"  >midi<br>
-							<input class="styled-checkbox" type="checkbox"  >midi<br>
-							<input class="styled-checkbox" type="checkbox"  >midi<br>
-							<input class="styled-checkbox" type="checkbox"  >midi<br>
-							<input class="styled-checkbox" type="checkbox"  >midi<br>
-							<input class="styled-checkbox" type="checkbox"  >midi<br>
+						<div class="midi-available" id="midi-available">
+							<input class="styled-checkbox" type="checkbox"  id="midi1">midi<br>
+							<input class="styled-checkbox" type="checkbox" id="midi2" >midi<br>
+							<input class="styled-checkbox" type="checkbox" id="midi3" >midi<br>
+							<input class="styled-checkbox" type="checkbox" id="midi4" >midi<br>
+							<input class="styled-checkbox" type="checkbox" id="midi5" >midi<br>
+							<input class="styled-checkbox" type="checkbox" id="midi6" >midi<br>
 						</div>
 					</div>
 				</div>
@@ -193,16 +193,16 @@
 							</ul>
 							<!-- <input type="text" class="OSC-setting" placeholder="OSC adress" name=""> -->
 
-							<select class= "midi-setting"  id="">
-								<option value="">midi 1</option>
-								<option value="">midi 2</option>
-								<option value="">midi 3</option>
-								<option value="">midi 4</option>
+							<select class= "midi-setting"  id="" name="midiPorts">
+								<option value="midi 1">midi 1</option>
+								<option value="midi 2">midi 2</option>
+								<option value="midi 3">midi 3</option>
+								<option value="midi 4">midi 4</option>
 							</select>
 
 							<label class="switch">
 							  
-						  	<input type="checkbox" class="cmdTog" name="mode">
+						  	<input type="checkbox" class="cmdTog" name="midiMode">
 						  	<div class="slider slider-midi round"></div>
 							</label>
 							

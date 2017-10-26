@@ -1,28 +1,68 @@
 {
   "motorMappings": [
     {
+      "type": "CC",
       "enabled": true,
-      "motorIndex": 1,
-      "cmd": "CC",
-      "nbID": 3
-    },
-    {
-      "enabled": true,
-      "motorIndex": 2,
+      "motorIndex": 0,
+      "port": "",
       "cmd": "CC",
       "nbID": 5
     },
     {
+      "type": "",
       "enabled": true,
-      "motorIndex": 0,
-      "cmd": "note",
+      "motorIndex": 1,
+      "port": "",
+      "cmd": "CC",
+      "nbID": 5
+    },
+    {
+      "type": "",
+      "enabled": true,
+      "motorIndex": 2,
+      "port": "",
+      "cmd": "CC",
       "nbID": 8
     },
     {
+      "type": "",
       "enabled": true,
-      "motorIndex": 0,
+      "motorIndex": 3,
+      "port": "",
       "cmd": "CC",
-      "nbID": 1
+      "nbID": 3
+    },
+    {
+      "type": "",
+      "enabled": true,
+      "motorIndex": 4,
+      "port": "",
+      "cmd": "CC",
+      "nbID": 5
+    },
+    {
+      "type": "",
+      "enabled": true,
+      "motorIndex": 5,
+      "port": "",
+      "cmd": "CC",
+      "nbID": 33
+    },
+    {
+      "type": "",
+      "enabled": true,
+      "motorIndex": 11,
+      "port": "",
+      "cmd": "CC",
+      "nbID": 4
+    },
+    {
+      "type": "",
+      "enabled": true,
+      "motorIndex": 17,
+      "port": "",
+      "cmd": "CC",
+      "nbID": 55
     }
   ]
 }

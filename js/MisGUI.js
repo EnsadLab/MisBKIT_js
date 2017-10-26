@@ -40,37 +40,7 @@ function MisGUI(){
     */
 
     $('#btMidi').on('click',function(){
-        var cl = $(this).prop("class");
-        if(cl=="connected"){
-            $(this).prop("class","disconnected").text("OFF");
-            midiPortManager.close($('#selectMidi').val());
-        }
-        else {
-            if(midiPortManager.open($('#selectMidi').val()) )
-                $(this).prop("class","connected").text("ON");
-            else
-                $('#btMidi').prop("class","disconnected").text("OFF");
-        }
-    });
-
-
-
-    $('#selectMidi').change(function(){
-        if(this.value == "scan") {
-            console.log("MIDI_SCAN");
-            self.scanMidiPorts();
-        }
-        else {
-            /*
-            // take away for now the automatic connection when selecting a new port
-            if( midiPortManager.open(this.value) )
-                $('#btMidi').prop("class","connected").text("ON");
-            else
-                $('#btMidi').prop("class","disconnected").text("OFF");
-            */
-            //TODO: perhaps we should now close all ports and not when a new entry is activated..
-            $('#btMidi').prop("class","disconnected").text("OFF");
-        }
+        self.scanMidiPorts();
     });
 
 
@@ -120,7 +90,6 @@ function MisGUI(){
 MisGUI.prototype.glou = function(){
     console.log("--------GLOU----------");
 };
-
 
 
 MisGUI.prototype.cmd = function(cmd,index,args) {
@@ -223,6 +192,16 @@ MisGUI.prototype.speedMax =function(index,val){
         .setRange(undefined,val)
         .setMinMax(undefined,val);
     //console.log("gui-SPEEDMAX:",val);
+}
+
+//cec
+//midi 
+MisGUI.prototype.midiMode =function(index,value){
+    console.log("SETMIDIMODE:",index," ",value);
+    switch(+value){
+        case 0:motorMappingManager.setMidiMotorMappingType(index,"CC");break;
+        case 1:motorMappingManager.setMidiMotorMappingType(index,"CC");break;
+    }
 }
 
 MisGUI.prototype.mode =function(index,value){
@@ -387,12 +366,71 @@ MisGUI.prototype.motorSettings = function(index,s){
 
 }
 
-MisGUI.prototype.setMappingNumberForMotor = function(motorIndex, nbID) {
-    if(nbID == null){ 
-        $("#divMotors .number-for-motor").eq(motorIndex).val(null); // done explicitly for now..
-    }else{
-        $("#divMotors .number-for-motor").eq(motorIndex).val(nbID);
+//TODO: cec
+MisGUI.prototype.midiMotorSettings = function(motorIndex,midiMappingSettings,midiPorts){
+    // Now that we have more midi configurations, we will use this method for loading config.
+    // until now, we just had to call setMappingNumberForNumber
+
+    //test for toggle:
+    var parent = this.getMotorStg(motorIndex);
+    parent.find("[name=midiMode]").prop("checked",1);
+
+    //Selections
+    var sel = $("#divMotorSettings .midi-setting").eq(motorIndex);
+    console.log("aaaa ", sel.data("id"));
+    //sel.attr("id",motorIndex);
+
+    sel.empty();
+    sel.append($("<option value=" + "'" + "none" + "'>" + "none" + "</option>"));
+    
+    for(var i=0;i<midiPorts.length;i++){
+        var portName = midiPorts[i].portName;
+        if(portName.length>0){
+            //sel.append($("<option value=" + "'" + portName + "' id=" + "'" + motorIndex + "'' name=" + "'" + motorIndex + "'>" + portName + "</option>"));
+            sel.append($("<option name='bla' value='coucou' index='33' >midimidi</option>"));
+            //sel.append($("<option value=" + "'" + portName + "' name=" + "'" + portName + "'>" + portName + "</option>"));
+        }
     }
+    
+    sel.change(function(){ 
+        var id = $(this).data("index"); //!!!parent.parent!!!
+        //var id = this.index;
+        //var id = $(this).prop("id");
+        //var id = $(this).find("name=data-id");
+        var name = "bla";//$(this).find("name");
+        var value = $(this).val();
+        console.log("!!!!!!!!!!!! midi port selection:",id,name,value);
+        //sensorManager.onChangeAnim(id,this.name,this.value);
+        console.log(this.name,this.value);
+    });
+
+    //test cec
+    //this.selectMidiMappingPort(motorIndex,"misB Bus 1","misB Bus 1");
+
+}
+
+MisGUI.prototype.setMappingNumberForMotor = function(motorIndex, nbID) {
+    //console.log("##### ", motorIndex,nbID);
+    if(nbID == null){ 
+        //$("#divMotors .number-for-motor").eq(motorIndex).val(null); // done explicitly for now.. //cec
+        $("#divMotorSettings").find("[name=mapping]").eq(motorIndex).val(null);
+    }else{
+        //$("#divMotors .number-for-motor").eq(motorIndex).val(nbID); //cec
+        $("#divMotorSettings").find("[name=mapping]").eq(motorIndex).val(nbID);
+
+    }
+
+}
+
+//cec
+MisGUI.prototype.selectMidiMappingPort = function(motorID, wich, name){        
+    var div = this.getMotorStg(motorID);
+
+    //var sel = div.find(".listAnims [name="+wich+"]");
+    var sel = div.find(".midi-setting [name="+wich+"]");
+    if( (name==undefined)||(name.length<1) )
+        name = "none";
+    sel.val(name);
 }
 
 MisGUI.prototype.init =function(){
@@ -431,15 +469,23 @@ MisGUI.prototype.init =function(){
         clone.appendTo(parent);
     }
 
-    this.motorMappings = $("#divMotors .number-for-motor"); 
-    for(var i=0;i<this.motorMappings.length;i++) {                        
+    //this.motorMappings = $("#divMotors .number-for-motor"); //cec
+    //this.motorMappings = $("#divMotorSettings .set-value");
+    //TODO: TALK WITH DIDIER... there are multiple set-value that are generated: 35 of them
+    //CHECK angle min and max..
+    //for now use the name "mapping" for selecting
+    this.motorMappings = $("#divMotorSettings").find("[name=mapping]");
+    var divTest = $("#divMotorSettings");
+    console.log("divTEst", divTest);
+    for(var i=0;i<this.motorMappings.length;i++) {                      
         $(this.motorMappings[i]).data("index",i);     
     }
 
-    this.motorMappings.on("change",function(){        
+    this.motorMappings.on("change",function(){  
         var index = $(this).data("index");        
-        var val = $(this).val();                
-        motorMappingManager.setMidiMotorMapping(index,parseInt(val),"CC"); // Gui only treats CC midi mappings for now
+        var val = $(this).val();       
+        //console.log("misgui:: setmidimotormapping will be called", index, val);          
+        motorMappingManager.setMidiMotorMappingIndex(index,parseInt(val)); // Gui only treats CC midi mappings for now
     });
 
 
@@ -624,6 +670,15 @@ MisGUI.prototype.init =function(){
         $(robusOnOff).prop("class","disconnected").text("OFF");        
         $("#robusTxt").val("");        
     });
+
+
+    /*
+    inputs.change(function(toto){
+        var id = $("#btAdvID").val();
+        var addr = +this.name;
+        var val  = +this.value;
+        console.log("inputs.change:",id,addr," ",val);
+    });*/
 
     //this.scanSerial();    /*Didier*/
     this.scanMidiPorts();
@@ -900,12 +955,15 @@ MisGUI.prototype.addSensor = function(settings, id){
     });
 
     clone.find("[name=anim1]").val(settings.amim1);
-    clone.find("[name=anim2]").val(settings.amim2);    
-    clone.find(".listAnims").change(function(){
+    clone.find("[name=anim2]").val(settings.amim2);  
+    
+
+    clone.find(".listAnims").change(function(){ 
         var id = $(this).data("id"); //!!!parent.parent!!!
         console.log("animselect:",id,this.name,this.value);
         sensorManager.onChangeAnim(id,this.name,this.value);
     });
+   
 
     var thres = settings.threshold;
     var min = settings.valMin;
@@ -976,6 +1034,7 @@ MisGUI.prototype.changeSensor = function(settings, id){
 // wich = "anim1" or "anim2" cf html 
 MisGUI.prototype.selectSensorAnim = function(sensorID, wich, name){        
     var div = this.divSensor(sensorID);
+
     var sel = div.find(".listAnims [name="+wich+"]");
     if( (name==undefined)||(name.length<1) )
         name = "none";
@@ -1099,26 +1158,52 @@ MisGUI.prototype.scanSerial = function(){
 
 MisGUI.prototype.scanMidiPorts = function(){
     var self = this;
-    var selector = $("#selectMidi");
+    var sel = $("#midi-available");
+    
     console.log("Scanning midi ports");
-    selector.empty();
+
+    sel.empty();
+
     if(midiPortManager){  
         for(var i=0;i<100;i++){
             var n = midiPortManager.getPortName(i);
             if(n){
                 console.log("Found midi port: " + n);
                 midiPortManager.addMidiPort(n,i);
-                selector.append($("<option value=" + "'" + n + "'>" + n + "</option>"));
+                sel.append($("<input class=" + "'" + "styled-checkbox" + "'" + "type=" + "'" + "checkbox"
+                + "'" + "id=" + "'" + n + "'>" + n + "<br>"));
             }else
                 break;
         }
-        selector.append($("<option value='scan' >scan</option>"));
+        $("#midi-available :input[type='checkbox']").each(
+            function() {
+                var portName =  $(this).prop("id");
+                console.log("PortName ", portName);
+                $(this).prop("checked",midiPortManager.isMidiPortEnabled(portName));
+                $(this).change(function(){
+                    var flag = $(this).prop("checked");
+                    console.log("change ..... TO ",flag);
+                    if(flag){
+                        midiPortManager.open(portName);
+                    }else{
+                        midiPortManager.close(portName);
+                    }
+                });
+            }
+        );  
     }
 };
 
-MisGUI.prototype.simSelectPort = function(portName){
-    $('#selectMidi').val(portName);
-    $('#btMidi').click();
+
+MisGUI.prototype.simSelectMidiPorts = function(){
+
+    $("#midi-available :input[type='checkbox']").each(
+        function() {
+            var portName =  $(this).prop("id");
+            console.log("PortName ", portName);
+            $(this).prop("checked",midiPortManager.isMidiPortEnabled(portName));
+        }
+    ); 
 }
 
 MisGUI.prototype.scanIPv4 = function(){

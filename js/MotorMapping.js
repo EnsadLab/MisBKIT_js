@@ -5,10 +5,10 @@
 MotorMapping = function () {
     
     this.m = { //settings
-        //type:"",
+        type:"",
         enabled: true,
         motorIndex:-1,
-        //port:-1,
+        port:"",
         cmd:"", 
         nbID:-1
         //valMin: -1,
