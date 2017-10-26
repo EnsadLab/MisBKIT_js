@@ -41,11 +41,12 @@ Sensor.prototype.getSettings = function(){
 
 Sensor.prototype.onValue = function(val){
     //console.log("sensor:",this.s.name,val);
-    misGUI.setSensorValue(this.ID,val);
+    var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin);
+    misGUI.setSensorValue(this.ID,val,nv*100);
     this.currValue = val;
     if(this.s.enabled){
         if(this.s.motorIndex>=0){
-            var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin)
+            //var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin)
             dxlManager.onNormControl(this.s.motorIndex,nv);
         }
         //TODO anims

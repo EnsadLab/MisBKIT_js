@@ -1,13 +1,28 @@
 {
   "sensors": [
     {
+      "device": "CM9",
+      "address": "",
+      "name": "POTARD",
+      "pin": 1,
+      "enabled": false,
+      "threshold": 1681,
+      "tolerance": 20,
+      "valMin": 20,
+      "valMax": 4050,
+      "anim1": "none",
+      "anim2": "none",
+      "motorIndex": 0,
+      "angleIndex": -1
+    },
+    {
       "device": "Midi",
       "address": "7",
       "name": "sensor_distance",
       "pin": 7,
       "enabled": false,
-      "threshold": 50,
-      "tolerance": 30,
+      "threshold": 49,
+      "tolerance": 4,
       "valMin": 0,
       "valMax": 100,
       "anim1": "anim1",

@@ -873,7 +873,7 @@ MisGUI.prototype.addSensor = function(settings, id){
             var v = this.checked ? true : false;
             var id = $(this).data("id");
             sensorManager.sensorEnable(id,v);
-            //console.log("sensorEnable:",id,v);    
+            console.log("sensor TOG:",id,v);    
         });
     
     //var nm = clone.find("[name=sensorName]");
@@ -906,6 +906,7 @@ MisGUI.prototype.addSensor = function(settings, id){
         console.log("animselect:",id,this.name,this.value);
         sensorManager.onChangeAnim(id,this.name,this.value);
     });
+
 
     var thres = settings.threshold;
     var min = settings.valMin;
@@ -944,13 +945,21 @@ MisGUI.prototype.addSensor = function(settings, id){
     clone.show();
 
     clone.find(".moreSensorSetting").bind('click', sensorSettings);
-    
+
+    //Didier ...
+
+
+
+    clone.find("[name=cm9pin]").val(0);
+    clone.find("[name=cm9pin]").change(function(){
+        console.log("cm9pin:changed:");
+    })
+
     this.setSensorAnims();
     
 }
 
 MisGUI.prototype.changeSensor = function(settings, id){
-    //console.log("ChangSensor:",id,settings);
     var self = this;
     var ssor = this.divSensor(id);
 
@@ -969,6 +978,10 @@ MisGUI.prototype.changeSensor = function(settings, id){
     //ssor.find(".slider-range").slider.max = +settings.valMax;
     ssor.find(".slider-range").slider( "option","min",+settings.valMin );
     ssor.find(".slider-range").slider( "option","max",+settings.valMax );
+
+    console.log("cm9pin:",settings.pin);
+    ssor.find("[name=cm9pin]").val(settings.pin);
+
 }
 
 
@@ -982,9 +995,10 @@ MisGUI.prototype.selectSensorAnim = function(sensorID, wich, name){
     sel.val(name);
 }
 
-MisGUI.prototype.setSensorValue = function(sensorID, sensorValue){
+MisGUI.prototype.setSensorValue = function(sensorID, sensorValue, percent){
     var div = this.divSensor(sensorID);
     div.find(".live-value").html(sensorValue);
+    div.find(".live-value-ui").css("left", percent+"%");
 }
 
 MisGUI.prototype.getSensorTolerance = function(sensorID){
