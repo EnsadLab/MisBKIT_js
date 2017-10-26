@@ -17,10 +17,14 @@ Sensor = function () {
         anim1: "", //TODO: change later in an array or not?
         anim2: "",
         //pin:-1,
-        cm9enabled: false,
+        cm9Enabled: false,
         cm9Pin: 0,        
-        motorIndex: 2,      
-        angleIndex: -1 
+        //motorIndex: 2,      
+        //angleIndex: -1,
+        fromMotorEnabled: false,
+        fromMotorIndex: 0,        
+        toMotorEnabled: false,
+        toMotorIndex: 0
     };
     //Suggestion:
     //   cm9:{ enabled:false , val:7 }, 
@@ -50,9 +54,9 @@ Sensor.prototype.onValue = function(val){
     misGUI.setSensorValue(this.ID,val,nv*100);
     this.currValue = val;
     if(this.s.enabled){
-        if(this.s.motorIndex>=0){
+        if( this.s.toMotorEnabled ){
             //var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin)
-            dxlManager.onNormControl(this.s.motorIndex,nv);
+            dxlManager.onNormControl(this.s.toMotorIndex,nv);
         }
         //TODO anims
         sensorManager.handleSensorValue(this.ID,val); 
@@ -90,11 +94,11 @@ Sensor.prototype.onName = function(txt){
         var kv = args[i].split(":");
         switch(kv[0]){
             case "pin":this.s.cm9Pin=+kv[1];changes++;break;
-            case "motor":this.s.motorIndex=+kv[1];changes++;break;
+            case "motor":this.s.toMotorIndexr=+kv[1];changes++;break;
             case "min":this.s.valMin=+kv[1];changes++;break;
             case "max":this.s.valMax=+kv[1];changes++;break;
             case "dev":this.s.device=kv[1];changes++;break;
-            case "pos":this.s.angleIndex=+kv[1];changes++;break;
+            case "pos":this.s.fromMotorIndex=+kv[1];changes++;break;
             case "addr":this.s.address=kv[1];changes++;break;
         }
     }

@@ -2,22 +2,39 @@
   "sensors": [
     {
       "device": "CM9",
-      "address": "",
-      "name": "POTARD /pin:0/motor:0/min:20/max:4050",
-      "enabled": true,
+      "address": "7",
+      "name": "Potentiometre",
+      "enabled": false,
       "threshold": 1681,
-      "tolerance": 100,
+      "tolerance": 300,
       "valMin": 20,
       "valMax": 4050,
       "anim1": "none",
       "anim2": "none",
-      "cm9enabled": false,
-      "cm9Pin": 1,
-      "motorIndex": 0,
-      "angleIndex": -1,
-      "pin": 0,
-      "cm9": false,
-      "cm9Enabled": true
+      "cm9Enabled": false,
+      "cm9Pin": 0,
+      "fromMotorEnabled": false,
+      "fromMotorIndex": 0,
+      "toMotorEnabled": false,
+      "toMotorIndex": 0
+    },
+    {
+      "device": "DXL",
+      "address": "0",
+      "name": "From Motor",
+      "enabled": true,
+      "threshold": 0,
+      "tolerance": 20,
+      "valMin": -150,
+      "valMax": 150,
+      "anim1": "none",
+      "anim2": "none",
+      "cm9Enabled": false,
+      "cm9Pin": 0,
+      "fromMotorEnabled": true,
+      "fromMotorIndex": 0,
+      "toMotorEnabled": false,
+      "toMotorIndex": 0
     }
   ]
 }

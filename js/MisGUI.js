@@ -995,7 +995,16 @@ MisGUI.prototype.addSensor = function(settings, id){
             sensorManager.saveSensorSettings();            
         }
     });
-    
+
+    clone.find(".cmdOnOff").on("click",function(){
+        console.log("cmdOnOff:",$(this).data("id"),this.name,this.checked ? true : false);
+        sensorManager.changeSetting($(this).data("id"),this.name,this.checked ? true : false);
+    })
+
+    clone.find(".cmdInt").change(function(){
+        console.log("cmdInt:",$(this).data("id"),this.name,parseInt($(this).val()));
+        sensorManager.changeSetting($(this).data("id"),this.name,parseInt($(this).val()));
+    })
     
     parent.append(clone); 
     //this.setSensorRange(id,settings.valMin,settings.valMax,settings.threshold);//after append
@@ -1004,6 +1013,7 @@ MisGUI.prototype.addSensor = function(settings, id){
     clone.find(".moreSensorSetting").bind('click', sensorSettings);
 
     //Didier ...
+    /*
     clone.find("[name=cm9Enabled]")
         .attr('data-id', id)
         .attr('checked',settings.cm9Enabled)
@@ -1011,10 +1021,10 @@ MisGUI.prototype.addSensor = function(settings, id){
         //var v = this.checked ? true : false;
         sensorManager.changeSetting(id,"cm9Enabled",this.checked ? true : false);
     });
-
     clone.find("[name=cm9Pin]").change(function(){
         sensorManager.changeSetting(id,"cm9Pin",parseInt($(this).val()));
     });
+    */
 
     this.setSensorAnims();
     this.changeSensor(settings,id);
@@ -1041,9 +1051,13 @@ MisGUI.prototype.changeSensor = function(settings, id){
     ssor.find(".slider-range").slider( "option","min",+settings.valMin );
     ssor.find(".slider-range").slider( "option","max",+settings.valMax );
 
-    //Didier
-    ssor.find("[name=cm9Enabled]").attr('checked',settings.cm9Enabled)
+    //Didier ... à automatiser ?
+    ssor.find("[name=cm9Enabled]").attr('checked',settings.cm9Enabled);
     ssor.find("[name=cm9Pin]").val(settings.cm9Pin);
+    ssor.find("[name=fromMotorEnabled]").attr('checked',settings.fromMotorEnabled);
+    ssor.find("[name=fromMotorIndex]").val(settings.fromMotorIndex);
+    ssor.find("[name=toMotorEnabled]").attr('checked',settings.toMotorEnabled);
+    ssor.find("[name=toMotorIndex]").val(settings.toMotorIndex);
 
 }
 

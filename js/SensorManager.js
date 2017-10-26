@@ -120,18 +120,24 @@ SensorManager.prototype.handleSensorValue = function(sensorID, sensorValue){
 SensorManager.prototype.handlePinValues=function(vals){
     var nbv = vals.length;
     $.each(this.sensors,function(i,sensor) {
-        var pin = +sensor.s.cm9Pin;
-        if( (pin>=0)&&(pin<nbv) ){
-            sensor.onValue(vals[pin]);
+        if( sensor.s.cm9Enabled ){
+            var pin = +sensor.s.cm9Pin;
+            if( (pin>=0)&&(pin<nbv) ){
+                sensor.onValue(vals[pin]);
+            }
         }
     });
 }
 
-//Motor position -> sensor.s.angleIndex
+//Motor position -> sensor.s.fromMotorIndex
 SensorManager.prototype.handleDxlPos=function(index,val){
+    console.log("handleDxlPos:",index,val);
     $.each(this.sensors,function(i,sensor) {
-        if(+sensor.s.angleIndex == index){
-            sensor.onValue(val);
+        //console.log("handleDxlPos:",i,sensor.s.fromMotorEnabled);
+        if(sensor.s.fromMotorEnabled){
+            if(+sensor.s.fromMotorIndex == index){
+                sensor.onValue(val);
+            }
         }
     });        
 }
@@ -154,6 +160,7 @@ SensorManager.prototype.startAnim = function(animPlaying, animStopping){
     
 
 }
+
 
 SensorManager.prototype.getSensorWithPin = function(sensorPin){
     var result = undefined;  
