@@ -32,12 +32,12 @@ MotorMappingManager.prototype.loadMappingSettings = function () {
         var s = JSON.parse(json);
         //console.log(s);
         // copy old versions to see if some motor mappings had been erased
-        var oldMotorMappings = JSON.parse(JSON.stringify(this.motorMappings))
+       // var oldMotorMappings = JSON.parse(JSON.stringify(this.motorMappings))
 
         // empty current motorMappings array
-        for (var i = this.motorMappings.length-1; i >= 0; i--) {
+        /*for (var i = this.motorMappings.length-1; i >= 0; i--) {
             this.motorMappings.splice(i, 1);
-        }
+        }*/
 
         // create new motorMappings from json file
         for(var i=0;i<s.motorMappings.length;i++){
@@ -49,7 +49,7 @@ MotorMappingManager.prototype.loadMappingSettings = function () {
         }
 
         // check whether some motor mappings had been erased. If yes, udpate to gui to "?"
-        for(var i=0; i < oldMotorMappings.length; i++){
+        /*for(var i=0; i < oldMotorMappings.length; i++){
             var found = false;
             for(var j=0; j<this.motorMappings.length; j++){
                 if( this.motorMappings[j].m.cmd == "CC" && 
@@ -61,10 +61,11 @@ MotorMappingManager.prototype.loadMappingSettings = function () {
             if(!found){
                 misGUI.setMappingNumberForMotor(oldMotorMappings[i].m.motorIndex, null);
             }
-        }
+        }*/
         settingsManager.copyPasteFromUserFolder("midiMotorMapping.json"); // TODO: to check!
         this.updateGUI();
     }
+
 }
 
  
@@ -105,33 +106,49 @@ MotorMappingManager.prototype.getMotorIndex = function(type,port,cmd,nbID){
     return motorIDs;
 };
 
-//called when a CC entry has changed in the GUI
-MotorMappingManager.prototype.setMidiMotorMapping = function(motorIndex,nbID,cmd){
+//called when the index entry has changed in the GUI
+MotorMappingManager.prototype.setMidiMotorMappingIndex = function(motorIndex,nbID){
     var found = false;
     for(var i=0; i<this.motorMappings.length; i++){
-        if( // this.motorMappings[i].m.type == "midi" &&
-           // this.motorMappings[i].m.port == port &&
-            this.motorMappings[i].m.cmd == cmd &&
-            this.motorMappings[i].m.motorIndex == motorIndex)
+        if(this.motorMappings[i].m.motorIndex == motorIndex)
         {
             this.motorMappings[i].m.nbID = nbID;
             found = true;
         }
     }
-    if(!found){
-        var motorMapping = new MotorMapping();
-        motorMapping.m.enabled = true;
-        //motorMapping.m.type = "midi";
-        //motorMapping.m.port = "";
-        motorMapping.m.cmd = "CC"; // when changed from the gui, we assume it is CC
-        motorMapping.m.motorIndex = motorIndex;
-        motorMapping.m.nbID = nbID;
-        this.motorMappings.push(motorMapping);
-    }
-
+    if(!found) console.log("-> should not happen: motor index not found when mapping");
     // save changes into the file
     this.saveMappingSettings();
-}
+};
+
+
+MotorMappingManager.prototype.setMidiMotorMappingType = function(motorIndex,midiType){
+    var found = false;
+    for(var i=0; i<this.motorMappings.length; i++){
+        if(this.motorMappings[i].m.motorIndex == motorIndex)
+        {
+            this.motorMappings[i].m.type = midiType;
+            found = true;
+        }
+    }
+    if(!found) console.log("-> should not happen: motor index not found when mapping");
+    // save changes into the file
+    this.saveMappingSettings();
+};
+
+MotorMappingManager.prototype.setMidiMotorMappingPort = function(motorIndex,port){
+    var found = false;
+    for(var i=0; i<this.motorMappings.length; i++){
+        if(this.motorMappings[i].m.motorIndex == motorIndex)
+        {
+            this.motorMappings[i].m.port = port;
+            found = true;
+        }
+    }
+    if(!found) console.log("-> should not happen: motor index not found when mapping");
+    // save changes into the file
+    this.saveMappingSettings();
+};
 
 //TODO: not called yet, but might be useful in the future
 MotorMappingManager.prototype.setMotorMapping = function(type,port,cmd,motorIndex,nbID){
@@ -172,6 +189,8 @@ MotorMappingManager.prototype.updateGUI = function () {
             this.motorMappings[i].m.cmd == "CC" && this.motorMappings[i].m.enabled){
                 misGUI.setMappingNumberForMotor(this.motorMappings[i].m.motorIndex, this.motorMappings[i].m.nbID);
         }
+        //test:
+        misGUI.midiMotorSettings(this.motorMappings[i].m.motorIndex,this.motorMappings[i].m,midiPortManager.midiPorts);
     }
 }
 
