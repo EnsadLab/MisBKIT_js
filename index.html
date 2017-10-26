@@ -20,24 +20,26 @@
 				<div class="plug">
 					<!--button class="gear"><img src="assets/settings.png"></button-->
 					<p>
-						CM9 <span class="status" id="cm9Text"></span>
-						<input type="checkbox" class="stopAll cmdTog" name ="enable"title="enable/disable"> 
-
+						CM9 <!--span class="status" id="cm9Text"></span-->
+						<!-- TODO cf MisGUI $('#btcm9').on('click'... ON OFF ERROR -->
+						<input id="btcm9" type="checkbox" class="stopAll cmdTog" name ="enable" title="enable/disable"> 
 					</p>
 
 					<div class="content">
 						<!--button class="gear" data-id="pasglop"><img src="assets/settings.png"></button-->
 						<br>CM9 :<br>
-						<button class="disconnected" id="btcm9">Off</button>
+						<!-- cm9Text: TODO texte d'information -->
+						<br><span class="status" id="cm9Text">...</span>
+						<!-- button class="disconnected" id="btcm9">Off</button-->
 						<br>
-						<input type="checkbox"  name ="glou">SINGLE<br>
+						<!-- input type="checkbox"  name ="glou">SINGLE<br>
 						<br>
 						<input class="styled-checkbox" type="checkbox"  >CM9_1<br>
 						<input class="styled-checkbox" type="checkbox"  >CM9_2<br>
 						<input class="styled-checkbox" type="checkbox"  >CM9_3<br>
 						<input class="styled-checkbox" type="checkbox"  >CM9_4<br>
 						<input class="styled-checkbox" type="checkbox"  >CM9_5<br>
-						<input class="styled-checkbox" type="checkbox"  >CM9_6<br>
+						<input class="styled-checkbox" type="checkbox"  >CM9_6<br -->
 					</div>
 
 				</div>
@@ -69,10 +71,25 @@
 					</p>
 					<div class="content">
 						<br>OSC :<br>
-						<select name="" id="selectOSC">
+						<br>
+						<hr>
+						Local IP:<input type="text" class="name" placeholder="255.255.255.255" size="18" title="address IP">
+						<!--input type="number" class="OSC-setting" placeholder="port" name=""-->
+						Local Port:
+						<input type="number" class="set-value" align="right" name="oscLocalPort" placeholder="6666">
+						<hr>
+						Remote IP:<input type="text" class="name" placeholder="255.255.255.255" size="18" title="address IP">
+						<!--input type="number" class="OSC-setting" placeholder="port" name=""-->
+						Remote Port:
+						<input type="number" class="set-value" align="right" name="oscRemotePort" placeholder="7777">
+
+					<hr>
+						+
+						<br>
+						<!--select name="" id="selectOSC">
 							<option value="">disabled</option>
 						</select>
-						<button class="disconnected" id="btOSC">OFF</button>
+						<button class="disconnected" id="btOSC">OFF</button-->
 					</div>
 				</div>
 
@@ -464,6 +481,7 @@
 
 							<section>
 								<h4>OSC</h4>
+								
 								<input type="checkbox" class="osc-btn cmdTog" name ="enable"title="enable/disable">
 								<div class="info">adresse : /sensor/proximity</div>
 								<!-- <input type="text" class="OSC-setting" placeholder="OSC adress" name=""> -->
