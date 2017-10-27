@@ -86,7 +86,16 @@ SensorManager.prototype.changeSetting = function(sensorID,name,value){
     console.log("SensorManager.changeSetting:",sensorID,name,value);
     var sensor = this.sensors[sensorID];
     if(sensor){
+        //tester if sensor.s[name] exists ???
         sensor.s[name]=value;
+        switch(name){
+                case "valMin":
+                case "valMax":
+                    //update min max tolerance threshold
+                    misGUI.changeSensor(sensor.s,sensorID);                
+                    break;
+                default:            
+        }
         console.log("sensorSetting:",sensor.s);
     }    
 }

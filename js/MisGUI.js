@@ -998,13 +998,6 @@ MisGUI.prototype.addSensor = function(settings, id){
         }
     });
 
-    clone.find("[name=valMin]").change(function(){
-        console.log("valMin:");
-    });
-    clone.find("[name=valMax]").change(function(){
-        console.log("valMax:");        
-    });
-
     clone.find(".cmdOnOff").on("click",function(){
         console.log("cmdOnOff:",$(this).data("id"),this.name,this.checked ? true : false);
         sensorManager.changeSetting($(this).data("id"),this.name,this.checked ? true : false);
@@ -1014,7 +1007,13 @@ MisGUI.prototype.addSensor = function(settings, id){
         console.log("cmdInt:",$(this).data("id"),this.name,parseInt($(this).val()));
         sensorManager.changeSetting($(this).data("id"),this.name,parseInt($(this).val()));
     })
-    
+
+    clone.find(".cmdString").change(function(){
+        console.log("cmdString:",$(this).data("id"),this.name,$(this).val());
+        sensorManager.changeSetting($(this).data("id"),this.name,$(this).val());
+    })
+
+
     parent.append(clone); 
     //this.setSensorRange(id,settings.valMin,settings.valMax,settings.threshold);//after append
     clone.show();
@@ -1055,12 +1054,10 @@ MisGUI.prototype.changeSensor = function(settings, id){
     //rng.find(".currentV").html(settings.threshold);
     rng.find(".maxV").html(settings.valMax);
 
-    //ssor.find(".slider-range").slider.min = +settings.valMin;
-    //ssor.find(".slider-range").slider.max = +settings.valMax;
     ssor.find(".slider-range").slider( "option","min",+settings.valMin );
     ssor.find(".slider-range").slider( "option","max",+settings.valMax );
 
-    //Didier ... à automatiser ?
+    //Didier ...
     ssor.find("[name=valMin]").val(settings.valMin);
     ssor.find("[name=valMax]").val(settings.valMax);
     
@@ -1097,6 +1094,7 @@ MisGUI.prototype.getSensorTolerance = function(sensorID){
 }
 MisGUI.prototype.setSensorTolerance = function(sensorID,val){
     var div = this.divSensor(sensorID);
+    //....
 }
 
 MisGUI.prototype.setSensorAnims = function(names){
@@ -1312,8 +1310,11 @@ MisGUI.prototype.temperature = function(index,val){
     $(".thermo").eq(index).html(val+"°");
 }
 
-
-
+MisGUI.prototype.setSensorRange = function(id,min,max,tolerance,threshold){
+    var div = this.divSensor(id);
+    toleranceUI(div.find(".tolerance-ui"),tolerance,threshold,min,max);
+    sensorAnimWidth(div.find(".sensor-range"),min,max,threshold,tolerance);
+}
 
 function sensorAnimWidth(element, min, max, cur, tolVal){
 

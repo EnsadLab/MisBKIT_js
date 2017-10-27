@@ -88,7 +88,7 @@ Sensor.prototype.init = function(){
 
 Sensor.prototype.onName = function(txt){
     var args = txt.split("/");
-    //console.log("*****************split:",args);
+    console.log("sensor onName *****************split:",args);
     var changes = 0;
     for(var i=0;i<args.length;i++){
         var kv = args[i].split(":");
