@@ -968,6 +968,7 @@ MisGUI.prototype.addSensor = function(settings, id){
     var thres = settings.threshold;
     var min = settings.valMin;
     var max = settings.valMax;
+
     var rng = clone.find(".sensor-range");
     rng.find(".minV").html(min);
     rng.find(".currentV").html(thres);
@@ -994,6 +995,13 @@ MisGUI.prototype.addSensor = function(settings, id){
             sensorManager.onThreshold(id,v);
             sensorManager.saveSensorSettings();            
         }
+    });
+
+    clone.find("[name=valMin]").change(function(){
+        console.log("valMin:");
+    });
+    clone.find("[name=valMax]").change(function(){
+        console.log("valMax:");        
     });
 
     clone.find(".cmdOnOff").on("click",function(){
@@ -1052,6 +1060,9 @@ MisGUI.prototype.changeSensor = function(settings, id){
     ssor.find(".slider-range").slider( "option","max",+settings.valMax );
 
     //Didier ... à automatiser ?
+    ssor.find("[name=valMin]").val(settings.valMin);
+    ssor.find("[name=valMax]").val(settings.valMax);
+    
     ssor.find("[name=cm9Enabled]").attr('checked',settings.cm9Enabled);
     ssor.find("[name=cm9Pin]").val(settings.cm9Pin);
     ssor.find("[name=fromMotorEnabled]").attr('checked',settings.fromMotorEnabled);
