@@ -84,15 +84,17 @@ MidiPortManager.prototype.addMidiPort = function(portName, portID){
     var found = false;
     for(var i=0; i<this.midiPorts.length; i++){
         if(this.midiPorts[i].portName == portName){
-            console.log("Midiport " + portName + " has already been added");
+            //console.log("Midiport " + portName + " has already been added");
+            this.midiPorts[i].enabledOnGUI = true;
             found = true;
             break;
         }
     }
     if(!found){
-        console.log("Midiport " + portName + " has been added");
+        //console.log("Midiport " + portName + " has been added");
         try{ 
             var midiPortNew = new MidiPort(); 
+            midiPortNew.enabledOnGUI = true;
             midiPortNew.portName = portName;
             midiPortNew.portID = portID;
             this.midiPorts.push(midiPortNew);
@@ -100,6 +102,12 @@ MidiPortManager.prototype.addMidiPort = function(portName, portID){
     }
     
 };
+
+MidiPortManager.prototype.hidePortsFromGUI = function(){
+    for(var i=0; i<this.midiPorts.length; i++){
+        this.midiPorts[i].enabledOnGUI = false;
+    }
+}
 
 MidiPortManager.prototype.getPortName = function(index) {
     if(index >= 0 && index < this.midiIn.getPortCount() ){
@@ -147,4 +155,34 @@ MidiPortManager.prototype.isValidMidiPort = function(portName){
         }
     }
     return false;
+}
+
+MidiPortManager.prototype.getNbMidiPorts = function(){
+    return this.midiPorts.length;
+}
+
+MidiPortManager.prototype.getNbMidiPortsOnGUI = function(){
+    var counter = 0;
+    for(var i=0; i<this.midiPorts.length; i++){
+        if(this.midiPorts[i].enabledOnGUI){
+            counter++;
+        }
+    }
+    return counter;
+}
+
+MidiPortManager.prototype.getFirstMidiPort = function(){
+    if(this.midiPorts.length >= 1){
+        return this.midiPorts[0].portName;
+    }
+    return "";
+}
+
+MidiPortManager.prototype.getFirstMidiPortOnGUI = function(){
+    for(var i=0; i<this.midiPorts.length; i++){
+        if(this.midiPorts[i].enabledOnGUI){
+            return this.midiPorts[i].portName;
+        }
+    }
+    return "";
 }

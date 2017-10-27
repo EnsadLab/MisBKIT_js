@@ -35,9 +35,9 @@ MotorMappingManager.prototype.loadMappingSettings = function () {
        // var oldMotorMappings = JSON.parse(JSON.stringify(this.motorMappings))
 
         // empty current motorMappings array
-        /*for (var i = this.motorMappings.length-1; i >= 0; i--) {
+        for (var i = this.motorMappings.length-1; i >= 0; i--) {
             this.motorMappings.splice(i, 1);
-        }*/
+        }
 
         // create new motorMappings from json file
         for(var i=0;i<s.motorMappings.length;i++){
@@ -63,11 +63,31 @@ MotorMappingManager.prototype.loadMappingSettings = function () {
             }
         }*/
         settingsManager.copyPasteFromUserFolder("midiMotorMapping.json"); // TODO: to check!
+
+        // set to default value when entries are empty
+        this.checkEmptyEntry(); 
+
         this.updateGUI();
     }
 
 }
 
+MotorMappingManager.prototype.checkEmptyEntry = function(){
+
+    for(var i=0; i<this.motorMappings.length; i++){
+        if(this.motorMappings[i].m.cmd.length < 1){
+            this.motorMappings[i].m.cmd = "CC";
+        }
+        // cannot put nothing actually
+        if(this.motorMappings[i].m.nbID == null){
+            this.motorMappings[i].m.nbID = this.motorMappings[i].m.motorIndex;
+        }
+        if(midiPortManager.getNbMidiPortsOnGUI() == 1 && this.motorMappings[i].m.port.length < 1){
+            this.motorMappings[i].m.port = midiPortManager.getFirstMidiPortOnGUI();
+        }
+    }
+
+}
  
 MotorMappingManager.prototype.isMapped = function(type,port,cmd,nbID){
 
@@ -79,9 +99,9 @@ MotorMappingManager.prototype.isMapped = function(type,port,cmd,nbID){
         //console.log(this.motorMappings[i].m.cmd + " = " + cmd);
         //console.log(this.motorMappings[i].m.nbID + " = " + nbID);
 
-        if( this.motorMappings[i].m.enabled &&
+        if( //this.motorMappings[i].m.enabled &&
             //this.motorMappings[i].m.type == type &&
-            //this.motorMappings[i].m.port == port &&
+            this.motorMappings[i].m.port == port &&
             this.motorMappings[i].m.cmd == cmd &&
             this.motorMappings[i].m.nbID == nbID)
         {
@@ -96,7 +116,7 @@ MotorMappingManager.prototype.getMotorIndex = function(type,port,cmd,nbID){
     for(var i=0; i<this.motorMappings.length; i++){
         if( this.motorMappings[i].m.enabled && 
             //this.motorMappings[i].m.type == type &&
-            //this.motorMappings[i].m.port == port &&
+            this.motorMappings[i].m.port == port &&
             this.motorMappings[i].m.cmd == cmd &&
             this.motorMappings[i].m.nbID == nbID)
         {
@@ -122,12 +142,12 @@ MotorMappingManager.prototype.setMidiMotorMappingIndex = function(motorIndex,nbI
 };
 
 
-MotorMappingManager.prototype.setMidiMotorMappingType = function(motorIndex,midiType){
+MotorMappingManager.prototype.setMidiMotorMappingCmd = function(motorIndex,cmd){
     var found = false;
     for(var i=0; i<this.motorMappings.length; i++){
         if(this.motorMappings[i].m.motorIndex == motorIndex)
         {
-            this.motorMappings[i].m.type = midiType;
+            this.motorMappings[i].m.cmd = cmd;
             found = true;
         }
     }
@@ -150,47 +170,12 @@ MotorMappingManager.prototype.setMidiMotorMappingPort = function(motorIndex,port
     this.saveMappingSettings();
 };
 
-//TODO: not called yet, but might be useful in the future
-MotorMappingManager.prototype.setMotorMapping = function(type,port,cmd,motorIndex,nbID){
-    var found = false;
-    for(var i=0; i<this.motorMappings.length; i++){
-        if( this.motorMappings[i].m.type == type &&
-            this.motorMappings[i].m.port == port &&
-            this.motorMappings[i].m.cmd == cmd &&
-            this.motorMappings[i].m.motorIndex == motorIndex)
-        {
-            this.motorMappings[i].m.nbID = nbID;
-            found = true;
-        }
-    }
-    if(!found){
-        var motorMapping = new MotorMapping();
-        motorMapping.m.enabled = true;
-        motorMapping.m.type = type;
-        motorMapping.m.port = port;
-        motorMapping.m.cmd = cmd;
-        motorMapping.m.motorIndex = motorIndex;
-        motorMapping.m.nbID = nbID;
-        this.motorMappings.push(motorMapping);
-    }
-
-    // save changes into the file
-    this.saveMappingSettings();
-
-};
-
 
 MotorMappingManager.prototype.updateGUI = function () {
     
     for(var i=0; i<this.motorMappings.length; i++){
-        //console.log(this.motorMappings[i]);
-        // for now, we only consider midi CC mapping in the gui
-        if(/*this.motorMappings[i].m.type == "midi" &&*/ 
-            this.motorMappings[i].m.cmd == "CC" && this.motorMappings[i].m.enabled){
-                misGUI.setMappingNumberForMotor(this.motorMappings[i].m.motorIndex, this.motorMappings[i].m.nbID);
-        }
-        //test:
-        misGUI.midiMotorSettings(this.motorMappings[i].m.motorIndex,this.motorMappings[i].m,midiPortManager.midiPorts);
+        //if(this.motorMappings[i].m.enabled)
+        misGUI.midiMotorSettings(this.motorMappings[i].m,midiPortManager.midiPorts);
     }
 }
 
@@ -203,8 +188,8 @@ MotorMappingManager.prototype.saveMappingSettings = function () {
 
         var nbm = this.motorMappings.length;
         for (var i = 0; i < nbm; i++) {
-            if(this.motorMappings[i].m.nbID != null && !isNaN(this.motorMappings[i].m.nbID))
-                s.motorMappings.push(this.motorMappings[i].getSettings());
+            //if(this.motorMappings[i].m.nbID != null && !isNaN(this.motorMappings[i].m.nbID))
+            s.motorMappings.push(this.motorMappings[i].getSettings());
         }
 
         var json = JSON.stringify(s, null, 2);
@@ -222,10 +207,10 @@ MotorMappingManager.prototype.onMetaKey=function(char){
 MotorMappingManager.prototype.onKeyCode = function(keyCode){
     if(keyCode=='R'){ // reset the gui according to the changed elements in the json
         console.log("Resetting motor mapping into GUI");
-        this.loadMappingSettings();
+        //this.loadMappingSettings();
         // Bug... the copyying file does not work.. why? because we call it from a key event?
         // for now, we do this... a bit weird I know but it works so.
-        this.saveMappingSettings();
+        //this.saveMappingSettings();
     }
 }
 

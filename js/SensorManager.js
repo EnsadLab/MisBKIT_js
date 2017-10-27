@@ -186,9 +186,11 @@ SensorManager.prototype.saveSensorSettings = function () {
         });    
     
         var json = JSON.stringify(s, null, 2);
-        fs.writeFileSync(__dirname + "/sensors.json", json);
-        settingsManager.copyPasteToUserFolder("sensors.json");
-        //console.log(json);
+        //Didier: dont overwrite default file
+        //fs.writeFileSync(__dirname + "/sensors.json", json);
+        //settingsManager.copyPasteToUserFolder("sensors.json");
+        settingsManager.saveToConfigurationFolder("sensors.json",json);
+        console.log(json);
 };
 
 // Simulates the reloading of the sensors.json file

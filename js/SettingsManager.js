@@ -3,11 +3,9 @@
 */
 
 function SettingsManager(){
-
     this.misBKITFolder  = "";
     this.animationFolder = "";
     this.configurationFolder = "";
-
 };
 
     
@@ -133,5 +131,10 @@ SettingsManager.prototype.copyPasteFromUserFolder = function(filename){
     fs.writeFileSync(this.configurationFolder + filename, fs.readFileSync(__dirname + "/" + filename));
     //fs.createReadStream(this.configurationFolder + filename)
       //      .pipe(fs.createWriteStream(__dirname + "/" + filename));
+}
+
+//Didier (used by SensorManager.saveSensorSettings)
+SettingsManager.prototype.saveToConfigurationFolder = function(filename,data){
+    fs.writeFileSync(this.configurationFolder + filename, data );    
 }
 
