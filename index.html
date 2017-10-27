@@ -417,7 +417,7 @@
 					<li class="single-sensor ui-state-default">
 
 						<button class="close"><img src="assets/close.png" alt=""></button>
-						<input type="checkbox" class="power cmdTog" name ="enable"title="enable/disable"> 
+						<input type="checkbox" class="power cmdTog" name ="sensorOnOff" title="enable/disable"> 
 
 						<input type="text" class="name" placeholder="Sensor name" name="sensorName" size="58">
 
@@ -512,18 +512,18 @@
 							</section>
 							<section>
 								<h4>CM9</h4>
-								<input type="checkbox" class="CM9-btn cmdTog" name ="enable"title="enable/disable">
-								<input type="number" class="OSC-setting" placeholder="PIN" name="">
+								<input type="checkbox" class="CM9-btn cmdOnOff" name ="cm9Enabled" title="enable/disable">
+								<input type="number" class="OSC-setting cmdInt" placeholder="PIN" name="cm9Pin" title="Analog Pin">
 							</section>
 							<section>
 								<h4>Mapping to motors :</h4>
-								<input type="checkbox" class="power cmdTog" name ="enable"title="enable/disable">
-								<input type="number" class="OSC-setting" placeholder="nb" name="">
+								<input type="checkbox" class="power cmdOnOff" name ="toMotorEnabled" >
+								<input type="number" class="OSC-setting cmdInt" placeholder="nb" name="toMotorIndex">
 							</section>
 							<section>
 								<h4>Mapping from motors :</h4>
-								<input type="checkbox" class="power cmdTog" name ="enable"title="enable/disable">
-								<input type="number" class="OSC-setting" placeholder="nb" name="">
+								<input type="checkbox" class="power cmdOnOff" name ="fromMotorEnabled" >
+								<input type="number" class="OSC-setting cmdInt" placeholder="nb" name="fromMotorIndex">
 							</section>
 							<button class="set">OK</button>
 

@@ -8,6 +8,10 @@
       "nbID": 0
     },
     {
+<<<<<<< HEAD
+=======
+      "type": "CC",
+>>>>>>> 9ec7dc4c147e1f389af9abdfade44804c96bb862
       "enabled": true,
       "motorIndex": 1,
       "port": "",
@@ -15,6 +19,10 @@
       "nbID": 1
     },
     {
+<<<<<<< HEAD
+=======
+      "type": "CC",
+>>>>>>> 9ec7dc4c147e1f389af9abdfade44804c96bb862
       "enabled": true,
       "motorIndex": 2,
       "port": "",
@@ -22,6 +30,10 @@
       "nbID": 2
     },
     {
+<<<<<<< HEAD
+=======
+      "type": "CC",
+>>>>>>> 9ec7dc4c147e1f389af9abdfade44804c96bb862
       "enabled": true,
       "motorIndex": 3,
       "port": "",
@@ -29,10 +41,33 @@
       "nbID": 3
     },
     {
+<<<<<<< HEAD
+=======
+      "type": "CC",
+>>>>>>> 9ec7dc4c147e1f389af9abdfade44804c96bb862
       "enabled": true,
       "motorIndex": 4,
       "port": "",
       "cmd": "CC",
+<<<<<<< HEAD
+=======
+      "nbID": 5
+    },
+    {
+      "type": "CC",
+      "enabled": true,
+      "motorIndex": 5,
+      "port": "",
+      "cmd": "CC",
+      "nbID": 33
+    },
+    {
+      "type": "",
+      "enabled": true,
+      "motorIndex": 11,
+      "port": "",
+      "cmd": "CC",
+>>>>>>> 9ec7dc4c147e1f389af9abdfade44804c96bb862
       "nbID": 4
     },
     {
