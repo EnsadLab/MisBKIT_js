@@ -16,6 +16,10 @@ Sensor = function () {
         valMax: -1,
         anim1: "", //TODO: change later in an array or not?
         anim2: "",
+        midiEnabled: false,
+        midiPort: "",
+        midiCmd: false, //true:note, false:CC
+        midiMapping: -1,
         //pin:-1,
         cm9Enabled: false,
         cm9Pin: 0,        

@@ -490,12 +490,12 @@
 
 							<section>
 								<h4>Midi</h4>
-								<input type="checkbox" class="midi-btn" name ="enable"title="enable/disable">
+								<input type="checkbox" class="midi-btn cmdOnOff" name ="midiEnabled"title="enable/disable">
 								
 
-								<select class= "midi-setting full"  id="">
+								<select class= "midi-setting full cmdString"  id="" name="midiPort">
 									<option value="">midi 1</option>
-									<option value="">midi 2</option>
+									<option value="midi 2">midi 2</option>
 									<option value="">midi 3</option>
 									<option value="">midi 4</option>
 								</select>
@@ -503,11 +503,11 @@
 
 								<label class="switch">
 							  	
-							  	<input type="checkbox" class="cmdTog" name="mode">
+							  	<input type="checkbox" class="cmdTog cmdOnOff" name="midiCmd">
 							  	<div class="slider round"></div>
 								</label>
 
-								<input type="number" class="OSC-setting " placeholder="nb" name="">
+								<input type="number" class="OSC-setting cmdInt" placeholder="nb" name="midiMapping">
 
 							</section>
 							<section>

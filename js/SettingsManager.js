@@ -91,7 +91,7 @@ SettingsManager.prototype.chooseMisBKITFolder = function() {
         });
     } else { // if directories have already been created!
         dxlManager.folderIsReady(this.animationFolder);
-        this.synchroniseFiles();
+       // this.synchroniseFiles();
         motorMappingManager.folderIsReady(this.configurationFolder);
         sensorManager.folderIsReady(this.configurationFolder);
     }

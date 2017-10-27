@@ -58,7 +58,7 @@ SensorManager.prototype.loadSensorSettings = function () {
             console.log("s... ",this.sensors[id].s.cm9Pin);
         }
 
-        settingsManager.copyPasteFromUserFolder("sensors.json");
+        //settingsManager.copyPasteFromUserFolder("sensors.json");
         this.updateGUI();
         robusManager.connect(); 
 

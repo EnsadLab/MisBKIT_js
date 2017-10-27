@@ -424,7 +424,7 @@ MisGUI.prototype.setMappingNumberForMotor = function(motorIndex, nbID) {
     }
 }
 
-//cec
+
 MisGUI.prototype.selectMidiMappingPort = function(motorID, name){        
     var div = this.getMotorStg(motorID);
     //var sel = div.find(".listAnims [name="+wich+"]");
@@ -998,6 +998,17 @@ MisGUI.prototype.addSensor = function(settings, id){
         }
     });
 
+    // TODO: @Didier: une manière plus élégante?
+    var midiSelection = clone.find("[name=midiPort]");
+    midiSelection.empty();
+    for(var i=0; i<midiPortManager.midiPorts.length; i++){
+        if(midiPortManager.midiPorts[i].enabledOnGUI){ // TODO: ou tester juste enable.. a voir le 2-3
+            var p = midiPortManager.midiPorts[i].portName;
+            midiSelection.append($("<option value=" + "'" + p + "'>" + p + "</option>"));
+        }
+    }
+
+
     clone.find(".cmdOnOff").on("click",function(){
         console.log("cmdOnOff:",$(this).data("id"),this.name,this.checked ? true : false);
         sensorManager.changeSetting($(this).data("id"),this.name,this.checked ? true : false);
@@ -1060,6 +1071,11 @@ MisGUI.prototype.changeSensor = function(settings, id){
     //Didier ...
     ssor.find("[name=valMin]").val(settings.valMin);
     ssor.find("[name=valMax]").val(settings.valMax);
+
+    ssor.find("[name=midiEnabled]").attr('checked',settings.midiEnabled);
+    ssor.find("[name=midiPort]").val(settings.midiPort);
+    ssor.find("[name=midiMapping]").val(settings.midiMapping);
+    ssor.find("[name=midiCmd]").attr('checked',settings.midiCmd);
     
     ssor.find("[name=cm9Enabled]").attr('checked',settings.cm9Enabled);
     ssor.find("[name=cm9Pin]").val(settings.cm9Pin);
