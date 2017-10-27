@@ -82,8 +82,8 @@ MotorMappingManager.prototype.checkEmptyEntry = function(){
         if(this.motorMappings[i].m.nbID == null){
             this.motorMappings[i].m.nbID = this.motorMappings[i].m.motorIndex;
         }
-        if(midiPortManager.getNbMidiPorts() == 1 && this.motorMappings[i].m.port.length < 1){
-            this.motorMappings[i].m.port = midiPortManager.getFirstMidiPort();
+        if(midiPortManager.getNbMidiPortsOnGUI() == 1 && this.motorMappings[i].m.port.length < 1){
+            this.motorMappings[i].m.port = midiPortManager.getFirstMidiPortOnGUI();
         }
     }
 

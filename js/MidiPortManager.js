@@ -161,9 +161,28 @@ MidiPortManager.prototype.getNbMidiPorts = function(){
     return this.midiPorts.length;
 }
 
+MidiPortManager.prototype.getNbMidiPortsOnGUI = function(){
+    var counter = 0;
+    for(var i=0; i<this.midiPorts.length; i++){
+        if(this.midiPorts[i].enabledOnGUI){
+            counter++;
+        }
+    }
+    return counter;
+}
+
 MidiPortManager.prototype.getFirstMidiPort = function(){
     if(this.midiPorts.length >= 1){
         return this.midiPorts[0].portName;
+    }
+    return "";
+}
+
+MidiPortManager.prototype.getFirstMidiPortOnGUI = function(){
+    for(var i=0; i<this.midiPorts.length; i++){
+        if(this.midiPorts[i].enabledOnGUI){
+            return midiPorts[i].portName;
+        }
     }
     return "";
 }

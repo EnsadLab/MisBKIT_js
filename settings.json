@@ -1,9 +1,7 @@
 {
   "oscHost": "none",
   "webSocket": "none",
-  "midiPorts": [
-    "misB Bus 1"
-  ],
+  "midiPorts": [],
   "anims": [],
   "motors": [
     {
