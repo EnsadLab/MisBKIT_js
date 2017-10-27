@@ -25,6 +25,7 @@
 
 MidiPort = function () {
     this.enabled = false;
+    this.enabledOnGUI = false;
     this.midiIn = new MIDI.input();
     this.callback = null;
     this.portName = "";
@@ -35,7 +36,7 @@ MidiPort = function () {
         if(self.enabled) {
 
             /*
-            http://computermusicresource.com/MIDI.Commands.html
+            www.computermusicresource.com/MIDI.Commands.html
             m[0] : status (128-255) -> (128-159):notes, (176-191): CC (176=CC chanel 1, 177=CC chanel 2...), ...
             m[1] : data 1 (0-127) 
             m[2] : data 2 (0-127)
@@ -60,7 +61,27 @@ MidiPort = function () {
             }else if(msg[0] >= 176 && msg[0] <= 191) cmd = "CC";
             else console.log("New MIDI command with number " + msg[0] + " -> needs to be added in code");
             
+            // if it is CC, we take the controller value
             if(cmd == "CC"){
+                if(motorMappingManager.isMapped("midi",self.portName,cmd,msg[1])){
+                    var motorIDs = motorMappingManager.getMotorIndex("midi",self.portName,cmd,msg[1]);
+                    for(var i=0; i<motorIDs.length; i++){
+                        dxlManager.onMidi(motorIDs[i], "midi", msg[2]);
+                    }
+                }
+            }else if(cmd == "note"){ // if it is note, we take the channel value (-> no controller value)
+                var channel;
+                if(msg[0] <= 143) channel = msg[0] - 128 + 1; // notes OFF
+                else channel = msg[0] - 144 + 1; // notes ON
+                //console.log("chanel ",channel);
+                if(motorMappingManager.isMapped("midi",self.portName,cmd,channel)){
+                    var motorIDs = motorMappingManager.getMotorIndex("midi",self.portName,cmd,channel);
+                    for(var i=0; i<motorIDs.length; i++){
+                         dxlManager.onMidi(motorIDs[i], "midi", msg[1]); //quick n dirty
+                    }
+                }
+            }
+            /*if(cmd == "CC"){
                 if(motorMappingManager.isMapped("midi",self.portName,cmd,msg[1])){
                     var motorIDs = motorMappingManager.getMotorIndex("midi",self.portName,cmd,msg[1]);
                     for(var i=0; i<motorIDs.length; i++){
@@ -85,7 +106,7 @@ MidiPort = function () {
                 }else{
                     dxlManager.onMidi(channel-1, "midi", msg[1]); 
                 }
-            }
+            }*/
 
             if (self.callback)
                 self.callback(msg[1], msg[2] / 127);
