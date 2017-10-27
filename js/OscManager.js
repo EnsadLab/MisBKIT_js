@@ -5,6 +5,10 @@
 
 OscManager = function () {
 
+    this.inputPort = 5555;
+    var outputPort = 6666;
+    var outputIP   = "localhost";
+
     this.oscUserReceiver = null; // reads values from user on port 4444
     this.oscCm9Receiver = null; // reads commands from CM9 on port ? 5555
     
