@@ -62,7 +62,7 @@ MotorMappingManager.prototype.loadMappingSettings = function () {
                 misGUI.setMappingNumberForMotor(oldMotorMappings[i].m.motorIndex, null);
             }
         }*/
-        settingsManager.copyPasteFromUserFolder("midiMotorMapping.json"); // TODO: to check!
+        //settingsManager.copyPasteFromUserFolder("midiMotorMapping.json"); // TODO: to check!
 
         // set to default value when entries are empty
         this.checkEmptyEntry(); 
@@ -193,8 +193,9 @@ MotorMappingManager.prototype.saveMappingSettings = function () {
         }
 
         var json = JSON.stringify(s, null, 2);
-        fs.writeFileSync(__dirname + "/midiMotorMapping.json", json);
-        settingsManager.copyPasteToUserFolder("midiMotorMapping.json");
+        //fs.writeFileSync(__dirname + "/midiMotorMapping.json", json);
+        //settingsManager.copyPasteToUserFolder("midiMotorMapping.json");
+        settingsManager.saveToConfigurationFolder("midiMotorMapping.json",json);
         //console.log(json);
 };
 

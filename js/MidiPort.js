@@ -69,6 +69,13 @@ MidiPort = function () {
                         dxlManager.onMidi(motorIDs[i], "midi", msg[2]);
                     }
                 }
+                if(sensorManager.isMapped("sensor",self.portName,cmd,msg[1])){
+                    var mappedSensors = sensorManager.getSensorIds("sensor",self.portName,cmd,msg[1]);
+                    for(var i=0; i<mappedSensors.length; i++){
+                        //console.log("CC",mappedSensors[i],msg[2]);
+                        sensorManager.onMidi(mappedSensors[i],"sensor",msg[2]);
+                    }
+                }
             }else if(cmd == "note"){ // if it is note, we take the channel value (-> no controller value)
                 var channel;
                 if(msg[0] <= 143) channel = msg[0] - 128 + 1; // notes OFF
@@ -78,6 +85,13 @@ MidiPort = function () {
                     var motorIDs = motorMappingManager.getMotorIndex("midi",self.portName,cmd,channel);
                     for(var i=0; i<motorIDs.length; i++){
                          dxlManager.onMidi(motorIDs[i], "midi", msg[1]); //quick n dirty
+                    }
+                }
+                if(sensorManager.isMapped("sensor",self.portName,cmd,channel)){
+                    var mappedSensors = sensorManager.getSensorIds("sensor",self.portName,cmd,channel);
+                    for(var i=0; i<mappedSensors.length; i++){
+                        //console.log("note",mappedSensors[i],msg[1]);
+                        sensorManager.onMidi(mappedSensors[i],"sensor",msg[1]);
                     }
                 }
             }

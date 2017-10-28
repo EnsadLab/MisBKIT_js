@@ -81,7 +81,7 @@ SettingsManager.prototype.chooseMisBKITFolder = function() {
                         console.log('failed to create Configurations directory', err);
                     } else {
                         console.log('created Configurations directory');
-                        self.synchroniseFiles();
+                        self.copyFiles();
                         motorMappingManager.folderIsReady(self.configurationFolder);
                         sensorManager.folderIsReady(self.configurationFolder);
 
@@ -116,6 +116,11 @@ SettingsManager.prototype.synchroniseFiles = function(){
         settingsManager.copyPasteToUserFolder('sensors.json');
     }
 
+}
+
+SettingsManager.prototype.copyFiles = function(){
+    this.copyPasteToUserFolder('midiMotorMapping.json');
+    this.copyPasteToUserFolder('sensors.json');
 }
 
 SettingsManager.prototype.copyPasteToUserFolder = function(filename){

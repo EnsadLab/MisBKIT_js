@@ -62,6 +62,7 @@ SensorManager.prototype.loadSensorSettings = function () {
         this.updateGUI();
         robusManager.connect(); 
 
+
     }
 
 }
@@ -271,5 +272,40 @@ SensorManager.prototype.onChangeAnim = function(id,wich,txt){
     this.sensors[id].s[wich]=txt;    
     console.log("changed anim:",id,wich,txt);
     this.saveSensorSettings();
+}
+
+SensorManager.prototype.isMapped = function(type,port,cmd,nbID){
+    for(id in this.sensors){
+        var s = this.sensors[id].s;
+        var cmd_bool = false;
+        if(cmd == "note") cmd_bool = true;
+        if(s.midiPort == port && s.midiCmd == cmd_bool && s.midiMapping == nbID && s.midiEnabled){
+            return true;
+        }
+    }
+    return false;
+}
+
+SensorManager.prototype.getSensorIds = function(type,port,cmd,nbID){
+    var sensorIDs = new Array();
+    for(id in this.sensors){
+        var s = this.sensors[id].s;
+        var cmd_bool = false;
+        if(cmd == "note") cmd_bool = true;
+        if(s.midiPort == port && s.midiCmd == cmd_bool && s.midiMapping == nbID && s.midiEnabled){
+            sensorIDs.push(id);
+        }
+    }
+    return sensorIDs;
+}
+
+SensorManager.prototype.onMidi = function(id,arg){
+    /*
+    var sensor = this.sensors[id];
+    var mappped_arg = arg*(sensor.valMax-sensor.valMin)/127 + sensor.valMin;
+    console.log("val", sensor.valMax, sensor.valMin);
+    console.log("mappped_arg",mappped_arg);
+    this.sensors[id].onValue(arg);
+    */
 }
 

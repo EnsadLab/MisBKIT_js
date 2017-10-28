@@ -998,17 +998,6 @@ MisGUI.prototype.addSensor = function(settings, id){
         }
     });
 
-    // TODO: @Didier: une manière plus élégante?
-    var midiSelection = clone.find("[name=midiPort]");
-    midiSelection.empty();
-    for(var i=0; i<midiPortManager.midiPorts.length; i++){
-        if(midiPortManager.midiPorts[i].enabledOnGUI){ // TODO: ou tester juste enable.. a voir le 2-3
-            var p = midiPortManager.midiPorts[i].portName;
-            midiSelection.append($("<option value=" + "'" + p + "'>" + p + "</option>"));
-        }
-    }
-
-
     clone.find(".cmdOnOff").on("click",function(){
         console.log("cmdOnOff:",$(this).data("id"),this.name,this.checked ? true : false);
         sensorManager.changeSetting($(this).data("id"),this.name,this.checked ? true : false);
@@ -1071,6 +1060,16 @@ MisGUI.prototype.changeSensor = function(settings, id){
     //Didier ...
     ssor.find("[name=valMin]").val(settings.valMin);
     ssor.find("[name=valMax]").val(settings.valMax);
+
+    // TODO: @Didier: une manière plus élégante?
+    var midiSelection = ssor.find("[name=midiPort]");
+    midiSelection.empty();
+    for(var i=0; i<midiPortManager.midiPorts.length; i++){
+        if(midiPortManager.midiPorts[i].enabledOnGUI){ // TODO: ou tester juste enable.. a voir le 2-3
+            var p = midiPortManager.midiPorts[i].portName;
+            midiSelection.append($("<option value=" + "'" + p + "'>" + p + "</option>"));
+        }
+    }
 
     ssor.find("[name=midiEnabled]").attr('checked',settings.midiEnabled);
     ssor.find("[name=midiPort]").val(settings.midiPort);
@@ -1254,6 +1253,9 @@ MisGUI.prototype.scanMidiPorts = function(){
         for(var i=0; i<motorMappingManager.motorMappings.length; i++){
             var m = motorMappingManager.motorMappings[i].m;
             this.updateMidiMotorSelection(m.motorIndex,m.port,midiPortManager.midiPorts);
+        }
+        for(id in sensorManager.sensors){
+            this.changeSensor(sensorManager.sensors[id].s,id)
         }
     }
 };
