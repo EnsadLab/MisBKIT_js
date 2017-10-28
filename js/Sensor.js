@@ -20,18 +20,15 @@ Sensor = function () {
         midiPort: "",
         midiCmd: false, //true:note, false:CC
         midiMapping: -1,
-        //pin:-1,
         cm9Enabled: false,
         cm9Pin: 0,        
-        //motorIndex: 2,      
-        //angleIndex: -1,
         fromMotorEnabled: false,
         fromMotorIndex: 0,        
         toMotorEnabled: false,
         toMotorIndex: 0
     };
     //Suggestion:
-    //   cm9:{ enabled:false , val:7 }, 
+    //   cm9:{ enabled:false , val:7 },
 
 
     this.currValue = -1;

@@ -99,9 +99,11 @@ MisGUI.prototype.cmd = function(cmd,index,args) {
     }
 }
 
+/*
 MisGUI.prototype.openOSC = function(remoteAddr,remotePort) {
     dxlManager.openOSC(remoteAddr,remotePort);
 };
+*/
 
 MisGUI.prototype.cm9State=function(state){
     //console.log("MisGUI.prototype.cm9State",state);
@@ -670,21 +672,22 @@ MisGUI.prototype.init =function(){
         $("#robusTxt").val("");        
     });
 
-
-    /*
-    inputs.change(function(toto){
-        var id = $("#btAdvID").val();
-        var addr = +this.name;
-        var val  = +this.value;
-        console.log("inputs.change:",id,addr," ",val);
-    });*/
-
     //this.scanSerial();    /*Didier*/
     this.scanMidiPorts();
-    this.scanIPv4();
+    this.scanIPv4(); //Didier
 
+    //this.showOSC();
 
 }//init
+
+MisGUI.prototype.showOSC = function(settings){
+    console.log("osc:",settings);
+    var div = $("#divOSC");
+    div.find("[name=oscLocalIP]").val(settings.oscLocalIP);
+    div.find("[name=oscLocalPort]").val(settings.oscLocalPort);
+    div.find("[name=oscRemoteIP]").val(settings.oscRemoteIP);
+    div.find("[name=oscRemotePort]").val(settings.oscRemotePort);    
+}
 
 
 MisGUI.prototype.clearDxlRegs = function(id) {
@@ -751,7 +754,7 @@ MisGUI.prototype.divAnim = function(animId){
 }
 
 MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
-    console.log("MisGUI:addAnim:", animId, " ", aName);
+    console.log("================MisGUI:addAnim:", animId, " ", aName);
 
     var self = this;
     //var parent = $("#divAnims");
@@ -912,7 +915,8 @@ MisGUI.prototype.addSensor = function(settings, id){
     //clone.children().data("id", id); //only first level !!! !!! !!!
     clone.find('*').data("id", id); //only first level !!! !!! !!!
 
-    toleranceUI(clone.find(".tolerance-ui"), settings.tolerance, settings.threshold, settings.valMin, settings.valMax);
+    //toleranceUI(clone.find(".tolerance-ui"), settings.tolerance, settings.threshold, settings.valMin, settings.valMax);
+    //sensorAnimWidth appelle toleranceUI
     sensorAnimWidth(clone.find(".sensor-range"), settings.valMin, settings.valMax, settings.threshold, settings.tolerance);
 
     //clone.find("input").attr('data-id', id);
@@ -944,8 +948,10 @@ MisGUI.prototype.addSensor = function(settings, id){
         .val(settings.tolerance)
         .on("change",function(){
             sensorManager.onTolerance($(this).data("id"), $(this).val());
-            toleranceUI(clone.find(".tolerance-ui"), settings.tolerance, settings.threshold, settings.valMin, settings.valMax);
-
+            //toleranceUI(clone.find(".tolerance-ui"), settings.tolerance, settings.threshold, settings.valMin, settings.valMax);
+            clone.find(".slider-range").slider("option","toler",settings.tolerance);
+            sensorAnimWidth(clone.find(".sensor-range"), settings.valMin, settings.valMax, settings.threshold, settings.tolerance);
+            //clone inside callback ????
         });
 
     clone.find(".close").on("click", function () {
@@ -967,29 +973,35 @@ MisGUI.prototype.addSensor = function(settings, id){
 
 
     var thres = settings.threshold;
-    var min = settings.valMin;
-    var max = settings.valMax;
+    var smin = settings.valMin;
+    var smax = settings.valMax;
 
     var rng = clone.find(".sensor-range");
-    rng.find(".minV").html(min);
+    rng.find(".minV").html(smin);
     rng.find(".currentV").html(thres);
-    rng.find(".maxV").html(max);
+    rng.find(".maxV").html(smax);
     
     clone.find(".slider-range").slider({
-        min: min,
-        max: max,
+        min: smin,
+        max: smax,
         value: thres,
+        toler: 789,
         slide: function( ev, ui ) {
-            // console.log("ev:",ev);
+            //console.log("slidetol:",$(this).slider("option","toler"));
             var id = $(this).data("id");
             var v  = $(this).slider("value");
             $(this).parent().find(".currentV").html(v);        
             sensorManager.onThreshold(id,v);
             // sensorAnimWidth(ev, min, max, v);
-            sensorAnimWidth(clone.find(".sensor-range"), min, max, v, settings.tolerance);
-
-
-
+            //console.log("slide:",id,min,max);
+            //sensorAnimWidth(clone.find(".sensor-range"), min, max, v, settings.tolerance); 
+            //GRRRRRRRRRRRRRRRRRRRRRR min max settings !!!!!
+            sensorAnimWidth(clone.find(".sensor-range")
+                    , $(this).slider("option","min")
+                    , $(this).slider("option","max")
+                    , v
+                    , $(this).slider("option","toler")
+            );
         },
         stop: function(ev,ui) {
             var v  = $(this).slider("value");
@@ -1039,6 +1051,11 @@ MisGUI.prototype.addSensor = function(settings, id){
     
 }
 
+MisGUI.prototype.logMinMax = function(id){
+    var ssor = this.divSensor(id);
+    console.log("------------3 changeSensor:",ssor.find(".slider-range").slider("option","max"));
+}    
+
 MisGUI.prototype.changeSensor = function(settings, id){
     var self = this;
     var ssor = this.divSensor(id);
@@ -1047,20 +1064,27 @@ MisGUI.prototype.changeSensor = function(settings, id){
     //ssor.find(".name").val(settings.name);
     //ssor.find(".tolerance").val(settings.tolerance);
     //ssor.find("[name=anim1]").val(settings.amim1);
-    //ssor.find("[name=anim2]").val(settings.amim2);    
-
+    //ssor.find("[name=anim2]").val(settings.amim2);
+    
     var rng = ssor.find(".sensor-range");
     rng.find(".minV").html(settings.valMin);
     //rng.find(".currentV").html(settings.threshold);
     rng.find(".maxV").html(settings.valMax);
 
-    ssor.find(".slider-range").slider( "option","min",+settings.valMin );
-    ssor.find(".slider-range").slider( "option","max",+settings.valMax );
+    //console.log("------------7 changeSensor:",ssor.find(".slider-range").slider("option","max"));
+    var sld = ssor.find(".slider-range");
+    sld.slider( "option","min",+settings.valMin );
+    sld.slider( "option","max",+settings.valMax );
+    sld.slider( "option","toler",+settings.tolerance );
+        
+    //console.log("RNG:",rng.slider( "option","min"));
 
     //Didier ...
     ssor.find("[name=valMin]").val(settings.valMin);
     ssor.find("[name=valMax]").val(settings.valMax);
-
+    //toleranceUI(ssor.find(".tolerance-ui"), settings.tolerance, settings.threshold, settings.valMin, settings.valMax);    
+    sensorAnimWidth(ssor.find(".sensor-range"),settings.valMin,settings.valMax,settings.threshold, settings.tolerance);
+    
     // TODO: @Didier: une manière plus élégante?
     var midiSelection = ssor.find("[name=midiPort]");
     midiSelection.empty();
@@ -1082,7 +1106,7 @@ MisGUI.prototype.changeSensor = function(settings, id){
     ssor.find("[name=fromMotorIndex]").val(settings.fromMotorIndex);
     ssor.find("[name=toMotorEnabled]").attr('checked',settings.toMotorEnabled);
     ssor.find("[name=toMotorIndex]").val(settings.toMotorIndex);
-
+    
 }
 
 
@@ -1109,6 +1133,7 @@ MisGUI.prototype.getSensorTolerance = function(sensorID){
 }
 MisGUI.prototype.setSensorTolerance = function(sensorID,val){
     var div = this.divSensor(sensorID);
+    console.log("setSensorTolerance:")
     //....
 }
 
@@ -1273,23 +1298,23 @@ MisGUI.prototype.simSelectMidiPorts = function(){
 }
 
 MisGUI.prototype.scanIPv4 = function(){
-    /*Didier
     var self = this;
-    var selector = $("#selectOSC");
-    selector.empty();
+    //var selector = $("#selectOSC");
+    //selector.empty();
     try {
         var interfaces = OS.networkInterfaces();
         for (var k in interfaces) {
             for (var k2 in interfaces[k]) {
                 var addr = interfaces[k][k2];
                 if (addr.internal == false && (addr.family == "IPv4")) {
-                    selector.append($("<option value=" + "'" + addr.address + "'>" + addr.address + "</option>"));
+                    console.log("localIP:",addr.address);
+                    //selector.append($("<option value=" + "'" + addr.address + "'>" + addr.address + "</option>"));
                 }
             }
         }
     }catch(e){}
-    selector.append($("<option value='scan' >scan</option>"));
-    */
+    //selector.append($("<option value='scan' >scan</option>"));
+    //*/
 }
 
 MisGUI.prototype.robusOnOff = function(onoff){
@@ -1329,20 +1354,23 @@ MisGUI.prototype.temperature = function(index,val){
 }
 
 MisGUI.prototype.setSensorRange = function(id,min,max,tolerance,threshold){
+    console.log("setSensorRange:");
     var div = this.divSensor(id);
-    toleranceUI(div.find(".tolerance-ui"),tolerance,threshold,min,max);
+    //toleranceUI(div.find(".tolerance-ui"),tolerance,threshold,min,max);
     sensorAnimWidth(div.find(".sensor-range"),min,max,threshold,tolerance);
 }
 
 function sensorAnimWidth(element, min, max, cur, tolVal){
 
+ 
     var total = max+Math.abs(min)
 
     selec = element.parent();
 
     percent = Math.abs(min-cur)*100/total;
 
-
+    //console.log("sensorAnimWidth:",min,max,percent);
+    
     var anim1 = selec.find(".select-anim-1");
     var anim2 = selec.find(".select-anim-2");
     var curentVal = selec.find(".currentV");
@@ -1370,11 +1398,9 @@ function toleranceUI(element, val, cur, min, max){
     element.width(val*100/total + "%");
 
     percent = Math.abs(min-cur)*100/total;
-
-    
+   
     var half_w = parseInt(element[0].style.width)/2;
-    console.log(percent);
-
+    //console.log(percent);
 
     element.css("left", percent - half_w +"%");
 

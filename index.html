@@ -64,24 +64,24 @@
 					</div>
 				</div>
 
-				<div class="plug">
+				<div id="divOSC" class="plug">
 					<p>
 						OSC  <span class="status"></span>
-						<input type="checkbox" class="stopAll cmdTog" name ="enable"title="enable/disable">
+						<input type="checkbox" class="stopAll cmdOnOff" name ="enable"title="enable/disable">
 					</p>
 					<div class="content">
 						<br>OSC :<br>
 						<br>
 						<hr>
-						Local IP:<input type="text" class="name" placeholder="255.255.255.255" size="18" title="address IP">
+						Local IP:<input type="text" class="name cmdString" name="oscLocalIP" placeholder="255.255.255.255" size="18" title="address IP">
 						<!--input type="number" class="OSC-setting" placeholder="port" name=""-->
 						Local Port:
-						<input type="number" class="set-value" align="right" name="oscLocalPort" placeholder="6666">
+						<input type="number" class="set-value cmdInt" name="oscLocalPort" align="right" placeholder="6666">
 						<hr>
-						Remote IP:<input type="text" class="name" placeholder="255.255.255.255" size="18" title="address IP">
+						Remote IP:<input type="text" class="name cmdString" name="oscRemoteIP" placeholder="255.255.255.255" size="18" title="address IP">
 						<!--input type="number" class="OSC-setting" placeholder="port" name=""-->
 						Remote Port:
-						<input type="number" class="set-value" align="right" name="oscRemotePort" placeholder="7777">
+						<input type="number" class="set-value cmdInt" name="oscRemotePort" align="right" placeholder="7777">
 
 					<hr>
 						+
@@ -377,7 +377,7 @@
 						<input type="checkbox" class="rec cmdTog" name="rec3">
 						<input type="checkbox" class="rec cmdTog" name="rec4">
 						<input type="checkbox" class="rec cmdTog" name="rec5">
-						<!--button class="disconnected">Record</button-- >
+						<! button class="disconnected">Record</button-- >
 						<button class="start-rec">Start RECording</button>
 					</div>
 

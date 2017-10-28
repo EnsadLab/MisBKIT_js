@@ -93,11 +93,13 @@ SensorManager.prototype.changeSetting = function(sensorID,name,value){
                 case "valMin":
                 case "valMax":
                     //update min max tolerance threshold
+                    if(sensor.s.threshold<sensor.s.valMin)sensor.s.threshold=sensor.s.valMin;
+                    if(sensor.s.threshold>sensor.s.valMax)sensor.s.threshold=sensor.s.valMax;                    
                     misGUI.changeSensor(sensor.s,sensorID);                
                     break;
                 default:            
         }
-        console.log("sensorSetting:",sensor.s);
+        //console.log("sensorSetting:",sensor.s);
     }    
 }
 
@@ -200,7 +202,7 @@ SensorManager.prototype.saveSensorSettings = function () {
         //fs.writeFileSync(__dirname + "/sensors.json", json);
         //settingsManager.copyPasteToUserFolder("sensors.json");
         settingsManager.saveToConfigurationFolder("sensors.json",json);
-        console.log(json);
+        //console.log(json);
 };
 
 // Simulates the reloading of the sensors.json file
@@ -258,13 +260,13 @@ SensorManager.prototype.onName = function(id,val){
 
 SensorManager.prototype.onTolerance = function(id,val){
     this.sensors[id].s.tolerance = parseInt(val);
-    console.log("changeTolerance:",id,val);
+    //console.log("changeTolerance:",id,val);
     this.saveSensorSettings();
 }
 
 SensorManager.prototype.onThreshold = function(id,val){
     this.sensors[id].s.threshold = parseInt(val);
-    console.log("changeTheshold:",id,val);
+    //console.log("changeTheshold:",id,val);
     //this.saveSensorSettings(); //done when slider stops cf MisGUI
 }
 
@@ -299,13 +301,11 @@ SensorManager.prototype.getSensorIds = function(type,port,cmd,nbID){
     return sensorIDs;
 }
 
-SensorManager.prototype.onMidi = function(id,arg){
-    /*
+SensorManager.prototype.onMidi = function(id,type,arg){
+    
     var sensor = this.sensors[id];
-    var mappped_arg = arg*(sensor.valMax-sensor.valMin)/127 + sensor.valMin;
-    console.log("val", sensor.valMax, sensor.valMin);
-    console.log("mappped_arg",mappped_arg);
-    this.sensors[id].onValue(arg);
-    */
+    var mappped_arg = Math.round(arg*(sensor.s.valMax-sensor.s.valMin)/127 + sensor.s.valMin);
+    this.sensors[id].onValue(mappped_arg);
+    
 }
 
