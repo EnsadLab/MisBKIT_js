@@ -2,12 +2,22 @@
 * Created by Cecile on 05/08/17.
 */
 
+/**
+ * note(Didier)
+ * sensorSimulator            oscP5 8888 , remote 5555
+ * animationTrigger           oscP5 6666 , remote 4444
+ * motorTrigger               oscP5 6666,  remote 4444
+ * multipleAnimationTrigger : oscP5 6666 , remote 4444
+ */
+
 
 OscManager = function () {
-
-    this.inputPort = 5555;
-    var outputPort = 6666;
-    var outputIP   = "localhost";
+    this.s = { //settings
+        oscLocalIP: "localhost",
+        oscLocalPort: 4444,
+        oscRemoteIP: "localhost",
+        oscRemotePort: 6666        
+    };
 
     this.oscUserReceiver = null; // reads values from user on port 4444
     this.oscCm9Receiver = null; // reads commands from CM9 on port ? 5555
@@ -24,6 +34,8 @@ OscManager.prototype.init = function(){
 
     this.initUserReceiver();
     this.initCm9Receiver();
+
+    misGUI.showOSC(this.s);
 
 }
 

@@ -6,6 +6,7 @@
 $(".btn-connexions").bind('click', showConnexion);
 
 function showConnexion(){
+	console.log("========showConnexion========"); //never ????
 	$(".connexions").show("slide");
 	$(".connexions").css("display", "block");
 	$(".btn-connexions").unbind('click', showConnexion);
