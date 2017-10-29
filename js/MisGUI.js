@@ -1085,6 +1085,8 @@ MisGUI.prototype.changeSensor = function(settings, id){
     //toleranceUI(ssor.find(".tolerance-ui"), settings.tolerance, settings.threshold, settings.valMin, settings.valMax);    
     sensorAnimWidth(ssor.find(".sensor-range"),settings.valMin,settings.valMax,settings.threshold, settings.tolerance);
     
+    ssor.find("[name=oscEnabled]").attr('checked',settings.oscEnabled);
+
     // TODO: @Didier: une manière plus élégante?
     var midiSelection = ssor.find("[name=midiPort]");
     midiSelection.empty();
