@@ -1,46 +1,46 @@
 {
   "motorMappings": [
-    {
-      "enabled": true,
-      "motorIndex": 0,
-      "port": "misbkit_midi Bus 1",
-      "cmd": "CC",
-      "nbID": 0
-    },
-    {
-      "enabled": true,
-      "motorIndex": 1,
-      "port": "misbkit_midi Bus 1",
-      "cmd": "CC",
-      "nbID": 1
-    },
-    {
-      "enabled": true,
-      "motorIndex": 2,
-      "port": "misbkit_midi Bus 1",
-      "cmd": "CC",
-      "nbID": 2
-    },
-    {
-      "enabled": true,
-      "motorIndex": 3,
-      "port": "misbkit_midi Bus 1",
-      "cmd": "CC",
-      "nbID": 3
-    },
-    {
-      "enabled": true,
-      "motorIndex": 4,
-      "port": "misbkit_midi Bus 1",
-      "cmd": "CC",
-      "nbID": 4
-    },
-    {
-      "enabled": true,
-      "motorIndex": 5,
-      "port": "misbkit_midi Bus 1",
-      "cmd": "CC",
-      "nbID": 5
-    }
-  ]
+      {
+        "enabled": true,
+        "motorIndex": 0,
+        "port": "misbkit_midi Bus 1",
+        "cmd": "CC",
+        "nbID": 0
+      },
+      {
+        "enabled": true,
+        "motorIndex": 1,
+        "port": "misbkit_midi Bus 1",
+        "cmd": "CC",
+        "nbID": 1
+      },
+      {
+        "enabled": true,
+        "motorIndex": 2,
+        "port": "misbkit_midi Bus 1",
+        "cmd": "CC",
+        "nbID": 2
+      },
+      {
+        "enabled": true,
+        "motorIndex": 3,
+        "port": "misbkit_midi Bus 1",
+        "cmd": "CC",
+        "nbID": 3
+      },
+      {
+        "enabled": true,
+        "motorIndex": 4,
+        "port": "misbkit_midi Bus 1",
+        "cmd": "CC",
+        "nbID": 4
+      },
+      {
+        "enabled": true,
+        "motorIndex": 5,
+        "port": "misbkit_midi Bus 1",
+        "cmd": "CC",
+        "nbID": 5
+      }
+    ]
 }

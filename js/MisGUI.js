@@ -1299,6 +1299,16 @@ MisGUI.prototype.simSelectMidiPorts = function(){
 
 MisGUI.prototype.scanIPv4 = function(){
     var self = this;
+    var infoIP = $(".infoIP");
+    var nbIP = infoIP.length;
+    for(var i=1;i<nbIP;i++){
+        infoIP.eq(i).remove();
+    }
+    var info = infoIP.eq(0);
+    //info.insertAfter(infoIP.eq(0));
+    
+    
+    
     //var selector = $("#selectOSC");
     //selector.empty();
     try {
@@ -1309,6 +1319,10 @@ MisGUI.prototype.scanIPv4 = function(){
                 if (addr.internal == false && (addr.family == "IPv4")) {
                     console.log("localIP:",addr.address);
                     //selector.append($("<option value=" + "'" + addr.address + "'>" + addr.address + "</option>"));
+                    var clone = info.clone(info);
+                    clone.html("LocalIP: "+addr.address);
+                    clone.insertAfter(info);
+                    info = clone;                    
                 }
             }
         }
