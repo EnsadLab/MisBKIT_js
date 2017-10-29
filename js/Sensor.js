@@ -16,6 +16,7 @@ Sensor = function () {
         valMax: -1,
         anim1: "", //TODO: change later in an array or not?
         anim2: "",
+        oscEnabled: false,
         midiEnabled: false,
         midiPort: "",
         midiCmd: false, //true:note, false:CC
@@ -61,6 +62,7 @@ Sensor.prototype.onValue = function(val){
         }
         //TODO anims
         sensorManager.handleSensorValue(this.ID,val); 
+        if(this.s.oscEnabled) oscManager.sendSensorMessage(this.ID,val);
     }
 }
 

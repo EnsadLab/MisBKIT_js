@@ -163,7 +163,15 @@ OscManager.prototype.initCm9Receiver = function(){
         var adr = rcv.address;
         if(adr.startsWith("/mbk/sensors")){
             console.log("osc msg:",rcv.address,rcv.args[0].value,rcv.args[1].value);
-            oscManager.handleSensorMessage(rcv); //le self. ne marchait pas!!!
+            //////////
+            //now we have different inputs that can change sensor value, so better to
+            //send the osc sensor values directly from the onValue method..
+            var sensorPin = rcv.args[0].value;
+            var sensorVal = rcv.args[1].value;
+            var sensor = sensorManager.getSensorWithPin(sensorPin);
+            sensor.onValue(sensorVal);
+            //oscManager.handleSensorMessage(rcv); //le self. ne marchait pas!!!
+            //////////
         }else{
             console.log("invalid OSC message: " + rcv);
         }
@@ -178,9 +186,29 @@ OscManager.prototype.initCm9Receiver = function(){
 
 }
 
+OscManager.prototype.sendSensorMessage = function(sensorID,sensorVal){
+
+    var sensor = sensorManager.sensors[sensorID];
+    // /mbk/sensors sensorName sensorValue sensorMin sensorMax   
+    buf = osc.toBuffer({
+        address: "/mbk/sensors",
+        args: [sensor.s.name,sensorVal,sensor.s.valMin,sensor.s.valMax] 
+    });
+    
+    this.udpUserSender.send(buf, 0, buf.length, this.outportUser, "localhost");
+
+    // concat messages into the adress for programs that handle osc messages only with one parameter
+    buf = osc.toBuffer({
+        address: "/mbk/sensors/" + sensorVal + "/" + sensor.s.valMin + "/" + sensor.s.valMax,
+        args: [sensor.s.name]
+    });
+ 
+    this.udpUserSender.send(buf, 0, buf.length, this.outportUser, "localhost");
+}
+
 
 // TODO: Simulation pour l'instant...
-// on aura par la suite une méthode onCm9Sensors appelée depuis cm9Com
+// enlever?
 OscManager.prototype.handleSensorMessage = function(rcv){
 
     var adr = rcv.address;
