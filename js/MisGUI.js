@@ -1364,14 +1364,14 @@ MisGUI.prototype.setSensorRange = function(id,min,max,tolerance,threshold){
 
 function sensorAnimWidth(element, min, max, cur, tolVal){
 
- 
-    var total = max+Math.abs(min)
-
     selec = element.parent();
+    
+    //var total = max+Math.abs(min) //MAIS ... nooooon
+    var total = Math.abs(max-min);
+    
+    percent = Math.abs(cur-min)*100/total;
 
-    percent = Math.abs(min-cur)*100/total;
-
-    //console.log("sensorAnimWidth:",min,max,percent);
+    console.log("sensorAnimWidth:",min,max,cur,percent);
     
     var anim1 = selec.find(".select-anim-1");
     var anim2 = selec.find(".select-anim-2");
@@ -1396,7 +1396,9 @@ function sensorAnimWidth(element, min, max, cur, tolVal){
 
 function toleranceUI(element, val, cur, min, max){
 
-    var total = max+Math.abs(min)
+    //var total = max+Math.abs(min) //again !!!
+    var total = Math.abs(max-min);
+    
     element.width(val*100/total + "%");
 
     percent = Math.abs(min-cur)*100/total;
