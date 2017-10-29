@@ -166,10 +166,12 @@ OscManager.prototype.initCm9Receiver = function(){
             //////////
             //now we have different inputs that can change sensor value, so better to
             //send the osc sensor values directly from the onValue method..
+            //new:
             var sensorPin = rcv.args[0].value;
             var sensorVal = rcv.args[1].value;
             var sensor = sensorManager.getSensorWithPin(sensorPin);
             sensor.onValue(sensorVal);
+            //old:
             //oscManager.handleSensorMessage(rcv); //le self. ne marchait pas!!!
             //////////
         }else{
