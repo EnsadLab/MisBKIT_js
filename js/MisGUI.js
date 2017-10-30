@@ -770,13 +770,10 @@ MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
     console.log("================MisGUI:addAnim:", animId, " ", aName);
 
     var self = this;
-    //var parent = $("#divAnims");
     //var parent = $("#divAnims").find("[name=listAnims]");
     var parent = $("#sortable-anim");
     var model = parent.find(".single-anim:first");
     var clone = model.clone();
-    console.log("animClone1:",parent);
-    console.log("animClone2:",model);
     clone.attr('data-id', animId); //select only find attr
     clone.children().data("id", animId); //only first level !!! !!! !!!
 
@@ -1157,20 +1154,20 @@ MisGUI.prototype.setSensorTolerance = function(sensorID,val){
 }
 
 MisGUI.prototype.setSensorAnims = function(names){
-    console.log("setSensorAnims:",names);
-    var parent = $(".sensors").find("[name=listSensors]");
-    var sel = $(".single-sensor .listAnims");
-    if(names==undefined){
+    
+    if(names==undefined){ //get names from html
         var qnames = $("[name=animName]");
         names = [];    
         qnames.each(function() {
             names.push($(this).val());
-            console.log("setSensorAnims:",$(this).val());
         });
     }
-    /*
-    console.log("setSensorAnims:",names.length);
-    console.log("select anims:",sel.length);
+    
+    var parent = $("#sortable-sens");
+    var sel = parent.find("[class*='listAnims']");
+    
+    console.log("setSensorAnims:",names);
+    console.log("selectanims:",sel.length);
 
     sel.empty();
     sel.append($("<option value=" + "'" + "none" + "'>" + "none" + "</option>"));
@@ -1189,8 +1186,7 @@ MisGUI.prototype.setSensorAnims = function(names){
             $(this).val(n);
         }
 
-    })
-    */
+    });
 }
 
 /*
