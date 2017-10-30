@@ -974,15 +974,17 @@ MisGUI.prototype.addSensor = function(settings, id){
         sensorManager.removeSensor($(this).data("id"));
     });
 
-    clone.find("[name=anim1]").val(settings.amim1);
-    clone.find("[name=anim2]").val(settings.amim2);  
-    
 
-    clone.find(".listAnims").change(function(){ 
+    this.setSensorAnims();
+    
+    //clone.find(".listAnims").change(function(){ 
+    clone.find("[class*='listAnims']").change(function(){
         var id = $(this).data("id"); //!!!parent.parent!!!
         console.log("animselect:",id,this.name,this.value);
         sensorManager.onChangeAnim(id,this.name,this.value);
     });
+    clone.find("[name=anim1]").val(settings.amim1);
+    clone.find("[name=anim2]").val(settings.amim2);
    
 
 
@@ -1060,7 +1062,6 @@ MisGUI.prototype.addSensor = function(settings, id){
     });
     */
 
-    this.setSensorAnims();
     this.changeSensor(settings,id);
     
 }
@@ -1163,8 +1164,7 @@ MisGUI.prototype.setSensorAnims = function(names){
         });
     }
     
-    var parent = $("#sortable-sens");
-    var sel = parent.find("[class*='listAnims']");
+    var sel = $("#sortable-sens").find("[class*='listAnims']"); //listAnims-1 & listAnims-2
     
     console.log("setSensorAnims:",names);
     console.log("selectanims:",sel.length);
@@ -1182,7 +1182,6 @@ MisGUI.prototype.setSensorAnims = function(names){
         if(id!=undefined){
             var nm = $(this).attr("name");
             var n = sensorManager.getSensorSetting(id,nm);
-            //console.log("------eachsel:",id,nm,n);
             $(this).val(n);
         }
 
@@ -1396,12 +1395,12 @@ function sensorAnimWidth(element, min, max, cur, tolVal){
 
     selec = element.parent();
     
-    //var total = max+Math.abs(min) //MAIS ... nooooon
+    //var total = max+Math.abs(min) //MAIS ... nooooon GRRRRR
     var total = Math.abs(max-min);
     
     percent = Math.abs(cur-min)*100/total;
 
-    console.log("sensorAnimWidth:",min,max,cur,percent);
+    ///console.log("sensorAnimWidth:",min,max,cur,percent);
     
     var anim1 = selec.find(".select-anim-1");
     var anim2 = selec.find(".select-anim-2");
@@ -1426,7 +1425,7 @@ function sensorAnimWidth(element, min, max, cur, tolVal){
 
 function toleranceUI(element, val, cur, min, max){
 
-    //var total = max+Math.abs(min) //again !!!
+    //var total = max+Math.abs(min) //again !!! GRRRR
     var total = Math.abs(max-min);
     
     element.width(val*100/total + "%");
