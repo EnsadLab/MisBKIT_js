@@ -2,14 +2,23 @@
   "oscHost": "none",
   "webSocket": "none",
   "midiPorts": [],
-  "anims": [],
+  "anims": [
+    {
+      "name": "anim1",
+      "key": "k"
+    },
+    {
+      "name": "2016-11-09-17h04mn35",
+      "key": ""
+    }
+  ],
   "motors": [
     {
       "id": 0,
       "enabled": false,
       "model": 12,
       "clockwise": true,
-      "mode": 1,
+      "mode": 0,
       "angleMin": -150,
       "angleMax": 150,
       "speedMin": -100,

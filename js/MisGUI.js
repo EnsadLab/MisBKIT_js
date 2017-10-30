@@ -771,9 +771,12 @@ MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
 
     var self = this;
     //var parent = $("#divAnims");
-    var parent = $("#divAnims").find("[name=listAnims]");
+    //var parent = $("#divAnims").find("[name=listAnims]");
+    var parent = $("#sortable-anim");
     var model = parent.find(".single-anim:first");
     var clone = model.clone();
+    console.log("animClone1:",parent);
+    console.log("animClone2:",model);
     clone.attr('data-id', animId); //select only find attr
     clone.children().data("id", animId); //only first level !!! !!! !!!
 
@@ -801,7 +804,8 @@ MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
             a.remove();
             dxlManager.removeAnim(animId);
         }
-        self.setSensorAnims();        
+        console.log("GUI.killanim:");
+        self.setSensorAnims();  //?????      
     });
 
     clone.find(".play").on("click", function () {
@@ -1153,6 +1157,7 @@ MisGUI.prototype.setSensorTolerance = function(sensorID,val){
 }
 
 MisGUI.prototype.setSensorAnims = function(names){
+    console.log("setSensorAnims:",names);
     var parent = $(".sensors").find("[name=listSensors]");
     var sel = $(".single-sensor .listAnims");
     if(names==undefined){
@@ -1160,8 +1165,10 @@ MisGUI.prototype.setSensorAnims = function(names){
         names = [];    
         qnames.each(function() {
             names.push($(this).val());
+            console.log("setSensorAnims:",$(this).val());
         });
     }
+    /*
     console.log("setSensorAnims:",names.length);
     console.log("select anims:",sel.length);
 
@@ -1183,7 +1190,7 @@ MisGUI.prototype.setSensorAnims = function(names){
         }
 
     })
-
+    */
 }
 
 /*

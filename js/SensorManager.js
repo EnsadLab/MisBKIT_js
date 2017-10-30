@@ -271,8 +271,8 @@ SensorManager.prototype.onThreshold = function(id,val){
 }
 
 SensorManager.prototype.onChangeAnim = function(id,wich,txt){
-    this.sensors[id].s[wich]=txt;    
     console.log("changed anim:",id,wich,txt);
+    this.sensors[id].s[wich]=txt;    
     this.saveSensorSettings();
 }
 
