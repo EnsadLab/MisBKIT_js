@@ -13,9 +13,9 @@
 
 OscManager = function () {
     this.s = { //settings
-        oscLocalIP: "localhost",
-        oscLocalPort: 4444,
+        //oscLocalIP: "localhost",
         oscRemoteIP: "localhost",
+        oscLocalPort: 4444,
         oscRemotePort: 6666        
     };
 

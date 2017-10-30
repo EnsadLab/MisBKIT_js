@@ -672,6 +672,18 @@ MisGUI.prototype.init =function(){
         $("#robusTxt").val("");        
     });
 
+    console.log("==================");
+    $("#divOSC").find(".cmdString").change(function(){
+        console.log("IPchange:");
+    });
+
+    var divOsc = $("#divOSC").find(".cmdInt");
+    console.log("divosc:",divOsc.length);
+    $("#divOSC").find(".cmdInt").change(function(){
+        console.log("Portchange:");
+    });
+
+
     //this.scanSerial();    /*Didier*/
     this.scanMidiPorts();
     this.scanIPv4(); //Didier
@@ -680,10 +692,11 @@ MisGUI.prototype.init =function(){
 
 }//init
 
+
+
 MisGUI.prototype.showOSC = function(settings){
-    console.log("osc:",settings);
+    console.log("==========showosc:",settings);
     var div = $("#divOSC");
-    div.find("[name=oscLocalIP]").val(settings.oscLocalIP);
     div.find("[name=oscLocalPort]").val(settings.oscLocalPort);
     div.find("[name=oscRemoteIP]").val(settings.oscRemoteIP);
     div.find("[name=oscRemotePort]").val(settings.oscRemotePort);    
@@ -1307,10 +1320,6 @@ MisGUI.prototype.scanIPv4 = function(){
         infoIP.eq(i).remove();
     }
     var info = infoIP.eq(0);
-    //info.insertAfter(infoIP.eq(0));
-    
-    
-    
     //var selector = $("#selectOSC");
     //selector.empty();
     try {
@@ -1322,7 +1331,7 @@ MisGUI.prototype.scanIPv4 = function(){
                     console.log("localIP:",addr.address);
                     //selector.append($("<option value=" + "'" + addr.address + "'>" + addr.address + "</option>"));
                     var clone = info.clone(info);
-                    clone.html("LocalIP: "+addr.address);
+                    clone.html("Local IP: "+addr.address);
                     clone.insertAfter(info);
                     info = clone;                    
                 }
@@ -1331,6 +1340,10 @@ MisGUI.prototype.scanIPv4 = function(){
     }catch(e){}
     //selector.append($("<option value='scan' >scan</option>"));
     //*/
+    $(".infoIP").on("click",function(){
+        misGUI.scanIPv4();
+    })
+
 }
 
 MisGUI.prototype.robusOnOff = function(onoff){
