@@ -9,18 +9,18 @@ Sensor = function () {
         device: "",      //(Didier) Midi,CM9,Robus,OSC,Mike ...
         address: "",     //(Didier) example for Robus "octo_wifi"
         name:"",         //(Didier) example Pour robus "octo_portard2"
-        enabled: true,
-        threshold:-1,
-        tolerance:-1,
-        valMin: -1,
-        valMax: -1,
-        anim1: "", //TODO: change later in an array or not?
-        anim2: "",
+        enabled: false,
+        threshold:50,   //default, pour addEmptySensor
+        tolerance:20,
+        valMin: 0,
+        valMax: 100,
+        anim1: "none", //TODO: change later in an array or not?
+        anim2: "none",
         oscEnabled: false,
         midiEnabled: false,
         midiPort: "",
         midiCmd: false, //true:note, false:CC
-        midiMapping: -1,
+        midiMapping: 0,
         cm9Enabled: false,
         cm9Pin: 0,        
         fromMotorEnabled: false,

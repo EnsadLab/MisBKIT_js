@@ -55,7 +55,7 @@ SensorManager.prototype.loadSensorSettings = function () {
             this.sensors[id].ID = id;
             this.sensors[id].copySettings(s.sensors[i]);
             //console.log("s... ",this.sensors[id].s);
-            console.log("s... ",this.sensors[id].s.cm9Pin);
+            //console.log("s... ",this.sensors[id].s.cm9Pin);
         }
 
         //settingsManager.copyPasteFromUserFolder("sensors.json");
@@ -309,3 +309,12 @@ SensorManager.prototype.onMidi = function(id,type,arg){
     
 }
 
+SensorManager.prototype.addEmptySensor = function(){
+    console.log("SensorManager.addEmptySensor");
+    var id = "S"+this.sensorID; 
+    this.sensors[id]= new Sensor(); //TODO? new Sensor(id)
+    this.sensors[id].s.name = "Sensor_"+this.sensorID;
+    this.sensors[id].ID = id;
+    misGUI.addSensor(this.sensors[id].s,id); 
+    this.sensorID++;      
+}

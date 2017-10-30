@@ -683,13 +683,16 @@ MisGUI.prototype.init =function(){
         console.log("Portchange:");
     });
 
+    $("#addEmptySensor").on("click",function(){
+        sensorManager.addEmptySensor();
+    })
+    
 
     //this.scanSerial();    /*Didier*/
     this.scanMidiPorts();
     this.scanIPv4(); //Didier
 
-    //this.showOSC();
-
+ 
 }//init
 
 

@@ -18,7 +18,7 @@
   ],
   "motors": [
     {
-      "id": 0,
+      "id": 42,
       "enabled": false,
       "model": 12,
       "clockwise": true,
