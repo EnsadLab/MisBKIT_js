@@ -115,12 +115,12 @@ SensorManager.prototype.handleSensorValue = function(sensorID, sensorValue){
             //console.log("Trigger left animation ",sensor.s.anim1);
             this.startAnim(sensor.s.anim1, sensor.s.anim2);
         }
-    }else if(sensorValue >= (sensor.s.threshold + sensor.s.tolerance) && sensorValue < sensor.s.valMax){
+    }else if(sensorValue >= (sensor.s.threshold + sensor.s.tolerance)){
         sensor.area = 1;
         //console.log("sensor area 1");
-        if(sensor.oldAra != sensor.area){
+        if(sensor.oldArea != sensor.area){
             // trigger animation 2
-            //console.log("Trigger left animation ",sensor.s.anim2);
+            //console.log("Trigger right animation ",sensor.s.anim2);
             this.startAnim(sensor.s.anim2, sensor.s.anim1);
         }
     }
@@ -143,7 +143,7 @@ SensorManager.prototype.handlePinValues=function(vals){
 
 //Motor position -> sensor.s.fromMotorIndex
 SensorManager.prototype.handleDxlPos=function(index,val){
-    console.log("handleDxlPos:",index,val);
+    //console.log("handleDxlPos:",index,val);
     $.each(this.sensors,function(i,sensor) {
         //console.log("handleDxlPos:",i,sensor.s.fromMotorEnabled);
         if(sensor.s.fromMotorEnabled){
