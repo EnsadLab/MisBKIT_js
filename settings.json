@@ -2,20 +2,36 @@
   "oscHost": "none",
   "webSocket": "none",
   "midiPorts": [
+<<<<<<< HEAD
     "nanoKONTROL2 SLIDER/KNOB"
+=======
+    "misB Bus 1"
+>>>>>>> 97eff6e1c6c2d702c258c4935488f079bbd8dc38
   ],
   "anims": [
     {
       "name": "anim1",
-      "key": "k"
-    },
-    {
-      "name": "2016-11-09-17h04mn35",
       "key": ""
     },
     {
       "name": "anim2",
-      "key": "a"
+      "key": ""
+    },
+    {
+      "name": "anim3",
+      "key": ""
+    },
+    {
+      "name": "anim4",
+      "key": ""
+    },
+    {
+      "name": "anim_0_negativeWheel",
+      "key": ""
+    },
+    {
+      "name": "anim_0_positiveWheel",
+      "key": ""
     }
   ],
   "motors": [
@@ -27,8 +43,8 @@
       "mode": 0,
       "angleMin": 0,
       "angleMax": 150,
-      "speedMin": -100,
-      "speedMax": 100,
+      "speedMin": 0,
+      "speedMax": 50,
       "torqueMax": 1023
     },
     {

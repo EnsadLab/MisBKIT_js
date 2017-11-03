@@ -35,6 +35,7 @@ app.on('ready', function() {
   mainWindow.loadURL('file://' + __dirname + '/index.html');
 
   //mainWindow.show();
+  ////////// TO PUT IN COMMENT WHEN EXPORTING
   mainWindow.webContents.openDevTools();
 
 
