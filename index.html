@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>misB KIT WIFI 2</title>
+        <title>misB KIT WIFI 3.0</title>
         <link rel="stylesheet" href="css/jquery-ui.css">
         <link rel="stylesheet" href="css/style.css">
         <link rel="author" href="humans.txt">
@@ -20,24 +20,26 @@
 				<div class="plug">
 					<!--button class="gear"><img src="assets/settings.png"></button-->
 					<p>
-						CM9 <span class="status" id="cm9Text"></span>
-						<input type="checkbox" class="stopAll cmdTog" name ="enable"title="enable/disable"> 
-
+						CM9 <!--span class="status" id="cm9Text"></span-->
+						<!-- TODO cf MisGUI $('#btcm9').on('click'... ON OFF ERROR -->
+						<input id="btcm9" type="checkbox" class="stopAll cmdTog" name ="enable" title="enable/disable"> 
 					</p>
 
 					<div class="content">
 						<!--button class="gear" data-id="pasglop"><img src="assets/settings.png"></button-->
 						<br>CM9 :<br>
-						<button class="disconnected" id="btcm9">Off</button>
+						<!-- cm9Text: TODO texte d'information -->
+						<br><span class="status" id="cm9Text">...</span>
+						<!-- button class="disconnected" id="btcm9">Off</button-->
 						<br>
-						<input type="checkbox"  name ="glou">SINGLE<br>
+						<!-- input type="checkbox"  name ="glou">SINGLE<br>
 						<br>
 						<input class="styled-checkbox" type="checkbox"  >CM9_1<br>
 						<input class="styled-checkbox" type="checkbox"  >CM9_2<br>
 						<input class="styled-checkbox" type="checkbox"  >CM9_3<br>
 						<input class="styled-checkbox" type="checkbox"  >CM9_4<br>
 						<input class="styled-checkbox" type="checkbox"  >CM9_5<br>
-						<input class="styled-checkbox" type="checkbox"  >CM9_6<br>
+						<input class="styled-checkbox" type="checkbox"  >CM9_6<br -->
 					</div>
 
 				</div>
@@ -51,28 +53,39 @@
 						<br>Midi :<br>
 						<button class="disconnected" id="btMidi">scan</button>
 						<br>
-						<div class="midi-available">
-							<input class="styled-checkbox" type="checkbox"  >midi<br>
-							<input class="styled-checkbox" type="checkbox"  >midi<br>
-							<input class="styled-checkbox" type="checkbox"  >midi<br>
-							<input class="styled-checkbox" type="checkbox"  >midi<br>
-							<input class="styled-checkbox" type="checkbox"  >midi<br>
-							<input class="styled-checkbox" type="checkbox"  >midi<br>
+						<div class="midi-available" id="midi-available">
+							<input class="styled-checkbox" type="checkbox"  id="midi1">midi<br>
+							<input class="styled-checkbox" type="checkbox" id="midi2" >midi<br>
+							<input class="styled-checkbox" type="checkbox" id="midi3" >midi<br>
+							<input class="styled-checkbox" type="checkbox" id="midi4" >midi<br>
+							<input class="styled-checkbox" type="checkbox" id="midi5" >midi<br>
+							<input class="styled-checkbox" type="checkbox" id="midi6" >midi<br>
 						</div>
 					</div>
 				</div>
 
-				<div class="plug">
+				<div id="divOSC" class="plug">
 					<p>
 						OSC  <span class="status"></span>
-						<input type="checkbox" class="stopAll cmdTog" name ="enable"title="enable/disable">
+						<input type="checkbox" class="stopAll cmdOnOff" name ="enable"title="enable/disable">
 					</p>
-					<div class="content">
+					<div class="content advanced">
 						<br>OSC :<br>
-						<select name="" id="selectOSC">
-							<option value="">disabled</option>
-						</select>
-						<button class="disconnected" id="btOSC">OFF</button>
+						<hr>
+						<font color='gray'>
+							<div class="infoIP">Local IP: localhost</div>
+						</font>
+						input Port:
+						<input type="number" class="set-value cmdInt" name="oscLocalPort" align="right" placeholder="6666">
+						<hr>
+						IP:<input type="text" class="name cmdString" name="oscRemoteIP" placeholder="255.255.255.255" size="18" title="address IP">
+						<!--input type="number" class="OSC-setting" placeholder="port" name=""-->
+						output Port:
+						<input type="number" class="set-value cmdInt" name="oscRemotePort" align="right" placeholder="7777">
+						<!--ul></ul-->
+						<hr>
+						+
+						<br>
 					</div>
 				</div>
 
@@ -193,16 +206,16 @@
 							</ul>
 							<!-- <input type="text" class="OSC-setting" placeholder="OSC adress" name=""> -->
 
-							<select class= "midi-setting"  id="">
-								<option value="">midi 1</option>
-								<option value="">midi 2</option>
-								<option value="">midi 3</option>
-								<option value="">midi 4</option>
+							<select class= "midi-setting"  id="" name="midiPorts">
+								<option value="midi 1">midi 1</option>
+								<option value="midi 2">midi 2</option>
+								<option value="midi 3">midi 3</option>
+								<option value="midi 4">midi 4</option>
 							</select>
 
 							<label class="switch">
 							  
-						  	<input type="checkbox" class="cmdTog" name="mode">
+						  	<input type="checkbox" class="cmdTog" name="midiMode">
 						  	<div class="slider slider-midi round"></div>
 							</label>
 							
@@ -332,7 +345,7 @@
 
 				<h2 id="sens">Sensors </h2> <input type="checkbox" class="stopAll cmdTog" name ="enable"title="enable/disable"> 
 				<!-- <sub><button class="gear" data-id="option-sensors"><img src="assets/settings.png"></button> </sub> -->
-				<select name="" id="" class="addSensors">
+				<!--select name="" id="" class="addSensors">
 					<option value="">Add sensor</option>
 					<option value="">Capteur</option>
 					<option value="">Capteur</option>
@@ -345,7 +358,9 @@
 					<option value="">Capteur</option>
 					<option value="">Capteur</option>
 					<option value="">Capteur</option>
-				</select>
+				</select-->
+				<button id="addEmptySensor" class="disconnected addSensors" style="color:grey;">Add Sensor</button>
+				
 
 				
 				
@@ -353,6 +368,7 @@
 				<div class="animations" id="divAnims">
 						
 					<!--div class="single-anim ui-state-default">
+						GRRRRRRRRRRRR
 						<input type="text" class="shorcut" disabled>
 						<input type="checkbox" class="rec cmdTog" name="rec0">
 						<input type="checkbox" class="rec cmdTog" name="rec1">
@@ -360,11 +376,11 @@
 						<input type="checkbox" class="rec cmdTog" name="rec3">
 						<input type="checkbox" class="rec cmdTog" name="rec4">
 						<input type="checkbox" class="rec cmdTog" name="rec5">
-						<!--button class="disconnected">Record</button-- >
+						<! button class="disconnected">Record</button >
 						<button class="start-rec">Start RECording</button>
-					</div>
+					</div-->
 
-				<ul id="sortable-anim" name="listAnims">
+				<ul id="sortable-anim" >
 					<!-- SIngle Animation -->
 					<li class="single-anim ui-state-default">
 						<button class="close"><img src="assets/close.png" alt=""></button>
@@ -400,7 +416,7 @@
 					<li class="single-sensor ui-state-default">
 
 						<button class="close"><img src="assets/close.png" alt=""></button>
-						<input type="checkbox" class="power cmdTog" name ="enable"title="enable/disable"> 
+						<input type="checkbox" class="power cmdTog" name ="sensorOnOff" title="enable/disable"> 
 
 						<input type="text" class="name" placeholder="Sensor name" name="sensorName" size="58">
 
@@ -458,13 +474,14 @@
 						<div class="sensor-setting-more">
 							<h3>Settings</h3>
 							<section>
-								<input type="number" class="value-setting" placeholder="min value" name="">
-								<input type="number" class="value-setting" placeholder="max value" name="">
+								<input type="number" class="value-setting cmdInt" placeholder="min value" name="valMin">
+								<input type="number" class="value-setting cmdInt" placeholder="max value" name="valMax">
 							</section>
 
 							<section>
 								<h4>OSC</h4>
-								<input type="checkbox" class="osc-btn cmdTog" name ="enable"title="enable/disable">
+								
+								<input type="checkbox" class="osc-btn cmdOnOff" name ="oscEnabled" title="enable/disable">
 								<div class="info">adresse : /sensor/proximity</div>
 								<!-- <input type="text" class="OSC-setting" placeholder="OSC adress" name=""> -->
 								<input type="number" class="OSC-setting" placeholder="port" name="">
@@ -472,12 +489,12 @@
 
 							<section>
 								<h4>Midi</h4>
-								<input type="checkbox" class="midi-btn cmdTog" name ="enable"title="enable/disable">
+								<input type="checkbox" class="midi-btn cmdOnOff" name ="midiEnabled"title="enable/disable">
 								
 
-								<select class= "midi-setting full"  id="">
+								<select class= "midi-setting full cmdString"  id="" name="midiPort">
 									<option value="">midi 1</option>
-									<option value="">midi 2</option>
+									<option value="midi 2">midi 2</option>
 									<option value="">midi 3</option>
 									<option value="">midi 4</option>
 								</select>
@@ -485,27 +502,27 @@
 
 								<label class="switch">
 							  	
-							  	<input type="checkbox" class="cmdTog" name="mode">
+							  	<input type="checkbox" class="cmdTog cmdOnOff" name="midiCmd">
 							  	<div class="slider round"></div>
 								</label>
 
-								<input type="number" class="OSC-setting " placeholder="nb" name="">
+								<input type="number" class="OSC-setting cmdInt" placeholder="nb" name="midiMapping">
 
 							</section>
 							<section>
 								<h4>CM9</h4>
-								<input type="checkbox" class="CM9-btn cmdTog" name ="enable"title="enable/disable">
-								<input type="number" class="OSC-setting" placeholder="PIN" name="">
+								<input type="checkbox" class="CM9-btn cmdOnOff" name ="cm9Enabled" title="enable/disable">
+								<input type="number" class="OSC-setting cmdInt" placeholder="PIN" name="cm9Pin" title="Analog Pin">
 							</section>
 							<section>
 								<h4>Mapping to motors :</h4>
-								<input type="checkbox" class="power cmdTog" name ="enable"title="enable/disable">
-								<input type="number" class="OSC-setting" placeholder="nb" name="">
+								<input type="checkbox" class="power cmdOnOff" name ="toMotorEnabled" >
+								<input type="number" class="OSC-setting cmdInt" placeholder="nb" name="toMotorIndex">
 							</section>
 							<section>
 								<h4>Mapping from motors :</h4>
-								<input type="checkbox" class="power cmdTog" name ="enable"title="enable/disable">
-								<input type="number" class="OSC-setting" placeholder="nb" name="">
+								<input type="checkbox" class="power cmdOnOff" name ="fromMotorEnabled" >
+								<input type="number" class="OSC-setting cmdInt" placeholder="nb" name="fromMotorIndex">
 							</section>
 							<button class="set">OK</button>
 

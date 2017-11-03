@@ -1,95 +1,57 @@
 {
-  "midiPort": "",
   "oscHost": "none",
   "webSocket": "none",
+  "midiPorts": [
+    "misB Bus 1"
+  ],
   "anims": [
     {
-      "name": "2017-10-10-19h45-19",
+      "name": "anim1",
       "key": ""
     },
     {
-      "name": "2017-10-10-19h45-26",
+      "name": "anim2",
       "key": ""
     },
     {
-      "name": "2017-10-13-16h19-50",
+      "name": "anim3",
       "key": ""
     },
     {
-      "name": "2017-10-17-13h46-43",
+      "name": "anim4",
       "key": ""
     },
     {
-      "name": "2017-10-17-13h49-19",
+      "name": "anim_0_negativeWheel",
       "key": ""
     },
     {
-      "name": "2017-10-17-14h02-26",
-      "key": ""
-    },
-    {
-      "name": "2017-10-10-19h45-19",
-      "key": ""
-    },
-    {
-      "name": "2017-10-10-19h45-26",
-      "key": ""
-    },
-    {
-      "name": "2017-10-10-19h51-25",
-      "key": ""
-    },
-    {
-      "name": "2017-10-13-16h19-50",
-      "key": ""
-    },
-    {
-      "name": "2017-10-17-13h46-43",
-      "key": ""
-    },
-    {
-      "name": "2017-10-17-13h49-19",
-      "key": ""
-    },
-    {
-      "name": "2017-10-17-14h02-26",
-      "key": ""
-    },
-    {
-      "name": "2017-10-10-19h45-26",
-      "key": ""
-    },
-    {
-      "name": "2017-10-10-19h51-25",
-      "key": ""
-    },
-    {
-      "name": "2017-10-10-19h51-25",
+      "name": "anim_0_positiveWheel",
       "key": ""
     }
   ],
   "motors": [
     {
-      "id": 14,
+      "id": 42,
       "enabled": false,
       "model": 12,
       "clockwise": true,
       "mode": 0,
       "angleMin": -150,
       "angleMax": 150,
-      "speedMin": -100,
-      "speedMax": 70,
-      "torqueMax": 1023
-    },
-    {
-      "id": 234,
-      "enabled": false,
-      "model": 12,
-      "clockwise": false,
-      "mode": 0,
-      "angleMin": 0,
-      "angleMax": 90,
       "speedMin": 0,
+      "speedMax": 50,
+      "torqueMax": 1023
+    },
+    {
+      "id": 0,
+      "enabled": false,
+      "model": 12,
+      "clockwise": true,
+      "mode": 1,
+      "angleMin": -150,
+      "angleMax": 150,
+      "speedMin": -100,
       "speedMax": 100,
       "torqueMax": 1023
     },
@@ -110,7 +72,7 @@
       "enabled": false,
       "model": 12,
       "clockwise": true,
-      "mode": 0,
+      "mode": 1,
       "angleMin": -150,
       "angleMax": 150,
       "speedMin": -100,

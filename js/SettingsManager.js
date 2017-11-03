@@ -3,11 +3,9 @@
 */
 
 function SettingsManager(){
-
     this.misBKITFolder  = "";
     this.animationFolder = "";
     this.configurationFolder = "";
-
 };
 
     
@@ -83,7 +81,7 @@ SettingsManager.prototype.chooseMisBKITFolder = function() {
                         console.log('failed to create Configurations directory', err);
                     } else {
                         console.log('created Configurations directory');
-                        self.synchroniseFiles();
+                        self.copyFiles();
                         motorMappingManager.folderIsReady(self.configurationFolder);
                         sensorManager.folderIsReady(self.configurationFolder);
 
@@ -93,7 +91,7 @@ SettingsManager.prototype.chooseMisBKITFolder = function() {
         });
     } else { // if directories have already been created!
         dxlManager.folderIsReady(this.animationFolder);
-        this.synchroniseFiles();
+       // this.synchroniseFiles();
         motorMappingManager.folderIsReady(this.configurationFolder);
         sensorManager.folderIsReady(this.configurationFolder);
     }
@@ -120,6 +118,11 @@ SettingsManager.prototype.synchroniseFiles = function(){
 
 }
 
+SettingsManager.prototype.copyFiles = function(){
+    this.copyPasteToUserFolder('midiMotorMapping.json');
+    this.copyPasteToUserFolder('sensors.json');
+}
+
 SettingsManager.prototype.copyPasteToUserFolder = function(filename){
     //console.log("copying from " + __dirname + "/" + filename);
     //console.log("to " + this.configurationFolder + filename);
@@ -133,5 +136,10 @@ SettingsManager.prototype.copyPasteFromUserFolder = function(filename){
     fs.writeFileSync(this.configurationFolder + filename, fs.readFileSync(__dirname + "/" + filename));
     //fs.createReadStream(this.configurationFolder + filename)
       //      .pipe(fs.createWriteStream(__dirname + "/" + filename));
+}
+
+//Didier (used by SensorManager.saveSensorSettings)
+SettingsManager.prototype.saveToConfigurationFolder = function(filename,data){
+    fs.writeFileSync(this.configurationFolder + filename, data );    
 }
 

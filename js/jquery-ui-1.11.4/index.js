@@ -127,6 +127,7 @@ window.onbeforeunload=function(){
         //cm9Com.close();
         dxlManager.serialOnOff(false);
         dxlManager.saveSettings();
+        settingsManager.saveSettings();
     }
 }
 
@@ -163,7 +164,7 @@ window.onload = function() {
         //console.log("down target:", e.target);
 
         if(e.metaKey || e.ctrlKey){
-            if(e.keyCode==83){dxlManager.saveSettings();return false;} //ctrl s
+            if(e.keyCode==83){settingsManager.saveSettings();dxlManager.saveSettings()}else return false;} //ctrl s
             if(e.keyCode==9) {
                 console.log("CTRL TAB");
                 var dlg = $("#dialog");
@@ -200,9 +201,12 @@ window.onload = function() {
 
         if(e.keyCode!=0) {
             console.log("char:", String.fromCharCode(e.keyCode));
-            if(e.metaKey)
+            if(e.metaKey){
+                console.log("key press meta");
                 dxlManager.onMetaKey(String.fromCharCode(event.keyCode));
-            else
+                motorMappingManager.onMetaKey(String.fromCharCode(event.keyCode));
+            }else{
+                console.log("key press");
                 dxlManager.onKeyCode(String.fromCharCode(event.keyCode));
             return false;
         }

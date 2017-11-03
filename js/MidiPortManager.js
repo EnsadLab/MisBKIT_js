@@ -24,9 +24,9 @@ MidiPortManager.prototype.open = function (p) {
 
     // for now, when we switch from one port to the other in the drop-down menu,
     // we want to be sure that no other port is still open
-    for(var i=0; i<this.midiPorts.length; i++){
+    /*for(var i=0; i<this.midiPorts.length; i++){
         this.midiPorts[i].close();
-    }
+    }*/
 
     if(isNaN(p)){
         //console.log("OPENING midi by name",p);
@@ -57,10 +57,12 @@ MidiPortManager.prototype.open = function (p) {
     return found;
 };
 
-MidiPortManager.prototype.openAtStart = function(portName){
-    if(this.isValidMidiPort(portName)){
+MidiPortManager.prototype.openMidiAtStart = function(){
+    
+    misGUI.simSelectMidiPorts();
+   /* if(this.isValidMidiPort(portName)){
         misGUI.simSelectPort(portName);
-    }
+    }*/
 }
 
 //TODO: try to close ports properly as well??
@@ -82,15 +84,17 @@ MidiPortManager.prototype.addMidiPort = function(portName, portID){
     var found = false;
     for(var i=0; i<this.midiPorts.length; i++){
         if(this.midiPorts[i].portName == portName){
-            console.log("Midiport " + portName + " has already been added");
+            //console.log("Midiport " + portName + " has already been added");
+            this.midiPorts[i].enabledOnGUI = true;
             found = true;
             break;
         }
     }
     if(!found){
-        console.log("Midiport " + portName + " has been added");
+        //console.log("Midiport " + portName + " has been added");
         try{ 
             var midiPortNew = new MidiPort(); 
+            midiPortNew.enabledOnGUI = true;
             midiPortNew.portName = portName;
             midiPortNew.portID = portID;
             this.midiPorts.push(midiPortNew);
@@ -98,6 +102,12 @@ MidiPortManager.prototype.addMidiPort = function(portName, portID){
     }
     
 };
+
+MidiPortManager.prototype.hidePortsFromGUI = function(){
+    for(var i=0; i<this.midiPorts.length; i++){
+        this.midiPorts[i].enabledOnGUI = false;
+    }
+}
 
 MidiPortManager.prototype.getPortName = function(index) {
     if(index >= 0 && index < this.midiIn.getPortCount() ){
@@ -115,6 +125,7 @@ MidiPortManager.prototype.getPortNum = function(name) {
     return -1;
 };
 
+//TODO: cec, now it should return an array, because multiple ports can be open..
 MidiPortManager.prototype.getCurrentPortName = function()
 {
     for(var i=0; i<this.midiPorts.length; i++){
@@ -125,6 +136,18 @@ MidiPortManager.prototype.getCurrentPortName = function()
     return ""; // TODO: or return null?
 };
 
+MidiPortManager.prototype.isMidiPortEnabled = function(portName){
+    if(this.isValidMidiPort(portName)){
+        for(var i=0; i<this.midiPorts.length; i++){
+            if(this.midiPorts[i].portName == portName){
+                return this.midiPorts[i].enabled;
+            }
+        }
+        return false;
+    }
+    return false;
+}
+
 MidiPortManager.prototype.isValidMidiPort = function(portName){
     for(var i=0; i<this.midiPorts.length; i++){
         if(this.midiPorts[i].portName == portName){
@@ -132,4 +155,34 @@ MidiPortManager.prototype.isValidMidiPort = function(portName){
         }
     }
     return false;
+}
+
+MidiPortManager.prototype.getNbMidiPorts = function(){
+    return this.midiPorts.length;
+}
+
+MidiPortManager.prototype.getNbMidiPortsOnGUI = function(){
+    var counter = 0;
+    for(var i=0; i<this.midiPorts.length; i++){
+        if(this.midiPorts[i].enabledOnGUI){
+            counter++;
+        }
+    }
+    return counter;
+}
+
+MidiPortManager.prototype.getFirstMidiPort = function(){
+    if(this.midiPorts.length >= 1){
+        return this.midiPorts[0].portName;
+    }
+    return "";
+}
+
+MidiPortManager.prototype.getFirstMidiPortOnGUI = function(){
+    for(var i=0; i<this.midiPorts.length; i++){
+        if(this.midiPorts[i].enabledOnGUI){
+            return this.midiPorts[i].portName;
+        }
+    }
+    return "";
 }

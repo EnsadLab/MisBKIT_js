@@ -55,12 +55,13 @@ SensorManager.prototype.loadSensorSettings = function () {
             this.sensors[id].ID = id;
             this.sensors[id].copySettings(s.sensors[i]);
             //console.log("s... ",this.sensors[id].s);
-            console.log("s... ",this.sensors[id].s.pin);
+            //console.log("s... ",this.sensors[id].s.cm9Pin);
         }
 
-        settingsManager.copyPasteFromUserFolder("sensors.json");
+        //settingsManager.copyPasteFromUserFolder("sensors.json");
         this.updateGUI();
         robusManager.connect(); 
+
 
     }
 
@@ -79,7 +80,27 @@ SensorManager.prototype.updateGUI = function () {
     //misGUI.setSensorValue("S0",42);
     //misGUI.setSensorRange("S1",50,133,100);
     //misGUI.setSensorTolerance("S0",42);
-    console.log("getPin:",this.getSensorWithPin(7));
+    //console.log("getPin:",this.getSensorWithPin(7));
+}
+
+SensorManager.prototype.changeSetting = function(sensorID,name,value){
+    console.log("SensorManager.changeSetting:",sensorID,name,value);
+    var sensor = this.sensors[sensorID];
+    if(sensor){
+        //tester if sensor.s[name] exists ???
+        sensor.s[name]=value;
+        switch(name){
+                case "valMin":
+                case "valMax":
+                    //update min max tolerance threshold
+                    if(sensor.s.threshold<sensor.s.valMin)sensor.s.threshold=sensor.s.valMin;
+                    if(sensor.s.threshold>sensor.s.valMax)sensor.s.threshold=sensor.s.valMax;                    
+                    misGUI.changeSensor(sensor.s,sensorID);                
+                    break;
+                default:            
+        }
+        //console.log("sensorSetting:",sensor.s);
+    }    
 }
 
 
@@ -94,12 +115,12 @@ SensorManager.prototype.handleSensorValue = function(sensorID, sensorValue){
             //console.log("Trigger left animation ",sensor.s.anim1);
             this.startAnim(sensor.s.anim1, sensor.s.anim2);
         }
-    }else if(sensorValue >= (sensor.s.threshold + sensor.s.tolerance) && sensorValue < sensor.s.valMax){
+    }else if(sensorValue >= (sensor.s.threshold + sensor.s.tolerance)){
         sensor.area = 1;
         //console.log("sensor area 1");
-        if(sensor.oldAra != sensor.area){
+        if(sensor.oldArea != sensor.area){
             // trigger animation 2
-            //console.log("Trigger left animation ",sensor.s.anim2);
+            //console.log("Trigger right animation ",sensor.s.anim2);
             this.startAnim(sensor.s.anim2, sensor.s.anim1);
         }
     }
@@ -111,18 +132,24 @@ SensorManager.prototype.handleSensorValue = function(sensorID, sensorValue){
 SensorManager.prototype.handlePinValues=function(vals){
     var nbv = vals.length;
     $.each(this.sensors,function(i,sensor) {
-        var pin = +sensor.s.pin;
-        if( (pin>=0)&&(pin<nbv) ){
-            sensor.onValue(vals[pin]);
+        if( sensor.s.cm9Enabled ){
+            var pin = +sensor.s.cm9Pin;
+            if( (pin>=0)&&(pin<nbv) ){
+                sensor.onValue(vals[pin]);
+            }
         }
     });
 }
 
-//Motor position -> sensor.s.angleIndex
+//Motor position -> sensor.s.fromMotorIndex
 SensorManager.prototype.handleDxlPos=function(index,val){
+    //console.log("handleDxlPos:",index,val);
     $.each(this.sensors,function(i,sensor) {
-        if(+sensor.s.angleIndex == index){
-            sensor.onValue(val);
+        //console.log("handleDxlPos:",i,sensor.s.fromMotorEnabled);
+        if(sensor.s.fromMotorEnabled){
+            if(+sensor.s.fromMotorIndex == index){
+                sensor.onValue(val);
+            }
         }
     });        
 }
@@ -146,11 +173,12 @@ SensorManager.prototype.startAnim = function(animPlaying, animStopping){
 
 }
 
+
 SensorManager.prototype.getSensorWithPin = function(sensorPin){
     var result = undefined;  
     $.each(this.sensors, function(i,sensor) {
         //console.log("pin:",sensorPin,sensor.s.pin);
-        if( sensor.s.pin == sensorPin){
+        if( sensor.s.cm9Pin == sensorPin){
             result = sensor;
             return false; //break
         }
@@ -170,8 +198,10 @@ SensorManager.prototype.saveSensorSettings = function () {
         });    
     
         var json = JSON.stringify(s, null, 2);
-        fs.writeFileSync(__dirname + "/sensors.json", json);
-        settingsManager.copyPasteToUserFolder("sensors.json");
+        //Didier: dont overwrite default file
+        //fs.writeFileSync(__dirname + "/sensors.json", json);
+        //settingsManager.copyPasteToUserFolder("sensors.json");
+        settingsManager.saveToConfigurationFolder("sensors.json",json);
         //console.log(json);
 };
 
@@ -230,19 +260,61 @@ SensorManager.prototype.onName = function(id,val){
 
 SensorManager.prototype.onTolerance = function(id,val){
     this.sensors[id].s.tolerance = parseInt(val);
-    console.log("changeTolerance:",id,val);
+    //console.log("changeTolerance:",id,val);
     this.saveSensorSettings();
 }
 
 SensorManager.prototype.onThreshold = function(id,val){
     this.sensors[id].s.threshold = parseInt(val);
-    console.log("changeTheshold:",id,val);
+    //console.log("changeTheshold:",id,val);
     //this.saveSensorSettings(); //done when slider stops cf MisGUI
 }
 
 SensorManager.prototype.onChangeAnim = function(id,wich,txt){
-    this.sensors[id].s[wich]=txt;    
     console.log("changed anim:",id,wich,txt);
+    this.sensors[id].s[wich]=txt;    
     this.saveSensorSettings();
 }
 
+SensorManager.prototype.isMapped = function(type,port,cmd,nbID){
+    for(id in this.sensors){
+        var s = this.sensors[id].s;
+        var cmd_bool = false;
+        if(cmd == "note") cmd_bool = true;
+        if(s.midiPort == port && s.midiCmd == cmd_bool && s.midiMapping == nbID && s.midiEnabled){
+            return true;
+        }
+    }
+    return false;
+}
+
+SensorManager.prototype.getSensorIds = function(type,port,cmd,nbID){
+    var sensorIDs = new Array();
+    for(id in this.sensors){
+        var s = this.sensors[id].s;
+        var cmd_bool = false;
+        if(cmd == "note") cmd_bool = true;
+        if(s.midiPort == port && s.midiCmd == cmd_bool && s.midiMapping == nbID && s.midiEnabled){
+            sensorIDs.push(id);
+        }
+    }
+    return sensorIDs;
+}
+
+SensorManager.prototype.onMidi = function(id,type,arg){
+    
+    var sensor = this.sensors[id];
+    var mappped_arg = Math.round(arg*(sensor.s.valMax-sensor.s.valMin)/127 + sensor.s.valMin);
+    this.sensors[id].onValue(mappped_arg);
+    
+}
+
+SensorManager.prototype.addEmptySensor = function(){
+    console.log("SensorManager.addEmptySensor");
+    var id = "S"+this.sensorID; 
+    this.sensors[id]= new Sensor(); //TODO? new Sensor(id)
+    this.sensors[id].s.name = "Sensor_"+this.sensorID;
+    this.sensors[id].ID = id;
+    misGUI.addSensor(this.sensors[id].s,id); 
+    this.sensorID++;      
+}

@@ -9,17 +9,28 @@ Sensor = function () {
         device: "",      //(Didier) Midi,CM9,Robus,OSC,Mike ...
         address: "",     //(Didier) example for Robus "octo_wifi"
         name:"",         //(Didier) example Pour robus "octo_portard2"
-        pin:-1,
-        enabled: true,
-        threshold:-1,
-        tolerance:-1,
-        valMin: -1,
-        valMax: -1,
-        anim1: "", //TODO: change later in an array or not?
-        anim2: "",
-        motorIndex: 2,      
-        angleIndex: -1 
+        enabled: false,
+        threshold:50,   //default, pour addEmptySensor
+        tolerance:20,
+        valMin: 0,
+        valMax: 100,
+        anim1: "none", //TODO: change later in an array or not?
+        anim2: "none",
+        oscEnabled: false,
+        midiEnabled: false,
+        midiPort: "",
+        midiCmd: false, //true:note, false:CC
+        midiMapping: 0,
+        cm9Enabled: false,
+        cm9Pin: 0,        
+        fromMotorEnabled: false,
+        fromMotorIndex: 0,        
+        toMotorEnabled: false,
+        toMotorIndex: 0
     };
+    //Suggestion:
+    //   cm9:{ enabled:false , val:7 },
+
 
     this.currValue = -1;
     this.ID = -1;
@@ -41,15 +52,17 @@ Sensor.prototype.getSettings = function(){
 
 Sensor.prototype.onValue = function(val){
     //console.log("sensor:",this.s.name,val);
-    misGUI.setSensorValue(this.ID,val);
+    var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin);
+    misGUI.setSensorValue(this.ID,val,nv*100);
     this.currValue = val;
     if(this.s.enabled){
-        if(this.s.motorIndex>=0){
-            var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin)
-            dxlManager.onNormControl(this.s.motorIndex,nv);
+        if( this.s.toMotorEnabled ){
+            //var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin)
+            dxlManager.onNormControl(this.s.toMotorIndex,nv);
         }
         //TODO anims
         sensorManager.handleSensorValue(this.ID,val); 
+        if(this.s.oscEnabled) oscManager.sendSensorMessage(this.ID,val);
     }
 }
 
@@ -78,17 +91,17 @@ Sensor.prototype.init = function(){
 
 Sensor.prototype.onName = function(txt){
     var args = txt.split("/");
-    //console.log("*****************split:",args);
+    console.log("sensor onName *****************split:",args);
     var changes = 0;
     for(var i=0;i<args.length;i++){
         var kv = args[i].split(":");
         switch(kv[0]){
-            case "pin":this.s.pin=+kv[1];changes++;break;
-            case "motor":this.s.motorIndex=+kv[1];changes++;break;
+            case "pin":this.s.cm9Pin=+kv[1];changes++;break;
+            case "motor":this.s.toMotorIndexr=+kv[1];changes++;break;
             case "min":this.s.valMin=+kv[1];changes++;break;
             case "max":this.s.valMax=+kv[1];changes++;break;
             case "dev":this.s.device=kv[1];changes++;break;
-            case "pos":this.s.angleIndex=+kv[1];changes++;break;
+            case "pos":this.s.fromMotorIndex=+kv[1];changes++;break;
             case "addr":this.s.address=kv[1];changes++;break;
         }
     }
