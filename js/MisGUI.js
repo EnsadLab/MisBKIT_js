@@ -1444,8 +1444,6 @@ function toleranceUI(element, val, cur, min, max){
 
 
 
-
-
 function sensorSettings(){
 
     var target = $(this).parent().parent().children();
@@ -1454,6 +1452,11 @@ function sensorSettings(){
     settings.removeClass('blury')
     settings.css("display", "block");
 
+    // NEW
+    $(".sensor-setting-more").bind("mouseenter", stopScroll);
+    $(".sensor-setting-more").bind("mouseleave", initScroll);
+
+
     $(this).parent().parent().find("button.set").bind("click", function(event) {
         settings.css("display", "none");        
         target.removeClass('blury');
@@ -1461,8 +1464,13 @@ function sensorSettings(){
     });
 }
 
-
-
+// NEW
+function initScroll(e){
+    $(".sensors").css("overflow", "auto");
+}
+function stopScroll(e){
+    $(".sensors").css("overflow", "hidden");
+}
 
 
 
