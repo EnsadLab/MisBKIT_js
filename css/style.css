@@ -1439,8 +1439,7 @@ input.name:focus{
     color: rgba(0,255,153,1);
     font-size: 22px;
     text-align: left;
-    transition:left 1s linear;
-
+    /*transition:left 1s linear;*/
 }
 
 /*slider*/

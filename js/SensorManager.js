@@ -84,7 +84,7 @@ SensorManager.prototype.updateGUI = function () {
 }
 
 SensorManager.prototype.changeSetting = function(sensorID,name,value){
-    console.log("SensorManager.changeSetting:",sensorID,name,value);
+    //console.log("SensorManager.changeSetting:",sensorID,name,value);
     var sensor = this.sensors[sensorID];
     if(sensor){
         //tester if sensor.s[name] exists ???
@@ -118,7 +118,7 @@ SensorManager.prototype.handleSensorValue = function(sensorID, sensorValue){
     }else if(sensorValue >= (sensor.s.threshold + sensor.s.tolerance) && sensorValue < sensor.s.valMax){
         sensor.area = 1;
         //console.log("sensor area 1");
-        if(sensor.oldAra != sensor.area){
+        if(sensor.oldArea != sensor.area){
             // trigger animation 2
             //console.log("Trigger left animation ",sensor.s.anim2);
             this.startAnim(sensor.s.anim2, sensor.s.anim1);
@@ -310,7 +310,7 @@ SensorManager.prototype.onMidi = function(id,type,arg){
 }
 
 SensorManager.prototype.addEmptySensor = function(){
-    console.log("SensorManager.addEmptySensor");
+    //console.log("SensorManager.addEmptySensor");
     var id = "S"+this.sensorID; 
     this.sensors[id]= new Sensor(); //TODO? new Sensor(id)
     this.sensors[id].s.name = "Sensor_"+this.sensorID;
