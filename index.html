@@ -22,16 +22,19 @@
 					<p>
 						CM9 <!--span class="status" id="cm9Text"></span-->
 						<!-- TODO cf MisGUI $('#btcm9').on('click'... ON OFF ERROR -->
-						<input id="btcm9" type="checkbox" class="stopAll cmdTog" name ="enable" title="enable/disable"> 
+						<input id="btcm9" type="checkbox" class="stopAll" name ="enable"title="enable/disable">
 					</p>
 
 					<div class="content">
 						<!--button class="gear" data-id="pasglop"><img src="assets/settings.png"></button-->
-						<br>CM9 :<br>
+						<br>CM9 :
+						<input id="numCm9" type="number" class="set-value" value="0" align="right">						
+						<br>
 						<!-- cm9Text: TODO texte d'information -->
 						<br><span class="status" id="cm9Text">...</span>
 						<!-- button class="disconnected" id="btcm9">Off</button-->
 						<br>
+						
 						<!-- input type="checkbox"  name ="glou">SINGLE<br>
 						<br>
 						<input class="styled-checkbox" type="checkbox"  >CM9_1<br>
@@ -87,6 +90,19 @@
 						+
 						<br>
 					</div>
+				</div>
+
+				<div id="divMobilizing" class="plug">
+					<p>
+					MOBILIZING
+					<input type="checkbox" class="stopAll" name ="enable"title="enable/disable">
+					</p>
+
+					<div class="content">
+						<br>MOBILIZING :
+						<br>
+					</div>
+
 				</div>
 
 				<div class="plug">
