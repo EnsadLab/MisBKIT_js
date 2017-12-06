@@ -254,7 +254,8 @@ MisGUI.prototype.angle = function(index,val){
     }
 }
 
-MisGUI.prototype.speed = function(index,val){ //!!!base100
+MisGUI.prototype.speed = function(index,val){ //[-100,100]
+    //console.log("gui speed:",index,val)
     if(index<this.rotSpeeds.length){
         var v = this.rotSpeeds[index].setValue(+val).value;
         this.inputVals.eq(index).val(v.toFixed(1));

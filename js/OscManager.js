@@ -67,6 +67,19 @@ OscManager.prototype.initUserReceiver = function(){
 
 }
 
+OscManager.prototype.handleMessage = function(rcv){
+    var adr = rcv.address;
+    if(adr.startsWith("/mbk/anims")){
+        console.log("mbz msg:",rcv.address,rcv.args[0].value);
+        oscManager.handleAnimMessage(rcv); //le self. ne marchait pas!!!
+    }else if(rcv.address.startsWith("/mbk/motors")){
+        console.log("mbz msg:",rcv.address);
+        oscManager.handleMotorMessage(rcv);
+    }else{
+        console.log("invalid OSC message: " + rcv);
+    }
+}
+
 // handles animation messages coming from user app
 OscManager.prototype.handleAnimMessage = function(rcv){
 
@@ -105,7 +118,9 @@ OscManager.prototype.handleMotorMessage = function(rcv){
     var adr = rcv.address;
     var arg;
     if(!adr.startsWith("/mbk/motors/stopAll")){
-        arg = rcv.args[0].value;
+        //arg = rcv.args[0].value; ???
+        arg = rcv.args[0];
+        console.log("arg",arg);
     }
     
     //console.log("arg: " + arg);
@@ -118,11 +133,12 @@ OscManager.prototype.handleMotorMessage = function(rcv){
         this.setMode(arg,1);
     }else if(adr.startsWith(cmp = "/mbk/motors/wheel/")){
         motorIndex = this.getArgInAdress(adr,cmp);
-        this.setMode(motorIndex,0);
-        misGUI.speed(motorIndex,arg);
+        console.log("motorIndex:",motorIndex,arg);
+        //this.setMode(motorIndex,0);
+        misGUI.speed(+motorIndex,arg);
     }else if(adr.startsWith(cmp = "/mbk/motors/joint/")){
         motorIndex = this.getArgInAdress(adr,cmp);
-        this.setMode(motorIndex,1);
+        //this.setMode(motorIndex,1);
         misGUI.angle(motorIndex,arg);
     }else if(adr.startsWith(cmp = "/mbk/motors/wheeljoint/")){
         motorIndex = this.getArgInAdress(adr,cmp);
