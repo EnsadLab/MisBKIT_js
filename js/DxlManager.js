@@ -613,16 +613,21 @@ DxlManager.prototype.onNormControl = function(index,val){
     }
 };
 
-
 DxlManager.prototype.setAngle = function(index,val){
-    console.log("dxlManager",this.motors.length);
     if(index<this.motors.length){
-        var dxl = this.motors[index];
-        return dxl.angle(val);
+        return this.motors[index].angle(val);
     }
     else
         return val;
 };
+
+DxlManager.prototype.setSpeed = function(index,val){
+    if(index<this.motors.length)
+        return this.motors[index].speed(val);
+    else
+        return val;
+};
+
 
 
 DxlManager.prototype.onPlay = function(index,val){

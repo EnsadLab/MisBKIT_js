@@ -83,10 +83,10 @@ OscManager.prototype.handleMessage = function(rcv){
 // handles animation messages coming from user app
 OscManager.prototype.handleAnimMessage = function(rcv){
 
-    console.log("handling animation message");
     var adr = rcv.address;
     var arg = rcv.args[0].value;
-
+    console.log("handling animation message",arg);
+    
     if(adr == "/mbk/anims/start"){
         var animIDs = dxlManager.getAnimID(arg);
         for(var i=0; i<animIDs.length; i++){ // in case multiple anims with same name
@@ -120,11 +120,11 @@ OscManager.prototype.handleMotorMessage = function(rcv){
     if(!adr.startsWith("/mbk/motors/stopAll")){
         arg = rcv.args[0].value;
         //arg = rcv.args[0];
-        console.log("arg",arg);
+        //console.log("arg",arg);
     }
     
     //console.log("arg: " + arg);
-    //console.log("handling motor message " + adr);
+    console.log("handling motor message ",adr,arg);
 
     var motorIndex;
     if(adr.startsWith(cmp = "/mbk/motors/wheelmode")){
@@ -136,9 +136,20 @@ OscManager.prototype.handleMotorMessage = function(rcv){
         console.log("motorIndex:",motorIndex,arg);
         //this.setMode(motorIndex,0);
         misGUI.speed(+motorIndex,arg);
+    }else if(adr.startsWith(cmp = "/mbk/motors/speed/")){
+        motorIndex = this.getArgInAdress(adr,cmp);
+        var s = dxlManager.setAngle(+motorIndex,arg);
+        console.log("motorIndex:",motorIndex,arg);
+        //this.setMode(motorIndex,0);
+        misGUI.speed(+motorIndex,arg);
     }else if(adr.startsWith(cmp = "/mbk/motors/joint/")){
         motorIndex = this.getArgInAdress(adr,cmp);
         //this.setMode(motorIndex,1);
+        var a = dxlManager.setAngle(+motorIndex,arg);
+        misGUI.angle(motorIndex,a);
+    }else if(adr.startsWith(cmp = "/mbk/motors/goal/")){
+        console.log("GOAL");
+        motorIndex = this.getArgInAdress(adr,cmp);
         var a = dxlManager.setAngle(+motorIndex,arg);
         misGUI.angle(motorIndex,a);
     }else if(adr.startsWith(cmp = "/mbk/motors/wheeljoint/")){

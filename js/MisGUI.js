@@ -259,7 +259,7 @@ MisGUI.prototype.speed = function(index,val){ //[-100,100]
     if(index<this.rotSpeeds.length){
         var v = this.rotSpeeds[index].setValue(+val).value;
         this.inputVals.eq(index).val(v.toFixed(1));
-        //console.log("misguiSpeed:",val,v);
+        console.log("misguiSpeed:",val,v);
     }
 }
 
