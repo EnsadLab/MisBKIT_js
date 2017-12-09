@@ -614,6 +614,15 @@ DxlManager.prototype.onNormControl = function(index,val){
 };
 
 
+DxlManager.prototype.setAngle = function(index,val){
+    console.log("dxlManager",this.motors.length);
+    if(index<this.motors.length){
+        var dxl = this.motors[index];
+        return dxl.angle(val);
+    }
+    else
+        return val;
+};
 
 
 DxlManager.prototype.onPlay = function(index,val){

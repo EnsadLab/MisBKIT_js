@@ -6,6 +6,7 @@
   "main": "main.js",
   "dependencies": {
     "midi": "^0.9.5",
+    "osc": "^2.2.0",
     "osc-min": "^1.1.1",
     "socket.io": "^2.0.4",
     "websocket": "^1.0.24"

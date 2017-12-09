@@ -352,7 +352,6 @@ MisGUI.prototype.motorSettings = function(index,s){
     //console.log("DBG_motorSettings:",index,s);
     //console.log("DBG_motorSettings ID:", s.id);
 
-
     var parent = this.getMotorUI(index);
     parent.find(".identity").text(s.id);
     parent.find("[name=enable]").prop("checked",s.enabled);
@@ -700,6 +699,15 @@ MisGUI.prototype.init =function(){
         sensorManager.addEmptySensor();
     })
     
+    //MOBILIZING : test de data-func
+    $("#mbzOnOff").on("change",function(){
+        console.log("mbzOnOff:",$(this).data("dest"),this.checked);
+        //eval($(this).data("func"))(this.checked); this messed
+        //eval($(this).data("func")).onOff(this.checked); this ok
+        eval($(this).data("func")+"("+this.checked+");"); //ok
+        
+        
+    });
 
     //this.scanSerial();    /*Didier*/
     this.scanMidiPorts();
@@ -1338,6 +1346,7 @@ MisGUI.prototype.scanIPv4 = function(){
         infoIP.eq(i).remove();
     }
     var info = infoIP.eq(0);
+    var mbzSrv = "ws://127.0.0.1:8080<br>"; 
     //var selector = $("#selectOSC");
     //selector.empty();
     try {
@@ -1351,16 +1360,23 @@ MisGUI.prototype.scanIPv4 = function(){
                     var clone = info.clone(info);
                     clone.html("Local IP: "+addr.address);
                     clone.insertAfter(info);
-                    info = clone;                    
+                    info = clone;
+                    mbzSrv+="ws://"+addr.address+":8080<br>";          
                 }
             }
         }
     }catch(e){}
     //selector.append($("<option value='scan' >scan</option>"));
     //*/
+    $(".mbzIP").html(mbzSrv);
     $(".infoIP").on("click",function(){
         misGUI.scanIPv4();
     })
+    $(".mbzIP").on("click",function(){
+        misGUI.scanIPv4();
+    })
+
+
 
 }
 

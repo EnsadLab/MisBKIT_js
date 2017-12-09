@@ -71,7 +71,7 @@ OscManager.prototype.handleMessage = function(rcv){
     var adr = rcv.address;
     if(adr.startsWith("/mbk/anims")){
         console.log("mbz msg:",rcv.address,rcv.args[0].value);
-        oscManager.handleAnimMessage(rcv); //le self. ne marchait pas!!!
+        oscManager.handleAnimMessage(rcv);
     }else if(rcv.address.startsWith("/mbk/motors")){
         console.log("mbz msg:",rcv.address);
         oscManager.handleMotorMessage(rcv);
@@ -118,8 +118,8 @@ OscManager.prototype.handleMotorMessage = function(rcv){
     var adr = rcv.address;
     var arg;
     if(!adr.startsWith("/mbk/motors/stopAll")){
-        //arg = rcv.args[0].value; ???
-        arg = rcv.args[0];
+        arg = rcv.args[0].value;
+        //arg = rcv.args[0];
         console.log("arg",arg);
     }
     
@@ -139,7 +139,8 @@ OscManager.prototype.handleMotorMessage = function(rcv){
     }else if(adr.startsWith(cmp = "/mbk/motors/joint/")){
         motorIndex = this.getArgInAdress(adr,cmp);
         //this.setMode(motorIndex,1);
-        misGUI.angle(motorIndex,arg);
+        var a = dxlManager.setAngle(+motorIndex,arg);
+        misGUI.angle(motorIndex,a);
     }else if(adr.startsWith(cmp = "/mbk/motors/wheeljoint/")){
         motorIndex = this.getArgInAdress(adr,cmp);
         var divMotor = misGUI.getMotorUI(motorIndex);
