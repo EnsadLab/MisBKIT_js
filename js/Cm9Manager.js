@@ -277,7 +277,6 @@ class CM9udp {
         }
     }
 
- 
     timedPause(){
         //console.log("cm9endPause:",this.sendStack.length);
         this.pauseDuration = 0;

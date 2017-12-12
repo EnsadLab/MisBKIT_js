@@ -17,6 +17,7 @@ Sensor = function () {
         anim1: "none", //TODO: change later in an array or not?
         anim2: "none",
         oscEnabled: false,
+        mobilizingEnabled: false,
         midiEnabled: false,
         midiPort: "",
         midiCmd: false, //true:note, false:CC
@@ -53,7 +54,6 @@ Sensor.prototype.getSettings = function(){
 Sensor.prototype.onValue = function(val){
     //console.log("sensor:",this.s.name,val);
     var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin);
-    misGUI.setSensorValue(this.ID,val,nv*100);
     this.currValue = val;
     if(this.s.enabled){
         if( this.s.toMotorEnabled ){
@@ -63,7 +63,17 @@ Sensor.prototype.onValue = function(val){
         //TODO anims
         sensorManager.handleSensorValue(this.ID,val); 
         if(this.s.oscEnabled) oscManager.sendSensorMessage(this.ID,val);
+        if(this.s.mobilizingEnabled){
+            oscMobilizing.sendOSC({
+                address:"/mbk/sensor",
+                args:[
+                    {type:'s',value:this.s.name},
+                    {type:'f',value:nv}
+                ]
+            });
+        }
     }
+    misGUI.setSensorValue(this.ID,val,nv*100);    
 }
 
 Sensor.prototype.init = function(){

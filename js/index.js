@@ -152,9 +152,8 @@ window.onload = function() {
     $(".toggleShow").on("click",toggleShow);
     */
 
-    // TODO: ordering had to be changed -> @Didier: is it a problem how it is now?
+    // TODO: ordering had to be changed -> @Didier: is it a problem how it is now? No
     settingsManager = new SettingsManager();
-    //cm9Com = new CM9_UDP();//cm9Com.open();
     cm9Com = new CM9udp();
     robusManager = new RobusManager();
 

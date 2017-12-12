@@ -250,7 +250,7 @@ MisGUI.prototype.angle = function(index,val){
     if(index<this.rotAngles.length){
         var v = this.rotAngles[index].setValue(+val).value;
         this.inputVals.eq(index).val(v.toFixed(1));
-        //console.log("misguiAngle:",val,v);
+        console.log("misguiAngle:",val,v);
     }
 }
 

@@ -67,18 +67,89 @@ OscManager.prototype.initUserReceiver = function(){
 
 }
 
+//... mobilizing ... in progress
+//TODO split
 OscManager.prototype.handleMessage = function(rcv){
     var adr = rcv.address;
     if(adr.startsWith("/mbk/anims")){
-        console.log("mbz msg:",rcv.address,rcv.args[0].value);
+        //console.log("mbz msg:",rcv.address,rcv.args[0].value);
         oscManager.handleAnimMessage(rcv);
     }else if(rcv.address.startsWith("/mbk/motors")){
-        console.log("mbz msg:",rcv.address);
-        oscManager.handleMotorMessage(rcv);
+        //console.log("mbz msg:",rcv.address);
+        oscManager.handleMotorMessage2(rcv);
     }else{
         console.log("invalid OSC message: " + rcv);
     }
 }
+
+//OscManager.prototype.handleMessage2 = function(split,args){
+    
+//}    
+
+// mobilizing ... in progress
+OscManager.prototype.handleMotorMessage2 = function(rcv){
+    var adds = rcv.address.split("/");
+    // ,,mbk,motors,cmd,index ....
+    var vals  = oscManager.getValsInAdress(4,adds,rcv.args);
+    //vals[0]=indexMotor 
+    console.log("osc motors:",adds[3],vals);
+    /* 
+    if( typeof dxlManager[adds[3]]==='function' ){
+        //console.log("DXLMANAGER has ",dxlManager[adds[3]]);
+        dxlManager[adds[3]](args);
+    }
+    ok ça marche ... on verra plus tard */
+
+    switch(adds[3]){ //cmd
+        case "posN":
+            dxlManager.setAngleN(vals[0],vals[1]);
+            break;
+        case "speedN":
+            dxlManager.setSpeedN(vals[0],vals[1]);
+            break;
+        case "pos":
+        case "angle":
+        case "joint":
+            dxlManager.setAngle(vals[0],vals[1]);
+            break;
+        case "speed":
+        case "wheel":
+            var a = dxlManager.setSpeed(vals[0],vals[1]);
+            break;
+        case "wheelmode":
+            this.setMode(vals[0],0);
+            break;    
+        case "jointmode":
+            this.setMode(vals[0],1);
+            break;
+        case "stop":
+            dxlManager.stopMotor(vals[0]);
+            break;
+        case "stopAll": //stops motors and anims
+            dxlManager.stopAll(); //TODO: gui....?
+            break;
+           
+        default:
+            console.log("unknown osc msg");        
+
+    }
+}
+
+//transferre les derniers item de address dans vals
+OscManager.prototype.getValsInAdress = function(index,splt,args){
+    vals = [];
+    for(var i=index;i<splt.length;i++){
+        if(isNaN(splt[i]))
+            vals.push(splt[i]);
+        else
+            vals.push(+splt[i]);
+    }
+    for(var i=0;i<args.length;i++){
+        vals.push(args[i].value);
+    }
+    return vals;
+}
+
 
 // handles animation messages coming from user app
 OscManager.prototype.handleAnimMessage = function(rcv){
