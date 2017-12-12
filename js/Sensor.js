@@ -64,6 +64,7 @@ Sensor.prototype.onValue = function(val){
         sensorManager.handleSensorValue(this.ID,val); 
         if(this.s.oscEnabled) oscManager.sendSensorMessage(this.ID,val);
         if(this.s.mobilizingEnabled){
+            console.log("send sensor:",this.s.name,nv);
             oscMobilizing.sendOSC({
                 address:"/mbk/sensor",
                 args:[

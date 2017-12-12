@@ -38,7 +38,9 @@ class OscMobilizing{
 
     sendOSC(msg){
         if(this.ready){
+            try{
             this.oscPort.send(msg);
+            }catch(err){} //console.log("mbz:",err)}
         }
     }
 
@@ -87,6 +89,7 @@ class OscMobilizing{
             });
 
             self.oscPort.on('close',function(ev){  //ok
+                self.ready = true;
                 console.log("oscPort close:",ev);
             });
 
