@@ -310,7 +310,7 @@ SensorManager.prototype.onMidi = function(id,type,arg){
 }
 
 SensorManager.prototype.addEmptySensor = function(){
-    console.log("SensorManager.addEmptySensor");
+    //console.log("SensorManager.addEmptySensor");
     var id = "S"+this.sensorID; 
     this.sensors[id]= new Sensor(); //TODO? new Sensor(id)
     this.sensors[id].s.name = "Sensor_"+this.sensorID;

@@ -398,6 +398,14 @@ DxlManager.prototype.cmd = function(cmd,index,arg){
     }
 };
 
+DxlManager.stopMotor = function(index){
+    //TODO GUI
+    if(index<this.motors.length){
+        this.motors[index].enable(false);        
+    }
+}
+
+
 DxlManager.prototype.stopAll = function() {
     cm9Com.write("stop\n");
     for (var i = 0; i < this.motors.length; i++) {
@@ -512,6 +520,14 @@ DxlManager.prototype.writeReg=function(index,addr,val) { //
 DxlManager.prototype.temperature = function(args){
     //console.log("temperature:",args[1],args[2]);
     misGUI.temperature(args[1],args[2]);
+    oscMobilizing.sendOSC({
+        address:"/mbk/temperature",
+        args:[
+            {type:'i',value:args[1]},
+            {type:'i',value:args[2]}            
+        ]
+    });
+
 }
 
 DxlManager.prototype.analogs = function(args){
@@ -613,6 +629,44 @@ DxlManager.prototype.onNormControl = function(index,val){
     }
 };
 
+/*
+Attention à cmd !!!
+DxlManager.prototype.angle = function(args){
+    var index=args[0];
+    if(index<this.motors.length){
+        misGUI.angle(index,this.motors[index].angle(args[1]));        
+    }
+}
+*/
+
+DxlManager.prototype.setAngle = function(index,val){
+    if(index<this.motors.length){
+        var a = this.motors[index].angle(val);
+        misGUI.angle(index,a);
+    }
+};
+
+DxlManager.prototype.setAngleN = function(index,val){
+    if(index<this.motors.length){
+        var a=this.motors[index].nAngle(val);
+        misGUI.angle(index,a);        
+    }
+};
+
+DxlManager.prototype.setSpeed = function(index,val){
+    if(index<this.motors.length){
+        var v=this.motors[index].speed(val);
+        misGUI.speed(index,v);        
+    }
+};
+
+DxlManager.prototype.setSpeedN = function(index,val){
+    if(index<this.motors.length){
+        var v=this.motors[index].nSpeed(val);
+        console.log("speedN:",v);
+        misGUI.speed(index,v);
+    }
+};
 
 
 

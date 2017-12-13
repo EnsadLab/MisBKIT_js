@@ -45,18 +45,25 @@ function MisGUI(){
 
 
     $('#btcm9').on('click',function(){
-        var cl = $(this).prop("class");
-        if(cl=="connected"){
-            cm9Com.close();
-            $(this).prop("class","disconnected").text("OFF");
+        console.log("btcm9",this.checked);
+        //var cl = $(this).prop("class");
+        if(this.checked){
+            cm9Com.open();
+            //$(this).prop("class","stopAll").text("OFF");
         }
         else {
-            cm9Com.open();
-            $(this).prop("class","connected").text("ON");
+            cm9Com.close();
+            //$(this).prop("class","connected").text("ON");
         }
     });
 
-
+    $('#numCm9').on('change',function(){
+        console.log("CM9 changed",this.value);
+        //$('#btcm9').prop("class","disconnected").text("OFF");
+        $('#btcm9').prop("checked",false);
+        var v = cm9Com.changeCm9(+this.value);
+        this.value=v;
+    });
 
     var inputs = $("#divDxlReg :input");
     inputs.change(function(toto){
@@ -110,13 +117,16 @@ MisGUI.prototype.cm9State=function(state){
     var bt = $("#btcm9");
     if(state=='OFF'){
         //console.log("MisGUI.prototype.cm9State OFF?",state);
-        bt.prop("class","disconnected").text("OFF");
+        //bt.prop("class","disconnected").text("OFF");
+        bt.prop("checked",false);
         this.cm9Info("");
     }
     else if(state=='ON')
-        bt.prop("class", "connected").text("ON");
+        //bt.prop("class", "connected").text("ON");
+        bt.prop("checked",true);
     else{
-        bt.prop("class", "error").text("ERROR");
+        //bt.prop("class", "error").text("ERROR");
+        bt.prop("checked",false);
         this.cm9Info("error");        
     }
     bt.prop('disabled',false);
@@ -240,15 +250,16 @@ MisGUI.prototype.angle = function(index,val){
     if(index<this.rotAngles.length){
         var v = this.rotAngles[index].setValue(+val).value;
         this.inputVals.eq(index).val(v.toFixed(1));
-        //console.log("misguiAngle:",val,v);
+        console.log("misguiAngle:",val,v);
     }
 }
 
-MisGUI.prototype.speed = function(index,val){ //!!!base100
+MisGUI.prototype.speed = function(index,val){ //[-100,100]
+    //console.log("gui speed:",index,val)
     if(index<this.rotSpeeds.length){
         var v = this.rotSpeeds[index].setValue(+val).value;
         this.inputVals.eq(index).val(v.toFixed(1));
-        //console.log("misguiSpeed:",val,v);
+        console.log("misguiSpeed:",val,v);
     }
 }
 
@@ -341,7 +352,6 @@ MisGUI.prototype.motorSettings = function(index,s){
 
     //console.log("DBG_motorSettings:",index,s);
     //console.log("DBG_motorSettings ID:", s.id);
-
 
     var parent = this.getMotorUI(index);
     parent.find(".identity").text(s.id);
@@ -520,6 +530,7 @@ MisGUI.prototype.init =function(){
     //DB
     this.inputVals = $("#divMotors .num_rotary");
     for(var i=0;i<this.inputVals.length;i++) {
+        //console.log("num_rotary:",i);
         this.inputVals.eq(i).val(0);
         $(this.inputVals[i]).data("index",i);
     }
@@ -527,6 +538,7 @@ MisGUI.prototype.init =function(){
         var index = $(this).data("index");
         var mode = dxlManager.getMode(index);
         var val = $(this).val();
+        console.log("num_rotary change:",index,mode,val);
         if(mode==0)
             self.angle(index,val);
         else
@@ -690,6 +702,15 @@ MisGUI.prototype.init =function(){
         sensorManager.addEmptySensor();
     })
     
+    //MOBILIZING : test de data-func
+    $("#mbzOnOff").on("change",function(){
+        console.log("mbzOnOff:",$(this).data("dest"),this.checked);
+        //eval($(this).data("func"))(this.checked); this messed
+        //eval($(this).data("func")).onOff(this.checked); this ok
+        eval($(this).data("func")+"("+this.checked+");"); //ok
+        
+        
+    });
 
     //this.scanSerial();    /*Didier*/
     this.scanMidiPorts();
@@ -1331,6 +1352,7 @@ MisGUI.prototype.scanIPv4 = function(){
         infoIP.eq(i).remove();
     }
     var info = infoIP.eq(0);
+    var mbzSrv = "ws://127.0.0.1:8080<br>"; 
     //var selector = $("#selectOSC");
     //selector.empty();
     try {
@@ -1344,16 +1366,23 @@ MisGUI.prototype.scanIPv4 = function(){
                     var clone = info.clone(info);
                     clone.html("Local IP: "+addr.address);
                     clone.insertAfter(info);
-                    info = clone;                    
+                    info = clone;
+                    mbzSrv+="ws://"+addr.address+":8080<br>";          
                 }
             }
         }
     }catch(e){}
     //selector.append($("<option value='scan' >scan</option>"));
     //*/
+    $(".mbzIP").html(mbzSrv);
     $(".infoIP").on("click",function(){
         misGUI.scanIPv4();
     })
+    $(".mbzIP").on("click",function(){
+        misGUI.scanIPv4();
+    })
+
+
 
 }
 

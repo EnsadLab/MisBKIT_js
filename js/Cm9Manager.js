@@ -48,6 +48,7 @@ class CM9udp {
         this.localIP = "192.168.4.2";
         this.localPort = 41235;
         this.remoteIP = "192.168.4.1";
+        //this.remoteIP = "10.0.0.199"
         this.remotePort = 41234;
         this.rcvTime   = 0; 
         this.rcvBuffer = new Uint8Array(1024);
@@ -114,6 +115,24 @@ class CM9udp {
     forgetAll(){
         this.sendStack = [];
         this.flushed = true;    
+    }
+
+    changeCm9(num){
+        this.close();
+        var n = +num;
+        if(n<0)n=0;
+        if(n>54)n=54;
+        if(n==0){ //( cm9 is AccesPoint )
+            this.remoteIP = "192.168.4.1";
+        }
+        else{; // xxx.xxx.xxx.20x ( cm9 has static IP)
+            this.localIP = getIpv4s()[0];
+            var dot = this.localIP.lastIndexOf(".")+1;
+            this.remoteIP = this.localIP.substring(0,dot)+(200+n);
+            console.log("cm9 ip:",this.remoteIP);
+        }
+        this.index = n;
+        return n;
     }
 
     open(inaddr,inport,incb) {
@@ -258,7 +277,6 @@ class CM9udp {
         }
     }
 
- 
     timedPause(){
         //console.log("cm9endPause:",this.sendStack.length);
         this.pauseDuration = 0;
@@ -336,4 +354,23 @@ class CM9udp {
         this.ready = true;
         dxlManager.cm9OnOff(true); //mmmm        
     }
+}; //class CM9udp
+
+function getIpv4s(){
+    ips = [];
+    try {
+        var interfaces = OS.networkInterfaces();
+        for (var k in interfaces) {
+            //console.log("netInterface:",interfaces[k]);
+            for (var k2 in interfaces[k]) {
+                var addr = interfaces[k][k2];
+                if (addr.internal == false && (addr.family == "IPv4")) {
+                    //console.log("localIP:",addr);
+                    ips.push( addr.address );
+                }
+            }
+        }
+    }catch(e){}
+    console.log("adresses IP:",ips);
+    return ips;
 }

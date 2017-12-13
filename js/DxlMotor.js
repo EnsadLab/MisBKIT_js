@@ -427,12 +427,11 @@ Dxl.prototype.angle = function(a){
     }
 };
 
-
 Dxl.prototype.nAngle = function(an) {
     //console.log("nangle:",a," min:",this.m.angleMin," max:",this.m.angleMax);
-    var a = this.m.angleMin + an * (this.m.angleMax - this.m.angleMin);
-    this.angle( a );
-    return a;
+    if(an>1)an=1.0;
+    else if(an<-1)an=-1.0;
+    return this.angle( this.m.angleMin + an * (this.m.angleMax - this.m.angleMin) );
 };
 
 Dxl.prototype.velocity = function(v){
@@ -456,7 +455,8 @@ Dxl.prototype.speed = function(s){
 };
 
 Dxl.prototype.nSpeed = function(s) {
-    //console.log("nspeed:",this.m.speedMin,' ',this.m.speedMax);
+    if(s>1)s=1.0;
+    else if(s<-1)s=-1.0;
     return this.speed(this.m.speedMin + s * (this.m.speedMax - this.m.speedMin) );
 };
 

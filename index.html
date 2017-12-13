@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>misB KIT WIFI 3.0</title>
+        <title>misB KIT WIFI 3.3</title>
         <link rel="stylesheet" href="css/jquery-ui.css">
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/toggle.css">
@@ -23,17 +23,21 @@
 					<p>
 						CM9 <!--span class="status" id="cm9Text"></span-->
 						<!-- TODO cf MisGUI $('#btcm9').on('click'... ON OFF ERROR -->
+
 						<input id="btcm9" type="checkbox" class="small cmdTog" name ="enable" title="enable/disable"> 
 					</p>
 
 					<div class="content">
 						<!--button class="gear" data-id="pasglop"><img src="assets/settings.png"></button-->
-						<br>CM9 :<br>
+						<br>CM9 :
+						<input id="numCm9" type="number" class="set-value" value="0" align="right">						
+						<br>
 						<!-- cm9Text: TODO texte d'information -->
 						<br><span class="status" id="cm9Text">...</span>
 						<input type="number" class="small cmd" name="" placeholder="CM9 number">
 						<!-- button class="disconnected" id="btcm9">Off</button-->
 						<br>
+						
 						<!-- input type="checkbox"  name ="glou">SINGLE<br>
 						<br>
 						<input class="styled-checkbox" type="checkbox"  >CM9_1<br>
@@ -89,6 +93,25 @@
 						+
 						<br>
 					</div>
+				</div>
+
+				<div id="divMobilizing" class="plug">
+					<p>
+					MOBILIZING
+					<input id="mbzOnOff" data-func="oscMobilizing.onOff" type="checkbox" class="stopAll" name ="enable" title="enable/disable">
+					</p>
+
+					<div class="content">
+						<br>MOBILIZING :
+						<br>
+						<hr>
+						<font color='gray'>
+							Server:
+							<div class="mbzIP">
+								ws://localhost:8080<br>ws://localhost:8080</div>
+						</font>
+					</div>
+
 				</div>
 
 				<div class="plug">
@@ -363,6 +386,35 @@
 									<option value="cm9">CM9</option>
 									<option value="mapto">Mapping to motor</option>
 									<option value="mapfrom">Mapping from motor</option>
+								<section>
+									<input type="number" class="value-setting cmdInt" placeholder="min value" name="valMin">
+									<input type="number" class="value-setting cmdInt" placeholder="max value" name="valMax">
+								</section>
+
+								<section>
+									<h4>Mobilizing</h4>
+									<input type="checkbox" class="power cmdOnOff" name ="mobilizingEnabled" title="enable/disable">								
+								</section>								
+
+								<section>
+									<h4>OSC</h4>
+									
+									<input type="checkbox" class="osc-btn cmdOnOff" name ="oscEnabled" title="enable/disable">
+									<div class="info">adresse : /sensor/proximity</div>
+									<!-- <input type="text" class="OSC-setting" placeholder="OSC adress" name=""> -->
+									<input type="number" class="OSC-setting" placeholder="port" name="">
+								</section>
+
+								<section>
+								<h4>Midi</h4>
+								<input type="checkbox" class="midi-btn cmdOnOff" name ="midiEnabled"title="enable/disable">
+								
+
+								<select class= "midi-setting full cmdString"  id="" name="midiPort">
+									<option value="">midi 1</option>
+									<option value="midi 2">midi 2</option>
+									<option value="">midi 3</option>
+									<option value="">midi 4</option>
 								</select>
 								<button class="set float-right valid">OK</button>
 							</div>
@@ -522,6 +574,6 @@
 			<script src="js/Sensor.js"></script>
 			<script src="js/SensorManager.js"></script>
 			<script src="js/OscManager.js"></script>
-			<script src="js/sticky-kit.min.js"></script>
-    </body>
+			<script src="js/OscMobilizing.js"></script>
+		</body>
 </html>

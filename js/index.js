@@ -28,7 +28,7 @@ var sensorManager = null; //cf SensorManager.js
 var oscManager = null; //cf OscManager.js
 var cm9Com     = null;
 var robusManager = null;
-
+var oscMobilizing = null;
 
 try {
     var ipc = require("electron").ipcRenderer;
@@ -43,6 +43,7 @@ try {
         robusManager.reset();
         cm9Com.removeAllCallbacks();
         cm9Com.close();
+        oscMobilizing.close();
     });
 
 }catch(e){}
@@ -151,9 +152,8 @@ window.onload = function() {
     $(".toggleShow").on("click",toggleShow);
     */
 
-    // TODO: ordering had to be changed -> @Didier: is it a problem how it is now?
+    // TODO: ordering had to be changed -> @Didier: is it a problem how it is now? No
     settingsManager = new SettingsManager();
-    //cm9Com = new CM9_UDP();//cm9Com.open();
     cm9Com = new CM9udp();
     robusManager = new RobusManager();
 
@@ -169,6 +169,8 @@ window.onload = function() {
 
     oscManager = new OscManager();
     oscManager.init();
+
+    oscMobilizing = new OscMobilizing();
     //dxlManager.loadSettings(); //-> now called from settingsManager when directories are ready
     
     //try{ cm9Com = new SerialClass(); }catch(e){}

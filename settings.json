@@ -2,16 +2,7 @@
   "oscHost": "none",
   "webSocket": "none",
   "midiPorts": [],
-  "anims": [
-    {
-      "name": "2017-12-12-11h59-14",
-      "key": ""
-    },
-    {
-      "name": "2017-12-12-12h46-10",
-      "key": ""
-    }
-  ],
+  "anims": [],
   "motors": [
     {
       "id": 2,
