@@ -33,13 +33,17 @@ function hideConnexion(){
 $("#sens").bind('click', showSensors);
 $("#anims").bind('click', showAnimations);
 
+showAnimations();
+
 function showSensors(){
+	$(".sensorsBTN").css("display", "block");
+
 	$(".sensors ").css("z-index", 1);
 	$(".sensors ").css("display", "block");
 
 	$(".animations ").css("z-index", -1);
 	$(".animations ").css("display", "none");
-	$(".load").css("display", "none");
+	$(".animBTN").css("display", "none");
 	$(".addSensors").css("display", "block");
 
 	$(this).css("opacity", 1);
@@ -49,13 +53,15 @@ function showSensors(){
 
 
 function showAnimations(){
+	$(".sensorsBTN").css("display", "none");
+
 	$(".animations ").css("z-index", 1);
 	$(".animations ").css("display", "block");
 
 	$(".sensors ").css("z-index", -1);
 	$(".sensors ").css("display", "none");
 
-	$(".load").css("display", "block");
+	$(".animBTN").css("display", "block");
 	$(".addSensors").css("display", "none");
 
 

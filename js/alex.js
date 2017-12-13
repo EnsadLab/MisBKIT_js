@@ -44,6 +44,7 @@
 
     $("button.advanced").bind("click", function(){
 		misGUI.toggleAdvanced(toggleAdvanced);
+
     	if(toggleAdvanced){
     		UIhideAdvanced();
     	}else{
@@ -109,20 +110,27 @@
 	  
 	  function UIshowAdvanced(){
 	  	
-	  	$(".normal").hide("slide", 300, function(){
+	  	$(".allMotors").hide("slide", 1, function(){
 	  		console.log("finish");
-	  		$(".settings").show("slide");
-	  		$("button.advanced").html("<div class='valid'>ok</div>");
+	  		$(".motors-settings").show("slide");
+	  		$("button.advanced").html("ok");
+	  		$("button.advanced").addClass("valid");
+	  		$(".motors-btn-group").find(".hide").show();
+	  		$(".motors-btn-group").find(".show").hide();
 	  	});
 	  	toggleAdvanced = true;
 	  }
 
 
 	  function UIhideAdvanced(){
-	  	$(".settings").hide("slide", 300, function(){
+	  	$(".motors-settings").hide("slide", 1, function(){
 	  		console.log("finish");
-	  		$(".normal").show("slide");
+	  		$(".allMotors").show("slide");
+	  		$("button.advanced").removeClass("valid");
 	  		$("button.advanced").html("<img src='assets/settings.png'>");
+	  		$(".motors-btn-group").find(".hide").hide();
+	  		$(".motors-btn-group").find(".show").show();
+
 	  	});
 	  	toggleAdvanced = false;
 	  	

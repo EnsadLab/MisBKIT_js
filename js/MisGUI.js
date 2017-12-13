@@ -325,6 +325,7 @@ MisGUI.prototype.toggleAdvanced = function(onoff){
             var parent = this.getMotorUI(i);
             var chk = parent.find("[name=enable]").prop("checked");
             console.log("DBG-check:",i," ",chk);
+            parseBlinker();
             if(chk)
                 dxlManager.cmd("enable",i,true);
 
@@ -465,11 +466,13 @@ MisGUI.prototype.init =function(){
     model = parent.find(".single-motor");
     model.data("index",0);
     model.find(".cmdTog").data("index",0);
+    model.find(".midi-blinker").bind("mouseover", frontBlinkInfo);
     for(var i=1;i<6;i++) {
         var clone = model.clone();
         clone.find(".cmdTog").data("index",i);
         clone.data("index",i);
         clone.appendTo(parent);
+        clone.find(".midi-blinker").bind("mouseover", frontBlinkInfo);
     }
 
     //this.motorMappings = $("#divMotors .number-for-motor"); //cec
@@ -963,7 +966,7 @@ MisGUI.prototype.addSensor = function(settings, id){
 
     clone.find(".tolerance")
         .val(settings.tolerance)
-        .on("change",function(){
+        .on("input",function(){
             sensorManager.onTolerance($(this).data("id"), $(this).val());
             //toleranceUI(clone.find(".tolerance-ui"), settings.tolerance, settings.threshold, settings.valMin, settings.valMax);
             clone.find(".slider-range").slider("option","toler",settings.tolerance);
@@ -1048,8 +1051,11 @@ MisGUI.prototype.addSensor = function(settings, id){
     parent.append(clone); 
     //this.setSensorRange(id,settings.valMin,settings.valMax,settings.threshold);//after append
     clone.show();
+    indexMotor();
+
 
     clone.find(".moreSensorSetting").bind('click', sensorSettings);
+    clone.find(".options .cmdOnOff").bind('click', echoActiveSetting);
 
     //Didier ...
     /*
@@ -1453,8 +1459,10 @@ function sensorSettings(){
     settings.css("display", "block");
 
     // NEW
-    $(".sensor-setting-more").bind("mouseenter", stopScroll);
-    $(".sensor-setting-more").bind("mouseleave", initScroll);
+    // $(".sensor-setting-more").bind("mouseenter", stopScroll);
+    // $(".sensor-setting-more").bind("mouseleave", initScroll);
+    $(".select-setting").on('change', selectSettings);
+
 
 
     $(this).parent().parent().find("button.set").bind("click", function(event) {
@@ -1464,13 +1472,183 @@ function sensorSettings(){
     });
 }
 
-// NEW
-function initScroll(e){
-    $(".sensors").css("overflow", "auto");
+// SCroll gestion
+// function initScroll(e){
+//     $(".sensors").css("overflow", "auto");
+// }
+// function stopScroll(e){
+//     $(".sensors").css("overflow", "hidden");
+// }
+
+
+function selectSettings() {
+    var target = $(this).val();
+    if(target){
+        $(".options").children().css("display", "none");
+        $("."+target).css("display", "block");
+    }
 }
-function stopScroll(e){
-    $(".sensors").css("overflow", "hidden");
+
+
+
+function echoActiveSetting(){
+    var info = $(this).data('label');
+    console.log(info);
+    var sensor = $(this).closest("li");
+    console.log(sensor);
+    sensor.find(".echo").html(info)
 }
+
+
+// PULL OFF
+function indexMotor(){
+    for (var i = 1; i < $(".motor-index").length; i++) {
+        $(".motor-index").eq(i).html(i+1);
+        console.log(i);
+    };
+}
+
+
+
+// STOP ALL
+//Motors
+
+$("input.btnGlobalMotor").bind('click', function() {
+    
+    if($(".allMotors").css("pointer-events")=="none"){
+        $(".allMotors").css("opacity", 1);
+        $(".allMotors").css("pointer-events", "auto");
+    }else{
+        $(".allMotors").css("opacity", 0.3);
+        $(".allMotors").css("pointer-events", "none");
+    }
+    
+
+});
+
+
+//Animations
+
+$("input.btnGlobalAnim").bind('click', function() {
+
+
+    if($(".animations").css("pointer-events")=="none"){
+        $(".animations").css("opacity", 1);
+        $(".animations").css("pointer-events", "auto");
+    }else{
+        $(".animations").css("opacity", 0.3);
+        $(".animations").css("pointer-events", "none");
+    }
+
+});
+
+
+// Sensors
+$("input.btnGlobalSensors").bind('click', function() {
+
+    if($(".sensors").css("pointer-events")=="none"){
+        $(".sensors").css("opacity", 1);
+        $(".sensors").css("pointer-events", "auto");
+    }else{
+        $(".sensors").css("opacity", 0.3);
+        $(".sensors").css("pointer-events", "none");
+    }
+
+});
+
+
+
+// Temperature motors
+
+// var clockForThermo = setInterval(function(){ thermoCheck()}, 1000);
+
+
+function thermoCheck(){
+
+    for (var i = 0; i < $(".single-motor").length; i++) {
+        $(".single-motor").eq(i).find(".thermo").html(Math.round(Math.random()*80));
+
+
+        var value = $(".single-motor").eq(i).find(".thermo").html();
+        value = parseInt(value);
+
+        
+        if(value>=70){
+            $(".single-motor").eq(i).css("background", "rgba(255,82,97,0.5)");
+            $(".single-motor").eq(i).css("opacity", "0.3");
+            $(".single-motor").eq(i).css("pointer-events", "none");
+            $(".single-motor").eq(i).find(".thermo").css("color", "#FF7F52");
+
+            $("#alertThermo").css("display", "block");
+
+            $("#alertThermo").append('<p>Attention ! le moteur '+ $(".single-motor").eq(i).find(".motor-index").html() +' est en surchauffe, il est arrêté.</p>')
+
+            $("#alertThermo").find('.close-modale').bind('click', function(event) {
+                $("#alertThermo").css("display", "none");
+                $("#alertThermo p").remove();
+            });
+
+        }
+        else if(value>=60){
+            $(".single-motor").eq(i).css("opacity", "1");
+            $(".single-motor").eq(i).find(".thermo").css("color", "#FF7F52");
+            $(".single-motor").eq(i).css("pointer-events", "auto");
+
+        }
+        else{
+            $(".single-motor").eq(i).css("opacity", "1");
+            $(".single-motor").eq(i).find(".thermo").css("color", "#99FF00");
+            $(".single-motor").eq(i).css("background", "");
+            $(".single-motor").eq(i).css("pointer-events", "auto");
+
+
+        }
+
+
+    };
+
+    
+    
+}
+
+
+// Midi frontBlink info
+
+parseBlinker();
+function parseBlinker(){
+    var elmt = $(".motors-settings .midi-chanel");
+    for (var i = 0; i < elmt.length; i++) {
+        if(elmt.eq(i).find('option:selected').val() == "none"){
+            console.log(elmt.eq(i).find('option:selected').val());
+            $('.allMotors').find('.single-motor').eq(i).find('.midi-blinker').css("display", "none");
+        }else{
+            console.log(elmt.eq(i).find('option:selected').val());
+            $('.allMotors').find('.single-motor').eq(i).find('.midi-blinker').css("display", "block");
+        }
+    };
+}
+
+
+function frontBlinkInfo(){
+    var i = $(this).parent().index();
+    console.log(i);
+    var settingTarget = $(".motors-settings .single-motor").eq(i);
+    var infoChanel = settingTarget.find('.midi-chanel option:selected' ).val();
+    var infoMode;
+
+    if(settingTarget.find('.toggle-small').eq(1).find('input[type="checkbox"]:checked')[0]){
+        infoMode = "Note";
+    }else{
+        infoMode = "CC";
+    }
+
+    $(".midi-blinker").prop('title', infoChanel+' - '+infoMode);
+
+
+
+}
+
+
 
 
 
