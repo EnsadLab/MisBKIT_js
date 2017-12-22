@@ -1488,8 +1488,8 @@ function sensorSettings(){
     settings.css("display", "block");
 
     // NEW
-    // $(".sensor-setting-more").bind("mouseenter", stopScroll);
-    // $(".sensor-setting-more").bind("mouseleave", initScroll);
+    $(".sensor-setting-more").bind("mouseenter", stopScroll);
+    $(".sensor-setting-more").bind("mouseleave", initScroll);
     $(".select-setting").on('change', selectSettings);
 
 
@@ -1502,12 +1502,12 @@ function sensorSettings(){
 }
 
 // SCroll gestion
-// function initScroll(e){
-//     $(".sensors").css("overflow", "auto");
-// }
-// function stopScroll(e){
-//     $(".sensors").css("overflow", "hidden");
-// }
+function initScroll(e){
+    $(".sensors").css("overflow", "auto");
+}
+function stopScroll(e){
+    $(".sensors").css("overflow", "hidden");
+}
 
 
 function selectSettings() {
@@ -1663,6 +1663,7 @@ function frontBlinkInfo(){
     console.log(i);
     var settingTarget = $(".motors-settings .single-motor").eq(i);
     var infoChanel = settingTarget.find('.midi-chanel option:selected' ).val();
+    var indexMapping = settingTarget.find('.midiMapping').val();
     var infoMode;
 
     if(settingTarget.find('.toggle-small').eq(1).find('input[type="checkbox"]:checked')[0]){
@@ -1671,7 +1672,7 @@ function frontBlinkInfo(){
         infoMode = "CC";
     }
 
-    $(".midi-blinker").prop('title', infoChanel+' - '+infoMode);
+    $(".midi-blinker").prop('title', infoChanel+' - '+infoMode+' - '+indexMapping);
 
 
 

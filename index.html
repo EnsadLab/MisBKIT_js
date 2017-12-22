@@ -30,14 +30,7 @@
 					<div class="content">
 						<!--button class="gear" data-id="pasglop"><img src="assets/settings.png"></button-->
 						<br>CM9 :
-						<input id="numCm9" type="number" class="set-value" value="0" align="right">						
-						<br>
-						<!-- cm9Text: TODO texte d'information -->
-						<br><span class="status" id="cm9Text">...</span>
 						<input type="number" class="small cmd" name="" placeholder="CM9 number">
-						<!-- button class="disconnected" id="btcm9">Off</button-->
-						<br>
-						
 						<!-- input type="checkbox"  name ="glou">SINGLE<br>
 						<br>
 						<input class="styled-checkbox" type="checkbox"  >CM9_1<br>
@@ -82,12 +75,12 @@
 							<div class="infoIP">Local IP: localhost</div>
 						</font>
 						input Port:
-						<input type="number" class="set-value cmdInt" name="oscLocalPort" align="right" placeholder="6666">
+						<input type="number" class="small set-value cmdInt" name="oscLocalPort" align="right" placeholder="6666">
 						<hr>
 						IP:<input type="text" class="name cmdString" name="oscRemoteIP" placeholder="255.255.255.255" size="18" title="address IP">
 						<!--input type="number" class="OSC-setting" placeholder="port" name=""-->
 						output Port:
-						<input type="number" class="set-value cmdInt" name="oscRemotePort" align="right" placeholder="7777">
+						<input type="number" class="small set-value cmdInt" name="oscRemotePort" align="right" placeholder="7777">
 						<!--ul></ul-->
 						<hr>
 						+
@@ -97,8 +90,8 @@
 
 				<div id="divMobilizing" class="plug">
 					<p>
-					MOBILIZING
-					<input id="mbzOnOff" data-func="oscMobilizing.onOff" type="checkbox" class="stopAll" name ="enable" title="enable/disable">
+					M.js
+					<input id="mbzOnOff" data-func="oscMobilizing.onOff" type="checkbox" class="small stopAll" name ="enable" title="enable/disable">
 					</p>
 
 					<div class="content">
@@ -257,7 +250,7 @@
 
 							<div class="medium text-right float-right">
 								<label class="">mapping : </label>
-								<input type="number" class="small" placeholder="index" name="mapping">
+								<input type="number" class="small midiMapping" placeholder="index" name="mapping">
 
 							</div>
 						</div>
@@ -324,11 +317,12 @@
 
 						<input type="text" class="float-left medium" placeholder="Sensor name" name="sensorName" size="58">
 
-						<div class="live-value">?</div>
-						<div class="live-value-ui">•</div>
-						<!-- Pour modifier la position du curseur, il faut traduire la valeur en % et ajouter ce script : $(".live-value-ui").css("left", val+"%");
-						-->
+						
 						<div class="sensor-setting">
+							<div class="live-value">?</div>
+							<div class="live-value-ui">•</div>
+							<!-- Pour modifier la position du curseur, il faut traduire la valeur en % et ajouter ce script : $(".live-value-ui").css("left", val+"%");
+							-->
 							<div class="select-anim-1">
 								<!-- animation 1 -->
 								<select class="listAnims-1 active" name="anim1" id="">
@@ -363,65 +357,72 @@
 						</div>
 
 
-						<div class="large text-left">
+						<!-- <div class="large text-left">
 							<button class="moreSensorSetting float-left"><img src="assets/settings.png"></button>
 							<section class="medium info echo float-left">Midi</section>
 
-						</div>
+						</div> -->
 
 						
 
 						<div class="sensor-setting-more clear">
 							
-							<h3>Settings</h3>
+							<!-- <h3>Settings</h3> -->
 							<div class="large">
 									<input type="number" class="small tiny cmdInt" placeholder="min value" name="valMin">
 									<input type="number" class="small tiny cmdInt" placeholder="max value" name="valMax">
 							</div>
-							<div class="large clear">
-								<select name="" class="select-setting medium float-left">
-									<option>Select options</option>
-									<option value="osc">OSC</option>
-									<option value="midi">Midi</option>
-									<option value="cm9">CM9</option>
-									<option value="mapto">Mapping to motor</option>
-									<option value="mapfrom">Mapping from motor</option>
-								<section>
-									<input type="number" class="value-setting cmdInt" placeholder="min value" name="valMin">
-									<input type="number" class="value-setting cmdInt" placeholder="max value" name="valMax">
-								</section>
 
-								<section>
-									<h4>Mobilizing</h4>
-									<input type="checkbox" class="power cmdOnOff" name ="mobilizingEnabled" title="enable/disable">								
-								</section>								
+							<h3>Input</h3>
+							<h3>Output</h3>
+							<section>
+								<input type="checkbox" class="power cmdOnOff" name ="mobilizingEnabled" title="enable/disable">	
+								<h4>CM9</h4>							
+							</section>					
 
-								<section>
-									<h4>OSC</h4>
-									
-									<input type="checkbox" class="osc-btn cmdOnOff" name ="oscEnabled" title="enable/disable">
-									<div class="info">adresse : /sensor/proximity</div>
-									<!-- <input type="text" class="OSC-setting" placeholder="OSC adress" name=""> -->
-									<input type="number" class="OSC-setting" placeholder="port" name="">
-								</section>
+							
 
-								<section>
-								<h4>Midi</h4>
-								<input type="checkbox" class="midi-btn cmdOnOff" name ="midiEnabled"title="enable/disable">
-								
 
-								<select class= "midi-setting full cmdString"  id="" name="midiPort">
+							<section>
+								<input type="checkbox" class="power cmdOnOff" name ="mobilizingEnabled" title="enable/disable">	
+								<h4>Mobilizing</h4>							
+							</section>	
+
+
+							<section>
+								<input type="checkbox" class="power cmdOnOff" name ="mobilizingEnabled" title="enable/disable">	
+								<h4>Motor Mapping</h4>							
+							</section>	
+
+
+							<section>
+								<input type="checkbox" class="power cmdOnOff" name ="mobilizingEnabled" title="enable/disable">	
+								<h4>Motor Mapping</h4>							
+							</section>
+
+							<section>
+								<input type="checkbox" class="power cmdOnOff" name ="midiEnabled"title="enable/disable">
+								<h4>Midi</h4>							
+
+								<select class= "small tiny cmdString"  id="" name="midiPort">
 									<option value="">midi 1</option>
 									<option value="midi 2">midi 2</option>
 									<option value="">midi 3</option>
 									<option value="">midi 4</option>
 								</select>
-								<button class="set float-right valid">OK</button>
-							</div>
 
+							</section>
+
+							<section>
+								<input type="checkbox" class="power cmdOnOff" name ="oscEnabled" title="enable/disable">
+								<h4>OSC</h4>
+								<!-- <div class="info">adresse : /sensor/proximity</div> -->
+								<!-- <input type="text" class="OSC-setting" placeholder="OSC adress" name=""> -->
+								<input type="number" class="small" placeholder="port" name="">
+							</section>
 							
 
-							<div class="options">
+							<!-- <div class="options">
 								<section class="osc">
 									<input type="checkbox" class="osc-btn cmdOnOff" name ="oscEnabled" title="enable/disable" data-label="OSC">
 									<div class="info">adresse : /sensor/proximity</div>
@@ -459,7 +460,7 @@
 									<input type="checkbox" class="power cmdOnOff" name ="fromMotorEnabled" data-label="Map from motor">
 									<input type="number" class="small cmdInt" placeholder="nb" name="fromMotorIndex">
 								</section>
-							</div>
+							</div> -->
 
 						</div>
 
@@ -478,7 +479,7 @@
 		</div>
 		
 		<div class="modale draggable" id="dynamixel-ctrl">
-			
+			<button class="close-modale"><img src="assets/close.png" alt=""></button>
 			<input type="text" size="5" id="btAdvID"><label for="">[ID]</label>
 			<br>
 			<div id="divDxlReg" >
@@ -517,7 +518,7 @@
 			
 		</div>
 
-		<div class="modale draggable" id="alertThermo" height="150">
+		<div class="modale draggable" id="alertThermo" height="200">
 			<button class="close-modale"><img src="assets/close.png" alt=""></button>
 			
 		</div>

@@ -5,22 +5,10 @@
   "anims": [],
   "motors": [
     {
-      "id": 2,
+      "id": 0,
       "enabled": false,
       "model": 12,
       "clockwise": true,
-      "mode": 0,
-      "angleMin": -150,
-      "angleMax": 150,
-      "speedMin": -100,
-      "speedMax": 100,
-      "torqueMax": 1023
-    },
-    {
-      "id": 1,
-      "enabled": false,
-      "model": 12,
-      "clockwise": false,
       "mode": 1,
       "angleMin": -150,
       "angleMax": 150,
@@ -29,10 +17,10 @@
       "torqueMax": 1023
     },
     {
-      "id": 4,
+      "id": 0,
       "enabled": false,
       "model": 12,
-      "clockwise": false,
+      "clockwise": true,
       "mode": 1,
       "angleMin": -150,
       "angleMax": 150,
@@ -41,7 +29,19 @@
       "torqueMax": 1023
     },
     {
-      "id": 6,
+      "id": 0,
+      "enabled": false,
+      "model": 12,
+      "clockwise": true,
+      "mode": 1,
+      "angleMin": -150,
+      "angleMax": 150,
+      "speedMin": -100,
+      "speedMax": 100,
+      "torqueMax": 1023
+    },
+    {
+      "id": 0,
       "enabled": false,
       "model": 12,
       "clockwise": true,
