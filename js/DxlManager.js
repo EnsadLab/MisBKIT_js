@@ -663,7 +663,7 @@ DxlManager.prototype.setSpeed = function(index,val){
 DxlManager.prototype.setSpeedN = function(index,val){
     if(index<this.motors.length){
         var v=this.motors[index].nSpeed(val);
-        console.log("speedN:",v);
+        console.log("speedN:",val,v);
         misGUI.speed(index,v);
     }
 };
