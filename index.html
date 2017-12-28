@@ -7,6 +7,7 @@
         <title>misB KIT WIFI 3.3</title>
         <link rel="stylesheet" href="css/jquery-ui.css">
         <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/toggle.css">
         <link rel="author" href="humans.txt">
 
     </head>
@@ -22,19 +23,14 @@
 					<p>
 						CM9 <!--span class="status" id="cm9Text"></span-->
 						<!-- TODO cf MisGUI $('#btcm9').on('click'... ON OFF ERROR -->
-						<input id="btcm9" type="checkbox" class="stopAll" name ="enable"title="enable/disable">
+
+						<input id="btcm9" type="checkbox" class="small cmdTog" name ="enable" title="enable/disable"> 
 					</p>
 
 					<div class="content">
 						<!--button class="gear" data-id="pasglop"><img src="assets/settings.png"></button-->
 						<br>CM9 :
-						<input id="numCm9" type="number" class="set-value" value="0" align="right">						
-						<br>
-						<!-- cm9Text: TODO texte d'information -->
-						<br><span class="status" id="cm9Text">...</span>
-						<!-- button class="disconnected" id="btcm9">Off</button-->
-						<br>
-						
+						<input type="number" class="small cmd" name="" placeholder="CM9 number">
 						<!-- input type="checkbox"  name ="glou">SINGLE<br>
 						<br>
 						<input class="styled-checkbox" type="checkbox"  >CM9_1<br>
@@ -50,12 +46,12 @@
 				<div class="plug">
 					<p>
 						MIDI  <span class="status" id="midiText"></span>
-						<input type="checkbox" class="stopAll cmdTog" name ="enable"title="enable/disable">
+						<input type="checkbox" class="small cmdTog" name ="enable"title="enable/disable">
 					</p>
 					<div class="content">
 						<br>Midi :<br>
-						<button class="disconnected" id="btMidi">scan</button>
-						<br>
+						<!-- <button class="disconnected" id="btMidi">scan</button>
+						<br> -->
 						<div class="midi-available" id="midi-available">
 							<input class="styled-checkbox" type="checkbox"  id="midi1">midi<br>
 							<input class="styled-checkbox" type="checkbox" id="midi2" >midi<br>
@@ -70,7 +66,7 @@
 				<div id="divOSC" class="plug">
 					<p>
 						OSC  <span class="status"></span>
-						<input type="checkbox" class="stopAll cmdOnOff" name ="enable"title="enable/disable">
+						<input type="checkbox" class="small cmdOnOff" name ="enable"title="enable/disable">
 					</p>
 					<div class="content advanced">
 						<br>OSC :<br>
@@ -79,12 +75,12 @@
 							<div class="infoIP">Local IP: localhost</div>
 						</font>
 						input Port:
-						<input type="number" class="set-value cmdInt" name="oscLocalPort" align="right" placeholder="6666">
+						<input type="number" class="small set-value cmdInt" name="oscLocalPort" align="right" placeholder="6666">
 						<hr>
 						IP:<input type="text" class="name cmdString" name="oscRemoteIP" placeholder="255.255.255.255" size="18" title="address IP">
 						<!--input type="number" class="OSC-setting" placeholder="port" name=""-->
 						output Port:
-						<input type="number" class="set-value cmdInt" name="oscRemotePort" align="right" placeholder="7777">
+						<input type="number" class="small set-value cmdInt" name="oscRemotePort" align="right" placeholder="7777">
 						<!--ul></ul-->
 						<hr>
 						+
@@ -94,8 +90,8 @@
 
 				<div id="divMobilizing" class="plug">
 					<p>
-					MOBILIZING
-					<input id="mbzOnOff" data-func="oscMobilizing.onOff" type="checkbox" class="stopAll" name ="enable" title="enable/disable">
+					M.js
+					<input id="mbzOnOff" data-func="oscMobilizing.onOff" type="checkbox" class="small stopAll" name ="enable" title="enable/disable">
 					</p>
 
 					<div class="content">
@@ -114,18 +110,19 @@
 				<div class="plug">
 					<p>
 						ROBUS  <span class="status"></span>
-						<input type="checkbox" class="stopAll cmdTog" name ="enable"title="enable/disable">
+						<input type="checkbox" class="small cmdTog error" name ="enable"title="enable/disable">
 					</p>
 					<div class="content">
 						<br>Robots :<br>
 						<br>
 						<!--input type="text" name="rien"-->
 						<textarea id="robusRobots" rows=6 cols=15>octo_wifi</textarea>
-
-						<button id="robusOnOff" class="disconnected" >OFF</button>
-						<button id="robusReset" class="disconnected" >RESET</button>
-						<br>
-						<button id="robusInfo"  class="disconnected" >info</button>
+						<div class="large">
+							<button id="robusOnOff" class="disconnected" >OFF</button>
+							<button id="robusReset" class="disconnected" >RESET</button>
+							<button id="robusInfo"  class="disconnected" >info</button>
+						</div>
+						
 						<br>
 
 						<textarea id="robusTxt" rows=18 cols=15>message</textarea>
@@ -144,24 +141,38 @@
 
 			<!-- MOTORS -->
 			<div class="motors" >
-				<h2>Motors</h2>
 				<div class="motors-btn-group">
-					<input type="checkbox" class="stopAll cmdTog" name ="enable"title="enable/disable"> 
-					<button class="start-rec">Start RECording</button>
-					<button class="advanced"><img src="assets/settings.png" alt=""></button>
+					<h2>Motors</h2>
+					<input type="checkbox" class="small cmdTog btnGlobalMotor" name ="enable"title="enable/disable"> 
+					<button class="advanced gear float-right small"><img src="assets/settings.png" alt=""></button>
+
+					<div class="tools float-right small show">
+						<button class="start-rec">Start RECording</button>
+					</div>
+
+					<div class="tools float-right medium hide">
+						<button class="gear tiny" id="opener" data-id="dynamixel-ctrl"><img src="assets/settings.png"></button>
+
+						<button class="tiny small" id="btScan" name="startScan">Scan</button>
+						<!--div id="scanProgress"></div-->
+						<meter id="scanProgress" class="medium" value="100" max="254"></meter>
+						<!--/div-->
+					</div>
+
 				</div>
 
-				<div id="divMotors" class="normal">
+				<div id="divMotors" class="allMotors">
+
 					<!-- SINGLE MOTOR -->
 					<div class="single-motor">
+						<div class="midi-blinker" title="midi chanel - note/cc">•</div>
 						<div class="left-col">
-							<div class="identity">10</div>	
+							<div class="motor-index">1</div>
+							<div class="identity">10</div>
 							<input type="checkbox" class="power cmdTog" name ="enable"
 								   title="enable/disable">
 							<input type="checkbox" class="rec cmdTog"   name="recCheck"
 								   title="check for next record">
-
-							
 							
 						</div>
 						<div class="circle">
@@ -171,7 +182,7 @@
 
 						<div class="properties">
 							<img src="assets/thermometer.png" class="ico-thermo" alt="">
-							<div class="thermo">-</div>
+							<div class="thermo">_</div>
 							<label class="switch">
 							  <input type="checkbox" class="cmdTog" name="mode">
 							  <div class="slider round"></div>
@@ -183,178 +194,67 @@
 							
 						</div>
 						<!--Didier: essai d'ajout d'un input number-->
-						<input type="number" class="num_rotary set-value" placeholder="angle/speed" name="">
-						
+						<input type="number" class="num_rotary" placeholder="angle/speed" name="">
 					</div>
 
 				</div>
 
 
 				<!-- Advanced Motors -->
-				<div id="divMotorSettings" class="settings">
+				<div id="divMotorSettings" class="motors-settings">
 					<!-- AREVOIR : bouton tools ...  -->
 					<!--div-->
-					<button class="gear" id="opener" data-id="dynamixel-ctrl"><img src="assets/settings.png"></button>
-					<button class="disconnected" id="btScan" name="startScan" style="color:white;">Scan</button>
-					<!--div id="scanProgress"></div-->
-					<progress id="scanProgress" value="0" max="254"></progress>
-					<!--/div-->
+					
 
-
-						<!-- SINGLE MOTOR Advanced-->
+					<!-- SINGLE MOTOR Advanced-->
 					<div class="single-motor">
 						<div class="left-col">
-							<!--button class="gear" id="opener"><img src="assets/settings.png"></button-->
-							<div class="identity">id :
-								<input type="text" class="set-value cmd" name="dxlID" placeholder="01">
+							<div class="identity">
+								<label for="">id :</label>
+								<input type="number" class=" small cmd" name="dxlID" placeholder="01">
 							</div>
 						</div>
-						<div class="properties">
-							<label class="switch-clock">
-							  <input type="checkbox" class="cmdTog" name="clockwise">
-							  <div class="slider round"></div>
-							</label>
-							<!--label class="switch">
-							  <input type="checkbox" class="cmdTog" name="mode">
-							  <div class="slider round"></div>
-							</label-->
-						</div>
-					<div class="advanced">
+						<div class="advanced">
 							<ul>
-								<li><label for="">Angle Min </label><input type="number" class="set-value cmd" name="angleMin" placeholder="0"></li>
-								<li><label for="">Angle Max </label><input type="number" class="set-value cmd" name="angleMax" placeholder="0"></li>
-								<li><label for="">Speed Min </label><input type="number" class="set-value cmd" name="speedMin" placeholder="0"></li>
-								<li><label for="">Speed Max </label><input type="number" class="set-value cmd" name="speedMax" placeholder="0"></li>
+								<li><input type="number" class="small cmd" name="angleMin" placeholder="Angle Min"><label for="">Angle Min </label></li>
+								<li><input type="number" class="small cmd" name="angleMax" placeholder="Angle Max"><label for="">Angle Max </label></li>
+								<li><input type="number" class="small cmd" name="speedMin" placeholder="Speed Min"><label for="">Speed Min </label></li>
+								<li><input type="number" class="small cmd" name="speedMax" placeholder="Speed Max"><label for="">Speed Max </label></li>
 							</ul>
-							<!-- <input type="text" class="OSC-setting" placeholder="OSC adress" name=""> -->
-
-							<select class= "midi-setting"  id="" name="midiPorts">
-								<option value="midi 1">midi 1</option>
-								<option value="midi 2">midi 2</option>
-								<option value="midi 3">midi 3</option>
-								<option value="midi 4">midi 4</option>
-							</select>
-
-							<label class="switch">
-							  
-						  	<input type="checkbox" class="cmdTog" name="midiMode">
-						  	<div class="slider slider-midi round"></div>
-							</label>
 							
-							<input type="number" class="set-value" placeholder="index" name="mapping">
-						</div>
-					</div>
-
-					<!-- SINGLE MOTOR Advanced
-					<div class="single-motor">
-						<div class="left-col">
-							<div class="identity">id :</div>
-							<input type="text" class="name" placeholder="01">
 						</div>
 						<div class="properties">
-							<label class="switch-clock">
-							  <input type="checkbox">
-							  <div class="slider round"></div>
+							<label class="toggle-small">
+							  <input type="checkbox" class="cmdTog" name="clockwise">
+							  <div class="slider clock round"></div>
 							</label>
 						</div>
-						<div class="advanced">
-							<ul>
-								<li><label for="">Angle Max :</label><input type="number" class="name" placeholder="0"></li>
-								<li><label for="">Speed Max :</label><input type="number" class="name" placeholder="0"></li>
-								<li><label for="">Angle Min :</label><input type="number" class="name" placeholder="0"></li>
-								<li><label for="">Speed Min :</label><input type="number" class="name" placeholder="0"></li>
-							</ul>
-						</div>
-					</div>
+						
+						<div class="large">
 
-					<!-- SINGLE MOTOR Advanced
-					<div class="single-motor">
-						<div class="left-col">
-							<div class="identity">id :</div>
-							<input type="text" class="name" placeholder="01">
-						</div>
-						<div class="properties">
-							<label class="switch-clock">
-							  <input type="checkbox">
-							  <div class="slider round"></div>
-							</label>
-						</div>
-						<div class="advanced">
-							<ul>
-								<li><label for="">Angle Max :</label><input type="number" class="name" placeholder="0"></li>
-								<li><label for="">Speed Max :</label><input type="number" class="name" placeholder="0"></li>
-								<li><label for="">Angle Min :</label><input type="number" class="name" placeholder="0"></li>
-								<li><label for="">Speed Min :</label><input type="number" class="name" placeholder="0"></li>
-							</ul>
-						</div>
-					</div>
+							<div class="medium float-left">
+								<label class="">midi : </label>
+								<select class= "small tiny midi-chanel"  id="" name="midiPorts">
+										<option>none</option>
+										<option value="midi 1">midi 1</option>
+										<option value="midi 2">midi 2</option>
+										<option value="midi 3">midi 3</option>
+										<option value="midi 4">midi 4</option>
+								</select>
 
-					<!-- SINGLE MOTOR Advanced
-					<div class="single-motor">
-						<div class="left-col">
-							<div class="identity">id :</div>
-							<input type="text" class="name" placeholder="01">
-						</div>
-						<div class="properties">
-							<label class="switch-clock">
-							  <input type="checkbox">
-							  <div class="slider round"></div>
-							</label>
-						</div>
-						<div class="advanced">
-							<ul>
-								<li><label for="">Angle Max :</label><input type="number" class="name" placeholder="0"></li>
-								<li><label for="">Speed Max :</label><input type="number" class="name" placeholder="0"></li>
-								<li><label for="">Angle Min :</label><input type="number" class="name" placeholder="0"></li>
-								<li><label for="">Speed Min :</label><input type="number" class="name" placeholder="0"></li>
-							</ul>
-						</div>
-					</div>
+								<label class="toggle-small">
+							  		<input type="checkbox" class="cmdTog" name="midiMode">
+							  		<div class="slider midi round"></div>
+								</label>
+							</div>
 
-					<!-- SINGLE MOTOR Advanced
-					<div class="single-motor">
-						<div class="left-col">
-							<div class="identity">id :</div>
-							<input type="text" class="name" placeholder="01">
-						</div>
-						<div class="properties">
-							<label class="switch-clock">
-							  <input type="checkbox">
-							  <div class="slider round"></div>
-							</label>
-						</div>
-						<div class="advanced">
-							<ul>
-								<li><label for="">Angle Max :</label><input type="number" class="name" placeholder="0"></li>
-								<li><label for="">Speed Max :</label><input type="number" class="name" placeholder="0"></li>
-								<li><label for="">Angle Min :</label><input type="number" class="name" placeholder="0"></li>
-								<li><label for="">Speed Min :</label><input type="number" class="name" placeholder="0"></li>
-							</ul>
-						</div>
-					</div>
+							<div class="medium text-right float-right">
+								<label class="">mapping : </label>
+								<input type="number" class="small midiMapping" placeholder="index" name="mapping">
 
-					<!-- SINGLE MOTOR Advanced
-					<div class="single-motor">
-						<div class="left-col">
-							<div class="identity">id :</div>
-							<input type="text" class="name" placeholder="01">
-						</div>
-						<div class="properties">
-							<label class="switch-clock">
-							  <input type="checkbox">
-							  <div class="slider round"></div>
-							</label>
-						</div>
-						<div class="advanced">
-							<ul>
-								<li><label for="">Angle Max :</label><input type="number" class="name" placeholder="0"></li>
-								<li><label for="">Speed Max :</label><input type="number" class="name" placeholder="0"></li>
-								<li><label for="">Angle Min :</label><input type="number" class="name" placeholder="0"></li>
-								<li><label for="">Speed Min :</label><input type="number" class="name" placeholder="0"></li>
-							</ul>
+							</div>
 						</div>
 					</div>
-					-->
 
 				</div>
 
@@ -362,45 +262,20 @@
 			</div>
 
 			<div class="left-side">
-				<h2 id="anims">Animations</h2><input type="checkbox" class="stopAll cmdTog" name ="enable"title="enable/disable"> 
-					<button class="load"><img src="assets/open.png" alt="" id="loadAnim"></button>
+				<div class="head">
+					<h2 id="anims">Animations</h2><input type="checkbox" class="small cmdTog btnGlobalAnim" name ="enable"title="enable/disable"> 
+					<!-- <button class="load"><img src="assets/open.png" alt="" id="loadAnim"></button> -->
+					<button id="loadAnim" class="animBTN float-right"><img src="assets/open.png" alt="" id=""> Load animation</button>
 
-				<h2 id="sens">Sensors </h2> <input type="checkbox" class="stopAll cmdTog" name ="enable"title="enable/disable"> 
-				<!-- <sub><button class="gear" data-id="option-sensors"><img src="assets/settings.png"></button> </sub> -->
-				<!--select name="" id="" class="addSensors">
-					<option value="">Add sensor</option>
-					<option value="">Capteur</option>
-					<option value="">Capteur</option>
-					<option value="">Capteur</option>
-					<option value="">Capteur</option>
-					<option value="">Capteur</option>
-					<option value="">Capteur</option>
-					<option value="">Capteur</option>
-					<option value="">Capteur</option>
-					<option value="">Capteur</option>
-					<option value="">Capteur</option>
-					<option value="">Capteur</option>
-				</select-->
-				<button id="addEmptySensor" class="disconnected addSensors" style="color:grey;">Add Sensor</button>
-				
+					<h2 id="sens">Sensors </h2> <input type="checkbox" class="small cmdTog btnGlobalSensors" name ="enable"title="enable/disable"> 
+					
+					<button id="addEmptySensor" class="sensorsBTN float-right"><img src="assets/add.png" alt="" id="loadAnim"> Add Sensor</button>
 
+					<button id="loadSensor" class="sensorsBTN float-right"><img src="assets/open.png" alt="" id=""> Load Sensor</button>
+				</div>
 				
-				
-
 				<div class="animations" id="divAnims">
-						
-					<!--div class="single-anim ui-state-default">
-						GRRRRRRRRRRRR
-						<input type="text" class="shorcut" disabled>
-						<input type="checkbox" class="rec cmdTog" name="rec0">
-						<input type="checkbox" class="rec cmdTog" name="rec1">
-						<input type="checkbox" class="rec cmdTog" name="rec2">
-						<input type="checkbox" class="rec cmdTog" name="rec3">
-						<input type="checkbox" class="rec cmdTog" name="rec4">
-						<input type="checkbox" class="rec cmdTog" name="rec5">
-						<! button class="disconnected">Record</button >
-						<button class="start-rec">Start RECording</button>
-					</div-->
+					
 
 				<ul id="sortable-anim" >
 					<!-- SIngle Animation -->
@@ -438,15 +313,16 @@
 					<li class="single-sensor ui-state-default">
 
 						<button class="close"><img src="assets/close.png" alt=""></button>
-						<input type="checkbox" class="power cmdTog" name ="sensorOnOff" title="enable/disable"> 
+						<input type="checkbox" class="power float-left cmdTog" name ="sensorOnOff" title="enable/disable"> 
 
-						<input type="text" class="name" placeholder="Sensor name" name="sensorName" size="58">
+						<input type="text" class="float-left medium" placeholder="Sensor name" name="sensorName" size="58">
 
-						<div class="live-value">?</div>
-						<div class="live-value-ui">•</div>
-						<!-- Pour modifier la position du curseur, il faut traduire la valeur en % et ajouter ce script : $(".live-value-ui").css("left", val+"%");
-						-->
+						
 						<div class="sensor-setting">
+							<div class="live-value">?</div>
+							<div class="live-value-ui">•</div>
+							<!-- Pour modifier la position du curseur, il faut traduire la valeur en % et ajouter ce script : $(".live-value-ui").css("left", val+"%");
+							-->
 							<div class="select-anim-1">
 								<!-- animation 1 -->
 								<select class="listAnims-1 active" name="anim1" id="">
@@ -477,81 +353,114 @@
 								 <div class="slider-range" data-min="0" data-max="100" data-default= "50" ></div>
 								 
 							</div>
-							<input type="number" class="tolerance" placeholder="tolerance" name="">
+							<input type="number" class="tolerance small" placeholder="tolerance" name="">
 						</div>
+
+
+						<!-- <div class="large text-left">
+							<button class="moreSensorSetting float-left"><img src="assets/settings.png"></button>
+							<section class="medium info echo float-left">Midi</section>
+
+						</div> -->
+
 						
-						<div class="connect-settings">
+
+						<div class="sensor-setting-more clear">
+							
+							<!-- <h3>Settings</h3> -->
+							<div class="large">
+									<input type="number" class="small tiny cmdInt" placeholder="min value" name="valMin">
+									<input type="number" class="small tiny cmdInt" placeholder="max value" name="valMax">
+							</div>
+
+							<h3>Input</h3>
+							<h3>Output</h3>
+							<section>
+								<input type="checkbox" class="power cmdOnOff" name ="mobilizingEnabled" title="enable/disable">	
+								<h4>CM9</h4>							
+							</section>					
 
 							
 
-							<!-- <input type="checkbox" class="osc-btn cmdTog" name ="enable"title="enable/disable">
 
-							<input type="checkbox" class="midi-btn cmdTog" name ="enable"title="enable/disable">
-
-							<input type="number" class="motor-index" placeholder="index motor" name=""> -->
-
-							<button class="moreSensorSetting"><img src="assets/settings.png"></button>
-						</div>
-
-						<div class="sensor-setting-more">
-							<h3>Settings</h3>
 							<section>
-								<input type="number" class="value-setting cmdInt" placeholder="min value" name="valMin">
-								<input type="number" class="value-setting cmdInt" placeholder="max value" name="valMax">
+								<input type="checkbox" class="power cmdOnOff" name ="mobilizingEnabled" title="enable/disable">	
+								<h4>Mobilizing</h4>							
+							</section>	
+
+
+							<section>
+								<input type="checkbox" class="power cmdOnOff" name ="mobilizingEnabled" title="enable/disable">	
+								<h4>Motor Mapping</h4>							
+							</section>	
+
+
+							<section>
+								<input type="checkbox" class="power cmdOnOff" name ="mobilizingEnabled" title="enable/disable">	
+								<h4>Motor Mapping</h4>							
 							</section>
 
 							<section>
-								<h4>Mobilizing</h4>
-								<input type="checkbox" class="power cmdOnOff" name ="mobilizingEnabled" title="enable/disable">								
-							</section>								
+								<input type="checkbox" class="power cmdOnOff" name ="midiEnabled"title="enable/disable">
+								<h4>Midi</h4>							
 
-							<section>
-								<h4>OSC</h4>
-								
-								<input type="checkbox" class="osc-btn cmdOnOff" name ="oscEnabled" title="enable/disable">
-								<div class="info">adresse : /sensor/proximity</div>
-								<!-- <input type="text" class="OSC-setting" placeholder="OSC adress" name=""> -->
-								<input type="number" class="OSC-setting" placeholder="port" name="">
-							</section>
-
-							<section>
-								<h4>Midi</h4>
-								<input type="checkbox" class="midi-btn cmdOnOff" name ="midiEnabled"title="enable/disable">
-								
-
-								<select class= "midi-setting full cmdString"  id="" name="midiPort">
+								<select class= "small tiny cmdString"  id="" name="midiPort">
 									<option value="">midi 1</option>
 									<option value="midi 2">midi 2</option>
 									<option value="">midi 3</option>
 									<option value="">midi 4</option>
 								</select>
-								<br>
-
-								<label class="switch">
-							  	
-							  	<input type="checkbox" class="cmdTog cmdOnOff" name="midiCmd">
-							  	<div class="slider round"></div>
-								</label>
-
-								<input type="number" class="OSC-setting cmdInt" placeholder="nb" name="midiMapping">
 
 							</section>
+
 							<section>
-								<h4>CM9</h4>
-								<input type="checkbox" class="CM9-btn cmdOnOff" name ="cm9Enabled" title="enable/disable">
-								<input type="number" class="OSC-setting cmdInt" placeholder="PIN" name="cm9Pin" title="Analog Pin">
+								<input type="checkbox" class="power cmdOnOff" name ="oscEnabled" title="enable/disable">
+								<h4>OSC</h4>
+								<!-- <div class="info">adresse : /sensor/proximity</div> -->
+								<!-- <input type="text" class="OSC-setting" placeholder="OSC adress" name=""> -->
+								<input type="number" class="small" placeholder="port" name="">
 							</section>
-							<section>
-								<h4>Mapping to motors :</h4>
-								<input type="checkbox" class="power cmdOnOff" name ="toMotorEnabled" >
-								<input type="number" class="OSC-setting cmdInt" placeholder="nb" name="toMotorIndex">
-							</section>
-							<section>
-								<h4>Mapping from motors :</h4>
-								<input type="checkbox" class="power cmdOnOff" name ="fromMotorEnabled" >
-								<input type="number" class="OSC-setting cmdInt" placeholder="nb" name="fromMotorIndex">
-							</section>
-							<button class="set">OK</button>
+							
+
+							<!-- <div class="options">
+								<section class="osc">
+									<input type="checkbox" class="osc-btn cmdOnOff" name ="oscEnabled" title="enable/disable" data-label="OSC">
+									<div class="info">adresse : /sensor/proximity</div>
+									<input type="number" class="small" placeholder="port" name="">
+								</section>
+
+								<section class="midi">
+									<input type="checkbox" class="midi-btn cmdOnOff" name ="midiEnabled"title="enable/disable" data-label="Midi">
+									<select class="medium cmdString"  id="" name="midiPort">
+										<option value="">midi 1</option>
+										<option value="">midi 2</option>
+										<option value="">midi 3</option>
+										<option value="">midi 4</option>
+									</select>
+									<br>
+									<div class="large">
+										<label class="toggle-small">
+								  	
+									  	<input type="checkbox" class="cmdTog cmdOnOff" name="midiCmd">
+									  	<div class="slider midi round"></div>
+										</label>
+
+										<input type="number" class="small cmdInt" placeholder="nb" name="midiMapping">
+									</div>
+								</section>
+								<section class="cm9">
+									<input type="checkbox" class="CM9-btn cmdOnOff" name ="cm9Enabled" title="enable/disable" data-label="CM9">
+									<input type="number" class="small cmdInt" placeholder="PIN" name="cm9Pin" title="Analog Pin">
+								</section>
+								<section class="mapto">
+									<input type="checkbox" class="power cmdOnOff" name ="toMotorEnabled" data-label="Map to motor">
+									<input type="number" class="small cmdInt" placeholder="nb" name="toMotorIndex">
+								</section>
+								<section class="mapfrom">
+									<input type="checkbox" class="power cmdOnOff" name ="fromMotorEnabled" data-label="Map from motor">
+									<input type="number" class="small cmdInt" placeholder="nb" name="fromMotorIndex">
+								</section>
+							</div> -->
 
 						</div>
 
@@ -570,32 +479,47 @@
 		</div>
 		
 		<div class="modale draggable" id="dynamixel-ctrl">
+			<button class="close-modale"><img src="assets/close.png" alt=""></button>
 			<input type="text" size="5" id="btAdvID"><label for="">[ID]</label>
-			<button id="btDxlRefresh" style="align:left;">refresh</button>
 			<br>
 			<div id="divDxlReg" >
-				<br><input type="text" size="5" name="000"><label for=""> MODEL</label>
-				<br><input type="text" size="5" name="002"><label for=""> FIRMWARE</label>
-				<br><input type="text" size="5" name="004"><label for=""> BAUDS</label>
-				<br><input type="text" size="5" name="005"><label for=""> DELAY</label>
-				<br><input type="text" size="5" name="006"><label for=""> CW LIMIT</label>
-				<br><input type="text" size="5" name="008"><label for=""> CCW LIMIT</label>
-				<br><input type="text" size="5" name="014"><label for=""> MAX TORQUE</label>
-				<br><input type="text" size="5" name="016"><label for=""> RETURN LEVEL</label>
-				<br><input type="text" size="5" name="017"><label for=""> ALARM LED</label>
-				<br><input type="text" size="5" name="018"><label for=""> ALARM SHUTDOWN</label>
-				<br><input type="text" size="5" name="024"><label for=""> TORQUE ENABLE</label>
-				<br><input type="text" size="5" name="025"><label for=""> LED</label>
-				<br><input type="text" size="5" name="026"><label for=""> PID 1</label>
-				<br><input type="text" size="5" name="027"><label for=""> PID 2</label>
-				<br><input type="text" size="5" name="028"><label for=""> PID 3</label>
-				<br><input type="text" size="5" name="029"><label for=""> PID 4</label>
-				<br><input type="text" size="5" name="030"><label for=""> GOAL</label>
-				<br><input type="text" size="5" name="032"><label for=""> SPEED</label>
-				<br><input type="text" size="5" name="034"><label for=""> TORQUE</label>
-				<br><input type="text" size="5" name="036"><label for=""> POSITION</label>
-				<br><input type="text" size="5" name="043"><label for=""> TEMPERATURE</label>
+				
+				<div class="medium float-left">
+					<br><input type="text" size="5" name="000"><label for=""> MODEL</label>
+					<br><input type="text" size="5" name="002"><label for=""> FIRMWARE</label>
+					<br><input type="text" size="5" name="004"><label for=""> BAUDS</label>
+					<br><input type="text" size="5" name="005"><label for=""> DELAY</label>
+					<br><input type="text" size="5" name="006"><label for=""> CW LIMIT</label>
+					<br><input type="text" size="5" name="008"><label for=""> CCW LIMIT</label>
+					<br><input type="text" size="5" name="014"><label for=""> MAX TORQUE</label>
+					<br><input type="text" size="5" name="016"><label for=""> RETURN LEVEL</label>
+					<br><input type="text" size="5" name="017"><label for=""> ALARM LED</label>
+					<br><input type="text" size="5" name="018"><label for=""> ALARM SHUTDOWN</label>
+					<br><input type="text" size="5" name="024"><label for=""> TORQUE ENABLE</label>
+				</div>
+				<div class="medium float-left">
+			
+					<br><input type="text" size="5" name="025"><label for=""> LED</label>
+					<br><input type="text" size="5" name="026"><label for=""> PID 1</label>
+					<br><input type="text" size="5" name="027"><label for=""> PID 2</label>
+					<br><input type="text" size="5" name="028"><label for=""> PID 3</label>
+					<br><input type="text" size="5" name="029"><label for=""> PID 4</label>
+					<br><input type="text" size="5" name="030"><label for=""> GOAL</label>
+					<br><input type="text" size="5" name="032"><label for=""> SPEED</label>
+					<br><input type="text" size="5" name="034"><label for=""> TORQUE</label>
+					<br><input type="text" size="5" name="036"><label for=""> POSITION</label>
+					<br><input type="text" size="5" name="043"><label for=""> TEMPERATURE</label>
+				</div>
 			</div>
+			<div class="large text-center">
+				<button id="btDxlRefresh" class="medium">refresh</button>
+			</div>
+			
+			
+		</div>
+
+		<div class="modale draggable" id="alertThermo" height="200">
+			<button class="close-modale"><img src="assets/close.png" alt=""></button>
 			
 		</div>
 
