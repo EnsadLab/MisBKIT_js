@@ -12,6 +12,7 @@
 
 ## Motors
 **Front side** id, index, on/off, rec, temperature
+
 **Back side** angle min-max, speed min-max, midi DONE -> tested all, with isadora, console and all settings are correctly saved and read. TO CHECK WITH MOTORS: btn reverse, id input
 
 **stopAll**
