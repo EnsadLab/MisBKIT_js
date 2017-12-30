@@ -1,7 +1,9 @@
 {
   "oscHost": "none",
   "webSocket": "none",
-  "midiPorts": [],
+  "midiPorts": [
+    "misB Bus 1"
+  ],
   "anims": [],
   "motors": [
     {
@@ -9,7 +11,7 @@
       "enabled": false,
       "model": 12,
       "clockwise": true,
-      "mode": 1,
+      "mode": 0,
       "angleMin": -150,
       "angleMax": 150,
       "speedMin": -100,
@@ -20,12 +22,12 @@
       "id": 0,
       "enabled": false,
       "model": 12,
-      "clockwise": true,
+      "clockwise": false,
       "mode": 1,
-      "angleMin": -150,
-      "angleMax": 150,
-      "speedMin": -100,
-      "speedMax": 100,
+      "angleMin": -25,
+      "angleMax": 25,
+      "speedMin": -70,
+      "speedMax": 70,
       "torqueMax": 1023
     },
     {

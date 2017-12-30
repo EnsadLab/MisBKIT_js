@@ -403,12 +403,12 @@ MisGUI.prototype.midiMotorSettings = function(midiMappingSettings,midiPorts){
 
 MisGUI.prototype.updateMidiMotorSelection = function(motorIndex,midiPortSelected,midiPorts){
 
-    var sel = $("#divMotorSettings .midi-setting").eq(motorIndex);
+    //var sel = $("#divMotorSettings .midi-setting").eq(motorIndex);
+    var sel = $("#divMotorSettings .midi-chanel").eq(motorIndex);
     sel.data("id",motorIndex);
 
     sel.empty();
     sel.append($("<option value=" + "'" + "none" + "'>" + "none" + "</option>"));
-    
     for(var i=0;i<midiPorts.length;i++){
         var portName = midiPorts[i].portName;
         if(portName.length>0 && midiPorts[i].enabledOnGUI){
@@ -443,7 +443,8 @@ MisGUI.prototype.selectMidiMappingPort = function(motorID, name){
     //var sel = div.find(".listAnims [name="+wich+"]");
     if( (name==undefined)||(name.length<1) )
         name = "none";
-    var sel = div.find(".midi-setting");
+    //var sel = div.find(".midi-setting");
+    var sel = div.find(".midi-chanel");
     sel.val(name);
 }
 
@@ -711,6 +712,13 @@ MisGUI.prototype.init =function(){
         
         
     });
+
+    $(".midiPlug").bind("mouseover", midiPanelOver);
+        function midiPanelOver(){
+            console.log("midi over");
+            misGUI.scanMidiPorts();
+        }
+    
 
     //this.scanSerial();    /*Didier*/
     this.scanMidiPorts();
@@ -1677,8 +1685,6 @@ function frontBlinkInfo(){
 
 
 }
-
-
 
 
 
