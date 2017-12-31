@@ -1,17 +1,20 @@
 {
   "oscHost": "none",
   "webSocket": "none",
-  "midiPorts": [
-    "misB Bus 1"
+  "midiPorts": [],
+  "anims": [
+    {
+      "name": "anim_0_negativeWheel",
+      "key": ""
+    }
   ],
-  "anims": [],
   "motors": [
     {
-      "id": 0,
+      "id": 1,
       "enabled": false,
       "model": 12,
       "clockwise": true,
-      "mode": 0,
+      "mode": 1,
       "angleMin": -150,
       "angleMax": 150,
       "speedMin": -100,

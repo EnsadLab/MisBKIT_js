@@ -39,8 +39,14 @@ function MisGUI(){
     });
     */
 
+    // not used right now.. leave it in case we want to re-add the scan button
     $('#btMidi').on('click',function(){
         self.scanMidiPorts();
+    });
+
+    $('#btmidi').on('click',function(){
+        midiPortManager.enabled = this.checked;
+        //console.log("*** btmidi", midiPortManager.enabled);
     });
 
 
@@ -358,6 +364,7 @@ MisGUI.prototype.motorSettings = function(index,s){
     parent.find("[name=enable]").prop("checked",s.enabled);
     parent.find("[name=mode]").prop("checked",(s.mode!=0));
     //parent.find(".number-for-motor").val(33);
+    parent.find(".motor-index").text(index);
 
     var parent = this.getMotorStg(index);
     parent.find("[name=dxlID]").val(s.id);
@@ -375,6 +382,7 @@ MisGUI.prototype.motorSettings = function(index,s){
     this.rotAngles[index].show((s.mode==0));
     this.rotSpeeds[index].show((s.mode==1));
     this.rotSpeeds[index].setValue(0);
+
 
 }
 
@@ -713,7 +721,7 @@ MisGUI.prototype.init =function(){
         
     });
 
-    $(".midiPlug").bind("mouseover", midiPanelOver);
+    $(".midiPlug").bind("mouseenter", midiPanelOver);//mouseover
         function midiPanelOver(){
             console.log("midi over");
             misGUI.scanMidiPorts();
