@@ -243,6 +243,7 @@ MisGUI.prototype.wheel =function(index){
 
 MisGUI.prototype.onRotary = function(val,rot){
     var i=rot.userData.i; 
+    console.log("on rotary");
     dxlManager.cmd(rot.userData.f,i,val);
     this.inputVals.eq(i).val(val.toFixed(1));
 };
@@ -568,11 +569,22 @@ MisGUI.prototype.init =function(){
         var v = this.checked ? 1 : 0;
         var index = $(this).data("index");
         var cmd = this.name;
-        //console.log("toggle:",index," ",cmd," ",v);
+        console.log("toggle:",index," ",cmd," ",v);
         if(self[this.name])
             self[cmd](index,v);
         else
             dxlManager.cmd(cmd,index,v);
+    });
+
+    $("#motor-freeze").on('click',function(){
+        console.log("*** mototor stop all");
+        //dxlManager.stopAll();
+        /*for (var i = 0; i < dxlManager.motors.length; i++) {
+            misGUI.speed(i,0);
+            misGUI.angle(i,0);
+        }*/
+
+        //dxlManager.freeze = !dxlManager.freeze;
     });
 
     $("button.start-rec").on("click",function() {
@@ -626,6 +638,16 @@ MisGUI.prototype.init =function(){
                 }
             });
         }
+    });
+
+    $("#anim-freeze").on('click',function(){
+        console.log("*** anim stop all");
+        dxlManager.stopAllAnims();
+        //TODO: put speed to zero for all motors
+    });
+
+    $("#sensor-freeze").on('click',function(){
+        console.log("*** sensor stop all");
     });
 
     $("#btScan").on("click",function() {
@@ -1148,7 +1170,6 @@ MisGUI.prototype.changeSensor = function(settings, id){
     
     ssor.find("[name=oscEnabled]").attr('checked',settings.oscEnabled);
 
-    // TODO: @Didier: une manière plus élégante?
     var midiSelection = ssor.find("[name=midiPort]");
     midiSelection.empty();
     for(var i=0; i<midiPortManager.midiPorts.length; i++){

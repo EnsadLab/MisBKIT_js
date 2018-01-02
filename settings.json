@@ -1,10 +1,16 @@
 {
   "oscHost": "none",
   "webSocket": "none",
-  "midiPorts": [],
+  "midiPorts": [
+    "nanoKONTROL2 SLIDER/KNOB"
+  ],
   "anims": [
     {
       "name": "anim_0_negativeWheel",
+      "key": ""
+    },
+    {
+      "name": "anim1",
       "key": ""
     }
   ],
