@@ -27,7 +27,7 @@
 
 - value enter moves gui but not motor (as we saw already): TODO
 
-- check osc messages: ok... voir remarques
+- check osc messages: à revoir. et voir remarques
 
 **Back side** angle min-max, speed min-max, midi DONE -> tested all, with isadora, console and all settings are correctly saved and read. btn reverse and id input OK: tested with motors
 
