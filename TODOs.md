@@ -79,3 +79,5 @@
 - changer le fond du moteur + apparition pop-up quand température est critique.
 
 - bug des moteurs au démarrage
+
+- qd on delete un capteur, il est encore actif... !
