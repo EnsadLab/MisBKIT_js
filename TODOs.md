@@ -67,3 +67,15 @@
 - OSC stop message appelle stopAll de dxlManager... -> pas ok, car disable les moteurs. Il faudrait avoir une méthode qui met les moteurs à la vitesse zéro, mais j'ai eu des soucis à faire cela... TODO.
 
 - Peut-on vraiment pas changer le mode du moteur quand on est en train d'enregistrer une animation?
+
+## A faire
+
+- tooltips
+
+- bouton vert CM9 devrait devenir orange si la carte est déconnectée
+
+- bouton scan devrait réagir même si CM9 ou si CM9 est connectée.
+
+- changer le fond du moteur + apparition pop-up quand température est critique.
+
+- bug des moteurs au démarrage
