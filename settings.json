@@ -1,9 +1,7 @@
 {
   "oscHost": "none",
   "webSocket": "none",
-  "midiPorts": [
-    "nanoKONTROL2 SLIDER/KNOB"
-  ],
+  "midiPorts": [],
   "anims": [
     {
       "name": "anim_0_negativeWheel",
@@ -28,7 +26,7 @@
       "torqueMax": 1023
     },
     {
-      "id": 0,
+      "id": 2,
       "enabled": false,
       "model": 12,
       "clockwise": false,
@@ -40,7 +38,7 @@
       "torqueMax": 1023
     },
     {
-      "id": 0,
+      "id": 12,
       "enabled": false,
       "model": 12,
       "clockwise": true,
@@ -52,7 +50,7 @@
       "torqueMax": 1023
     },
     {
-      "id": 0,
+      "id": 18,
       "enabled": false,
       "model": 12,
       "clockwise": true,

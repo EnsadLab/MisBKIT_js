@@ -364,7 +364,6 @@ MisGUI.prototype.motorSettings = function(index,s){
     parent.find(".identity").text(s.id);
     parent.find("[name=enable]").prop("checked",s.enabled);
     parent.find("[name=mode]").prop("checked",(s.mode!=0));
-    //parent.find(".number-for-motor").val(33);
     parent.find(".motor-index").text(index);
 
     var parent = this.getMotorStg(index);
@@ -579,10 +578,10 @@ MisGUI.prototype.init =function(){
     $("#motor-freeze").on('click',function(){
         console.log("*** mototor stop all");
         //dxlManager.stopAll();
-        /*for (var i = 0; i < dxlManager.motors.length; i++) {
-            misGUI.speed(i,0);
-            misGUI.angle(i,0);
-        }*/
+        for (var i = 0; i < dxlManager.motors.length; i++) {
+            //misGUI.speed(i,0); // POURQUOI CA NE MARCHE PAS? Exactement la même méthode que celle depuis onMidi()...
+            //misGUI.angle(i,0);
+        }
 
         //dxlManager.freeze = !dxlManager.freeze;
     });
@@ -984,7 +983,7 @@ MisGUI.prototype.divSensor = function(sensorId){
 
 MisGUI.prototype.addSensor = function(settings, id){
     //console.log("CLONE",id);
-    //console.log("MisGUI:addSensor " + settings.name);
+    console.log("MisGUI:addSensor " + settings.name);
     var self = this;
     var parent = $(".sensors").find("[name=listSensors]");
     var model = parent.find(".single-sensor:first");
@@ -1110,7 +1109,7 @@ MisGUI.prototype.addSensor = function(settings, id){
     parent.append(clone); 
     //this.setSensorRange(id,settings.valMin,settings.valMax,settings.threshold);//after append
     clone.show();
-    indexMotor();
+    //indexMotor();
 
 
     clone.find(".moreSensorSetting").bind('click', sensorSettings);
@@ -1568,7 +1567,7 @@ function echoActiveSetting(){
 
 // PULL OFF
 function indexMotor(){
-    for (var i = 1; i < $(".motor-index").length; i++) {
+    for (var i = 0; i < $(".motor-index").length; i++) {
         $(".motor-index").eq(i).html(i+1);
         console.log(i);
     };

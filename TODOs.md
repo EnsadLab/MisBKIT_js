@@ -31,6 +31,8 @@
 
 **Back side** angle min-max, speed min-max, midi DONE -> tested all, with isadora, console and all settings are correctly saved and read. btn reverse and id input OK: tested with motors
 
+- pas assez de place pour les IDs à deux chiffres -> dire A Alex.
+
 **stopAll button AND midi button to stop motors** : not working yet
 
 - devrait on pas plutôt appeler les boutons "stop all", "freeze"?
@@ -52,17 +54,34 @@
 - check OSC messages: OK
 
 
-
 **stopAll button** : animation stops. TODO: put speed to zero for all motors
 
 ## Sensors
 
-**stopAll button** : TODO
+- trop de choses encore à changer dans la gui. Je pense qu'il vaut mieux attendre les modifs d'Alex. Lui écrit en fin de semaine.
+
+## à changer:
+
+- val min, val max, normal qu'ils soient à droite?
+
+- le mot tolerance n'a plus la place nécessaire.. on l'enlève?
+
+- CM9, manque la pin id
+
+- Midi, manque le mode et l'index. Et le port est trop petit.
+
+- motor mapping, manque l'index
+
+- OSC, enlever le port.(pour l'instant)
+
+- possible de rendre le nom du panel Sensors plus visible? C'était Filipe surtout qui voulait ce chgmt.
+
+**stopAll button and etc...** TODO 
 
 
 ## Remarques
 
-- Osc panel? Les messages osc sont toujours transmis, même si le bouton est à off. Veut-on vraiment implémenter ce bouton global on/off. Si oui, pourrait-on pas le mettre à on par défaut.. car ça fait quand même bcp de choses à activer pour que misB fonctionne.
+- Osc panel? Les messages osc sont toujours transmis, même si le bouton est à off. Veut-on vraiment implémenter ce bouton global on/off. Si oui, pourrait-on pas le mettre à ON par défaut.. car ça fait quand même bcp de choses à activer pour que misB fonctionne.
 
 - OSC stop message appelle stopAll de dxlManager... -> pas ok, car disable les moteurs. Il faudrait avoir une méthode qui met les moteurs à la vitesse zéro, mais j'ai eu des soucis à faire cela... TODO.
 
@@ -80,4 +99,4 @@
 
 - bug des moteurs au démarrage
 
-- qd on delete un capteur, il est encore actif... !
+- qd on delete un capteur, il est encore actif... (le bug qu'on a vu pdt le workshop mobilizing)

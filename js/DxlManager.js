@@ -388,20 +388,20 @@ DxlManager.prototype.update = function(){
 }
 
 DxlManager.prototype.cmd = function(cmd,index,arg){
-    console.log("dxl command: ",index," cmd:",cmd," arg:",arg);
+    //console.log("dxl command: ",index," cmd:",cmd," arg:",arg);
     if(!this.freeze){
-        console.log("not freezing start");
+       // console.log("not freezing start");
         if(this[cmd]){
-            console.log("DxlManager.cmd:",cmd);
+         //   console.log("DxlManager.cmd:",cmd);
             this[cmd](index,arg);
         }
         else {
             if (index < this.motors.length)
                 this.motors[index][cmd](arg);
         }
-        console.log("not freezing end");
+       // console.log("not freezing end");
     }
-    console.log("dxl command end");
+    //console.log("dxl command end");
 };
 
 DxlManager.stopMotor = function(index){
