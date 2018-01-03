@@ -1,3 +1,9 @@
+## commentaires
+
+- J'ai implémenté ce que j'ai pu. En gros, les capteurs, j'ai pas encore touché, car y'a trop de modifs qu'Alex doit faire. J'y toucherai du coup la semaine prochaine.
+
+- pour le reste, le prob principal est que je n'arrive pas à mettre une vitesse zéro aux moteurs. misGui.speed(index,0) n'a pas l'air de marcher.. suis un peu perplexe.
+
 ## Panels
 
 **CM9** DONE
@@ -10,11 +16,11 @@
 
 - Est-ce qu'on enregistre le bouton global dans les settings? En contradiction ac les autres panels.. mais serait plus pratique.
 
-**OSC**
+**OSC** voir remarques
 
 **Mobilizing** OK
 
-**Robus**
+**Robus** Didier
 
 ## Motors
 **Front side** 
