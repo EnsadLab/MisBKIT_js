@@ -45,7 +45,8 @@
 
 - j'ai exprès enlever le "cmdtog".. on peut remettre. J'ai trouvé plus logique de ne pas passer par le système à commande, comme c'est une "commande" pour le dxlManager et non pour les moteurs.. bref, on peut en discuter.
 
-**gear button: To be done... Le bouton close a giclé à un moment donné. A retester..
+
+**gear button**: To be done... Le bouton close a giclé à un moment donné. A retester..
 
 
 ## Animations
