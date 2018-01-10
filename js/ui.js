@@ -46,8 +46,8 @@ function showSensors(){
 	$(".animBTN").css("display", "none");
 	$(".addSensors").css("display", "block");
 
-	$(this).css("opacity", 1);
-	$("#anims").css("opacity", 0.3);
+	$(this).parent('.tab').css("opacity", 1);
+	$("#anims").parent('.tab').css("opacity", 0.6);
 
 }
 
@@ -66,8 +66,8 @@ function showAnimations(){
 
 
 
-	$(this).css("opacity", 1);
-	$("#sens").css("opacity", 0.3);
+	$(this).parent('.tab').css("opacity", 1);
+	$("#sens").parent('.tab').css("opacity", 0.6);
 
 }
 

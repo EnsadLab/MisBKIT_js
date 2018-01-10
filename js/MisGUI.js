@@ -1679,6 +1679,8 @@ function frontBlinkInfo(){
 }
 
 
-
-
+$(".midiPlug").bind("mouseover", midiPanelOver);
+function midiPanelOver(){
+    console.log("midi over");
+}
 

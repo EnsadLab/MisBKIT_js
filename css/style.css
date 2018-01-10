@@ -155,6 +155,10 @@ h2{
 	width:100%;
 }
 
+.medium-75{
+	width:75%;	
+}
+
 .medium{
 	width:50%;
 }
@@ -178,9 +182,16 @@ h2{
 	/*margin-left:10px;*/
 }
 
+.text-left{
+	text-align: left;
+	display:inline-block;
+	vertical-align: -webkit-baseline-middle;
+}
+
 .text-right{
 	text-align: right;
 	display:inline-block;
+	vertical-align: -webkit-baseline-middle;
 }
 .text-center{
 	text-align: center;
@@ -301,6 +312,15 @@ button:hover{
   to { opacity: 0.4; }
 }
 
+
+.tab {	
+	display:inline;
+	padding:1% 0% 1% 0;
+	margin-left:1%;
+	border: 1px solid #9FA4BC;
+	border-radius:5px 5px 0px 0px;
+	border-bottom:0px;
+}
 
 
 /*GEAR BUTTON*/
@@ -462,7 +482,7 @@ input[type="number"]:focus{
 
 /*INPUT NUMBER SMALL*/
 input[type="number"].small{
-    font-size: 13px;
+    font-size: 10px;
     height: 20px;
 }
 
@@ -990,7 +1010,7 @@ input:checked.rec:before{
 }
 
 #sens{
-	opacity:0.3;
+	/*opacity:0.3;*/
 }
 
 /*Animation*/
@@ -1342,6 +1362,7 @@ button.sensorsBTN img, button.animBTN img{
     border-radius: 25px;
     color:white;
     width: 15%;
+    margin-bottom: 5%;
 }
 
 .live-value{
@@ -1542,14 +1563,14 @@ h3{
 
 .sensor-setting-more{
 	float: left;
-	margin-top:-8%;
+	margin-top:-15%;
     margin-left: 50%;
     position: relative;
     z-index: 10;
     top: -205px;
     padding-top: 0%;
     border-radius: 10px;
-    height: 260px;
+    height: 285px;
     padding: 15px;
     /* display: none; */
     text-align: left;
@@ -1557,7 +1578,7 @@ h3{
     color: white;
 }
 
-.sensor-setting-more h3{
+.single-sensor h3{
 	display: inline-block;
 	float: left;
 	width: 47%;
@@ -1567,7 +1588,7 @@ h3{
 }
 
 .sensor-setting-more select, .sensor-setting-more .valid{
-	margin-top:10px;
+	/*margin-top:10px;*/
 }
 
 
@@ -1590,10 +1611,9 @@ h3{
 .sensor-setting-more section{
     display: inline-block;
     float: left;
-    height: auto;
+    height: 70px;
     text-align: left;
     width: 43%;
-    height: auto;
     margin: 4% 2% -2% 1%;
     padding: 2%;
 }
@@ -1639,6 +1659,7 @@ h4{
 	font-size: 12px;
 	font-weight: 100;
 	letter-spacing: 2px;
+	color:white;
 }
 
 ::-webkit-input-placeholder {
