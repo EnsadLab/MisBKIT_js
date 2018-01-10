@@ -62,65 +62,41 @@ MidiPort = function () {
             else console.log("New MIDI command with number " + msg[0] + " -> needs to be added in code");
             
             // if it is CC, we take the controller value
-            if(cmd == "CC"){
-                if(motorMappingManager.isMapped("midi",self.portName,cmd,msg[1])){
-                    var motorIDs = motorMappingManager.getMotorIndex("midi",self.portName,cmd,msg[1]);
-                    for(var i=0; i<motorIDs.length; i++){
-                        dxlManager.onMidi(motorIDs[i], "midi", msg[2]);
+            if(midiPortManager.enabled){
+                if(cmd == "CC"){
+                    if(motorMappingManager.isMapped("midi",self.portName,cmd,msg[1])){
+                        var motorIDs = motorMappingManager.getMotorIndex("midi",self.portName,cmd,msg[1]);
+                        for(var i=0; i<motorIDs.length; i++){
+                            dxlManager.onMidi(motorIDs[i], "midi", msg[2]);
+                        }
                     }
-                }
-                if(sensorManager.isMapped("sensor",self.portName,cmd,msg[1])){
-                    var mappedSensors = sensorManager.getSensorIds("sensor",self.portName,cmd,msg[1]);
-                    for(var i=0; i<mappedSensors.length; i++){
-                        //console.log("CC",mappedSensors[i],msg[2]);
-                        sensorManager.onMidi(mappedSensors[i],"sensor",msg[2]);
+                    if(sensorManager.isMapped("sensor",self.portName,cmd,msg[1])){
+                        var mappedSensors = sensorManager.getSensorIds("sensor",self.portName,cmd,msg[1]);
+                        for(var i=0; i<mappedSensors.length; i++){
+                            //console.log("CC",mappedSensors[i],msg[2]);
+                            sensorManager.onMidi(mappedSensors[i],"sensor",msg[2]);
+                        }
                     }
-                }
-            }else if(cmd == "note"){ // if it is note, we take the channel value (-> no controller value)
-                var channel;
-                if(msg[0] <= 143) channel = msg[0] - 128 + 1; // notes OFF
-                else channel = msg[0] - 144 + 1; // notes ON
-                //console.log("chanel ",channel);
-                if(motorMappingManager.isMapped("midi",self.portName,cmd,channel)){
-                    var motorIDs = motorMappingManager.getMotorIndex("midi",self.portName,cmd,channel);
-                    for(var i=0; i<motorIDs.length; i++){
-                         dxlManager.onMidi(motorIDs[i], "midi", msg[1]); //quick n dirty
+                }else if(cmd == "note"){ // if it is note, we take the channel value (-> no controller value)
+                    var channel;
+                    if(msg[0] <= 143) channel = msg[0] - 128 + 1; // notes OFF
+                    else channel = msg[0] - 144 + 1; // notes ON
+                    //console.log("chanel ",channel);
+                    if(motorMappingManager.isMapped("midi",self.portName,cmd,channel)){
+                        var motorIDs = motorMappingManager.getMotorIndex("midi",self.portName,cmd,channel);
+                        for(var i=0; i<motorIDs.length; i++){
+                            dxlManager.onMidi(motorIDs[i], "midi", msg[1]); //quick n dirty
+                        }
                     }
-                }
-                if(sensorManager.isMapped("sensor",self.portName,cmd,channel)){
-                    var mappedSensors = sensorManager.getSensorIds("sensor",self.portName,cmd,channel);
-                    for(var i=0; i<mappedSensors.length; i++){
-                        //console.log("note",mappedSensors[i],msg[1]);
-                        sensorManager.onMidi(mappedSensors[i],"sensor",msg[1]);
+                    if(sensorManager.isMapped("sensor",self.portName,cmd,channel)){
+                        var mappedSensors = sensorManager.getSensorIds("sensor",self.portName,cmd,channel);
+                        for(var i=0; i<mappedSensors.length; i++){
+                            //console.log("note",mappedSensors[i],msg[1]);
+                            sensorManager.onMidi(mappedSensors[i],"sensor",msg[1]);
+                        }
                     }
                 }
             }
-            /*if(cmd == "CC"){
-                if(motorMappingManager.isMapped("midi",self.portName,cmd,msg[1])){
-                    var motorIDs = motorMappingManager.getMotorIndex("midi",self.portName,cmd,msg[1]);
-                    for(var i=0; i<motorIDs.length; i++){
-                        //if(dxlManager.isEnabled(motorIDs[i]))
-                            dxlManager.onMidi(motorIDs[i], "midi", msg[2]); //quick n dirty
-                    }
-                }else{
-                    //if(dxlManager.isEnabled(msg[1]))
-                        dxlManager.onMidi(msg[1], "midi", msg[2]); //quick n dirty
-                }
-            } else if(cmd == "note"){
-                var channel;
-                
-                if(msg[0] <= 143) channel = msg[0] - 128 + 1; // notes OFF
-                else channel = msg[0] - 144 + 1; // notes ON
-                if(motorMappingManager.isMapped("midi",self.portName,cmd,channel)){
-                    var motorIDs = motorMappingManager.getMotorIndex("midi",self.portName,cmd,channel);
-                    for(var i=0; i<motorIDs.length; i++){
-                        //if(dxlManager.isEnabled(motorIDs[i]))
-                            dxlManager.onMidi(motorIDs[i], "midi", msg[1]); //quick n dirty
-                    }
-                }else{
-                    dxlManager.onMidi(channel-1, "midi", msg[1]); 
-                }
-            }*/
 
             if (self.callback)
                 self.callback(msg[1], msg[2] / 127);

@@ -39,8 +39,14 @@ function MisGUI(){
     });
     */
 
+    // not used right now.. leave it in case we want to re-add the scan button
     $('#btMidi').on('click',function(){
         self.scanMidiPorts();
+    });
+
+    $('#btmidi').on('click',function(){
+        midiPortManager.enabled = this.checked;
+        //console.log("*** btmidi", midiPortManager.enabled);
     });
 
 
@@ -237,6 +243,7 @@ MisGUI.prototype.wheel =function(index){
 
 MisGUI.prototype.onRotary = function(val,rot){
     var i=rot.userData.i; 
+    console.log("on rotary");
     dxlManager.cmd(rot.userData.f,i,val);
     this.inputVals.eq(i).val(val.toFixed(1));
 };
@@ -357,7 +364,7 @@ MisGUI.prototype.motorSettings = function(index,s){
     parent.find(".identity").text(s.id);
     parent.find("[name=enable]").prop("checked",s.enabled);
     parent.find("[name=mode]").prop("checked",(s.mode!=0));
-    //parent.find(".number-for-motor").val(33);
+    parent.find(".motor-index").text(index);
 
     var parent = this.getMotorStg(index);
     parent.find("[name=dxlID]").val(s.id);
@@ -375,6 +382,7 @@ MisGUI.prototype.motorSettings = function(index,s){
     this.rotAngles[index].show((s.mode==0));
     this.rotSpeeds[index].show((s.mode==1));
     this.rotSpeeds[index].setValue(0);
+
 
 }
 
@@ -403,12 +411,12 @@ MisGUI.prototype.midiMotorSettings = function(midiMappingSettings,midiPorts){
 
 MisGUI.prototype.updateMidiMotorSelection = function(motorIndex,midiPortSelected,midiPorts){
 
-    var sel = $("#divMotorSettings .midi-setting").eq(motorIndex);
+    //var sel = $("#divMotorSettings .midi-setting").eq(motorIndex);
+    var sel = $("#divMotorSettings .midi-chanel").eq(motorIndex);
     sel.data("id",motorIndex);
 
     sel.empty();
     sel.append($("<option value=" + "'" + "none" + "'>" + "none" + "</option>"));
-    
     for(var i=0;i<midiPorts.length;i++){
         var portName = midiPorts[i].portName;
         if(portName.length>0 && midiPorts[i].enabledOnGUI){
@@ -443,7 +451,8 @@ MisGUI.prototype.selectMidiMappingPort = function(motorID, name){
     //var sel = div.find(".listAnims [name="+wich+"]");
     if( (name==undefined)||(name.length<1) )
         name = "none";
-    var sel = div.find(".midi-setting");
+    //var sel = div.find(".midi-setting");
+    var sel = div.find(".midi-chanel");
     sel.val(name);
 }
 
@@ -559,11 +568,22 @@ MisGUI.prototype.init =function(){
         var v = this.checked ? 1 : 0;
         var index = $(this).data("index");
         var cmd = this.name;
-        //console.log("toggle:",index," ",cmd," ",v);
+        console.log("toggle:",index," ",cmd," ",v);
         if(self[this.name])
             self[cmd](index,v);
         else
             dxlManager.cmd(cmd,index,v);
+    });
+
+    $("#motor-freeze").on('click',function(){
+        console.log("*** mototor stop all");
+        //dxlManager.stopAll();
+        for (var i = 0; i < dxlManager.motors.length; i++) {
+            //misGUI.speed(i,0); // POURQUOI CA NE MARCHE PAS? Exactement la même méthode que celle depuis onMidi()...
+            //misGUI.angle(i,0);
+        }
+
+        //dxlManager.freeze = !dxlManager.freeze;
     });
 
     $("button.start-rec").on("click",function() {
@@ -617,6 +637,16 @@ MisGUI.prototype.init =function(){
                 }
             });
         }
+    });
+
+    $("#anim-freeze").on('click',function(){
+        console.log("*** anim stop all");
+        dxlManager.stopAllAnims();
+        //TODO: put speed to zero for all motors
+    });
+
+    $("#sensor-freeze").on('click',function(){
+        console.log("*** sensor stop all");
     });
 
     $("#btScan").on("click",function() {
@@ -711,6 +741,13 @@ MisGUI.prototype.init =function(){
         
         
     });
+
+    $(".midiPlug").bind("mouseenter", midiPanelOver);//mouseover
+        function midiPanelOver(){
+            console.log("midi over");
+            misGUI.scanMidiPorts();
+        }
+    
 
     //this.scanSerial();    /*Didier*/
     this.scanMidiPorts();
@@ -946,7 +983,7 @@ MisGUI.prototype.divSensor = function(sensorId){
 
 MisGUI.prototype.addSensor = function(settings, id){
     //console.log("CLONE",id);
-    //console.log("MisGUI:addSensor " + settings.name);
+    console.log("MisGUI:addSensor " + settings.name);
     var self = this;
     var parent = $(".sensors").find("[name=listSensors]");
     var model = parent.find(".single-sensor:first");
@@ -1072,7 +1109,7 @@ MisGUI.prototype.addSensor = function(settings, id){
     parent.append(clone); 
     //this.setSensorRange(id,settings.valMin,settings.valMax,settings.threshold);//after append
     clone.show();
-    indexMotor();
+    //indexMotor();
 
 
     clone.find(".moreSensorSetting").bind('click', sensorSettings);
@@ -1132,7 +1169,6 @@ MisGUI.prototype.changeSensor = function(settings, id){
     
     ssor.find("[name=oscEnabled]").attr('checked',settings.oscEnabled);
 
-    // TODO: @Didier: une manière plus élégante?
     var midiSelection = ssor.find("[name=midiPort]");
     midiSelection.empty();
     for(var i=0; i<midiPortManager.midiPorts.length; i++){
@@ -1531,7 +1567,7 @@ function echoActiveSetting(){
 
 // PULL OFF
 function indexMotor(){
-    for (var i = 1; i < $(".motor-index").length; i++) {
+    for (var i = 0; i < $(".motor-index").length; i++) {
         $(".motor-index").eq(i).html(i+1);
         console.log(i);
     };
@@ -1677,6 +1713,7 @@ function frontBlinkInfo(){
 
 
 }
+
 
 
 $(".midiPlug").bind("mouseover", midiPanelOver);

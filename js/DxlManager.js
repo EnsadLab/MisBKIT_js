@@ -79,6 +79,7 @@ function DxlManager(){
 
     this.onoffMotorIndex = 0;      //TOTHINK: in DxlMotor ??? 
     this.onoffTimer = undefined;
+    this.freeze = false;
 
     //-------------------------
     //var json = fs.readFileSync(__dirname + "/data/ax12.json", 'utf8');
@@ -388,14 +389,19 @@ DxlManager.prototype.update = function(){
 
 DxlManager.prototype.cmd = function(cmd,index,arg){
     //console.log("dxl command: ",index," cmd:",cmd," arg:",arg);
-    if(this[cmd]){
-        console.log("DxlManager.cmd:",cmd);
-        this[cmd](index,arg);
+    if(!this.freeze){
+       // console.log("not freezing start");
+        if(this[cmd]){
+         //   console.log("DxlManager.cmd:",cmd);
+            this[cmd](index,arg);
+        }
+        else {
+            if (index < this.motors.length)
+                this.motors[index][cmd](arg);
+        }
+       // console.log("not freezing end");
     }
-    else {
-        if (index < this.motors.length)
-            this.motors[index][cmd](arg);
-    }
+    //console.log("dxl command end");
 };
 
 DxlManager.stopMotor = function(index){
@@ -412,6 +418,11 @@ DxlManager.prototype.stopAll = function() {
         this.motors[i].enable(false);
     }
     this.stopAllAnims();
+}
+
+// TODO
+DxlManager.prototype.stopAllMotors = function(){
+
 }
 
 DxlManager.prototype.startReadDxl = function(dxlId) {
@@ -663,7 +674,7 @@ DxlManager.prototype.setSpeed = function(index,val){
 DxlManager.prototype.setSpeedN = function(index,val){
     if(index<this.motors.length){
         var v=this.motors[index].nSpeed(val);
-        console.log("speedN:",v);
+        console.log("speedN:",val,v);
         misGUI.speed(index,v);
     }
 };

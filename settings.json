@@ -2,7 +2,16 @@
   "oscHost": "none",
   "webSocket": "none",
   "midiPorts": [],
-  "anims": [],
+  "anims": [
+    {
+      "name": "anim_0_negativeWheel",
+      "key": ""
+    },
+    {
+      "name": "anim1",
+      "key": ""
+    }
+  ],
   "motors": [
     {
       "id": 14,
@@ -20,16 +29,16 @@
       "id": 25,
       "enabled": false,
       "model": 12,
-      "clockwise": true,
+      "clockwise": false,
       "mode": 1,
-      "angleMin": -150,
-      "angleMax": 150,
-      "speedMin": -100,
-      "speedMax": 100,
+      "angleMin": -25,
+      "angleMax": 25,
+      "speedMin": -70,
+      "speedMax": 70,
       "torqueMax": 1023
     },
     {
-      "id": 0,
+      "id": 12,
       "enabled": false,
       "model": 12,
       "clockwise": true,
@@ -41,7 +50,7 @@
       "torqueMax": 1023
     },
     {
-      "id": 0,
+      "id": 18,
       "enabled": false,
       "model": 12,
       "clockwise": true,

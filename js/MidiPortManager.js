@@ -16,6 +16,9 @@ MidiPortManager = function () {
     // array of midi ports
     this.midiPorts = new Array();
 
+    // boolean corresponding to the ON/OFF value in the midi panel
+    this.enabled = false;
+
     console.log("MIDI");
 
 };
