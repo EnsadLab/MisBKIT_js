@@ -2,16 +2,7 @@
   "oscHost": "none",
   "webSocket": "none",
   "midiPorts": [],
-  "anims": [
-    {
-      "name": "anim_0_negativeWheel",
-      "key": ""
-    },
-    {
-      "name": "anim1",
-      "key": ""
-    }
-  ],
+  "anims": [],
   "motors": [
     {
       "id": 14,
