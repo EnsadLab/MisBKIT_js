@@ -1016,7 +1016,7 @@ MisGUI.prototype.addSensor = function(settings, id){
     //var nm = clone.find("[name=sensorName]");
     //console.log("------sensorName:",nm.length);
 
-    clone.find(".name")
+    clone.find("[name=sensorName]")//(".name")
         .val(settings.name)
         .on("change", function () {
             sensorManager.onName($(this).data("id"), $(this).val());
@@ -1337,7 +1337,7 @@ MisGUI.prototype.scanMidiPorts = function(){
             if(n){
                 //console.log("Found midi port: " + n);
                 midiPortManager.addMidiPort(n,i);
-                sel.append($("<input class=" + "'" + "styled-checkbox" + "'" + "type=" + "'" + "checkbox"
+                sel.append($("<input class=" + "'" + "styled-checkbox small" + "'" + "type=" + "'" + "checkbox"
                 + "'" + "id=" + "'" + n + "'>" + n + "<br>"));
             }else
                 break;
