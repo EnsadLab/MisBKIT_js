@@ -21,6 +21,7 @@
 **Mobilizing** OK
 
 **Robus** Didier
+    DB: Je vais le désactiver. Inutile et perturbant tant que nous n'avons pas de modules Robus.
 
 ## Motors
 **Front side** 
@@ -44,7 +45,7 @@
 - devrait on pas plutôt appeler les boutons "stop all", "freeze"?
 
 - j'ai exprès enlever le "cmdtog".. on peut remettre. J'ai trouvé plus logique de ne pas passer par le système à commande, comme c'est une "commande" pour le dxlManager et non pour les moteurs.. bref, on peut en discuter.
-
+  DB: oui, c'est à revoir de façon plus génerale. Mais je dois verifier que tout marche.
 
 **gear button**: To be done... Le bouton close a giclé à un moment donné. A retester..
 
@@ -58,6 +59,7 @@
 - add animation, and all buttons OK
 
 - remove default animation: DEJA PRESENT ds ancienne version. Faudrait-il pas l'enlever?
+    DB: à cacher ("hyde"), le sensor par défaut doit être revu aussi.
 
 - check OSC messages: OK
 
@@ -94,6 +96,7 @@
 - OSC stop message appelle stopAll de dxlManager... -> pas ok, car disable les moteurs. Il faudrait avoir une méthode qui met les moteurs à la vitesse zéro, mais j'ai eu des soucis à faire cela... TODO.
 
 - Peut-on vraiment pas changer le mode du moteur quand on est en train d'enregistrer une animation?
+    DB: pas prévu et difficile ... ce serait vraiment utile ?
 
 ## A faire
 
@@ -102,9 +105,11 @@
 - bouton vert CM9 devrait devenir orange si la carte est déconnectée
 
 - bouton scan devrait réagir même si CM9 ou si CM9 est connectée.
+    DB: réagir comment ?
 
 - changer le fond du moteur + apparition pop-up quand température est critique.
 
 - bug des moteurs au démarrage
 
 - qd on delete un capteur, il est encore actif... (le bug qu'on a vu pdt le workshop mobilizing)
+    DB: oui c'est grave et bizarre, à debugger.
