@@ -486,6 +486,12 @@ input[type="number"].small{
     height: 20px;
 }
 
+input[type="number"].tiny{
+    font-size: 10px;
+    height: 20px;
+}
+
+
 
 /*STATUS*/
 .connected {
@@ -1571,7 +1577,7 @@ h3{
     padding-top: 0%;
     border-radius: 10px;
     height: 285px;
-    padding: 15px;
+    padding-top: 15px;
     /* display: none; */
     text-align: left;
     overflow: auto;
@@ -1611,19 +1617,27 @@ h3{
 .sensor-setting-more section{
     display: inline-block;
     float: left;
-    height: 70px;
+    height: 28px;
     text-align: left;
-    width: 43%;
-    margin: 4% 2% -2% 1%;
+    width: 45%;
+    margin: 3% 0% -2% 1%;
     padding: 2%;
 }
 
-.sensor-setting-more section .power{
+
+.sensor-setting-more section.hight{
+    height: 80px;
+}
+
+.sensor-setting-more section input.cmdOnOff{
 	float:left;
 }
 
 .sensor-setting-more section h4{
-	margin-top:5%;
+	margin-top:2%;
+	/*float:left;*/
+	display:flex;
+	/*width:70px;*/
 }
 
 /*.sensor-setting-more */.info{

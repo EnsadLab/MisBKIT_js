@@ -397,53 +397,64 @@
 							<h3>Input</h3>
 							<h3>Output</h3>
 							<section>
-								<div class="large float-left">
-									<input type="checkbox" class="power cmdOnOff" name ="mobilizingEnabled" title="enable/disable">	
+								<div class="medium float-left">
+									<input type="checkbox" class=" small cmdOnOff" name ="mobilizingEnabled" title="enable/disable">	
 									<h4>CM9</h4>	
 								</div>
 								
-								<div class="large float-left text-center">
-									<input type="number" class="small" placeholder="Pin" name="">							
+								<div class="medium float-left text-center">
+									<input type="number" class="medium tiny" placeholder="Pin" name="">							
 								</div>
 								
 							</section>					
 
-							
+							<section>
+								<input type="checkbox" class="small cmdOnOff" name ="oscEnabled" title="enable/disable">
+								<h4>OSC</h4>
+								<!-- <div class="info">adresse : /sensor/proximity</div> -->
+								<!-- <input type="text" class="OSC-setting" placeholder="OSC adress" name=""> -->
+								
+							</section>
 
 
 							<section>
-								<input type="checkbox" class="power cmdOnOff" name ="mobilizingEnabled" title="enable/disable">	
+								<input type="checkbox" class="small cmdOnOff" name ="mobilizingEnabled" title="enable/disable">	
 								<h4>Mobilizing</h4>							
-							</section>	
+							</section>
+
+							<section>
+								<input type="checkbox" class="small cmdOnOff" name ="mobilizingEnabled" title="enable/disable">	
+								<h4>Mobilizing</h4>							
+							</section>
 
 
 							<section>
-								<div class="large float-left">
-									<input type="checkbox" class="power cmdOnOff" name ="mobilizingEnabled" title="enable/disable">	
+								<div class="medium float-left">
+									<input type="checkbox" class="small cmdOnOff" name ="mobilizingEnabled" title="enable/disable">	
 									<h4>Motor Mapping</h4>
 								</div>
 
-								<div class="large float-left text-center">
-									<input type="number" class="small" placeholder="index" name="">							
+								<div class="medium float-right text-right">
+									<input type="number" class="medium tiny float-right" placeholder="index" name="">							
 								</div>						
 							</section>	
 
 
 							<section>
-								<div class="large float-left">
-									<input type="checkbox" class="power cmdOnOff" name ="mobilizingEnabled" title="enable/disable">	
+								<div class="medium float-left">
+									<input type="checkbox" class="small cmdOnOff" name ="mobilizingEnabled" title="enable/disable">	
 									<h4>Motor Mapping</h4>
 								</div>
 
-								<div class="large float-left text-center">
-									<input type="number" class="small" placeholder="index" name="">							
+								<div class="medium float-right text-right">
+									<input type="number" class="medium tiny float-right" placeholder="index" name="">							
 								</div>
 
 							</section>
 
-							<section>
+							<section class="hight">
 								<div class="large float-left">
-									<input type="checkbox" class="power cmdOnOff" name ="midiEnabled"title="enable/disable">
+									<input type="checkbox" class="small cmdOnOff" name ="midiEnabled"title="enable/disable">
 									<h4>Midi</h4>
 								</div>
 								
@@ -455,7 +466,11 @@
 										</label>
 									</div>
 									<div class="medium float-right text-right">
-										<select class= " tiny medium-75 cmdString"  id="" name="midiPort">
+										<input type="number" class="medium-75 tiny" placeholder="index">
+										
+									</div>
+									<div class="large">
+										<select class= " tiny large cmdString"  id="" name="midiPort">
 											<option value="">midi 1</option>
 											<option value="midi 2">midi 2</option>
 											<option value="">midi 3</option>
@@ -466,13 +481,7 @@
 
 							</section>
 
-							<section>
-								<input type="checkbox" class="power cmdOnOff" name ="oscEnabled" title="enable/disable">
-								<h4>OSC</h4>
-								<!-- <div class="info">adresse : /sensor/proximity</div> -->
-								<!-- <input type="text" class="OSC-setting" placeholder="OSC adress" name=""> -->
-								
-							</section>
+							
 							
 
 							<!-- <div class="options">
