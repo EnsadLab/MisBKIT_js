@@ -650,6 +650,8 @@ MisGUI.prototype.init =function(){
     });
 
     $("#btScan").on("click",function() {
+        $("#btScan").css('background', 'white');
+		$("#btScan").css('color', 'black');
         dxlManager.startScan();
     });
 
@@ -1022,7 +1024,7 @@ MisGUI.prototype.addSensor = function(settings, id){
             sensorManager.onName($(this).data("id"), $(this).val());
     });
 
-    clone.find(".tolerance")
+    clone.find("[name=tolerance]") //(".tolerance")
         .val(settings.tolerance)
         .on("input",function(){
             sensorManager.onTolerance($(this).data("id"), $(this).val());
@@ -1185,6 +1187,7 @@ MisGUI.prototype.changeSensor = function(settings, id){
     
     ssor.find("[name=cm9Enabled]").attr('checked',settings.cm9Enabled);
     ssor.find("[name=cm9Pin]").val(settings.cm9Pin);
+    ssor.find("[name=mobilizingEnabled]").attr('checked',settings.mobilizingEnabled);
     ssor.find("[name=fromMotorEnabled]").attr('checked',settings.fromMotorEnabled);
     ssor.find("[name=fromMotorIndex]").val(settings.fromMotorIndex);
     ssor.find("[name=toMotorEnabled]").attr('checked',settings.toMotorEnabled);
@@ -1207,12 +1210,14 @@ MisGUI.prototype.selectSensorAnim = function(sensorID, wich, name){
 MisGUI.prototype.setSensorValue = function(sensorID, sensorValue, percent){
     var div = this.divSensor(sensorID);
     div.find(".live-value").html(sensorValue);
+    if(percent < 0 ) percent = 0;
+    if(percent > 100) percent = 100;
     div.find(".live-value-ui").css("left", percent+"%");
 }
 
 MisGUI.prototype.getSensorTolerance = function(sensorID){
     var div = this.divSensor(sensorID);
-    return div.find(".tolerance").value();
+    return div.find("[name=tolerance]")/*(".tolerance")*/.value();
 }
 MisGUI.prototype.setSensorTolerance = function(sensorID,val){
     var div = this.divSensor(sensorID);
@@ -1338,7 +1343,7 @@ MisGUI.prototype.scanMidiPorts = function(){
                 //console.log("Found midi port: " + n);
                 midiPortManager.addMidiPort(n,i);
                 sel.append($("<input class=" + "'" + "styled-checkbox small" + "'" + "type=" + "'" + "checkbox"
-                + "'" + "id=" + "'" + n + "'>" + n + "<br>"));
+                + "'" + "id=" + "'" + n + "'>&nbsp;" + n + "<br>"));
             }else
                 break;
         }
@@ -1422,16 +1427,21 @@ MisGUI.prototype.scanIPv4 = function(){
 
 }
 
+var use_robus = false;
+
 MisGUI.prototype.robusOnOff = function(onoff){
-    if(onoff){
-        $(robusOnOff).prop("class","connected").text("ON");
-        var txt = robusManager.getInfo();
-        $("#robusTxt").val(txt);        
+    if(use_robus){
+        if(onoff){
+            $(robusOnOff).prop("class","connected").text("ON");
+            var txt = robusManager.getInfo();
+            $("#robusTxt").val(txt);        
+        }
+        else
+            $(robusOnOff).prop("class","disconnected").text("OFF");
     }
-    else
-        $(robusOnOff).prop("class","disconnected").text("OFF");
 };
 MisGUI.prototype.robusWait = function(text){
+    if(use_robus)
         $(robusOnOff).prop("class","disconnected").text("WAIT");
 };
 MisGUI.prototype.robusInfo = function(text){
@@ -1451,7 +1461,12 @@ MisGUI.prototype.blockUI=function(block){
 }
 
 MisGUI.prototype.scanProgress =function(val){
+    console.log("val",val);
     $("#scanProgress").val(val);
+    if(val >= $("#scanProgress").attr('max') - 1){ // TODO: talk about the progress bar with Didier!
+        $("#btScan").css('background', 'transparent');
+		$("#btScan").css('color', 'white');
+    }
 }
 
 MisGUI.prototype.temperature = function(index,val){
@@ -1481,7 +1496,7 @@ function sensorAnimWidth(element, min, max, cur, tolVal){
     var curentVal = selec.find(".currentV");
     var tol_ui = selec.find(".tolerance-ui");
     var tol_Val = parseInt(tolVal);
-    var til_Val_input = selec.find(".tolerance");
+    var til_Val_input = selec.find("[name=tolerance]");//(".tolerance");
 
 
     anim1.width(parseInt(percent)+"%");
