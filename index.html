@@ -49,8 +49,10 @@
 						MIDI  <span class="status" id="midiText"></span>
 						<input id="btmidi" type="checkbox" class="small cmdTog" name ="enable"title="enable/disable">
 					</p>
+					
 					<div class="content">
 						<br>Midi :<br>
+						<hr>
 						<!-- <button class="disconnected" id="btMidi">scan</button>
 						<br> -->
 						<div class="midi-available" id="midi-available">
@@ -117,6 +119,7 @@
 						<br>Robots :<br>
 						<br>
 						<!--input type="text" name="rien"-->
+						<!--
 						<textarea id="robusRobots" rows=6 cols=15>octo_wifi</textarea>
 						<div class="large">
 							<button id="robusOnOff2" class="disconnected" >OFF</button>
@@ -129,6 +132,7 @@
 						-->
 					</div>
 				</div>
+				-->
 
 				<!--div class="plug" >
 						ADVANCED :
@@ -157,7 +161,7 @@
 
 						<button class="tiny small" id="btScan" name="startScan">Scan</button>
 						<!--div id="scanProgress"></div-->
-						<meter id="scanProgress" class="medium" value="100" max="254"></meter>
+						<meter id="scanProgress" class="medium" value="0" max="254"></meter>
 						<!--/div-->
 					</div>
 
@@ -364,9 +368,10 @@
 								 <div class="slider-range" data-min="0" data-max="100" data-default= "50" ></div>
 								 
 							</div>
-							<input type="number" class="tolerance small" placeholder="tolerance" name="">
+							<!--<input type="number" class="tolerance small" placeholder="tolerance" name="">-->
 							
 							<div class="large">
+								<br>
 								<div class="medium float-left">
 									<h4 class="text-left">Min value :</h4>
 									<input type="number" class="small  tiny cmdInt" placeholder="min value" name="valMin">
@@ -376,6 +381,11 @@
 									<h4 class="text-right">Max value :</h4>
 									<input type="number" class="small text-right tiny cmdInt" placeholder="max value" name="valMax">
 								</div>
+								<div class="medium float-left">
+										<h4 class="text-left">Tolerance :</h4>
+											<input type="number" class="small  tiny cmdInt" placeholder="tolerance" name="tolerance">			
+								</div>
+								
 							</div>
 
 						</div>
@@ -397,65 +407,86 @@
 							<h3>Input</h3>
 							<h3>Output</h3>
 							<section>
-								<div class="large float-left">
-									<input type="checkbox" class="power cmdOnOff small" name ="cm9Enabled" title="enable/disable">	
+
+								<div class="medium float-left">
+									<input type="checkbox" class=" small cmdOnOff" name ="cm9Enabled" title="enable/disable">	
 									<h4>CM9</h4>	
 								</div>
 								
-								<div class="large float-left text-center">
-									<input type="number" class="small" placeholder="Pin" name="cm9Pin">							
+								<div class="medium float-left text-center">
+									<input type="number" class="medium tiny cmdInt" placeholder="Pin" name="cm9Pin">
 								</div>
 								
 							</section>					
 
-							
-
-
 							<section>
-								<input type="checkbox" class="power cmdOnOff small" name ="mobilizingEnabled" title="enable/disable">	
+								<input type="checkbox" class="small cmdOnOff" name ="oscEnabled" title="enable/disable">
+								<h4>OSC</h4>
+								<!-- <div class="info">adresse : /sensor/proximity</div> -->
+								<!-- <input type="text" class="OSC-setting" placeholder="OSC adress" name=""> -->
+								
+							</section>
+
+							<!--
+							<section>
+								<!-- Input -->
+								<!--
+								<input type="checkbox" class="small cmdOnOff" name ="mobilizingEnabledInpput" title="enable/disable">	
+
 								<h4>Mobilizing</h4>							
-							</section>	
+							</section>-->
+							<!--
+							<section>
+								<!-- output -->
+								<!--
+								<input type="checkbox" class="small cmdOnOff" name ="mobilizingEnabledOutput" title="enable/disable">	
+								<h4>Mobilizing</h4>							
+							</section>-->
 
 
 							<section>
-								<div class="large float-left">
-									<input type="checkbox" class="power cmdOnOff small" name ="fromMotorEnabled" title="enable/disable">	
+								<div class="medium float-left">
+									<input type="checkbox" class="small cmdOnOff" name ="fromMotorEnabled" title="enable/disable">	
 									<h4>Motor Mapping</h4>
 								</div>
 
-								<div class="large float-left text-center">
-									<input type="number" class="small" placeholder="index" name="fromMotorIndex">							
+								<div class="medium float-right text-right">
+									<input type="number" class="medium tiny float-right cmdInt" placeholder="index" name="fromMotorIndex">
 								</div>						
 							</section>	
 
 
 							<section>
-								<div class="large float-left">
-									<input type="checkbox" class="power cmdOnOff small" name ="toMotorEnabled" title="enable/disable">	
+								<div class="medium float-left">
+									<input type="checkbox" class="small cmdOnOff" name ="toMotorEnabled" title="enable/disable">	
 									<h4>Motor Mapping</h4>
 								</div>
 
-								<div class="large float-left text-center">
-									<input type="number" class="small" placeholder="index" name="toMotorIndex">							
+								<div class="medium float-right text-right">
+									<input type="number" class="medium tiny float-right cmdInt" placeholder="index" name="toMotorIndex">
 								</div>
 
 							</section>
 
-							<section>
+							<section class="hight">
 								<div class="large float-left">
-									<input type="checkbox" class="power cmdOnOff small" name ="midiEnabled"title="enable/disable">
+									<input type="checkbox" class="small cmdOnOff" name ="midiEnabled"title="enable/disable">
 									<h4>Midi</h4>
 								</div>
 								
 								<div class="large float-left">
 									<div class="medium float-left">
 										<label class="toggle-small">
-								  			<input type="checkbox" class="cmdTog" name="midiCmd">
+								  			<input type="checkbox" class="cmdTog cmdOnOff" name="midiCmd">
 								  			<div class="slider midi round"></div>
 										</label>
 									</div>
 									<div class="medium float-right text-right">
-										<select class= " tiny medium-75 cmdString"  id="" name="midiPort">
+										<input type="number" class="medium-75 tiny cmdInt"  placeholder="index" name="midiMapping">
+										
+									</div>
+									<div class="large">
+										<select class= " tiny large cmdString"  id="" name="midiPort">
 											<option value="">midi 1</option>
 											<option value="midi 2">midi 2</option>
 											<option value="">midi 3</option>
@@ -465,14 +496,20 @@
 								</div>
 
 							</section>
-
 							<section>
-								<input type="checkbox" class="power cmdOnOff small" name ="oscEnabled" title="enable/disable">
-								<h4>OSC</h4>
+								<!-- output -->
+								
+								<input type="checkbox" class="small cmdOnOff" name ="mobilizingEnabled" title="enable/disable">	
+								<h4>Mobilizing</h4>							
+							</section>
+
+							<!--<section>
+								<input type="checkbox" class=" cmdOnOff small" name ="oscEnabled" title="enable/disable">
+								<h4>OSC</h4>-->
 								<!-- <div class="info">adresse : /sensor/proximity</div> -->
 								<!-- <input type="text" class="OSC-setting" placeholder="OSC adress" name=""> -->
 								
-							</section>
+							<!--</section>-->
 							
 
 							<!-- <div class="options">

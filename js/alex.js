@@ -141,6 +141,8 @@
 		  if(witch==undefined)witch=this;
 		  $(witch).parent().next(".progress").addClass('active');
 		  $(witch).css("opacity", 1);
+	  	  $(witch).html('<img src="assets/play-green.png" alt="" name="loop">');
+
 	  }
 
 	  function UIloopAnim(witch,onoff){
@@ -148,8 +150,13 @@
 	  	if(onoff==undefined)onoff=($(witch).css("opacity")!=1);
 	  	if(onoff){
 	  		$(witch).css("opacity", 1);
+
+	  		$(witch).html('<img src="assets/loop-green.png" alt="" name="loop">');
+
 	  	}else{
 			$(witch).css("opacity", 0.6);
+
+			$(witch).html('<img src="assets/loop.png" alt="" name="loop">');
 	  	}
 	  	return onoff;
 	  }
@@ -157,6 +164,8 @@
 	  function UIstopAnim(witch){
 		  if(witch==undefined)witch=this;
 	  	$(witch).prev(".play").css("opacity", 0.6);
+	  	$(witch).prev(".play").html('<img src="assets/play.png" alt="" name="loop">');
+
 	  	//NOOON $(witch).next(".loop").css("opacity", 0.6);
 	  	$(witch).parent().next(".progress").removeClass('active');
 	  }
