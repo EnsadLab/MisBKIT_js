@@ -60,9 +60,10 @@ MidiPortManager.prototype.open = function (p) {
     return found;
 };
 
-MidiPortManager.prototype.openMidiAtStart = function(){
+MidiPortManager.prototype.openMidiAtStart = function(enabled){
     
-    misGUI.simSelectMidiPorts();
+    this.enabled = true;
+    misGUI.simSelectMidiPorts(enabled);
    /* if(this.isValidMidiPort(portName)){
         misGUI.simSelectPort(portName);
     }*/

@@ -100,11 +100,14 @@ DxlManager.prototype.saveSettings = function () {
     //s.midiPort = midiPortManager.getCurrentPortName();
     s.oscHost = "none";
     s.webSocket = "none";
+
+    s.midiEnabled = midiPortManager.enabled;
     
     s.midiPorts = [];
     s.anims = [];
     s.motors = [];
 
+    
     for(var p=0; p<midiPortManager.midiPorts.length; p++){
         console.log(midiPortManager.midiPorts[p].portName);
         if(midiPortManager.midiPorts[p].enabled){
@@ -140,6 +143,7 @@ DxlManager.prototype.loadSettings = function () {
         this.oscHost = s.oscHost;
         this.webSocket = s.webSocket;
 
+        
         // scan has already been called by misgui when we enter here.
         for(var i=0; i<s.midiPorts.length; i++){
             console.log("opening midi port ", s.midiPorts[i]);
@@ -161,7 +165,7 @@ DxlManager.prototype.loadSettings = function () {
         }
 
         console.log("trying to open midiport:",this.midiPort);
-        midiPortManager.openMidiAtStart();
+        midiPortManager.openMidiAtStart(s.midiEnabled);
 
         misGUI.midiPortManager(this.midiPort); //TODO: what does it do?
 

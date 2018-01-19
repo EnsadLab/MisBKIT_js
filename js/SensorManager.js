@@ -241,6 +241,18 @@ SensorManager.prototype.removeSensor = function(id){
 
 }
 
+SensorManager.prototype.freezeAllSensors = function(){
+    for(id in this.sensors){
+        var s = this.sensors[id].freezeSensor();
+    }
+}
+
+SensorManager.prototype.unfreezeAllSensors = function(){
+    for(id in this.sensors){
+        var s = this.sensors[id].unfreezeSensor();
+    }
+}
+
 SensorManager.prototype.getSensorSetting = function(id,wich){
     return this.sensors[id].s[wich];
 }

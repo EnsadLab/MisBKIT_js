@@ -257,16 +257,16 @@ MisGUI.prototype.angle = function(index,val){
     if(index<this.rotAngles.length){
         var v = this.rotAngles[index].setValue(+val).value;
         this.inputVals.eq(index).val(v.toFixed(1));
-        console.log("misguiAngle:",val,v);
+        //console.log("misguiAngle:",val,v);
     }
 }
 
 MisGUI.prototype.speed = function(index,val){ //[-100,100]
-    console.log("MisGUI.speed:",index,val)
+    //console.log("MisGUI.speed:",index,val)
     if(index<this.rotSpeeds.length){
         var v = this.rotSpeeds[index].setValue(+val).value;
         this.inputVals.eq(index).val(v.toFixed(1));
-        console.log("misguiSpeed:",val,v);
+       // console.log("misguiSpeed:",val,v);
     }
 }
 
@@ -640,13 +640,22 @@ MisGUI.prototype.init =function(){
     });
 
     $("#anim-freeze").on('click',function(){
-        console.log("*** anim stop all");
-        dxlManager.stopAllAnims();
-        dxlManager.stopAllMotors();
+        if($('#anim-freeze').is(":checked")){
+            console.log("*** anim stop all");
+            dxlManager.stopAllAnims();
+            dxlManager.stopAllMotors();
+        }
     });
 
     $("#sensor-freeze").on('click',function(){
-        console.log("*** sensor stop all");
+        if($('#sensor-freeze').is(":checked")){
+            console.log("*** sensor freeze all");
+            sensorManager.freezeAllSensors();
+            dxlManager.stopAllMotors();
+        }else{
+            console.log("*** sensor unfreeze all");
+            sensorManager.unfreezeAllSensors();
+        }
     });
 
     // hide default animation, also when no animations are loaded
@@ -1385,8 +1394,11 @@ MisGUI.prototype.scanMidiPorts = function(){
 };
 
 
-MisGUI.prototype.simSelectMidiPorts = function(){
+MisGUI.prototype.simSelectMidiPorts = function(midiEnabled){
 
+    //if(midiEnabled){
+        $('#btmidi').prop("checked",midiEnabled);
+    //}
     $("#midi-available :input[type='checkbox']").each(
         function() {
             var portName =  $(this).prop("id");

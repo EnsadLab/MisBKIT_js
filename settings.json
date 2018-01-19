@@ -1,11 +1,14 @@
 {
   "oscHost": "none",
   "webSocket": "none",
-  "midiPorts": [],
+  "midiEnabled": true,
+  "midiPorts": [
+    "nanoKONTROL2 SLIDER/KNOB"
+  ],
   "anims": [],
   "motors": [
     {
-      "id": 14,
+      "id": 1,
       "enabled": false,
       "model": 12,
       "clockwise": true,
@@ -17,19 +20,7 @@
       "torqueMax": 1023
     },
     {
-      "id": 25,
-      "enabled": false,
-      "model": 12,
-      "clockwise": false,
-      "mode": 1,
-      "angleMin": -25,
-      "angleMax": 25,
-      "speedMin": -70,
-      "speedMax": 70,
-      "torqueMax": 1023
-    },
-    {
-      "id": 12,
+      "id": 0,
       "enabled": false,
       "model": 12,
       "clockwise": true,
@@ -41,7 +32,19 @@
       "torqueMax": 1023
     },
     {
-      "id": 18,
+      "id": 0,
+      "enabled": false,
+      "model": 12,
+      "clockwise": true,
+      "mode": 1,
+      "angleMin": -150,
+      "angleMax": 150,
+      "speedMin": -100,
+      "speedMax": 100,
+      "torqueMax": 1023
+    },
+    {
+      "id": 0,
       "enabled": false,
       "model": 12,
       "clockwise": true,

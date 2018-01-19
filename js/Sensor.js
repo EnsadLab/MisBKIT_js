@@ -37,7 +37,10 @@ Sensor = function () {
     this.ID = -1;
     this.area = -1; // -1:nowhere, 0:before the threshold, 1:after the threshold
     this.oldArea = -1;
+    this.freeze = false;
 
+    this.freeze = true;
+    this.enabled = false;
 };
 
 Sensor.prototype.copySettings = function(s){
@@ -126,7 +129,21 @@ Sensor.prototype.onName = function(txt){
 }
 
 Sensor.prototype.discard = function(){
-    this.enabled = false; //just in case
+    this.s.enabled = false; //just in case 
     //cm9Com.removeCallback(+this.s.pin);
     robusManager.removeCallback(this.s.address,this.s.name);   
+}
+
+Sensor.prototype.freezeSensor = function(){
+    if(this.s.enabled){
+        this.freeze = true;
+        this.s.enabled = false;
+    }
+}
+
+Sensor.prototype.unfreezeSensor = function(){
+    if(this.freeze){
+        this.s.enabled = true;
+        this.freeze = false;
+    }
 }
