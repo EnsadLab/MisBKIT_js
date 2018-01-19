@@ -458,6 +458,9 @@ MisGUI.prototype.selectMidiMappingPort = function(motorID, name){
 
 MisGUI.prototype.init =function(){
     console.log("----- INIT GUI");
+
+    $("#robusOnOff").prop("disabled",true);
+
     var parent = $("#divAnims").find("[name=listAnims]");
     var tanim = parent.find(".single-anim:first");
     tanim.hide();
@@ -685,7 +688,7 @@ MisGUI.prototype.init =function(){
 
     //ROBUS
     var robs = $("#robusRobots");
-    var bt   = $("#robusOnOff");
+    var bt   = $("#robusOnOff2");
     robs.on("click",function(){
         bt.prop("class","disconnected").text("OFF");
     });    
@@ -713,7 +716,7 @@ MisGUI.prototype.init =function(){
     });
     $("#robusReset").on('click',function(){
         robusManager.reset();
-        $(robusOnOff).prop("class","disconnected").text("OFF");        
+        $("#robusOnOff2").prop("class","disconnected").text("OFF");        
         $("#robusTxt").val("");        
     });
 
@@ -1424,15 +1427,15 @@ MisGUI.prototype.scanIPv4 = function(){
 
 MisGUI.prototype.robusOnOff = function(onoff){
     if(onoff){
-        $(robusOnOff).prop("class","connected").text("ON");
+        $("#robusOnOff2").prop("class","connected").text("ON");
         var txt = robusManager.getInfo();
         $("#robusTxt").val(txt);        
     }
     else
-        $(robusOnOff).prop("class","disconnected").text("OFF");
+        $("#robusOnOff2").prop("class","disconnected").text("OFF");
 };
 MisGUI.prototype.robusWait = function(text){
-        $(robusOnOff).prop("class","disconnected").text("WAIT");
+        $("#robusOnOff2").prop("class","disconnected").text("WAIT");
 };
 MisGUI.prototype.robusInfo = function(text){
     $("#robusTxt").val(text);

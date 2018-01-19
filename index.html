@@ -108,10 +108,10 @@
 
 				</div>
 
-				<div class="plug">
+				<div id="robusPlug" class="plug">
 					<p>
 						ROBUS  <span class="status"></span>
-						<input type="checkbox" class="small cmdTog error" name ="enable"title="enable/disable">
+						<input id="robusOnOff" type="checkbox" class="small" name ="enable" title="enable/disable">
 					</p>
 					<div class="content">
 						<br>Robots :<br>
@@ -119,14 +119,14 @@
 						<!--input type="text" name="rien"-->
 						<textarea id="robusRobots" rows=6 cols=15>octo_wifi</textarea>
 						<div class="large">
-							<button id="robusOnOff" class="disconnected" >OFF</button>
+							<button id="robusOnOff2" class="disconnected" >OFF</button>
 							<button id="robusReset" class="disconnected" >RESET</button>
 							<button id="robusInfo"  class="disconnected" >info</button>
 						</div>
-						
+						<!--
 						<br>
-
 						<textarea id="robusTxt" rows=18 cols=15>message</textarea>
+						-->
 					</div>
 				</div>
 
