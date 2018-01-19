@@ -126,6 +126,7 @@ Sensor.prototype.onName = function(txt){
 }
 
 Sensor.prototype.discard = function(){
+    this.enabled = false; //just in case
     //cm9Com.removeCallback(+this.s.pin);
     robusManager.removeCallback(this.s.address,this.s.name);   
 }

@@ -229,7 +229,7 @@ SensorManager.prototype.removeAllSensors = function(){
 }
 
 SensorManager.prototype.removeSensor = function(id){
-    console.log("removing:",id);
+    console.log("Sensors removing:",id);
     if( id in this.sensors){
         misGUI.removeSensor(id);
         this.sensors[id].discard();
