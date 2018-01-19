@@ -230,11 +230,15 @@ OscManager.prototype.handleMotorMessage = function(rcv){
         if(divMotor.find("[name=mode]").prop('checked')) misGUI.speed(motorIndex,arg);
         else misGUI.angle(motorIndex,arg);
     }else if(adr.startsWith(cmp = "/mbk/motors/stopAll")){ // stops motors and anims
-        dxlManager.stopAll(); //TODO: gui....?
+        //dxlManager.stopAll(); //TODO: gui....?
+        dxlManager.stopAllMotors();
     }else if(adr.startsWith(cmp = "/mbk/motors/stop")){ // only stops motor
+        dxlManager.stopMotor(arg);
+        /*
         var divMotor = misGUI.getMotorUI(arg);
         if(divMotor.find("[name=mode]").prop('checked')) misGUI.speed(arg,0);
         else misGUI.angle(arg,0);
+        */
     }
 
 }
@@ -290,6 +294,7 @@ OscManager.prototype.initCm9Receiver = function(){
 OscManager.prototype.sendSensorMessage = function(sensorID,sensorVal){
 
     var sensor = sensorManager.sensors[sensorID];
+    
     // /mbk/sensors sensorName sensorValue sensorMin sensorMax   
     buf = osc.toBuffer({
         address: "/mbk/sensors",

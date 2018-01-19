@@ -406,7 +406,6 @@ MisGUI.prototype.midiMotorSettings = function(midiMappingSettings,midiPorts){
     //selections:
     this.updateMidiMotorSelection(motorIndex,midiPort,midiPorts);
 
-
 }
 
 MisGUI.prototype.updateMidiMotorSelection = function(motorIndex,midiPortSelected,midiPorts){
@@ -415,7 +414,9 @@ MisGUI.prototype.updateMidiMotorSelection = function(motorIndex,midiPortSelected
     var sel = $("#divMotorSettings .midi-chanel").eq(motorIndex);
     sel.data("id",motorIndex);
 
+
     sel.empty();
+    
     sel.append($("<option value=" + "'" + "none" + "'>" + "none" + "</option>"));
     for(var i=0;i<midiPorts.length;i++){
         var portName = midiPorts[i].portName;
@@ -579,21 +580,10 @@ MisGUI.prototype.init =function(){
     });
 
     $("#motor-freeze").on('click',function(){
-        console.log("*** mototor stop all");
-        dxlManager.stopAll();
-        /*
-        for (var i = 0; i < dxlManager.motors.length; i++) {
-            misGUI.speed(i,0); // POURQUOI CA NE MARCHE PAS? Exactement la même méthode que celle depuis onMidi()...
-            misGUI.angle(i,0);
-        }
-        */
-        //DB: chez moi ça marche ???
-        //  -  j'ai mis les misGUI.speed dans dxlManager.stopAll()
-        //     pour mettre à jour le GUI si stopAll() est appelée ailleurs
-        //     ( ex touche clavier 'panic') 
-        //  - à mon avis l'angle ne doit pas être mis à 0
-
-        //dxlManager.freeze = !dxlManager.freeze;
+        if($('#motor-freeze').is(":checked"))
+            dxlManager.freezeAllMotors();
+        else
+            dxlManager.unfreezeAllMotors();
     });
 
     $("button.start-rec").on("click",function() {
@@ -652,12 +642,22 @@ MisGUI.prototype.init =function(){
     $("#anim-freeze").on('click',function(){
         console.log("*** anim stop all");
         dxlManager.stopAllAnims();
-        //TODO: put speed to zero for all motors
+        dxlManager.stopAllMotors();
     });
 
     $("#sensor-freeze").on('click',function(){
         console.log("*** sensor stop all");
     });
+
+    // hide default animation, also when no animations are loaded
+    var parent = $("#sortable-anim");
+    var model = parent.find(".single-anim:first");
+    model.hide();
+
+    // hide default sensor, also when no sensors are loaded
+    var parentS = $(".sensors").find("[name=listSensors]");
+    var modelS = parentS.find(".single-sensor:first");
+    modelS.hide();
 
     $("#btScan").on("click",function() {
         $("#btScan").css('background', 'white');
@@ -849,6 +849,7 @@ MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
     //var parent = $("#divAnims").find("[name=listAnims]");
     var parent = $("#sortable-anim");
     var model = parent.find(".single-anim:first");
+    model.hide();
     var clone = model.clone();
     clone.attr('data-id', animId); //select only find attr
     clone.children().data("id", animId); //only first level !!! !!! !!!

@@ -69,6 +69,13 @@ MidiPort = function () {
                         for(var i=0; i<motorIDs.length; i++){
                             dxlManager.onMidi(motorIDs[i], "midi", msg[2]);
                         }
+                    }else if(motorMappingManager.isMapped("midi",self.portName,cmd,32 - msg[1])){ // STOP BUTTONS
+                        var motorIDs = motorMappingManager.getMotorIndex("midi",self.portName,cmd,32-msg[1]);
+                        for(var i=0; i<motorIDs.length; i++){
+                            dxlManager.onMidi(motorIDs[i], "midi", 127.0*0.5);
+                        }
+                    }else if(msg[1] == 42) {// BIG STOP BUTTON
+                        dxlManager.stopAllMotors();
                     }
                     if(sensorManager.isMapped("sensor",self.portName,cmd,msg[1])){
                         var mappedSensors = sensorManager.getSensorIds("sensor",self.portName,cmd,msg[1]);

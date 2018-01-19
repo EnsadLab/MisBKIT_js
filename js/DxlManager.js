@@ -79,7 +79,6 @@ function DxlManager(){
 
     this.onoffMotorIndex = 0;      //TOTHINK: in DxlMotor ??? 
     this.onoffTimer = undefined;
-    this.freeze = false;
 
     //-------------------------
     //var json = fs.readFileSync(__dirname + "/data/ax12.json", 'utf8');
@@ -388,20 +387,17 @@ DxlManager.prototype.update = function(){
 }
 
 DxlManager.prototype.cmd = function(cmd,index,arg){
-    //console.log("dxl command: ",index," cmd:",cmd," arg:",arg);
-    if(!this.freeze){
-       // console.log("not freezing start");
-        if(this[cmd]){
-         //   console.log("DxlManager.cmd:",cmd);
-            this[cmd](index,arg);
-        }
-        else {
-            if (index < this.motors.length)
-                this.motors[index][cmd](arg);
-        }
-       // console.log("not freezing end");
+    console.log("dxl command: ",index," cmd:",cmd," arg:",arg);
+
+    if(this[cmd]){
+        //   console.log("DxlManager.cmd:",cmd);
+        this[cmd](index,arg);
     }
-    //console.log("dxl command end");
+    else {
+        if (index < this.motors.length)
+            this.motors[index][cmd](arg);
+    }
+
 };
 
 DxlManager.stopMotor = function(index){
@@ -422,9 +418,35 @@ DxlManager.prototype.stopAll = function() {
     this.stopAllAnims();
 }
 
-// TODO ?
+
 DxlManager.prototype.stopAllMotors = function(){
     console.log("DxlManager.stopAllMotors!");
+    for (var i = 0; i < this.motors.length; i++) {
+        misGUI.speed(i,0);
+        this.motors[i].stopMotor();
+    }
+}
+
+DxlManager.prototype.stopMotor = function(index){
+    console.log("DxlManager.stopAllMotors!");
+    if(index >= 0 && index < this.motors.length){
+        misGUI.speed(index,0);
+        this.motors[index].stopMotor();
+    }
+}
+
+DxlManager.prototype.freezeAllMotors = function(){
+    console.log("**** freezing");
+    for (var i = 0; i < this.motors.length; i++) {
+        this.motors[i].freezeMotor();
+    }
+}
+
+DxlManager.prototype.unfreezeAllMotors = function(){
+    console.log("**** unfreezing");
+    for (var i = 0; i < this.motors.length; i++) {
+        this.motors[i].unfreezeMotor();
+    }
 
 }
 
@@ -626,6 +648,7 @@ DxlManager.prototype.onMidi = function(index,cmd,arg){
             misGUI.speed(index,   dxl.nSpeed(arg/127));
         }
     }
+   
 };
 
 DxlManager.prototype.onNormControl = function(index,val){

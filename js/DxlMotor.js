@@ -45,6 +45,7 @@ function Dxl(index){
     this.limitCW  = 0;
     this.limitCCW = 1023; //AX12
     this.angleRef  = 300; //AX12
+    this.freeze = false;
 }
 
 Dxl.prototype.getGoal= function(){
@@ -359,6 +360,37 @@ Dxl.prototype.enable = function(onoff){
         this._speed = 0;
     }
     return onoff;
+}
+
+Dxl.prototype.stopMotor = function(){
+    //cm9Com.pushPause(500);
+    /*
+    cm9Com.pushMessage( // ??? wheel for relax ???
+        "EI "+this.index+","+this.m.id+",\n"
+        +"wheel "+this.index+"\n"
+    );*
+    /*
+    if(this._gotModel==false){
+        cm9Com.pushPause(200,"model " + this.index + ",\n"); //request model 2
+    }*/
+    if(this.enabled){
+        this.delayMotorON();
+    }
+    this._speed = 0;
+}
+
+Dxl.prototype.freezeMotor = function(){
+    if(this.enabled){
+        this.freeze = true;
+        this.enable(false);
+    }
+}
+
+Dxl.prototype.unfreezeMotor = function(){
+    if(this.freeze){
+        this.freeze = false;
+        this.enable(true);
+    }
 }
 
 /*
