@@ -413,15 +413,18 @@ DxlManager.stopMotor = function(index){
 
 
 DxlManager.prototype.stopAll = function() {
+    console.log("DxlManager.stopAll!")
     cm9Com.write("stop\n");
     for (var i = 0; i < this.motors.length; i++) {
         this.motors[i].enable(false);
+        misGUI.speed(i,0);
     }
     this.stopAllAnims();
 }
 
-// TODO
+// TODO ?
 DxlManager.prototype.stopAllMotors = function(){
+    console.log("DxlManager.stopAllMotors!");
 
 }
 

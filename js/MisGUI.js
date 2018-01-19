@@ -262,7 +262,7 @@ MisGUI.prototype.angle = function(index,val){
 }
 
 MisGUI.prototype.speed = function(index,val){ //[-100,100]
-    //console.log("gui speed:",index,val)
+    console.log("MisGUI.speed:",index,val)
     if(index<this.rotSpeeds.length){
         var v = this.rotSpeeds[index].setValue(+val).value;
         this.inputVals.eq(index).val(v.toFixed(1));
@@ -580,11 +580,18 @@ MisGUI.prototype.init =function(){
 
     $("#motor-freeze").on('click',function(){
         console.log("*** mototor stop all");
-        //dxlManager.stopAll();
+        dxlManager.stopAll();
+        /*
         for (var i = 0; i < dxlManager.motors.length; i++) {
-            //misGUI.speed(i,0); // POURQUOI CA NE MARCHE PAS? Exactement la même méthode que celle depuis onMidi()...
-            //misGUI.angle(i,0);
+            misGUI.speed(i,0); // POURQUOI CA NE MARCHE PAS? Exactement la même méthode que celle depuis onMidi()...
+            misGUI.angle(i,0);
         }
+        */
+        //DB: chez moi ça marche ???
+        //  -  j'ai mis les misGUI.speed dans dxlManager.stopAll()
+        //     pour mettre à jour le GUI si stopAll() est appelée ailleurs
+        //     ( ex touche clavier 'panic') 
+        //  - à mon avis l'angle ne doit pas être mis à 0
 
         //dxlManager.freeze = !dxlManager.freeze;
     });
