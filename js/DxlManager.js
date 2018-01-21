@@ -391,10 +391,8 @@ DxlManager.prototype.update = function(){
 }
 
 DxlManager.prototype.cmd = function(cmd,index,arg){
-    console.log("dxl command: ",index," cmd:",cmd," arg:",arg);
-
+    //console.log("dxl command: ",index," cmd:",cmd," arg:",arg);
     if(this[cmd]){
-        //   console.log("DxlManager.cmd:",cmd);
         this[cmd](index,arg);
     }
     else {

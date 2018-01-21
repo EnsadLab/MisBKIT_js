@@ -294,7 +294,7 @@ OscManager.prototype.initCm9Receiver = function(){
 OscManager.prototype.sendSensorMessage = function(sensorID,sensorVal){
 
     var sensor = sensorManager.sensors[sensorID];
-    
+
     // /mbk/sensors sensorName sensorValue sensorMin sensorMax   
     buf = osc.toBuffer({
         address: "/mbk/sensors",
