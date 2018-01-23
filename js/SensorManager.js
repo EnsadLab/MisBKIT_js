@@ -143,7 +143,7 @@ SensorManager.prototype.handlePinValues=function(vals){
 
 //Motor position -> sensor.s.fromMotorIndex
 SensorManager.prototype.handleDxlPos=function(index,nval){
-    console.log("handleDxlPos:",index,nval);
+    //console.log("handleDxlPos:",index,nval);
     $.each(this.sensors,function(i,sensor) {
         //console.log("handleDxlPos:",i,sensor.s.fromMotorEnabled);
         if(sensor.s.fromMotorEnabled){

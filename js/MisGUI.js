@@ -119,8 +119,19 @@ MisGUI.prototype.openOSC = function(remoteAddr,remotePort) {
 */
 
 MisGUI.prototype.cm9State=function(state){
-    //console.log("MisGUI.prototype.cm9State",state);
+    console.log("MisGUI.prototype.cm9State",state);
     var bt = $("#btcm9");
+    switch(state){
+        case "ERROR":
+            bt.addClass("warning");
+        case "OFF":
+            bt.prop("checked",false);
+            this.cm9Info("");
+            break;
+            
+    }
+
+    /*
     if(state=='OFF'){
         //console.log("MisGUI.prototype.cm9State OFF?",state);
         //bt.prop("class","disconnected").text("OFF");
@@ -137,6 +148,7 @@ MisGUI.prototype.cm9State=function(state){
     }
     bt.prop('disabled',false);
     //this.blockUI(false);
+    */
 }
 
 MisGUI.prototype.cm9Info=function(txt){

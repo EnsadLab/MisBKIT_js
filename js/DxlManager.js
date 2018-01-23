@@ -282,7 +282,7 @@ DxlManager.prototype.serialOnOff= function(onoff,name){
 */
 
 DxlManager.prototype.cm9OnOff= function(onoff,name){
-    //console.log("CM9_ONOFF:",onoff);
+    console.log("DxlManager.cm9OnOff:",onoff);
     var self = this;
     this.serialRcvTime=0;
     if(onoff){
@@ -294,9 +294,11 @@ DxlManager.prototype.cm9OnOff= function(onoff,name){
         }
     }
     else{
+        /*
         if(cm9Com.isOpen()){
             cm9Com.close();
         }
+        */
         misGUI.cm9State("OFF");
         this.serialRcvTime=0;
     }
@@ -500,7 +502,6 @@ DxlManager.prototype.onCm9Strings=function(args){
 
     this.serialRcvTime = Date.now();
 }
-
 
 DxlManager.prototype.ipos=function(array) { //stringCmd
     var n = array.length-1;

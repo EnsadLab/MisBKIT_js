@@ -221,12 +221,13 @@ class CM9udp {
     
     close() {
         //TOTHINK remove callbacks ?
-        console.log("*** CM9 close ***");
+        console.log("Cm9Manager.close:");
         this.stopVersionTimer();
         this.ready = false;
         if(this.socket) {
             this.socket.close();
             this.socket = null;
+            console.log("Cm9Manager.closed:");
         }
         dxlManager.cm9OnOff(false);
         this.forgetAll();
@@ -309,7 +310,7 @@ class CM9udp {
     }
 
     askVersion(){
-        if(++this.versionCount<6){
+        if(++this.versionCount<8){
             //console.log("ask version:",this.versionCount);
             if(this.socket==null)
                 console.log("ask null????");
@@ -319,9 +320,11 @@ class CM9udp {
             this.pushPause(100,"name \nversion \n");
         }
         else{
-            this.stopVersionTimer();
-            misGUI.cm9Info("---");
-            this.ready = true; //!!! CONTINUE ANIWAY !!!
+            //this.stopVersionTimer();
+            this.close();
+            this.ready = false; //!!! CONTINUE ANIWAY !!!
+            misGUI.cm9Info("-?-");
+            misGUI.cm9State("ERROR");
             //TODO no response ?
         }
     }
@@ -330,7 +333,8 @@ class CM9udp {
         clearInterval(this.versionTimer);
         this.versionTimer = undefined;
         this.versionCount = 0;
-        dxlManager.cm9OnOff(true); //mmmm        
+        this.ready = false;
+        //dxlManager.cm9OnOff(false);        
     }
 
     onVersion(args){
