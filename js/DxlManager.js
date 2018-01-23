@@ -684,7 +684,8 @@ DxlManager.prototype.angle = function(args){
 }
 */
 
-DxlManager.prototype.setAngle = function(index,val){
+
+DxlManager.prototype.setAngle = function(index,val){ //degrés
     if(index<this.motors.length){
         var a = this.motors[index].angle(val);
         misGUI.angle(index,a);

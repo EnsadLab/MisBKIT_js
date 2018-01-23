@@ -547,15 +547,34 @@ MisGUI.prototype.init =function(){
         this.inputVals.eq(i).val(0);
         $(this.inputVals[i]).data("index",i);
     }
+
     this.inputVals.on("change",function(){
         var index = $(this).data("index");
         var mode = dxlManager.getMode(index);
         var val = $(this).val();
-        console.log("num_rotary change:",index,mode,val);
-        if(mode==0)
-            self.angle(index,val);
-        else
-            self.speed(index,val);
+        //console.log("num_rotary change:",index,mode,val);
+        if(mode==0){
+            dxlManager.setAngle(index,val);
+            //self.angle(index,val); //rem called by dxlManager
+        }
+        else{
+            dxlManager.setSpeed(index,val);
+            //self.speed(index,val); //rem called by dxlManager
+        }
+    });
+    this.inputVals.on("keydown",function(ev){
+        //console.log("inputVals.on(keydown):",ev);
+        if(ev.keyCode==13){
+            var index = $(this).data("index");
+            var mode = dxlManager.getMode(index);
+            var val = $(this).val();
+            if(mode==0){
+                dxlManager.setAngle(index,val);
+            }
+            else{
+                dxlManager.setSpeed(index,val);
+            }    
+        }
     });
     //
 
