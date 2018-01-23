@@ -1483,11 +1483,14 @@ MisGUI.prototype.blockUI=function(block){
 }
 
 MisGUI.prototype.scanProgress =function(val){
-    console.log("val",val);
-    $("#scanProgress").val(val);
+    //console.log("scanProgress:",val);
     if(val >= $("#scanProgress").attr('max') - 1){ // TODO: talk about the progress bar with Didier!
+        $("#scanProgress").val(0);
         $("#btScan").css('background', 'transparent');
 		$("#btScan").css('color', 'white');
+    }
+    else{
+        $("#scanProgress").val(val);
     }
 }
 

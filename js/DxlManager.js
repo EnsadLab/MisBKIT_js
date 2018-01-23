@@ -876,21 +876,22 @@ DxlManager.prototype.onKeyCode = function(keyCode){
 
 // DXL SCAN functions ---------------------
 DxlManager.prototype.ping=function(args){ //oldCM9
-    console.log("ping:",args[1]);
-    misGUI.scanProgress(+args[1]);
+    console.log("scan step:",args[1]); 
+    misGUI.scanProgress(+args[1]); //show minimal progress
 }
 DxlManager.prototype.pong=function(args){ //oldCM9
     console.log("pong:",args[1]);
     misGUI.scanProgress(+args[1]);
 }
 DxlManager.prototype.scan=function(args){ //oldCM9
-    misGUI.scanProgress(+args[1]);
+    console.log("scan scan:",args[1]);
+    misGUI.scanProgress(+args[1]+20);
 }
 
 DxlManager.prototype.startScan=function(){
     if(cm9Com.isOpen()) {
         console.log("STARTSCAN");
-        misGUI.scanProgress(0);
+        misGUI.scanProgress(30); //visual info
         //misGUI.blockUI(true);
         //this.stopAll();
         for (var i = 0; i < this.motors.length; i++) {

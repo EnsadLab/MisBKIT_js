@@ -10,6 +10,9 @@
 // npm install midi --runtime=electron --target=1.6.11 --disturl=https://atom.io/download/atom-shell --abi=53
 //electron-packager . --platform=darwin --arch=x64 --overwrite --icon=misbkit.icns
 
+//cecile path: /Users/Didier/Documents/
+//didier path:
+
 const electron = require('electron');
 var fs = require('fs');
 
