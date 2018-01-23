@@ -54,8 +54,8 @@ SensorManager.prototype.loadSensorSettings = function () {
             this.sensors[id]= new Sensor(); //TODO? new Sensor(id) 
             this.sensors[id].ID = id;
             this.sensors[id].copySettings(s.sensors[i]);
-            console.log("s... ",this.sensors[id].s);
-            console.log("s... ",this.sensors[id].s.cm9Pin);
+            //console.log("s... ",this.sensors[id].s);
+            //console.log("s... ",this.sensors[id].s.cm9Pin);
         }
 
         //settingsManager.copyPasteFromUserFolder("sensors.json");

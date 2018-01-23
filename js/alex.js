@@ -146,8 +146,8 @@
 	  }
 
 	  function UIloopAnim(witch,onoff){
-	  	if(witch==undefined)witch=this;
-	  	if(onoff==undefined)onoff=($(witch).css("opacity")!=1);
+		if(witch==undefined)witch=this;
+		if(onoff==undefined)onoff=($(witch).css("opacity")!=1);
 	  	if(onoff){
 	  		$(witch).css("opacity", 1);
 

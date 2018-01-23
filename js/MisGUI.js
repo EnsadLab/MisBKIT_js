@@ -902,6 +902,9 @@ MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
         UIstopAnim(this);
     });
 
+
+    clone.find(".loop").css("opacity",0.6);
+
     clone.find(".loop").on("click", function () {
         var onoff = UIloopAnim(this);
         dxlManager.loopAnim($(this).data("id"), onoff);
@@ -1005,7 +1008,6 @@ MisGUI.prototype.divSensor = function(sensorId){
 
 MisGUI.prototype.addSensor = function(settings, id){
     //console.log("CLONE",id);
-    console.log("MisGUI:addSensor " + settings.name);
     var self = this;
     var parent = $(".sensors").find("[name=listSensors]");
     var model = parent.find(".single-sensor:first");
@@ -1257,8 +1259,8 @@ MisGUI.prototype.setSensorAnims = function(names){
     
     var sel = $("#sortable-sens").find("[class*='listAnims']"); //listAnims-1 & listAnims-2
     
-    console.log("setSensorAnims:",names);
-    console.log("selectanims:",sel.length);
+    //console.log("setSensorAnims:",names);
+    //console.log("selectanims:",sel.length);
 
     sel.empty();
     sel.append($("<option value=" + "'" + "none" + "'>" + "none" + "</option>"));
