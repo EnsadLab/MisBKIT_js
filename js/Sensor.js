@@ -54,6 +54,11 @@ Sensor.prototype.getSettings = function(){
     return this.s;
 }
 
+Sensor.prototype.onNormValue = function(nval){ //[0 1]
+    var val = nval*((this.s.valMax-this.s.valMin)) + this.s.valMin;
+    this.onValue(val); //TODO onValue() -> onNormValue()
+}
+
 Sensor.prototype.onValue = function(val){
     //console.log("sensor:",this.s.name,val);
     var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin);

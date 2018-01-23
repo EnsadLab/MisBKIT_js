@@ -509,8 +509,9 @@ DxlManager.prototype.ipos=function(array) { //stringCmd
     for(var i=0;i<n;i++){
         var v = +array[i+1] //array[0]="ipos"
         if(v>=0){
-            var a = +this.motors[i].currPos(v).toFixed(1);
-            sensorManager.handleDxlPos(i,a);
+            var m = this.motors[i];
+            var a = m.currPos(v).toFixed(1);
+            sensorManager.handleDxlPos(i,m.angleToNorm(a));
             misGUI.needle(i,a);
         }
     }

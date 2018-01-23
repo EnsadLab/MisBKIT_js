@@ -430,6 +430,12 @@ Dxl.prototype.wheel = function(){
     return this;
 };
 
+
+Dxl.prototype.angleToNorm = function(a){ //[0 1]
+    return (a-this.m.angleMin)/(this.m.angleMax-this.m.angleMin);
+}
+
+
 Dxl.prototype.currPos=function(p){
     if(p>=0) {
         var a = this.pos2angle(p);

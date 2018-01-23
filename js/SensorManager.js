@@ -142,13 +142,13 @@ SensorManager.prototype.handlePinValues=function(vals){
 }
 
 //Motor position -> sensor.s.fromMotorIndex
-SensorManager.prototype.handleDxlPos=function(index,val){
-    //console.log("handleDxlPos:",index,val);
+SensorManager.prototype.handleDxlPos=function(index,nval){
+    console.log("handleDxlPos:",index,nval);
     $.each(this.sensors,function(i,sensor) {
         //console.log("handleDxlPos:",i,sensor.s.fromMotorEnabled);
         if(sensor.s.fromMotorEnabled){
             if(+sensor.s.fromMotorIndex == index){
-                sensor.onValue(val);
+                sensor.onNormValue(nval);
             }
         }
     });        

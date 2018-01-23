@@ -1250,7 +1250,7 @@ MisGUI.prototype.selectSensorAnim = function(sensorID, wich, name){
 
 MisGUI.prototype.setSensorValue = function(sensorID, sensorValue, percent){
     var div = this.divSensor(sensorID);
-    div.find(".live-value").html(sensorValue);
+    div.find(".live-value").html(sensorValue.toString().substr(0,6));
     if(percent < 0 ) percent = 0;
     if(percent > 100) percent = 100;
     div.find(".live-value-ui").css("left", percent+"%");
