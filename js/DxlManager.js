@@ -3,6 +3,12 @@
  */
 /*
  TODO static: ?
+ num speed/joint -> dxlspeed  //URGENT
+ mapping sensor -> motor      //URGENT
+ OSC -> ...
+ CM9 deconnectée : ajouter class warning bt CM9 
+ fausse valeur scan //CM9
+ temperature
 */
 
 

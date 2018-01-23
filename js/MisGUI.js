@@ -1662,7 +1662,7 @@ $("input.btnGlobalSensors").bind('click', function() {
 
 // var clockForThermo = setInterval(function(){ thermoCheck()}, 1000);
 
-
+//TODO DB call this func
 function thermoCheck(){
 
     for (var i = 0; i < $(".single-motor").length; i++) {
