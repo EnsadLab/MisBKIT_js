@@ -172,7 +172,7 @@ MotorMappingManager.prototype.setMidiMotorMappingPort = function(motorIndex,port
 
 
 MotorMappingManager.prototype.updateGUI = function () {
-    
+    //console.log("MotorMappingManager.updateGUI");
     for(var i=0; i<this.motorMappings.length; i++){
         //if(this.motorMappings[i].m.enabled)
         misGUI.midiMotorSettings(this.motorMappings[i].m,midiPortManager.midiPorts);

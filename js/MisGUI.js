@@ -122,9 +122,16 @@ MisGUI.prototype.cm9State=function(state){
     console.log("MisGUI.prototype.cm9State",state);
     var bt = $("#btcm9");
     switch(state){
+        case "ON":
+        case true:
+            bt.removeClass("warning");
+            bt.prop("checked",true);
+            break;
         case "ERROR":
             bt.addClass("warning");
+            //break;
         case "OFF":
+        case false:
             bt.prop("checked",false);
             this.cm9Info("");
             break;
@@ -769,16 +776,24 @@ MisGUI.prototype.init =function(){
         $("#robusTxt").val("");        
     });
 
-    console.log("==================");
-    $("#divOSC").find(".cmdString").change(function(){
-        console.log("IPchange:");
+    divOsc = $("#divOSC");
+    divOsc.find("#btOSC").click(function(){
+        console.log("osc ON",this.checked);
+        oscManager.onOff(this.checked);
+    });
+    divOsc.find(".cmdInt").change(function(){
+        console.log("osc:",this.name);
+        oscManager.changeParam(this.name,parseInt($(this).val()));
+    });
+    divOsc.find(".cmdString").change(function(){
+        console.log("osc:",this.name);
+        oscManager.changeParam(this.name,$(this).val());
+    });
+    divOsc.on("mouseenter",function(){
+        console.log("divOSC:mouseenter");
+        misGUI.scanIPv4();
     });
 
-    var divOsc = $("#divOSC").find(".cmdInt");
-    console.log("divosc:",divOsc.length);
-    $("#divOSC").find(".cmdInt").change(function(){
-        console.log("Portchange:");
-    });
 
     $("#addEmptySensor").on("click",function(){
         sensorManager.addEmptySensor();
@@ -794,11 +809,13 @@ MisGUI.prototype.init =function(){
         
     });
 
+    
+
     $(".midiPlug").bind("mouseenter", midiPanelOver);//mouseover
-        function midiPanelOver(){
-            console.log("midi over");
-            misGUI.scanMidiPorts();
-        }
+    function midiPanelOver(){
+        console.log("midi over");
+        misGUI.scanMidiPorts();
+    }
     
 
     //this.scanSerial();    /*Didier*/
@@ -809,6 +826,9 @@ MisGUI.prototype.init =function(){
 }//init
 
 
+MisGUI.prototype.enableOSC = function(onoff){
+    $("#divOSC").find("#btOSC").prop("checked",onoff);
+}
 
 MisGUI.prototype.showOSC = function(settings){
     console.log("==========showosc:",settings);

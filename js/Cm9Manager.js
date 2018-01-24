@@ -310,7 +310,7 @@ class CM9udp {
     }
 
     askVersion(){
-        if(++this.versionCount<8){
+        if(++this.versionCount<10){
             //console.log("ask version:",this.versionCount);
             if(this.socket==null)
                 console.log("ask null????");
@@ -318,6 +318,9 @@ class CM9udp {
             //this.pushMessage("version \nname \n");
             //this.pushMessage("name \nversion \n");
             this.pushPause(100,"name \nversion \n");
+
+            misGUI.cm9State( (this.versionCount & 1)==0 );
+
         }
         else{
             //this.stopVersionTimer();

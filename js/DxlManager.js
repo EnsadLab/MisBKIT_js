@@ -3,12 +3,12 @@
  */
 /*
  TODO static: ?
- num speed/joint -> dxlspeed  //URGENT
- mapping sensor -> motor      //URGENT
- OSC -> ...
- CM9 deconnectée : ajouter class warning bt CM9 
- fausse valeur scan //CM9
- temperature
+ num speed/joint -> dxlspeed  //DONE
+ mapping sensor -> motor      //DONE
+ OSC -> ... //????
+ CM9 deconnectée : ajouter class warning bt CM9 ... 
+ fausse valeur scan //CM9 //DONE
+ temperature //TODO
 */
 
 
@@ -104,7 +104,7 @@ DxlManager.prototype.saveSettings = function () {
     var s = {}; //settings
     s.serialPort = cm9Com.serialName;
     //s.midiPort = midiPortManager.getCurrentPortName();
-    s.oscHost = "none";
+    s.oscPorts = oscManager.s;
     s.webSocket = "none";
 
     s.midiEnabled = midiPortManager.enabled;
@@ -146,7 +146,10 @@ DxlManager.prototype.loadSettings = function () {
         //console.log("SERIAL NAME:",cm9Com.serialName);
 
         //this.midiPort = s.midiPort;
-        this.oscHost = s.oscHost;
+        //this.oscHost = s.oscHost;
+        //oscManager.s = s.oscPorts;
+        oscManager.setSettings(s.oscPorts);
+
         this.webSocket = s.webSocket;
 
         

@@ -22,48 +22,84 @@ OscManager = function () {
     this.oscUserReceiver = null; // reads values from user on port 4444
     this.oscCm9Receiver = null; // reads commands from CM9 on port ? 5555
     
-    this.outportUser = 6666; // forward sensor values to user
+    //this.outportUser = 6666; // forward sensor values to user
     this.udpUserSender = udp.createSocket("udp4");
 
     this.outportCm9 = 7777; //TODO: à parler avec Didier....
 
 };
 
-
-OscManager.prototype.init = function(){
-
-    this.initUserReceiver();
-    this.initCm9Receiver();
-
+OscManager.prototype.setSettings = function(set){
+    console.log("osc.setSettings",set);
+    this.close();
+    for (var p in set) {
+        console.log("osc."+p+" "+set[p]);
+        this.s[p]=set[p];
+    }
     misGUI.showOSC(this.s);
+}
+
+OscManager.prototype.changeParam = function(name,value){
+    this.close();
+    if(this.s[name]){
+        this.s[name]=value;
+    }
+    else
+        console.log("osc bad param:",name,val);
 
 }
 
+OscManager.prototype.onOff = function(onoff){
+    if(onoff) this.open();
+    else this.close();
+}
+
+OscManager.prototype.open = function(){
+    console.log("OscManager.open:");
+
+    this.initUserReceiver();
+    //this.initCm9Receiver();
+}
+
+OscManager.prototype.close= function(){
+    if(this.oscUserReceiver){
+        this.oscUserReceiver.close();
+        this.oscUserReceiver = undefined;
+    }
+    if(this.oscCm9Receiver){
+        this.oscCm9Receiver.close()
+        this.oscCm9Receiver = undefined;
+    }
+    misGUI.enableOSC(false);
+}
+
 OscManager.prototype.initUserReceiver = function(){
-    
-    var inport = 4444;
+    console.log("OSC:initUserReceiver");
+    var inport = this.s.localport; //4444;
     this.oscUserReceiver = udp.createSocket("udp4", function(msg, rinfo) {
-    var error, error1;
-    try {
-        var rcv = osc.fromBuffer(msg);
-        var adr = rcv.address;
-        if(adr.startsWith("/mbk/anims")){
-            console.log("osc msg:",rcv.address,rcv.args[0].value);
-            oscManager.handleAnimMessage(rcv); //le self. ne marchait pas!!!
-        }else if(rcv.address.startsWith("/mbk/motors")){
-            console.log("osc msg:",rcv.address);
-            oscManager.handleMotorMessage(rcv);
-        }else{
-            console.log("invalid OSC message: " + rcv);
-        }
-        return rcv;
-        } catch (error1) {
-            error = error1;
-            return console.log("invalid OSC packet " + error);
-        }
+        var error, error1;
+        console.log("osc rcv");
+        try {
+            var rcv = osc.fromBuffer(msg);
+            var adr = rcv.address;
+            if(adr.startsWith("/mbk/anims")){
+                console.log("osc msg:",rcv.address,rcv.args[0].value);
+                oscManager.handleAnimMessage(rcv); //le self. ne marchait pas!!!
+            }else if(rcv.address.startsWith("/mbk/motors")){
+                console.log("osc msg:",rcv.address);
+                oscManager.handleMotorMessage(rcv);
+            }else{
+                console.log("invalid OSC message: " + rcv);
+            }
+            return rcv;
+            } catch (error1) {
+                error = error1;
+                return console.log("invalid OSC packet " + error);
+            }
     });
     
     this.oscUserReceiver.bind(inport);
+    console.log(this.oscUserReceiver);
 
 }
 
@@ -75,7 +111,7 @@ OscManager.prototype.handleMessage = function(rcv){
         //console.log("mbz msg:",rcv.address,rcv.args[0].value);
         oscManager.handleAnimMessage(rcv);
     }else if(rcv.address.startsWith("/mbk/motors")){
-        //console.log("mbz msg:",rcv.address);
+        console.log("OSC.handleMessage:",rcv.address);
         oscManager.handleMotorMessage2(rcv);
     }else{
         console.log("invalid OSC message: " + rcv);
@@ -212,6 +248,7 @@ OscManager.prototype.handleMotorMessage = function(rcv){
         var s = dxlManager.setAngle(+motorIndex,arg);
         console.log("motorIndex:",motorIndex,arg);
         //this.setMode(motorIndex,0);
+        dxlManager.setSpeed(+motorIndex,arg)
         misGUI.speed(+motorIndex,arg);
     }else if(adr.startsWith(cmp = "/mbk/motors/joint/")){
         motorIndex = this.getArgInAdress(adr,cmp);
@@ -301,15 +338,16 @@ OscManager.prototype.sendSensorMessage = function(sensorID,sensorVal){
         args: [sensor.s.name,sensorVal,sensor.s.valMin,sensor.s.valMax] 
     });
     
-    this.udpUserSender.send(buf, 0, buf.length, this.outportUser, "localhost");
-
+    //this.udpUserSender.send(buf, 0, buf.length, this.outportUser, "localhost");
+    this.udpUserSender.send(buf, 0, buf.length, this.s.oscRemotePort, this.s.oscRemoteIP);
+    
     // concat messages into the adress for programs that handle osc messages only with one parameter
     buf = osc.toBuffer({
         address: "/mbk/sensors/" + sensorVal + "/" + sensor.s.valMin + "/" + sensor.s.valMax,
         args: [sensor.s.name]
     });
  
-    this.udpUserSender.send(buf, 0, buf.length, this.outportUser, "localhost");
+    this.udpUserSender.send(buf, 0, buf.length, this.oscRemotePort, this.s.oscRemoteIP );
 }
 
 
@@ -335,7 +373,8 @@ OscManager.prototype.handleSensorMessage = function(rcv){
         args: [sensor.s.name,sensorVal,sensor.s.valMin,sensor.s.valMax] 
     });
     
-    this.udpUserSender.send(buf, 0, buf.length, this.outportUser, "localhost");
+    //this.udpUserSender.send(buf, 0, buf.length, this.outportUser, "localhost");
+    this.udpUserSender.send(buf, 0, buf.length, this.s.oscRemotePort, this.s.oscRemoteIP);
 
     // concat messages into the adress for programs that handle osc messages only with one parameter
     buf = osc.toBuffer({
@@ -343,6 +382,7 @@ OscManager.prototype.handleSensorMessage = function(rcv){
         args: [sensor.s.name]
     });
 
-    this.udpUserSender.send(buf, 0, buf.length, this.outportUser, "localhost");
+    //this.udpUserSender.send(buf, 0, buf.length, this.outportUser, "localhost");
+    this.udpUserSender.send(buf, 0, buf.length, this.s.oscRemotePort, this.s.oscRemoteIP);
 
 }

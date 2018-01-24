@@ -159,6 +159,7 @@ window.onload = function() {
 
     motorMappingManager = new MotorMappingManager();
 
+    oscManager = new OscManager();
     dxlManager = new DxlManager();
     sensorManager = new SensorManager();
     try{ midiPortManager = new MidiPortManager(); }catch(e){console.log(e);}
@@ -167,8 +168,7 @@ window.onload = function() {
 
     settingsManager.loadSettings();
 
-    oscManager = new OscManager();
-    oscManager.init();
+    //oscManager.open();
 
     oscMobilizing = new OscMobilizing();
     //dxlManager.loadSettings(); //-> now called from settingsManager when directories are ready
@@ -271,7 +271,7 @@ window.onload = function() {
 
     $('body').keypress(function(e){
         //console.log("DBG-keytarget:", e.target);
-        console.log("DBG-keypress:", e.keyCode);
+        //console.log("DBG-keypress:", e.keyCode);
         if($(e.target).is('input'))
             return;
         if($(e.target).is('textarea'))
