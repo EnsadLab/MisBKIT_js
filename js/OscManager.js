@@ -74,8 +74,9 @@ OscManager.prototype.close= function(){
 }
 
 OscManager.prototype.initUserReceiver = function(){
-    console.log("OSC:initUserReceiver");
-    var inport = this.s.localport; //4444;
+    console.log("OSC:initUserReceiver",this.s.oscLocalPort);
+    //var inport = 4444;
+    var inport = this.s.oscLocalPort; //4444;
     this.oscUserReceiver = udp.createSocket("udp4", function(msg, rinfo) {
         var error, error1;
         console.log("osc rcv");
@@ -240,11 +241,12 @@ OscManager.prototype.handleMotorMessage = function(rcv){
         this.setMode(arg,1);
     }else if(adr.startsWith(cmp = "/mbk/motors/wheel/")){
         motorIndex = this.getArgInAdress(adr,cmp);
-        console.log("motorIndex:",motorIndex,arg);
+        console.log("whheel:",motorIndex,arg);
         //this.setMode(motorIndex,0);
         misGUI.speed(+motorIndex,arg);
     }else if(adr.startsWith(cmp = "/mbk/motors/speed/")){
         motorIndex = this.getArgInAdress(adr,cmp);
+        console.log("speed:",motorIndex,arg);
         var s = dxlManager.setAngle(+motorIndex,arg);
         console.log("motorIndex:",motorIndex,arg);
         //this.setMode(motorIndex,0);
@@ -256,7 +258,6 @@ OscManager.prototype.handleMotorMessage = function(rcv){
         var a = dxlManager.setAngle(+motorIndex,arg);
         misGUI.angle(motorIndex,a);
     }else if(adr.startsWith(cmp = "/mbk/motors/goal/")){
-        console.log("GOAL");
         motorIndex = this.getArgInAdress(adr,cmp);
         var a = dxlManager.setAngle(+motorIndex,arg);
         misGUI.angle(motorIndex,a);

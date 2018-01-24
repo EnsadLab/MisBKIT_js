@@ -1,10 +1,12 @@
 {
-  "oscHost": "none",
+  "oscPorts": {
+    "oscRemoteIP": "localhost",
+    "oscLocalPort": 4444,
+    "oscRemotePort": 6666
+  },
   "webSocket": "none",
   "midiEnabled": true,
-  "midiPorts": [
-    "nanoKONTROL2 SLIDER/KNOB"
-  ],
+  "midiPorts": [],
   "anims": [],
   "motors": [
     {
@@ -12,7 +14,7 @@
       "enabled": false,
       "model": 12,
       "clockwise": true,
-      "mode": 1,
+      "mode": 0,
       "angleMin": -150,
       "angleMax": 150,
       "speedMin": -100,
