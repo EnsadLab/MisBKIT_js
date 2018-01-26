@@ -302,6 +302,8 @@ DxlManager.prototype.cm9OnOff= function(onoff,name){
             cm9Com.close();
         }
         */
+        
+
         misGUI.cm9State("OFF");
         this.serialRcvTime=0;
     }

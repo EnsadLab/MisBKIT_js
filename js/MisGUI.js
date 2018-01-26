@@ -277,6 +277,16 @@ MisGUI.prototype.angle = function(index,val){
         var v = this.rotAngles[index].setValue(+val).value;
         this.inputVals.eq(index).val(v.toFixed(1));
         //console.log("misguiAngle:",val,v);
+
+        
+        // SIMULATION FROM MOTOR MAPPING TO SENSOR sans le moteur avec index 2 allumé.
+        // TEST -> donc à gicler quand on en a plus besoin.
+        // pour tester le BUG observé par Filipe concernant le motor mapping to.
+        /*
+        if(index == 2){
+            console.log("fake mapping to sensor");
+            sensorManager.handleDxlPos(2,Math.random());
+        }*/
     }
 }
 
@@ -1769,6 +1779,19 @@ function thermoCheck(){
 
 
 // Midi frontBlink info
+//var clockForMidiBlink = setInterval(function(){ checkMidiBlink()}, 1000);
+
+function checkMidiBlink(){
+    //var elmt = $(".motors-settings .midi-chanel");
+    /*for (var i = 0; i < elmt.length; i++) {
+        if(midi){
+            $('.allMotors').find('.single-motor').eq(i).find('.midi-blinker').css("display", "none");
+        }else(){
+            $('.allMotors').find('.single-motor').eq(i).find('.midi-blinker').css("display", "block");
+        }
+    }*/
+
+}
 
 parseBlinker();
 function parseBlinker(){
