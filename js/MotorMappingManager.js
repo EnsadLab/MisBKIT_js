@@ -111,6 +111,33 @@ MotorMappingManager.prototype.isMapped = function(type,port,cmd,nbID){
     return false;
 };
 
+MotorMappingManager.prototype.setMappingToActive = function(type,port,cmd,nbID){
+    for(var i=0; i<this.motorMappings.length; i++){
+        if( this.motorMappings[i].m.enabled && 
+            this.motorMappings[i].m.port == port &&
+            this.motorMappings[i].m.cmd == cmd &&
+            this.motorMappings[i].m.nbID == nbID)
+        {
+            this.motorMappings[i].active = true;
+            misGUI.setMidiBlinkOn(this.motorMappings[i].motorIndex);
+        }
+    }
+}
+
+MotorMappingManager.prototype.setAllMappingActive = function(){
+    for(var i=0; i<this.motorMappings.length; i++){
+        this.motorMappings[i].active = false;
+    }
+}
+
+MotorMappingManager.prototype.isMappingActive = function(motorIndex){
+    if(motorIndex >= 0 && motorIndex < this.motorMappings.length){
+        console.log("*** mapping index",this.motorMappings[motorIndex].nbID);
+        return this.motorMappings[motorIndex].active;
+    }
+    return false;
+}
+
 MotorMappingManager.prototype.getMotorIndex = function(type,port,cmd,nbID){
     var motorIDs = new Array();
     for(var i=0; i<this.motorMappings.length; i++){

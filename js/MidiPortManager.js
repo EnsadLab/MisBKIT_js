@@ -152,6 +152,7 @@ MidiPortManager.prototype.isMidiPortEnabled = function(portName){
     return false;
 }
 
+
 MidiPortManager.prototype.isValidMidiPort = function(portName){
     for(var i=0; i<this.midiPorts.length; i++){
         if(this.midiPorts[i].portName == portName){

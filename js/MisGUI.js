@@ -525,6 +525,7 @@ MisGUI.prototype.init =function(){
         clone.data("index",i);
         clone.appendTo(parent);
         clone.find(".midi-blinker").bind("mouseover", frontBlinkInfo);
+        clone.find(".midi-blinker").css("display", "none");
     }
 
     //this.motorMappings = $("#divMotors .number-for-motor"); //cec
@@ -1779,21 +1780,38 @@ function thermoCheck(){
 
 
 // Midi frontBlink info
-//var clockForMidiBlink = setInterval(function(){ checkMidiBlink()}, 1000);
+var clockForMidiBlink = setInterval(function(){ checkMidiBlink()}, 500);
 
 function checkMidiBlink(){
-    //var elmt = $(".motors-settings .midi-chanel");
-    /*for (var i = 0; i < elmt.length; i++) {
-        if(midi){
-            $('.allMotors').find('.single-motor').eq(i).find('.midi-blinker').css("display", "none");
-        }else(){
-            $('.allMotors').find('.single-motor').eq(i).find('.midi-blinker').css("display", "block");
+    var elmt = $(".motors-settings .midi-chanel");
+    for (var i = 0; i < elmt.length; i++) {
+        
+        var settingTarget = $(".motors-settings .single-motor").eq(i);
+        var infoChanel = settingTarget.find('.midi-chanel option:selected' ).val();
+        var indexMapping = settingTarget.find('.midiMapping').val();
+        var infoMode;
+        if(settingTarget.find('.toggle-small').eq(1).find('input[type="checkbox"]:checked')[0]){
+            infoMode = "Note";
+        }else{
+            infoMode = "CC";
         }
-    }*/
+
+        //console.log("midi infos: motor",i,infoChanel,indexMapping,infoMode);
+        if(motorMappingManager.isMappingActive(i)){
+            $('.allMotors').find('.single-motor').eq(i).find('.midi-blinker').css("display", "block");
+        }else{
+            $('.allMotors').find('.single-motor').eq(i).find('.midi-blinker').css("display", "none");
+        }
+    }
+    motorMappingManager.setAllMappingActive(false);
 
 }
 
-parseBlinker();
+MisGUI.prototype.setMidiBlinkOn = function(motorIndex){
+    $('.allMotors').find('.single-motor').eq(motorIndex).find('.midi-blinker').css("display", "block");
+}
+
+//parseBlinker();
 function parseBlinker(){
     var elmt = $(".motors-settings .midi-chanel");
     for (var i = 0; i < elmt.length; i++) {
