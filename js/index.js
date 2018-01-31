@@ -37,13 +37,21 @@ try {
     //var remote = require('electron').remote;
     //var dialog = remote.require('dialog');
     ipc.on("close",function(e,arg){
+        dxlManager.stopAll();
+        sleep(2);
+        dxlManager.stopAll();
+        sleep(2);
+        dxlManager.stopAll();
         dxlManager.saveSettings();
+        //sleep(5);
+        //alert("Quit the program?");
         settingsManager.saveSettings();
         motorMappingManager.saveMappingSettings();
         robusManager.reset();
         cm9Com.removeAllCallbacks();
         cm9Com.close();
         oscMobilizing.close();
+        
     });
 
 }catch(e){}

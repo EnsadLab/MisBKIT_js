@@ -277,6 +277,16 @@ MisGUI.prototype.angle = function(index,val){
         var v = this.rotAngles[index].setValue(+val).value;
         this.inputVals.eq(index).val(v.toFixed(1));
         //console.log("misguiAngle:",val,v);
+
+        
+        // SIMULATION FROM MOTOR MAPPING TO SENSOR sans le moteur avec index 2 allumé.
+        // TEST -> donc à gicler quand on en a plus besoin.
+        // pour tester le BUG observé par Filipe concernant le motor mapping to.
+        /*
+        if(index == 2){
+            console.log("fake mapping to sensor");
+            sensorManager.handleDxlPos(2,Math.random());
+        }*/
     }
 }
 
@@ -515,6 +525,7 @@ MisGUI.prototype.init =function(){
         clone.data("index",i);
         clone.appendTo(parent);
         clone.find(".midi-blinker").bind("mouseover", frontBlinkInfo);
+        clone.find(".midi-blinker").css("display", "none");
     }
 
     //this.motorMappings = $("#divMotors .number-for-motor"); //cec
@@ -1769,8 +1780,38 @@ function thermoCheck(){
 
 
 // Midi frontBlink info
+var clockForMidiBlink = setInterval(function(){ checkMidiBlink()}, 500);
 
-parseBlinker();
+function checkMidiBlink(){
+    var elmt = $(".motors-settings .midi-chanel");
+    for (var i = 0; i < elmt.length; i++) {
+        
+        var settingTarget = $(".motors-settings .single-motor").eq(i);
+        var infoChanel = settingTarget.find('.midi-chanel option:selected' ).val();
+        var indexMapping = settingTarget.find('.midiMapping').val();
+        var infoMode;
+        if(settingTarget.find('.toggle-small').eq(1).find('input[type="checkbox"]:checked')[0]){
+            infoMode = "Note";
+        }else{
+            infoMode = "CC";
+        }
+
+        //console.log("midi infos: motor",i,infoChanel,indexMapping,infoMode);
+        if(motorMappingManager.isMappingActive(i)){
+            $('.allMotors').find('.single-motor').eq(i).find('.midi-blinker').css("display", "block");
+        }else{
+            $('.allMotors').find('.single-motor').eq(i).find('.midi-blinker').css("display", "none");
+        }
+    }
+    motorMappingManager.setAllMappingActive(false);
+
+}
+
+MisGUI.prototype.setMidiBlinkOn = function(motorIndex){
+    $('.allMotors').find('.single-motor').eq(motorIndex).find('.midi-blinker').css("display", "block");
+}
+
+//parseBlinker();
 function parseBlinker(){
     var elmt = $(".motors-settings .midi-chanel");
     for (var i = 0; i < elmt.length; i++) {
