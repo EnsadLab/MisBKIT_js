@@ -6,7 +6,9 @@
   },
   "webSocket": "none",
   "midiEnabled": true,
-  "midiPorts": [],
+  "midiPorts": [
+    "misbkit_midi Bus 1"
+  ],
   "anims": [],
   "motors": [
     {
@@ -26,7 +28,7 @@
       "enabled": false,
       "model": 12,
       "clockwise": true,
-      "mode": 1,
+      "mode": 0,
       "angleMin": -150,
       "angleMax": 150,
       "speedMin": -100,
@@ -38,7 +40,7 @@
       "enabled": false,
       "model": 12,
       "clockwise": true,
-      "mode": 1,
+      "mode": 0,
       "angleMin": -150,
       "angleMax": 150,
       "speedMin": -100,
@@ -50,7 +52,7 @@
       "enabled": false,
       "model": 12,
       "clockwise": true,
-      "mode": 1,
+      "mode": 0,
       "angleMin": -150,
       "angleMax": 150,
       "speedMin": -100,
