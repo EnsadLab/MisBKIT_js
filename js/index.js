@@ -10,6 +10,7 @@
 //https://github.com/EnsadLab/MisBKIT_processing.git
 
 
+const ipc = require('electron').ipcRenderer;
 var remote = require('electron').remote;
 var dialog = remote.dialog;
 const OS = require('os');
@@ -31,7 +32,6 @@ var robusManager = null;
 var oscMobilizing = null;
 
 try {
-    var ipc = require("electron").ipcRenderer;
     fs = require('fs');
     console.log("USE FS");
     //var remote = require('electron').remote;
@@ -149,16 +149,8 @@ window.onbeforeunload=function(){
         settingsManager.saveSettings();
 }
 
-
 //$(function() {
 window.onload = function() {
-
-    /*V02
-    $(".btHide").on('click',hideParent);
-    $(".btShowHide").on('click',btShowHide);
-    $(".toggleBt").on("click",toggleButton);
-    $(".toggleShow").on("click",toggleShow);
-    */
 
     // TODO: ordering had to be changed -> @Didier: is it a problem how it is now? No
     settingsManager = new SettingsManager();
@@ -231,6 +223,10 @@ window.onload = function() {
                     break;
                 */
                 case 65: //ctrl a :selectionne la page (berk)
+                    break;
+
+                case 32: //ctrl espace: open devtools
+                    ipc.send('devTools');
                     break;
                    
                 default: // <ctl q><ctl tab> .... 
@@ -308,4 +304,8 @@ window.onload = function() {
     //var dlgBt = document.getElementById("btDialog");
     //dlgBt.onclick = function(){dialog.show();}
     //console.log("DIRNAME",__dirname);
+
+    //ipc.send('devTools','on');
+
+    //$('body').openDevTools();
 };

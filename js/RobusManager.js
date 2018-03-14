@@ -1,11 +1,29 @@
 
 const WebSocket = require('websocket').w3cwebsocket;
 const dns = require('dns');
+//const SerialPort = require('serialport');
 
 class RobusManager{
     constructor(){
         this.robots = {};
     }
+/*
+    scanSerialPorts(callback){
+        SerialPort.list().then(function(ports){
+            //console.log("then...",ports);
+            for(var i=0;i<ports.length;i++){
+                //console.log(ports[i].manufacturer);
+                if(ports[i].manufacturer == "Pollen Robotics"){
+                    console.log('----GOT ONE:',ports[i].comName);
+                    openLuos(ports[i].comName);
+                    setupStep = 1;
+                }
+            }
+        });
+    
+    }
+*/
+
 
     // connect() : connect all 'robots'
     connect(robname){

@@ -102,6 +102,7 @@ function DxlManager(){
 
 DxlManager.prototype.saveSettings = function () {
     var s = {}; //settings
+    s.cm9Num = cm9Com.num;
     s.serialPort = cm9Com.serialName;
     //s.midiPort = midiPortManager.getCurrentPortName();
     s.oscPorts = oscManager.s;
@@ -143,6 +144,12 @@ DxlManager.prototype.loadSettings = function () {
         var s = JSON.parse(json);
         this.serialPort = s.serialPort;
         cm9Com.serialName = s.serialPort;
+        if(s.cm9Num){
+            cm9Com.changeCm9(+s.cm9Num);
+            misGUI.setCM9Num(+s.cm9Num);
+        }
+        else cm9Com.changeCm9(0);
+
         //console.log("SERIAL NAME:",cm9Com.serialName);
 
         //this.midiPort = s.midiPort;

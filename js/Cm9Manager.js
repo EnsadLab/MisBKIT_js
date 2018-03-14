@@ -43,6 +43,7 @@ class Cm9Manager{
 class CM9udp {
     constructor(){
         this.name = "---";
+        this.num = 0;
         this.ready  = false;
         this.socket = null;
         this.localIP = "192.168.4.2";
@@ -131,6 +132,7 @@ class CM9udp {
             this.remoteIP = this.localIP.substring(0,dot)+(200+n);
             console.log("cm9 ip:",this.remoteIP);
         }
+        this.num = n;
         this.index = n;
         return n;
     }

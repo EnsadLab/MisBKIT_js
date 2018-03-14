@@ -267,6 +267,11 @@ MisGUI.prototype.onRotary = function(val,rot){
     this.inputVals.eq(i).val(val.toFixed(1));
 };
 
+MisGUI.prototype.setCM9Num = function(n){
+    $('#numCm9').val(n);
+    $('#btcm9').prop("checked",false);
+}
+
 MisGUI.prototype.setValue = function(index,name,val){
     var div = $("#dxlConfig .motorParam").eq(index);
     div.find("input[name="+name+"]").val(val);
