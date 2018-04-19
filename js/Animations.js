@@ -118,6 +118,7 @@ Animation.prototype.stopRec = function(){
 
 Animation.prototype.recKey = function(values){
     if(this.wStream) {
+        console.log("anim.reckey:",values);
         //console.log("REC:",this.writeCount," ",this.recording);
         for (var i = 0; i < this.nbChannels; i++) {
             console.log("rec:",i," v:",values[i]);
@@ -237,6 +238,8 @@ Animation.prototype.playKey = function() {
     if(this.keyIndex<this.datas.length){
         for(var c=0;c<this.nbChannels;c++){
             if(this.channels[c].play) {
+                var v = this.datas.readFloatLE(ik);
+                console.log("anim.playkey:",ik,v);
                 //console.log("play:",this.channels[c].i, " ", this.datas.readInt16LE(ik));
                 //console.log("play:",this.channels[c].i," ", this.datas.readFloatLE(ik));
                 dxlManager.playKey(this.channels[c].f,this.channels[c].i,this.datas.readFloatLE(ik));

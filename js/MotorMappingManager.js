@@ -132,7 +132,7 @@ MotorMappingManager.prototype.setAllMappingActive = function(){
 
 MotorMappingManager.prototype.isMappingActive = function(motorIndex){
     if(motorIndex >= 0 && motorIndex < this.motorMappings.length){
-        console.log("*** mapping index",this.motorMappings[motorIndex].nbID);
+ //Didier       console.log("*** mapping index",this.motorMappings[motorIndex].nbID);
         return this.motorMappings[motorIndex].active;
     }
     return false;

@@ -10,6 +10,13 @@
 //https://github.com/EnsadLab/MisBKIT_processing.git
 
 
+//var detectSSid = require('detect-ssid');
+/*
+detectSSid(function(error, ssidname) {
+    console.log("SSID",ssidname);
+});
+*/
+
 const ipc = require('electron').ipcRenderer;
 var remote = require('electron').remote;
 var dialog = remote.dialog;
@@ -154,7 +161,9 @@ window.onload = function() {
 
     // TODO: ordering had to be changed -> @Didier: is it a problem how it is now? No
     settingsManager = new SettingsManager();
-    cm9Com = new CM9udp();
+    //cm9Com = new CM9udp();
+    cm9Com = new Cm9TCPclient();
+
     robusManager = new RobusManager();
 
     motorMappingManager = new MotorMappingManager();
@@ -308,4 +317,7 @@ window.onload = function() {
     //ipc.send('devTools','on');
 
     //$('body').openDevTools();
+
+
+
 };

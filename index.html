@@ -18,7 +18,7 @@
 			<div class="connexions">
 				<h2>Connexions</h2>
 
-				<div class="plug">
+				<div class="plug cm9Plug">
 					<!--button class="gear"><img src="assets/settings.png"></button-->
 					<p>
 						CM9 <!--span class="status" id="cm9Text"></span-->
@@ -27,7 +27,7 @@
 						<input id="btcm9" type="checkbox" class="small cmdTog" name ="enable" title="enable/disable"> 
 					</p>
 
-					<div class="content">
+					<div id="cm9Content" class="content">
 						<!--button class="gear" data-id="pasglop"><img src="assets/settings.png"></button-->
 						<br>CM9 :
 						<input id="numCm9" type="number" class="small cmd" name="" placeholder="CM9 number">
@@ -573,8 +573,12 @@
 		</div>
 		
 		<div class="modale draggable" id="dynamixel-ctrl">
-			<button class="close-modale"><img src="assets/close.png" alt=""></button>
+			<button id="closeDxl" class="close-modale"><img src="assets/close.png" alt=""></button>
 			<input type="text" size="5" id="btAdvID"><label for="">[ID]</label>
+			&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+			&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+			------> change ID : &ensp;
+			<input id="changeDxlID" type="text" size="5"> <!--class="float-right"-->
 			<br>
 			<div id="divDxlReg" >
 				

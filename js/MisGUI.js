@@ -51,7 +51,7 @@ function MisGUI(){
 
 
     $('#btcm9').on('click',function(){
-        console.log("btcm9",this.checked);
+        console.log("btcm9 click",this.checked);
         //var cl = $(this).prop("class");
         if(this.checked){
             cm9Com.open();
@@ -124,12 +124,14 @@ MisGUI.prototype.cm9State=function(state){
     switch(state){
         case "ON":
         case true:
-            bt.removeClass("warning");
+            bt.removeClass("error");
             bt.prop("checked",true);
             break;
         case "ERROR":
-            bt.addClass("warning");
-            //break;
+            bt.addClass("error");
+            bt.prop("checked",false);
+            this.cm9Info("ERROR");
+            break;
         case "OFF":
         case false:
             bt.prop("checked",false);
@@ -176,15 +178,9 @@ MisGUI.prototype.midiPortManager = function(name) {
     var bt = $("#btMidi");
 };
 
-//TODO check exist , ... remove ... verifier ...
+
 MisGUI.prototype.dxlID =function(index,val) {
-    console.log("dxlID:", val);
-
-    if(val.startsWith("#")){
-        this.changeDxlID(index,val);
-        return;
-    }
-
+    console.log("MisGUI.dxlID:", val);
     dxlManager.cmd("dxlID",index,+val);
     //var div = $("#divMotors .single-motor").eq(index);
     //div.find(".identity").text(val); //TODO .showParams -> #dxlID
@@ -241,10 +237,16 @@ MisGUI.prototype.midiMode =function(index,value){
 }
 
 MisGUI.prototype.mode =function(index,value){
-    //console.log("SETMODE:",index," ",value);
-    switch(+value){
-        case 0:this.joint(index);break;
-        case 1:this.wheel(index);break;
+    //console.log("MisGUI.mode:",index,value);
+    switch(value){
+        case "J":
+        case 0:
+            this.joint(index);
+            break;
+        case "W":
+        case 1:
+            this.wheel(index);
+            break;
     }
 }
 
@@ -258,18 +260,26 @@ MisGUI.prototype.wheel =function(index){
     this.rotAngles[index].show(false);
     this.rotSpeeds[index].show(true);
     this.rotSpeeds[index].setValue(0);
+    this.speed(index,0);
 };
 
 MisGUI.prototype.onRotary = function(val,rot){
     var i=rot.userData.i; 
-    console.log("on rotary");
+    //console.log("on rotary");
     dxlManager.cmd(rot.userData.f,i,val);
     this.inputVals.eq(i).val(val.toFixed(1));
 };
 
 MisGUI.prototype.setCM9Num = function(n){
-    $('#numCm9').val(n);
-    $('#btcm9').prop("checked",false);
+    //console.log("misGUI.setCM9Num:",n);
+    if(n==0){
+        $('#numCm9').hide();    
+    }
+    else{
+        $('#numCm9').val(n);
+        $('#numCm9').show();
+        //$('#btcm9').prop("checked",false);
+    }
 }
 
 MisGUI.prototype.setValue = function(index,name,val){
@@ -338,8 +348,10 @@ MisGUI.prototype.getMotorStg = function(index){
     return $("#divMotorSettings .single-motor").eq(index);
 }
 
-
+//TODELETE ?
+/*
 MisGUI.prototype.changeDxlID=function(index,val){
+    console.log("******** MISGUI ****** changeDxlID" );
     var id = parseInt(val.substr(1));
     if(dialog){
         var bt = dialog.showMessageBox({
@@ -359,6 +371,7 @@ MisGUI.prototype.changeDxlID=function(index,val){
 
     }
 }
+*/
 
 MisGUI.prototype.alert = function(msg){
     var bt = dialog.showMessageBox({
@@ -388,19 +401,19 @@ MisGUI.prototype.toggleAdvanced = function(onoff){
 }
 
 MisGUI.prototype.motorSettings = function(index,s){
-    if(s==null)//TODO default
+    console.log("GUI:motorSettings!!!",index,s);
+    if((s==undefined)||(s==null)){//TODO default
         return;
-
-    //console.log("DBG_motorSettings:",index,s);
-    //console.log("DBG_motorSettings ID:", s.id);
+    }
 
     var parent = this.getMotorUI(index);
     parent.find(".identity").text(s.id);
     parent.find("[name=enable]").prop("checked",s.enabled);
-    parent.find("[name=mode]").prop("checked",(s.mode!=0));
+    parent.find("[name=mode]").prop( "checked",((s.mode==1)||(s.mode=="W")) );
     parent.find(".motor-index").text(index);
 
     var parent = this.getMotorStg(index);
+
     parent.find("[name=dxlID]").val(s.id);
     parent.find("[name=clockwise]").prop("checked",!s.clockwise);
     parent.find("[name=angleMin]").val(s.angleMin);
@@ -408,13 +421,16 @@ MisGUI.prototype.motorSettings = function(index,s){
     parent.find("[name=speedMin]").val(s.speedMin); //*(100/1023));
     parent.find("[name=speedMax]").val(s.speedMax); //*(100/1023));
 
+    $(".thermo").eq(index).html("-°");
+
     this.angleMin(index,s.angleMin);
     this.angleMax(index,s.angleMax);
     this.speedMin(index,s.speedMin);
     this.speedMax(index,s.speedMax);
-
-    this.rotAngles[index].show((s.mode==0));
-    this.rotSpeeds[index].show((s.mode==1));
+    //this.rotAngles[index].show((s.mode==0));
+    //this.rotSpeeds[index].show((s.mode==1));
+    //console.log("MisGUI.motorSettings:",s.mode);
+    this.mode(index,s.mode);
     this.rotSpeeds[index].setValue(0);
 
 
@@ -512,8 +528,9 @@ MisGUI.prototype.init =function(){
     for(var i=1;i<6;i++) {
         var clone = model.clone();
         clone.data("index",i);
-        clone.find(".cmd").data("index",i);
-        clone.find(".cmdTog").data("index",i);
+        clone.find("*").data("index",i);
+        //clone.find(".cmd").data("index",i);
+        //clone.find(".cmdTog").data("index",i);
         clone.insertAfter(after);
         after = clone;
     }
@@ -526,12 +543,31 @@ MisGUI.prototype.init =function(){
     model.find(".midi-blinker").bind("mouseover", frontBlinkInfo);
     for(var i=1;i<6;i++) {
         var clone = model.clone();
-        clone.find(".cmdTog").data("index",i);
         clone.data("index",i);
+        clone.find("*").data("index",i);
+        //clone.find(".cmdTog").data("index",i);
         clone.appendTo(parent);
         clone.find(".midi-blinker").bind("mouseover", frontBlinkInfo);
         clone.find(".midi-blinker").css("display", "none");
     }
+
+    //!!! right click & context menu  DONOT WORK !!! ?????? 
+    $("#divMotors").find('div').on('click',function(e){
+        if( e.metaKey || e.altKey || e.shiftKey || e.ctrlKey ){//ctrl doesnt work!!!
+            var index = $(this).data("index");
+            if(index != undefined){
+                openDxlControl(index);
+            }
+        }
+    });
+    $("#divMotorSettings").find('div').on('click',function(e){
+        if( e.metaKey || e.altKey || e.shiftKey || e.ctrlKey ){//ctrl doesnt work!!!
+            var index = $(this).data("index");
+            if(index != undefined){
+                openDxlControl(index);
+            }
+        }
+    });
 
     //this.motorMappings = $("#divMotors .number-for-motor"); //cec
     //this.motorMappings = $("#divMotorSettings .set-value");
@@ -611,7 +647,10 @@ MisGUI.prototype.init =function(){
             }    
         }
     });
-    //
+
+
+
+
 
     $("#divMotorSettings .cmd").on('change',function(){
         var index = $(this).data("index");
@@ -626,7 +665,7 @@ MisGUI.prototype.init =function(){
         var v = this.checked ? 1 : 0;
         var index = $(this).data("index");
         var cmd = this.name;
-        console.log("toggle:",index," ",cmd," ",v);
+        //console.log("cmdTog:",index," ",cmd," ",v);
         if(self[this.name])
             self[cmd](index,v);
         else
@@ -860,7 +899,6 @@ MisGUI.prototype.clearDxlRegs = function(id) {
     inputs.val('?');
     $("#btAdvID").val(id);
     dxlManager.startReadDxl(id); //async >> showDxlReg
-
 }
 
 MisGUI.prototype.showDxlReg = function(id,addr,val){
@@ -872,8 +910,8 @@ MisGUI.prototype.showDxlReg = function(id,addr,val){
 }
 
 
-//????
-MisGUI.prototype.setDxlReg=function(i,name,val){
+//TODELETE
+MisGUI.prototype.setDxlRegDEL=function(i,name,val){
     var inp = $( "#divDxlReg #addr"+i).eq(0);
     console.log("inputs:",inp.length);
     if(inp.length<1){
@@ -1561,9 +1599,38 @@ MisGUI.prototype.scanProgress =function(val){
     }
 }
 
-MisGUI.prototype.temperature = function(index,val){
-    $(".thermo").eq(index).html(val+"°");
+MisGUI.prototype.temperature = function(index,value){
+    var prevt = parseInt($(".thermo").eq(index).html());
+    $(".thermo").eq(index).html(value+"°");
+    if(prevt==value)
+        return;
+    var motodiv = $(".single-motor").eq(index);
+    if(value>=68){
+        motodiv.css("background", "rgba(255,82,97,0.5)");
+        motodiv.css("opacity", "0.3");
+        motodiv.css("pointer-events", "none");
+        motodiv.find(".thermo").css("color", "#FF7F52");
+        //$("#alertThermo").css("display", "block");
+        //$("#alertThermo").append('<p>Attention ! le moteur '+ $(".single-motor").eq(index).find(".motor-index").html() +' est en surchauffe, il est arrêté.</p>')
+        //$("#alertThermo").find('.close-modale').bind('click', function(event) {
+        //    $("#alertThermo").css("display", "none");
+        //    $("#alertThermo p").remove();
+        //});
+    }
+    else if(value>=60){
+        motodiv.css("opacity", "1");
+        motodiv.find(".thermo").css("color", "#FF7F52");
+        motodiv.css("pointer-events", "auto");
+    }
+    else{
+        motodiv.css("opacity", "1");
+        motodiv.find(".thermo").css("color", "#99FF00");
+        motodiv.css("background", "");
+        motodiv.css("pointer-events", "auto");
+    }
+
 }
+
 
 MisGUI.prototype.setSensorRange = function(id,min,max,tolerance,threshold){
     console.log("setSensorRange:");
@@ -1735,53 +1802,6 @@ $("input.btnGlobalSensors").bind('click', function() {
 // var clockForThermo = setInterval(function(){ thermoCheck()}, 1000);
 
 //TODO DB call this func
-function thermoCheck(){
-
-    for (var i = 0; i < $(".single-motor").length; i++) {
-        $(".single-motor").eq(i).find(".thermo").html(Math.round(Math.random()*80));
-
-
-        var value = $(".single-motor").eq(i).find(".thermo").html();
-        value = parseInt(value);
-
-        
-        if(value>=70){
-            $(".single-motor").eq(i).css("background", "rgba(255,82,97,0.5)");
-            $(".single-motor").eq(i).css("opacity", "0.3");
-            $(".single-motor").eq(i).css("pointer-events", "none");
-            $(".single-motor").eq(i).find(".thermo").css("color", "#FF7F52");
-
-            $("#alertThermo").css("display", "block");
-
-            $("#alertThermo").append('<p>Attention ! le moteur '+ $(".single-motor").eq(i).find(".motor-index").html() +' est en surchauffe, il est arrêté.</p>')
-
-            $("#alertThermo").find('.close-modale').bind('click', function(event) {
-                $("#alertThermo").css("display", "none");
-                $("#alertThermo p").remove();
-            });
-
-        }
-        else if(value>=60){
-            $(".single-motor").eq(i).css("opacity", "1");
-            $(".single-motor").eq(i).find(".thermo").css("color", "#FF7F52");
-            $(".single-motor").eq(i).css("pointer-events", "auto");
-
-        }
-        else{
-            $(".single-motor").eq(i).css("opacity", "1");
-            $(".single-motor").eq(i).find(".thermo").css("color", "#99FF00");
-            $(".single-motor").eq(i).css("background", "");
-            $(".single-motor").eq(i).css("pointer-events", "auto");
-
-
-        }
-
-
-    };
-
-    
-    
-}
 
 
 // Midi frontBlink info
@@ -1815,6 +1835,8 @@ function checkMidiBlink(){
 MisGUI.prototype.setMidiBlinkOn = function(motorIndex){
     $('.allMotors').find('.single-motor').eq(motorIndex).find('.midi-blinker').css("display", "block");
 }
+
+
 
 //parseBlinker();
 function parseBlinker(){
@@ -1851,10 +1873,54 @@ function frontBlinkInfo(){
 
 }
 
+/*
+MisGUI.prototype.showCm9Num = function(onoff){
+    if(onoff)$("#numCm9").show();
+    else($("#numCm9").hide());
+}
+*/
 
+$(".cm9Plug").on("mouseover",function(){
+    //console.log("cm9Plug mouseover");
+    cm9Com.checkConnection();
+})
 
 $(".midiPlug").bind("mouseover", midiPanelOver);
 function midiPanelOver(){
     console.log("midi over");
 }
 
+
+$("#changeDxlID").keypress(function(e){
+    //console.log("KEY:",e);
+    if(e.key=='Enter'){
+        var prevID = parseInt($("#btAdvID").val());
+        if(isNaN(prevID)){
+            alert("Scan a valid Motor");
+            return;
+        }
+        var newID = parseInt($(this).val());
+        if(isNaN(newID)||(newID<1)||(newID>253)){
+            alert("Not a valid Dynamixel ID");
+            return;
+        }
+        if( confirm("Change dynamixel ID #"+prevID+"  to  #"+newID+" ?") ){
+            dxlManager.changeDxlID(prevID,newID);
+            $("#btAdvID").val(newID);
+            misGUI.clearDxlRegs(newID);
+        }
+    }
+});
+
+
+
+$("#closeDxl").on('click',function(){
+    $("#dynamixel-ctrl").css("display","none");
+})
+var openDxlControl = function(index){
+    $("#dynamixel-ctrl").css("display", "block");
+    var dxlID = dxlManager.getIDByIndex(index);
+    $("#btAdvID").val(dxlID);
+    console.log("dxlCtrl:",index,dxlID);
+    misGUI.clearDxlRegs(dxlID); //refresh
+}

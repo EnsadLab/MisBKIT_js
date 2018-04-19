@@ -1,5 +1,5 @@
 {
-  "cm9Num": 0,
+  "cm9Num": 9,
   "oscPorts": {
     "oscRemoteIP": "localhost",
     "oscLocalPort": 4444,
@@ -7,10 +7,13 @@
   },
   "webSocket": "none",
   "midiEnabled": true,
-  "midiPorts": [
-    "misbkit_midi Bus 1"
+  "midiPorts": [],
+  "anims": [
+    {
+      "name": "2016-11-09-17h04mn35",
+      "key": ""
+    }
   ],
-  "anims": [],
   "motors": [
     {
       "id": 1,
@@ -18,6 +21,7 @@
       "model": 12,
       "clockwise": true,
       "mode": 0,
+      "jointSpeed": 0,
       "angleMin": -150,
       "angleMax": 150,
       "speedMin": -100,
@@ -25,11 +29,12 @@
       "torqueMax": 1023
     },
     {
-      "id": 0,
+      "id": 42,
       "enabled": false,
-      "model": 12,
+      "model": -1,
       "clockwise": true,
       "mode": 0,
+      "jointSpeed": 0,
       "angleMin": -150,
       "angleMax": 150,
       "speedMin": -100,
@@ -37,35 +42,12 @@
       "torqueMax": 1023
     },
     {
-      "id": 0,
+      "id": 170,
       "enabled": false,
-      "model": 12,
-      "clockwise": true,
-      "mode": 0,
-      "angleMin": -150,
-      "angleMax": 150,
-      "speedMin": -100,
-      "speedMax": 100,
-      "torqueMax": 1023
-    },
-    {
-      "id": 0,
-      "enabled": false,
-      "model": 12,
-      "clockwise": true,
-      "mode": 0,
-      "angleMin": -150,
-      "angleMax": 150,
-      "speedMin": -100,
-      "speedMax": 100,
-      "torqueMax": 1023
-    },
-    {
-      "id": 0,
-      "enabled": false,
-      "model": 12,
+      "model": -1,
       "clockwise": true,
       "mode": 1,
+      "jointSpeed": 0,
       "angleMin": -150,
       "angleMax": 150,
       "speedMin": -100,
@@ -73,11 +55,38 @@
       "torqueMax": 1023
     },
     {
-      "id": 0,
+      "id": 2,
       "enabled": false,
-      "model": 12,
+      "model": -1,
       "clockwise": true,
-      "mode": 1,
+      "mode": -1,
+      "jointSpeed": 0,
+      "angleMin": -150,
+      "angleMax": 150,
+      "speedMin": -100,
+      "speedMax": 100,
+      "torqueMax": 1023
+    },
+    {
+      "id": 57,
+      "enabled": false,
+      "model": -1,
+      "clockwise": true,
+      "mode": -1,
+      "jointSpeed": 0,
+      "angleMin": -150,
+      "angleMax": 150,
+      "speedMin": -100,
+      "speedMax": 100,
+      "torqueMax": 1023
+    },
+    {
+      "id": 250,
+      "enabled": false,
+      "model": -1,
+      "clockwise": true,
+      "mode": -1,
+      "jointSpeed": 0,
       "angleMin": -150,
       "angleMax": 150,
       "speedMin": -100,
