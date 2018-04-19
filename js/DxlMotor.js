@@ -384,12 +384,12 @@ Dxl.prototype.nSpeed = function(s) {
 
 Dxl.prototype.clockwise = function(val){
     this.m.clockwise = (val==0); //0:CW 1:CCW
-    console.log("Dxl.clockwise:",this.m.clockwise);
+    //console.log("Dxl.clockwise:",this.m.clockwise);
     return this;
 }
 
 Dxl.prototype.angleMin = function(val){
-    console.log("Dxl.angleMin:",this.index,this.m);
+    //console.log("Dxl.angleMin:",this.index,this.m);
     this.m.angleMin = val;
     return this;
 };

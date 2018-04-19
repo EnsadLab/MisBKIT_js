@@ -406,8 +406,6 @@ DxlManager.prototype.dxlPos=function(array) {  //array[0]="dxlpos"
     for(var i=0;i<n;i++){
         var v = +array[i+1] //array[0]="dxlpos"
         if(v>=0){
-            if(i>0)
-                console.log("dxlPos:",i,v);
             var m = this.motors[i];
             var a = m.currPos(v).toFixed(1);
             sensorManager.handleDxlPos(i,m.angleToNorm(a));

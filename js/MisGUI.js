@@ -401,7 +401,7 @@ MisGUI.prototype.toggleAdvanced = function(onoff){
 }
 
 MisGUI.prototype.motorSettings = function(index,s){
-    console.log("GUI:motorSettings!!!",index,s);
+    //console.log("GUI:motorSettings:",index,s);
     if((s==undefined)||(s==null)){//TODO default
         return;
     }

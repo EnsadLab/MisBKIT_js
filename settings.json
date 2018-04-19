@@ -24,20 +24,7 @@
       "torqueMax": 1023
     },
     {
-      "id": 2,
-      "enabled": false,
-      "model": -1,
-      "clockwise": true,
-      "mode": -1,
-      "jointSpeed": 0,
-      "angleMin": -150,
-      "angleMax": 150,
-      "speedMin": -100,
-      "speedMax": 100,
-      "torqueMax": 1023
-    },
-    {
-      "id": 3,
+      "id": 0,
       "enabled": false,
       "model": -1,
       "clockwise": true,
@@ -50,7 +37,20 @@
       "torqueMax": 1023
     },
     {
-      "id": 4,
+      "id": 0,
+      "enabled": false,
+      "model": -1,
+      "clockwise": true,
+      "mode": 0,
+      "jointSpeed": 0,
+      "angleMin": -150,
+      "angleMax": 150,
+      "speedMin": -100,
+      "speedMax": 100,
+      "torqueMax": 1023
+    },
+    {
+      "id": 0,
       "enabled": false,
       "model": -1,
       "clockwise": true,
@@ -63,7 +63,7 @@
       "torqueMax": 1023
     },
     {
-      "id": 5,
+      "id": 0,
       "enabled": false,
       "model": -1,
       "clockwise": true,
@@ -76,7 +76,7 @@
       "torqueMax": 1023
     },
     {
-      "id": 6,
+      "id": 0,
       "enabled": false,
       "model": -1,
       "clockwise": true,
