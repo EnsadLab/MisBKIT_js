@@ -348,30 +348,7 @@ MisGUI.prototype.getMotorStg = function(index){
     return $("#divMotorSettings .single-motor").eq(index);
 }
 
-//TODELETE ?
-/*
-MisGUI.prototype.changeDxlID=function(index,val){
-    console.log("******** MISGUI ****** changeDxlID" );
-    var id = parseInt(val.substr(1));
-    if(dialog){
-        var bt = dialog.showMessageBox({
-            type:"question",
-            //title:"change ID to "+val+" ?", //OSX: no title ???
-            message:"change ID to "+val+" ?",
-            buttons:["Cancel","Ok"]
-        });
-        console.log("Dialog Button:",bt);
-
-        if(bt==1) {//OK
-            console.log("Write ID:", id);
-            dxlManager.writeDxlId(index, id);
-        }
-
-        this.motorSettings(index,dxlManager.getMotorSettings(index));
-
-    }
-}
-*/
+//DELETED MisGUI.prototype.changeDxlID=function(index,val){
 
 MisGUI.prototype.alert = function(msg){
     var bt = dialog.showMessageBox({
@@ -785,8 +762,9 @@ MisGUI.prototype.init =function(){
     */
     $("#btAdvID").on("change",function() {
         var id = $("#btAdvID").val();
-        console.log("#btDxlRefresh click ",id);
+        //console.log("#btDxlRefresh click ",id);
         self.clearDxlRegs(+id);
+        dxlManager.startReadDxl(+id); //async >> showDxlReg            
     });
     $("#btAdvID").keypress(function(e){
         if(e.which==13){
@@ -898,7 +876,7 @@ MisGUI.prototype.clearDxlRegs = function(id) {
     var inputs = $("#divDxlReg :input");
     inputs.val('?');
     $("#btAdvID").val(id);
-    dxlManager.startReadDxl(id); //async >> showDxlReg
+    //dxlManager.startReadDxl(id); //async >> showDxlReg
 }
 
 MisGUI.prototype.showDxlReg = function(id,addr,val){
@@ -1905,9 +1883,9 @@ $("#changeDxlID").keypress(function(e){
             return;
         }
         if( confirm("Change dynamixel ID #"+prevID+"  to  #"+newID+" ?") ){
-            dxlManager.changeDxlID(prevID,newID);
-            $("#btAdvID").val(newID);
             misGUI.clearDxlRegs(newID);
+            $("#btAdvID").val(newID);
+            dxlManager.changeDxlID(prevID,newID); //->startReadDxl(newID)
         }
     }
 });
@@ -1923,4 +1901,5 @@ var openDxlControl = function(index){
     $("#btAdvID").val(dxlID);
     console.log("dxlCtrl:",index,dxlID);
     misGUI.clearDxlRegs(dxlID); //refresh
+    dxlManager.startReadDxl(dxlID); //async >> showDxlReg            
 }

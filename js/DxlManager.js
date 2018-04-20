@@ -58,7 +58,7 @@ const ADDR_TEMPERATURE = 43;
 
 
 function DxlManager(){
-    this.pause = 0;   //>0 dont sync speeds & goals
+    //this.pause = 0;   //>0 dont sync speeds & goals
     this.motors = [];
     this.recIndices = [];
     this.recording  = false;
@@ -74,8 +74,11 @@ function DxlManager(){
     this.refreshID = -1;
     this.refreshAddr = -1;
 
+
     this.onoffMotorIndex = 0;      //TOTHINK: in DxlMotor ??? 
     this.onoffTimer = undefined;
+
+    this.chgID = {prev:-1,new:-1,count:-1}; //prevID newID
 
     //-------------------------
     //var json = fs.readFileSync(__dirname + "/data/ax12.json", 'utf8');
@@ -362,16 +365,16 @@ DxlManager.prototype.stopAll = function() {
 DxlManager.prototype.stopAllMotors = function(){
     console.log("DxlManager.stopAllMotors!");
     for (var i = 0; i < this.motors.length; i++) {
-        misGUI.speed(i,0);
         this.motors[i].stopMotor();
+        misGUI.speed(i,0);
     }
 }
 
 DxlManager.prototype.stopMotor = function(index){
     console.log("DxlManager.stopMotors!",index);
     if(index >= 0 && index < this.motors.length){
-        misGUI.speed(index,0);
         this.motors[index].stopMotor();
+        misGUI.speed(index,0);
     }
 }
 
@@ -423,12 +426,12 @@ DxlManager.prototype.cmdString = function(str){ //"dxlXXXX val val val ..."
         case "dxlR":
             //console.log("dxlR:",args[1],args[2],args[3]);
             misGUI.showDxlReg(arr[1],arr[2],arr[3]); //id,addr,val
-            /*
-            if(+arr[2]==0){ //model
-                if(+arr[3]>0)
-                    console.log("******* GOT MODEL:",+arr[1],+arr[3]);
-            }
-            */
+            //check dxlID change
+            if( (+arr[2]==3) )
+                this.checkChangeID(+arr[1],+arr[3]); //id value
+            break;
+        case "dxlW":
+            console.log("dxlW:",arr[1],arr[2],arr[3]);
             break;
         case "dxlpos":
             this.dxlPos(arr);
@@ -999,22 +1002,50 @@ DxlManager.prototype.getMotorSettings=function(index){
     return null;
 }
 
-DxlManager.prototype.changeDxlID = function(prevID,newID){
-    var motor = this.getMotorByID(prevID);
+
+DxlManager.prototype.changeDxlID = function(id,newID){
+
+    console.log("changeDxlID:"+id+",--->,"+newID+"\n"); //3=ADDR_ID (PROTECTED)
+    if((id<=0)||(id>253)||(newID<=0)||(newID>253))
+        return;
+
+    var motor = this.getMotorByID(id);
     if(motor)motor.enable(false);
 
-    console.log("dxlW "+prevID+",(ADDR_ID),"+newID+"\n"); //3=ADDR_ID (PROTECTED)
-    cm9Com.pushMessage("dxlW "+prevID+",3,"+newID+"\n"); //3=ADDR_ID (PROTECTED)
+    cm9Com.pushMessage("dxlW "+id+",3,"+newID+"\n"); //3=ADDR_ID (PROTECTED)
 
-    if(motor){
+    if(motor){ //what if failed ?
         motor.dxlID(newID);
         misGUI.motorSettings(motor.index,motor.m);
     }
+    this.chgID.prev  = id;
+    this.chgID.new   = newID;
+    this.chgID.count = 20;
+
+    this.startReadDxl(newID); //async >> showDxlReg >> rcv "dxlR newID,3,xxx"          
 }
+//called cmdString "dxlR xxx,3,xxx"
+DxlManager.prototype.checkChangeID = function(id,value){
+    if( id == this.chgID.new){
+        if(value!=this.chgID.new){ //-1 what else? or what?//OK, DONE!
+            if(--this.chgID.count>=0){ //resend
+                console.log("checkChangeID:resend:",this.chgID.count);
+                //cm9Com.pushMessage("dxlW "+this.chgID.prev+",3,"+this.chgID.new+"\n"); //3=ADDR_ID (PROTECTED)
+                this.startReadDxl(this.chgID.new); //async >> showDxlReg >> rcv "dxlR newID,3,xxx"          
+                return;
+            }
+            else{ //failed
+                misGUI.alert("ID change FAILED");
+            }
+        }
+        this.chgID.new = -1; //stop checking
+    }
+}
+
 
 //TODELETE ?
 DxlManager.prototype.writeDxlId = function(index,val){
-    console.log("!!!!! DXLM-changeDxlId:",index," ",val);
+    console.log("!!!!! DXLM-writeDxlId:",index," ",val);
     var nm=this.motors.length;
     for(var i=0;i<nm;i++){
         if((i!=index)&&(this.motors[i].m.id==val))
