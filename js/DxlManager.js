@@ -1030,7 +1030,7 @@ DxlManager.prototype.checkChangeID = function(id,value){
         if(value!=this.chgID.new){ //-1 what else? or what?//OK, DONE!
             if(--this.chgID.count>=0){ //resend
                 console.log("checkChangeID:resend:",this.chgID.count);
-                //cm9Com.pushMessage("dxlW "+this.chgID.prev+",3,"+this.chgID.new+"\n"); //3=ADDR_ID (PROTECTED)
+                cm9Com.pushMessage("dxlW "+this.chgID.prev+",3,"+this.chgID.new+"\n"); //3=ADDR_ID (PROTECTED)
                 this.startReadDxl(this.chgID.new); //async >> showDxlReg >> rcv "dxlR newID,3,xxx"          
                 return;
             }

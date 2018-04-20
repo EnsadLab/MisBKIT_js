@@ -8,14 +8,19 @@
   "webSocket": "none",
   "midiEnabled": true,
   "midiPorts": [],
-  "anims": [],
+  "anims": [
+    {
+      "name": "2018-04-20-18h37-35",
+      "key": ""
+    }
+  ],
   "motors": [
     {
-      "id": 1,
+      "id": 32,
       "enabled": false,
       "model": 12,
       "clockwise": true,
-      "mode": 1,
+      "mode": 0,
       "jointSpeed": 0,
       "angleMin": -150,
       "angleMax": 150,
