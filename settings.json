@@ -1,5 +1,5 @@
 {
-  "cm9Num": 0,
+  "cm9Num": 1,
   "oscPorts": {
     "oscRemoteIP": "localhost",
     "oscLocalPort": 4444,
@@ -16,9 +16,9 @@
   ],
   "motors": [
     {
-      "id": 32,
+      "id": 1,
       "enabled": false,
-      "model": 12,
+      "model": -1,
       "clockwise": true,
       "mode": 0,
       "jointSpeed": 0,
@@ -33,7 +33,7 @@
       "enabled": false,
       "model": -1,
       "clockwise": true,
-      "mode": 1,
+      "mode": 0,
       "jointSpeed": 0,
       "angleMin": -150,
       "angleMax": 150,

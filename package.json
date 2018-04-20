@@ -1,7 +1,7 @@
 {
-  "name": "MisBKIT-WIFI",
-  "version": "3.5.0",
-  "author": "Didier Bouchon",
+  "name": "MisBKIT-WIFI_TCP",
+  "version": "5.0.0",
+  "author": "Didier Bouchon, Cecile Bucher",
   "description": "",
   "main": "main.js",
   "dependencies": {
