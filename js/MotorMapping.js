@@ -15,6 +15,8 @@ MotorMapping = function () {
         //valMax: -1
     };
 
+    this.active = false;
+
 };
 
 

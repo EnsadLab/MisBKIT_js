@@ -10,6 +10,14 @@
 //https://github.com/EnsadLab/MisBKIT_processing.git
 
 
+//var detectSSid = require('detect-ssid');
+/*
+detectSSid(function(error, ssidname) {
+    console.log("SSID",ssidname);
+});
+*/
+
+const ipc = require('electron').ipcRenderer;
 var remote = require('electron').remote;
 var dialog = remote.dialog;
 const OS = require('os');
@@ -31,19 +39,26 @@ var robusManager = null;
 var oscMobilizing = null;
 
 try {
-    var ipc = require("electron").ipcRenderer;
     fs = require('fs');
     console.log("USE FS");
     //var remote = require('electron').remote;
     //var dialog = remote.require('dialog');
     ipc.on("close",function(e,arg){
+        dxlManager.stopAll();
+        sleep(2);
+        dxlManager.stopAll();
+        sleep(2);
+        dxlManager.stopAll();
         dxlManager.saveSettings();
+        //sleep(5);
+        //alert("Quit the program?");
         settingsManager.saveSettings();
         motorMappingManager.saveMappingSettings();
         robusManager.reset();
         cm9Com.removeAllCallbacks();
         cm9Com.close();
         oscMobilizing.close();
+        
     });
 
 }catch(e){}
@@ -141,24 +156,19 @@ window.onbeforeunload=function(){
         settingsManager.saveSettings();
 }
 
-
 //$(function() {
 window.onload = function() {
 
-    /*V02
-    $(".btHide").on('click',hideParent);
-    $(".btShowHide").on('click',btShowHide);
-    $(".toggleBt").on("click",toggleButton);
-    $(".toggleShow").on("click",toggleShow);
-    */
-
     // TODO: ordering had to be changed -> @Didier: is it a problem how it is now? No
     settingsManager = new SettingsManager();
-    cm9Com = new CM9udp();
+    //cm9Com = new CM9udp();
+    cm9Com = new Cm9TCPclient();
+
     robusManager = new RobusManager();
 
     motorMappingManager = new MotorMappingManager();
 
+    oscManager = new OscManager();
     dxlManager = new DxlManager();
     sensorManager = new SensorManager();
     try{ midiPortManager = new MidiPortManager(); }catch(e){console.log(e);}
@@ -167,8 +177,7 @@ window.onload = function() {
 
     settingsManager.loadSettings();
 
-    oscManager = new OscManager();
-    oscManager.init();
+    //oscManager.open();
 
     oscMobilizing = new OscMobilizing();
     //dxlManager.loadSettings(); //-> now called from settingsManager when directories are ready
@@ -224,6 +233,10 @@ window.onload = function() {
                 */
                 case 65: //ctrl a :selectionne la page (berk)
                     break;
+
+                case 32: //ctrl espace: open devtools
+                    ipc.send('devTools');
+                    break;
                    
                 default: // <ctl q><ctl tab> .... 
                     console.log("< default >");
@@ -271,7 +284,7 @@ window.onload = function() {
 
     $('body').keypress(function(e){
         //console.log("DBG-keytarget:", e.target);
-        console.log("DBG-keypress:", e.keyCode);
+        //console.log("DBG-keypress:", e.keyCode);
         if($(e.target).is('input'))
             return;
         if($(e.target).is('textarea'))
@@ -300,4 +313,11 @@ window.onload = function() {
     //var dlgBt = document.getElementById("btDialog");
     //dlgBt.onclick = function(){dialog.show();}
     //console.log("DIRNAME",__dirname);
+
+    //ipc.send('devTools','on');
+
+    //$('body').openDevTools();
+
+
+
 };

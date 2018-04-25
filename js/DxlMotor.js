@@ -11,14 +11,20 @@
 //          MR (read motor) id reg
 //          réponse MV index reg value
 
+const DXL_OFF = -1; //RELAX
+const DXL_JOINT = 0;
+const DXL_WHEEL = 1;
+//multitour ...
+
 //TODO copy ?
 function Dxl(index){
     this.m = { //settings
         id:0,
         enabled: false,
-        model:12, //AX12 par defaut
+        model:-1, //AX12 par defaut
         clockwise:true,
-        mode:1, //0:joint 1:wheel //default=wheel
+        mode:DXL_OFF, //0:joint 1:wheel //default=wheel
+        jointSpeed: 0, //[-100 100] !!! 0 = speedMax !!!
         angleMin: -150,
         angleMax: 150,
         speedMin: -100,
@@ -30,71 +36,64 @@ function Dxl(index){
     this.enabled = false;
     this.rec = false;
     this.timeOfRequest = 0;
-    this._goalAngle    = 0;
-    this._speed   = 0;
     this._currPos = NaN;
     this._curAngle = 0;
-    this.temperature = 0;
-    this.wantedMode   = NaN;
+    this.dxlGoal = 512;
+    this.wantedAngle  = 0;
+    this.dxlSpeed = 0;
+    this.wantedSpeed  = 0;
     this.wantedTorque = NaN;
-    this.wantedAngle  = NaN;
-    this.wantedSpeed  = NaN;
     this._taskCount = 0;
     this._regRead = -1;
     this._gotModel = false;
     this.limitCW  = 0;
     this.limitCCW = 1023; //AX12
     this.angleRef  = 300; //AX12
+    this.temperature = 0;
+    this.freeze = false;
 }
 
-Dxl.prototype.getGoal= function(){
-    if(!this.enabled)
-        return -1;
-    if(!isNaN(this.wantedAngle)){
-        if(this.wantedMode===0){
-            this.wantedMode = undefined;
-            cm9Com.pushMessage("joint "+this.index+",\n");                 
+Dxl.prototype.sendGoalSpeed = function(){
+    if(this.m.id>0){
+        var mod = DXL_OFF; //relax par default
+        var s = 0;
+        if(this.enabled){
+            if(this.temperature>65)
+                this.onoff(false);
+            mod=this.m.mode;
+            s = this.dxlSpeed;
         }
-        var a = this.m.clockwise ? -this.wantedAngle : this.wantedAngle;
-        this.wantedAngle = NaN;
-        return this.angle2pos(a);
+        cm9Com.pushMessage(
+           "dxlMotor"+this.index+" "+this.m.id
+          +","+mod+","+s+","+this.dxlGoal+"\n"
+        );
     }
-    else
-        return -1;
+    else{
+        cm9Com.pushMessage("dxlMotor"+this.index+" 0\n");
+    }
 }
 
-Dxl.prototype.getSpeed= function(){
-    if(!this.enabled)
-        return -1;
-    var v = -1;
-    if(!isNaN(this.wantedSpeed)){
-        if(this.wantedMode===1){
-            this.wantedMode = undefined;
-            cm9Com.pushMessage("wheel "+this.index+",\n");                 
-        }
-        v = this.m.clockwise ? -this.wantedSpeed : this.wantedSpeed;
-        this.wantedSpeed = NaN;
-        if(v<0)
-            v = 1024-v;
-        //console.log("dxl.getSpeed:",v);
-    }
-    return v|0;
-}
+//DELETED Dxl.prototype.getWanted=function(){
+//DELETED Dxl.prototype.getGoal= function(){
+//DELETED Dxl.prototype.getSpeed= function(){
 
 Dxl.prototype.pos2angle=function(p){
-    return ((p/this.limitCCW)-0.5)*this.angleRef;
+    var a = ((p/this.limitCCW)-0.5)*this.angleRef;
+    if (this.m.clockwise) return -a;
+    return a;
 }
 
 Dxl.prototype.angle2pos=function(a){
+    if(this.m.clockwise) a=-a;
     //default: AX12
-    if(this.m.model!=12)
-        return (2048 +(a * 2048 / 180))|0; //MX28 ...
+    if( (this.m.model==12)||(this.m.model==-1) )
+        return (512 +(a * 511.5 / 150))|0; //AX12 or unknown
     else
-        return (512 +(a * 511.5 / 150))|0; //AX12
+        return (2048 +(a * 2048 / 180))|0; //MX28 ...
 }
 
-
-
+//TODELETE
+/*
 Dxl.prototype.onAddr=function(addr,val){
     switch(addr){
         case ADDR_MODEL:
@@ -105,7 +104,6 @@ Dxl.prototype.onAddr=function(addr,val){
             break;
         case ADDR_POSITION:
             var a = this.pos2angle(val);
-            if (this.m.clockwise) a = -a;
             this._curAngle = a;
             this._currPos  = val;
             break;
@@ -113,143 +111,45 @@ Dxl.prototype.onAddr=function(addr,val){
             console.log("DXLREG? ",reg," ",val);
     }
 }
+*/
 
-Dxl.prototype.pushSerialMsg = function(stack){
-    if(!this.enabled)
-        return;
+//DELETED Dxl.prototype.delayMotorON = function(){
+//DELETED Dxl.prototype.pushSerialMsg = function(stack){
+//DELETED Dxl.prototype.sendMode = function(jw){ //0:joint 1:wheel
 
-    /*
-    if(!isNaN(this.wantedMode)){
-        console.log("pushSerialMsg:wantedMode:",this.wantedMode);
-        this.setMode(this.wantedMode);
-        this.wantedMode = NaN;
+Dxl.prototype.copySettings = function(dxl){
+    if(dxl.m){
+        for(var e in dxl.m){
+            this.m[e]=dxl.m[e];
+            //console.log("copySettings:",this.m[e]);
+        }
     }
-    */
-    /* //speed & goal sync
-    if(!isNaN(this.wantedSpeed)){
-        var s = this.m.clockwise ? -this.wantedSpeed : this.wantedSpeed;
-        dxlManager.cm9Msg("EW "+this.index+","+ADDR_SPEED+","+s+",\n");
-        this.wantedSpeed = NaN;
+    else{
+        for(var e in dxl){
+            this.m[e]=dxl[e];
+            //console.log("***copySettings:",e,this.m[e]);
+        }        
     }
-    */
-    /* //speed & goal sync
-    if(!isNaN(this.wantedAngle)){
-        var a = this.m.clockwise ? -this.wantedAngle : this.wantedAngle;
-        var g = this.angle2pos(a);
-        dxlManager.cm9Msg("EW "+this.index+" "+ADDR_GOAL+" "+g+"\n");
-        this.wantedAngle = NaN;
-    }
-    */
-    if(!isNaN(this.wantedTorque)){
-        stack.push("EW "+this.index+","+ADDR_TORQUE+","+this.wantedTorque+",\n");
-        this.wantedTorque = NaN;
-        return; //... next'frame'
-    }
-}
-
-Dxl.prototype.delayMotorON = function(){
-    var self = this;
-    misGUI.dxlEnabled(self.index,false);     
-    setTimeout(function(){
-        //console.log("-----TIMED MOTOR----",self.index,self.enabled);
-        self.enable(true);
-        misGUI.dxlEnabled(self.index,true);     
-    },250);
-}
-
-Dxl.prototype.sendMode = function(jw){ //0:joint 1:wheel
-    dxlManager.setPause(5);
-    if(jw==0){ //joint
-
-        var msg = "EI "+this.index+","+this.m.id+",\n"
-            + "joint "+this.index+",\n";
-       cm9Com.pushPause(500,msg);
-       //cm9Com.pushMessage(msg);
-       //cm9Com.pushMessage("goals -1,-1,-1,-1,-1,-1,");
-       
-
-        //if(!isNaN(this._currPos))
-        /*
-        stack.push("EW "+this.index+","+ADDR_TORQUE_ENABLE+",1,\n");
-        stack.push("EW "+this.index+","+ADDR_SPEED+",1,\n");
-        stack.push("EW "+this.index+","+ADDR_TORQUE+",0,\n");
-        if(this._currPos>0)
-            stack.push("EW "+this.index+","+ADDR_GOAL+","+this._currPos+",\n");
-
-        //TOTHINK : dxl limits ?
-        stack.push("EW "+this.index+","+ADDR_CW_LIMIT+",0,\n");
-        stack.push("EW "+this.index+","+ADDR_CCW_LIMIT+","+this.limitCCW+",\n"); //AX_12
-        if(this._currPos>=0)
-            stack.push("EW "+this.index+","+ADDR_GOAL+","+this._currPos+",\n");
-        //this.wantedAngle = this._curAngle;
-        this.wantedTorque = this.m.torqueMax;
-        //if(this.m.clockwise) this.wantedSpeed = -this.m.speedMax;
-        //else this.wantedSpeed = this.m.speedMax;//see update
-        this.m.mode = 0;
-        console.log("curAngle:",this._curAngle);
-        //console.log("JOINT: ",this.wantedSpeed," ",this.m.speedMax);
-        */
-        /*
-        dxlManager.cm9Msg("EW "+this.index+","+ADDR_SPEED+",0,\n"
-            +"joint "+this.index+"\n");
-        */
-        //this.wantedTorque = this.m.torqueMax;
-        //this.wantedSpeed = 0;
-        this.wantedAngle = this._curAngle;
-        this.wantedSpeed = 0;
-        this.wantedMode = 0;
-        this.m.mode = 0;
-        //console.log("setJOINT:",this._curAngle);
-        misGUI.angle(this.index,this._curAngle);
-    }
-    else{ //1: wheel
-        var msg = "EI "+this.index+","+this.m.id+",\n"
-        + "wheel "+this.index+",\n";
-        cm9Com.pushPause(500,msg);
-
-        this.wantedSpeed = 0;
-        //this.wantedTorque = this.m.torqueMax;
-        this.m.mode = 1;
-        this.wantedMode = 1;
-        //console.log("curAngle:",this._curAngle);
-        misGUI.speed(this.index,0);
-    }
-}
-
-Dxl.prototype.copySettings = function(s){
-    for(var e in s){
-        this.m[e]=s[e];
-    }
-    //console.log("copySettings:clockwise",this.index," ",this.m.clockwise);
 }
 
 Dxl.prototype.getSettings=function(){
-    //console.log("getSettings:clockwise:",this.index," ",this.m.clockwise);
     return this.m;
 }
 
 Dxl.prototype.update = function(t){
-    /*
-     if( (this.timeOfRequest>0)&&((t-this.timeOfRequest)>1000)){
-     this.enabled = false;
-     this.timeOfRequest = 0;
-     dxlManager.dxlEnabled(this.index,0);
-     console.log("RQ timeout");
-     return false;
-     }
-     */
+    
     if(this.m.id>0) {
-        if (this._regRead >= 0) {
+        /*
+        if (this._regRead >= 0) { //TODO dxlRead id addr 
             this._taskCount++;
             if((this._taskCount & 7)==0) {
-                //!!!cm9 dxlManager.cm9Msg("DR " + this.m.id + "," + this._regRead + ",\n");
-                cm9Com.pushMessage("DR " + this.m.id + "," + this._regRead + ",\n")
+                cm9Com.pushMessage("dxlR " + this.m.id + "," + this._regRead + ",\n")
                 if (++this._regRead >= 48)
                     this._regRead = -1;
             }
         }
+        */
     }
-
 
     return true;
 }
@@ -257,15 +157,30 @@ Dxl.prototype.update = function(t){
 Dxl.prototype.cm9Init = function() {
     if(this.m.id<1)
         return;
-
-    //!!!cm9 dxl Manager.cm9Msg("EI " + this.index + "," + this.m.id + ",\n");
-    //!!!cm9 dxlManager.cm9Msg("model " + this.index + ",\n");
-    cm9Com.pushPause(100,"EI " + this.index + "," + this.m.id + ",\n");
-    cm9Com.pushPause(100,"model " + this.index + ",\n");
     
     if(this.enabled)
         this.enable(true);
 }
+
+
+Dxl.prototype.dxlID = function(id){
+
+    this.enable(false);
+    if(+id != this.m.id){
+        this.temperature = 0;
+        this.m.model = -1; 
+        this._gotModel = false;
+    }
+    this.m.id = +id;
+    
+    if(this.m.id>0){
+        if( this._gotModel == false){
+            cm9Com.pushMessage("dxlModel "+this.m.id+"\n");
+        }
+    }
+    return this;
+};
+
 
 Dxl.prototype.model=function(val){
     console.log("------ model:[",this.index,"]-------",val);
@@ -277,102 +192,104 @@ Dxl.prototype.model=function(val){
             this.m.model = val;
             this.limitCCW = 1023;
             this.angleRef  = 300;
-            //compliance très souple par defaut
-            //!!!cm9 dxlManager.cm9Msg("EW "+this.index+","+ADDR_SLOPE_CW+",128,\n");
-            //!!!cm9 dxlManager.cm9Msg("EW "+this.index+","+ADDR_SLOPE_CCW+",128,\n");
-            //cm9Com.pushMessage("EW "+this.index+","+ADDR_SLOPE_CW+",128,\n");
-            //cm9Com.pushMessage("EW "+this.index+","+ADDR_SLOPE_CCW+",128,\n");
             this._gotModel = true;
+            cm9Com.pushMessage(
+                "dxlWrite "+this.m.id+","+ADDR_SLOPE_CW+",128\n"
+               +"dxlWrite "+this.m.id+","+ADDR_SLOPE_CCW+",128\n"); //smooth
             break;
 
         //case -1: //!!!MX28 par defaut, becoz RS485
         case 29: //MX28
             this._gotModel = true;
+            this.m.model = val;
+            this.limitCCW = 4095;
+            this.angleRef  = 380;
+            break;
         default: //MX64 MX106 ..
+            this._gotModel = true;
             this.m.model = val;
             this.limitCCW = 4095;
             this.angleRef  = 380;
             break;
     }
-    //this.sendMode(this.m.mode);
 }
 
-Dxl.prototype.dxlID = function(id){
-
-    if(+id != this.m.id){
-        this.enable(false);
-        this._gotModel = false;
-    }
-    this.m.id = +id;
-    cm9Com.pushPause(200,"EI " + this.index + "," + id + ",\n");
-    if(this.m.id>0){
-        if( this._gotModel == false){
-        //!!!cm9 dxlManager.cm9Msg("EM " + this.index + ",\n"); //request model
-        //cm9Com.pushMessage("EM " + this.index + ",\n");    //request model
-        cm9Com.pushPause(200,"model " + this.index + ",\n"); //request model 2
-        }
-    }
-    return this;
-};
 
 Dxl.prototype.enable = function(onoff){
-    //console.log("-------- Dxl.Enable(): -------",this.m.id,onoff);
-    if(this.m.id<1){  //no id : cannot enable (ping?)
+    console.log("-------- Dxl.Enable(): -------",this.m.id,onoff);
+    if(this.m.id<1){
         this.enabled = false;
         misGUI.dxlEnabled(this.index,false);
         return false;
     }
 
+    //AREVOIR MODE
     if(onoff){
-        //console.log("-------- Dxl.Enable: -------",this.m.id,onoff);
-        //dxlManager.cm9Msg("EI "+this.index+","+this.m.id+",\n");
-        //dxlManager.cm9Msg("model "+this.index+",\n"); //request model again
-        //!!!cm9 dxlManager.cm9Msg("EI "+this.index+","+this.m.id+"\n");
-        //cm9Com.pushMessage("EI "+this.index+","+this.m.id+",\n");
-        //             +"model "+this.index+",\n");
-        //this._speed = 0;
-        //this.wantedSpeed = 0;     
-        this.enabled = true;
-        this.sendMode(this.m.mode);
-        if(this._gotModel==false)
-            cm9Com.pushMessage("model " + this.index + ",\n"); //request model 2
-    }
-    else{ //mode wheel pour "relax" AX12 //A REVOIR!!!
-        console.log("----- Dxl.disable: -----",this.m.id);
-        this.enabled = false;
-        /*!!!cm9
-        dxlManager.cm9Msg("EI "+this.index+","+this.m.id+",\n");        
-        dxlManager.cm9Msg("EW "+this.index+","+ADDR_TORQUE+",0,\n");
-        dxlManager.cm9Msg("EW "+this.index+","+ADDR_SPEED+",0,\n");
-        dxlManager.cm9Msg("EW "+this.index+","+ADDR_CW_LIMIT+",0,\n");
-        dxlManager.cm9Msg("EW "+this.index+","+ADDR_CCW_LIMIT+",0,\n");
-        */
-        cm9Com.pushPause(500);
-        cm9Com.pushMessage( // ??? wheel for relax ???
-            "EI "+this.index+","+this.m.id+",\n"
-            +"wheel "+this.index+"\n"
-        );
-        if(this._gotModel==false){
-            cm9Com.pushPause(200,"model " + this.index + ",\n"); //request model 2
+        if(this.temperature>67){
+            console.log("***** TO HOT ****",this.index);
+            this.enabled = false;
         }
-
-        this._speed = 0;
+        else{
+            //console.log("-------- Dxl.Enable: -------",this.m.id,onoff," model:",this.m.model);
+            if(this.m.model==-1){ //ask for model
+                console.log("-----------askForModel:",this.m.id);
+                cm9Com.pushMessage("dxlModel "+this.m.id+"\n");
+            }
+            this.enabled = true;
+            if(this.m.mode==DXL_JOINT)
+                this.joint();
+            else if(this.m.mode==DXL_WHEEL)
+                this.wheel();
+        }
+    }
+    else{ //mode wheel pour "relax" AX12 ... torque ... //A REVOIR!!!
+        //console.log("----- Dxl.disable: -----",this.m.id);
+        this.enabled = false;
+        this.dxlSpeed = 0;
+        this.wantedSpeed = 0;
+        misGUI.speed(this.index,0);
+        //TORQUE ?
     }
     return onoff;
 }
 
-/*
-Dxl.prototype.mode=function(mod){
-    console.log("------- dxl.mode: -------",mod);
-    if(mod!=undefined){
-        this.wantedMode = mod;
-        this.m.mode = mod;
-        this.setMode(mod);
+Dxl.prototype.stopMotor = function(){
+    console.log("NEW STOP MOTOR");
+    if(this.enabled){
+        this.enable(false); //STOP
+        this.enable(true);  //REENABLE
     }
-    return this.m.mode;
+    /*
+    switch(this.m.mode){
+        case DXL_OFF:
+        case DXL_WHEEL:
+            this.speed(0);
+            break;
+        case DXL_JOINT:
+        this._curAngle = a;
+            this.wantedAngle = this._curAngle;
+            this.dxlGoal = this._currPos; 
+            break;    
+    }
+    misGUI.speed(this.index,0);
+    misGUI.angle(this.index,this.wantedAngle);
+    */
 }
-*/
 
+Dxl.prototype.freezeMotor = function(){
+    //console.log("freeeeeeeeeze:",this.index);
+    if(this.enabled){
+        this.freeze = true;
+        this.enable(false);
+    }
+}
+
+Dxl.prototype.unfreezeMotor = function(){
+    if(this.freeze){
+        this.freeze = false;
+        this.enable(true);
+    }
+}
 
 Dxl.prototype.angleRange = function(min,max){
     this.m.angleMin = min;
@@ -381,49 +298,67 @@ Dxl.prototype.angleRange = function(min,max){
 };
 
 Dxl.prototype.joint = function(){
-    console.log("----- Dxl.joint: ----");
-    //wantedMode = 0; //pour delay
-    this.m.mode = 0;
-    if(this.enabled)
-        this.delayMotorON();
+    this.m.mode = DXL_JOINT;
+    this.speed(this.m.jointSpeed);
+    misGUI.angle(this.index,this.wantedAngle); //updated by currPos
+    console.log("----- Dxl.joint: ----",this.m.mode,this._curAngle);
+    if(this.m.id>0){
+        if(this.m.model==-1){ //ask for model
+            console.log("-----------askForModel");
+            cm9Com.pushMessage("dxlModel "+this.m.id+"\n");
+        }
+        if(this.m.model==12){
+            cm9Com.pushMessage(
+                "dxlWrite "+this.m.id+","+ADDR_SLOPE_CW+",128\n"
+                +"dxlWrite "+this.m.id+","+ADDR_SLOPE_CCW+",128\n"); //smooth
+        }
+    }
     return this;
 };
 
 Dxl.prototype.wheel = function(){
-    console.log("----- Dxl.wheel: ----");
-    //wantedMode = 1; //pour delay
-    this.m.mode = 1; 
-    if(this.enabled)
-        this.delayMotorON();
+    this.m.mode = DXL_WHEEL;
+    this.dxlSpeed = 0;
+    this.wantedSpeed = 0;
+    console.log("----- Dxl.wheel: ----",this.m.mode);
     return this;
 };
 
-Dxl.prototype.currPos=function(p){
+Dxl.prototype.angleToNorm = function(a){ //[0 1]
+    return (a-this.m.angleMin)/(this.m.angleMax-this.m.angleMin);
+}
+
+//setCurrpos , returns angle
+Dxl.prototype.currPos = function(p){
     if(p>=0) {
         var a = this.pos2angle(p);
-
-
-        if (this.m.clockwise) a = -a;
         this._curAngle = a;
         this._currPos = p;
+
+        if( this.m.mode==DXL_WHEEL ){ //||((this.m.mode==DLX_OFF) )
+            this.wantedAngle = a;
+            this.dxlGoal = p;
+        }
+        else if(!this.enabled){
+            this.wantedAngle = a; 
+            this.dxlGoal = p;
+            misGUI.angle(this.index,a);
+        }
         return a;
     }
-    return 0;
+    return this.wantedAngle;
 }
 
 Dxl.prototype.angle = function(a){
     if(a!=undefined) {
         if (a > this.m.angleMax)a = this.m.angleMax;
         else if (a < this.m.angleMin)a = this.m.angleMin;
-        //this._goal = this.angle2pos(a);
-        this._goalAngle  = a;
-        this.wantedAngle = a;
+        this.wantedAngle  = a;
+        this.dxlGoal = this.angle2pos(a);
         return a;
     }
     else {
-        //return (this._goal - 512) * (150 / 512);   //
-        //console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        return 0;
+        return this.wantedAngle;
     }
 };
 
@@ -444,14 +379,18 @@ Dxl.prototype.speed = function(s){
     if(s!=undefined) {
         if (s > this.m.speedMax)s = this.m.speedMax;
         else if (s < this.m.speedMin)s = this.m.speedMin;
-        //if(this.m.clockwise)s=-s;
-        this._speed = s;
-        this.wantedSpeed = (s*1023/100)|0;
-        //console.log("WANTED SPEED:",s,this.wantedSpeed);
+        this.wantedSpeed = s; 
+
+        var v = (s*1023/100)|0;
+        if(this.m.clockwise) v=-v;
+        //if(v<0) v = 1024-v; //!!! SUR LE CM9 !!!
+        this.dxlSpeed = v;    
         return s;
     }
-    else
-        return this._speed;
+    else{
+        console.log("***** Dxl.spped READ? ******");
+        return this.wantedSpeed;
+    }
 };
 
 Dxl.prototype.nSpeed = function(s) {
@@ -462,10 +401,12 @@ Dxl.prototype.nSpeed = function(s) {
 
 Dxl.prototype.clockwise = function(val){
     this.m.clockwise = (val==0); //0:CW 1:CCW
+    //console.log("Dxl.clockwise:",this.m.clockwise);
     return this;
 }
 
 Dxl.prototype.angleMin = function(val){
+    //console.log("Dxl.angleMin:",this.index,this.m);
     this.m.angleMin = val;
     return this;
 };
@@ -487,18 +428,3 @@ Dxl.prototype.speedMax = function(val){
     return this;
 };
 
-/*
-Dxl.prototype.copy = function(from){
-    //this.m.enabled = from.m.enabled;
-    //this.m.model  = from.m.
-    this.m.clockwise  = from.m.clockwise;
-    this.m.mode = from.m.mode;
-    this.m.angleMin = from.m.angleMin;
-    this.m.angleMax = from.m.angleMax;
-    this.m.speedMin = from.m.speedMin;
-    this.m.speedMax = from.m.speedMax;
-    this.m.torqueMax = from.m.torqueMax;
-
-    this.wantedMode = this.m.mode;
-}
-*/

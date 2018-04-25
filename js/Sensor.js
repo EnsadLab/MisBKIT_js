@@ -37,7 +37,10 @@ Sensor = function () {
     this.ID = -1;
     this.area = -1; // -1:nowhere, 0:before the threshold, 1:after the threshold
     this.oldArea = -1;
+    this.freeze = false;
 
+    this.freeze = true;
+    this.enabled = false;
 };
 
 Sensor.prototype.copySettings = function(s){
@@ -51,6 +54,11 @@ Sensor.prototype.getSettings = function(){
     return this.s;
 }
 
+Sensor.prototype.onNormValue = function(nval){ //[0 1]
+    var val = nval*((this.s.valMax-this.s.valMin)) + this.s.valMin;
+    this.onValue(val); //TODO onValue() -> onNormValue()
+}
+
 Sensor.prototype.onValue = function(val){
     //console.log("sensor:",this.s.name,val);
     var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin);
@@ -58,6 +66,7 @@ Sensor.prototype.onValue = function(val){
     if(this.s.enabled){
         if( this.s.toMotorEnabled ){
             //var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin)
+            console.log("to motor:",this.s.toMotorIndex,nv);
             dxlManager.onNormControl(this.s.toMotorIndex,nv);
         }
         //TODO anims
@@ -126,6 +135,21 @@ Sensor.prototype.onName = function(txt){
 }
 
 Sensor.prototype.discard = function(){
+    this.s.enabled = false; //just in case 
     //cm9Com.removeCallback(+this.s.pin);
     robusManager.removeCallback(this.s.address,this.s.name);   
+}
+
+Sensor.prototype.freezeSensor = function(){
+    if(this.s.enabled){
+        this.freeze = true;
+        this.s.enabled = false;
+    }
+}
+
+Sensor.prototype.unfreezeSensor = function(){
+    if(this.freeze){
+        this.s.enabled = true;
+        this.freeze = false;
+    }
 }

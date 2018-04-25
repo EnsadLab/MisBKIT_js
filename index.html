@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>misB KIT WIFI 3.3</title>
+        <title>misB KIT WIFI 5.0 TCP</title>
         <link rel="stylesheet" href="css/jquery-ui.css">
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/toggle.css">
@@ -18,7 +18,7 @@
 			<div class="connexions">
 				<h2>Connexions</h2>
 
-				<div class="plug">
+				<div class="plug cm9Plug">
 					<!--button class="gear"><img src="assets/settings.png"></button-->
 					<p>
 						CM9 <!--span class="status" id="cm9Text"></span-->
@@ -27,10 +27,10 @@
 						<input id="btcm9" type="checkbox" class="small cmdTog" name ="enable" title="enable/disable"> 
 					</p>
 
-					<div class="content">
+					<div id="cm9Content" class="content">
 						<!--button class="gear" data-id="pasglop"><img src="assets/settings.png"></button-->
 						<br>CM9 :
-						<input type="number" class="small cmd" name="" placeholder="CM9 number">
+						<input id="numCm9" type="number" class="small cmd" name="" placeholder="CM9 number">
 						<span class="status" id="cm9Text">...</span>
 						<!-- input type="checkbox"  name ="glou">SINGLE<br>
 						<br>
@@ -49,8 +49,10 @@
 						MIDI  <span class="status" id="midiText"></span>
 						<input id="btmidi" type="checkbox" class="small cmdTog" name ="enable"title="enable/disable">
 					</p>
+					
 					<div class="content">
 						<br>Midi :<br>
+						<hr>
 						<!-- <button class="disconnected" id="btMidi">scan</button>
 						<br> -->
 						<div class="midi-available" id="midi-available">
@@ -67,7 +69,7 @@
 				<div id="divOSC" class="plug">
 					<p>
 						OSC  <span class="status"></span>
-						<input type="checkbox" class="small cmdOnOff" name ="enable"title="enable/disable">
+						<input id="btOSC" type="checkbox" class="small warning cmdOnOff" name ="enable"title="enable/disable">
 					</p>
 					<div class="content advanced">
 						<br>OSC :<br>
@@ -107,28 +109,31 @@
 					</div>
 
 				</div>
-
-				<div class="plug">
+				<!--
+				<div id="robusPlug" class="plug">
 					<p>
 						ROBUS  <span class="status"></span>
-						<input type="checkbox" class="small cmdTog error" name ="enable" title="enable/disable">
+
+						<input id="robusOnOff" type="checkbox" class="small" name ="enable" title="enable/disable">
 					</p>
 					<div class="content">
 						<br>Robots :<br>
 						<br>
 						<!--input type="text" name="rien"-->
+						<!--
 						<textarea id="robusRobots" rows=6 cols=15>octo_wifi</textarea>
 						<div class="large">
-							<button id="robusOnOff" class="disconnected" >OFF</button>
+							<button id="robusOnOff2" class="disconnected" >OFF</button>
 							<button id="robusReset" class="disconnected" >RESET</button>
 							<button id="robusInfo"  class="disconnected" >info</button>
 						</div>
-						
+						<!--
 						<br>
-
 						<textarea id="robusTxt" rows=18 cols=15>message</textarea>
+						--> <!--
 					</div>
 				</div>
+				-->
 
 				<!--div class="plug" >
 						ADVANCED :
@@ -157,7 +162,7 @@
 
 						<button class="tiny small" id="btScan" name="startScan">Scan</button>
 						<!--div id="scanProgress"></div-->
-						<meter id="scanProgress" class="medium" value="100" max="254"></meter>
+						<meter id="scanProgress" class="medium" value="0" max="254"></meter>
 						<!--/div-->
 					</div>
 
@@ -266,13 +271,17 @@
 			<div class="left-side">
 				<div class="head">
 					<div class="tab">
-						<h2 id="anims">Animations</h2><input type="checkbox" class="small cmdTog btnGlobalAnim" name ="enable"title="enable/disable"> 
+						<h2 id="anims">Animations</h2><input type="checkbox" class="small cmdTog btnGlobalAnim" id="anim-freeze" name ="enable"title="enable/disable"> 
 					</div>
 
 					<!-- //////////// -->
+				<!-- !!!!!!!!!!!!!!!!!!! REMOVED SENSOR TAB -->
 					<div class="tab">
-						<h2 id="sens">Sensors </h2> <input type="checkbox" class="small cmdTog btnGlobalSensors" name ="enable"title="enable/disable">
+						<h2 id="sens">Sensors </h2> <input type="checkbox" class="small cmdTog btnGlobalSensors" id="sensor-freeze" name ="enable"title="enable/disable">
 					</div>
+				
+
+
 
 					<!-- <h2 id="anims">Animations</h2><input type="checkbox" class="small cmdTog btnGlobalAnim" id="anim-freeze" name ="enable"title="enable/disable">  -->
 					<!-- <button class="load"><img src="assets/open.png" alt="" id="loadAnim"></button> -->
@@ -283,6 +292,7 @@
 					<button id="addEmptySensor" class="sensorsBTN float-right"><img src="assets/add.png" alt="" id="loadAnim"> Add Sensor</button>
 
 					<button id="loadSensor" class="sensorsBTN float-right"><img src="assets/open.png" alt="" id=""> Load Sensor</button>
+			
 				</div>
 				
 				<div class="animations" id="divAnims">
@@ -381,10 +391,6 @@
 								<input type="checkbox" class=" small cmdOnOff" name ="mobilizingEnabled" title="enable/disable">	
 								<h4>CM9</h4>	
 							</div>
-							
-							<div class="medium float-left text-right">
-								<input type="number" class="medium tiny" placeholder="Pin" name="">
-							</div>
 						</section>
 
 
@@ -454,7 +460,6 @@
 							</div>						
 						</section>	
 
-							
 
 					</div>
 
@@ -537,7 +542,7 @@
 												<input type="number" class=" maxval small text-right tiny cmdInt" placeholder="max value" name="valMax">
 											</div>
 										</div>
-
+								
 									</div>
 										
 								</section>
@@ -550,6 +555,7 @@
 										<input type="checkbox" class="small cmdOnOff" name ="oscEnabled" title="enable/disable">
 										<h4>OSC</h4>
 									</div>
+
 
 									<div class="medium float-left text-right">
 										<input type="text" class="large tiny" placeholder="adress" name="">
@@ -567,6 +573,7 @@
 									</div>
 
 									<div class="medium float-right text-right">
+
 										<input type="number" class="medium tiny float-right" placeholder="index" name="">
 									</div>
 
@@ -628,8 +635,12 @@
 		</div>
 		
 		<div class="modale draggable" id="dynamixel-ctrl">
-			<button class="close-modale"><img src="assets/close.png" alt=""></button>
+			<button id="closeDxl" class="close-modale"><img src="assets/close.png" alt=""></button>
 			<input type="text" size="5" id="btAdvID"><label for="">[ID]</label>
+			&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+			&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+			------> change ID : &ensp;
+			<input id="changeDxlID" type="text" size="5"> <!--class="float-right"-->
 			<br>
 			<div id="divDxlReg" >
 				

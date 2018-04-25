@@ -51,7 +51,7 @@ function MisGUI(){
 
 
     $('#btcm9').on('click',function(){
-        console.log("btcm9",this.checked);
+        console.log("btcm9 click",this.checked);
         //var cl = $(this).prop("class");
         if(this.checked){
             cm9Com.open();
@@ -119,8 +119,28 @@ MisGUI.prototype.openOSC = function(remoteAddr,remotePort) {
 */
 
 MisGUI.prototype.cm9State=function(state){
-    //console.log("MisGUI.prototype.cm9State",state);
+    console.log("MisGUI.prototype.cm9State",state);
     var bt = $("#btcm9");
+    switch(state){
+        case "ON":
+        case true:
+            bt.removeClass("error");
+            bt.prop("checked",true);
+            break;
+        case "ERROR":
+            bt.addClass("error");
+            bt.prop("checked",false);
+            this.cm9Info("ERROR");
+            break;
+        case "OFF":
+        case false:
+            bt.prop("checked",false);
+            this.cm9Info("");
+            break;
+            
+    }
+
+    /*
     if(state=='OFF'){
         //console.log("MisGUI.prototype.cm9State OFF?",state);
         //bt.prop("class","disconnected").text("OFF");
@@ -137,6 +157,7 @@ MisGUI.prototype.cm9State=function(state){
     }
     bt.prop('disabled',false);
     //this.blockUI(false);
+    */
 }
 
 MisGUI.prototype.cm9Info=function(txt){
@@ -157,15 +178,9 @@ MisGUI.prototype.midiPortManager = function(name) {
     var bt = $("#btMidi");
 };
 
-//TODO check exist , ... remove ... verifier ...
+
 MisGUI.prototype.dxlID =function(index,val) {
-    console.log("dxlID:", val);
-
-    if(val.startsWith("#")){
-        this.changeDxlID(index,val);
-        return;
-    }
-
+    console.log("MisGUI.dxlID:", val);
     dxlManager.cmd("dxlID",index,+val);
     //var div = $("#divMotors .single-motor").eq(index);
     //div.find(".identity").text(val); //TODO .showParams -> #dxlID
@@ -222,10 +237,16 @@ MisGUI.prototype.midiMode =function(index,value){
 }
 
 MisGUI.prototype.mode =function(index,value){
-    //console.log("SETMODE:",index," ",value);
-    switch(+value){
-        case 0:this.joint(index);break;
-        case 1:this.wheel(index);break;
+    //console.log("MisGUI.mode:",index,value);
+    switch(value){
+        case "J":
+        case 0:
+            this.joint(index);
+            break;
+        case "W":
+        case 1:
+            this.wheel(index);
+            break;
     }
 }
 
@@ -239,14 +260,27 @@ MisGUI.prototype.wheel =function(index){
     this.rotAngles[index].show(false);
     this.rotSpeeds[index].show(true);
     this.rotSpeeds[index].setValue(0);
+    this.speed(index,0);
 };
 
 MisGUI.prototype.onRotary = function(val,rot){
     var i=rot.userData.i; 
-    console.log("on rotary");
+    //console.log("on rotary");
     dxlManager.cmd(rot.userData.f,i,val);
     this.inputVals.eq(i).val(val.toFixed(1));
 };
+
+MisGUI.prototype.setCM9Num = function(n){
+    //console.log("misGUI.setCM9Num:",n);
+    if(n==0){
+        $('#numCm9').hide();    
+    }
+    else{
+        $('#numCm9').val(n);
+        $('#numCm9').show();
+        //$('#btcm9').prop("checked",false);
+    }
+}
 
 MisGUI.prototype.setValue = function(index,name,val){
     var div = $("#dxlConfig .motorParam").eq(index);
@@ -257,16 +291,26 @@ MisGUI.prototype.angle = function(index,val){
     if(index<this.rotAngles.length){
         var v = this.rotAngles[index].setValue(+val).value;
         this.inputVals.eq(index).val(v.toFixed(1));
-        console.log("misguiAngle:",val,v);
+        //console.log("misguiAngle:",val,v);
+
+        
+        // SIMULATION FROM MOTOR MAPPING TO SENSOR sans le moteur avec index 2 allumé.
+        // TEST -> donc à gicler quand on en a plus besoin.
+        // pour tester le BUG observé par Filipe concernant le motor mapping to.
+        /*
+        if(index == 2){
+            console.log("fake mapping to sensor");
+            sensorManager.handleDxlPos(2,Math.random());
+        }*/
     }
 }
 
 MisGUI.prototype.speed = function(index,val){ //[-100,100]
-    //console.log("gui speed:",index,val)
+    //console.log("MisGUI.speed:",index,val)
     if(index<this.rotSpeeds.length){
         var v = this.rotSpeeds[index].setValue(+val).value;
         this.inputVals.eq(index).val(v.toFixed(1));
-        console.log("misguiSpeed:",val,v);
+       // console.log("misguiSpeed:",val,v);
     }
 }
 
@@ -304,27 +348,7 @@ MisGUI.prototype.getMotorStg = function(index){
     return $("#divMotorSettings .single-motor").eq(index);
 }
 
-
-MisGUI.prototype.changeDxlID=function(index,val){
-    var id = parseInt(val.substr(1));
-    if(dialog){
-        var bt = dialog.showMessageBox({
-            type:"question",
-            //title:"change ID to "+val+" ?", //OSX: no title ???
-            message:"change ID to "+val+" ?",
-            buttons:["Cancel","Ok"]
-        });
-        console.log("Dialog Button:",bt);
-
-        if(bt==1) {//OK
-            console.log("Write ID:", id);
-            dxlManager.writeDxlId(index, id);
-        }
-
-        this.motorSettings(index,dxlManager.getMotorSettings(index));
-
-    }
-}
+//DELETED MisGUI.prototype.changeDxlID=function(index,val){
 
 MisGUI.prototype.alert = function(msg){
     var bt = dialog.showMessageBox({
@@ -354,19 +378,19 @@ MisGUI.prototype.toggleAdvanced = function(onoff){
 }
 
 MisGUI.prototype.motorSettings = function(index,s){
-    if(s==null)//TODO default
+    //console.log("GUI:motorSettings:",index,s);
+    if((s==undefined)||(s==null)){//TODO default
         return;
-
-    //console.log("DBG_motorSettings:",index,s);
-    //console.log("DBG_motorSettings ID:", s.id);
+    }
 
     var parent = this.getMotorUI(index);
     parent.find(".identity").text(s.id);
     parent.find("[name=enable]").prop("checked",s.enabled);
-    parent.find("[name=mode]").prop("checked",(s.mode!=0));
+    parent.find("[name=mode]").prop( "checked",((s.mode==1)||(s.mode=="W")) );
     parent.find(".motor-index").text(index);
 
     var parent = this.getMotorStg(index);
+
     parent.find("[name=dxlID]").val(s.id);
     parent.find("[name=clockwise]").prop("checked",!s.clockwise);
     parent.find("[name=angleMin]").val(s.angleMin);
@@ -374,13 +398,16 @@ MisGUI.prototype.motorSettings = function(index,s){
     parent.find("[name=speedMin]").val(s.speedMin); //*(100/1023));
     parent.find("[name=speedMax]").val(s.speedMax); //*(100/1023));
 
+    $(".thermo").eq(index).html("-°");
+
     this.angleMin(index,s.angleMin);
     this.angleMax(index,s.angleMax);
     this.speedMin(index,s.speedMin);
     this.speedMax(index,s.speedMax);
-
-    this.rotAngles[index].show((s.mode==0));
-    this.rotSpeeds[index].show((s.mode==1));
+    //this.rotAngles[index].show((s.mode==0));
+    //this.rotSpeeds[index].show((s.mode==1));
+    //console.log("MisGUI.motorSettings:",s.mode);
+    this.mode(index,s.mode);
     this.rotSpeeds[index].setValue(0);
 
 
@@ -406,7 +433,6 @@ MisGUI.prototype.midiMotorSettings = function(midiMappingSettings,midiPorts){
     //selections:
     this.updateMidiMotorSelection(motorIndex,midiPort,midiPorts);
 
-
 }
 
 MisGUI.prototype.updateMidiMotorSelection = function(motorIndex,midiPortSelected,midiPorts){
@@ -415,7 +441,9 @@ MisGUI.prototype.updateMidiMotorSelection = function(motorIndex,midiPortSelected
     var sel = $("#divMotorSettings .midi-chanel").eq(motorIndex);
     sel.data("id",motorIndex);
 
+
     sel.empty();
+    
     sel.append($("<option value=" + "'" + "none" + "'>" + "none" + "</option>"));
     for(var i=0;i<midiPorts.length;i++){
         var portName = midiPorts[i].portName;
@@ -458,6 +486,9 @@ MisGUI.prototype.selectMidiMappingPort = function(motorID, name){
 
 MisGUI.prototype.init =function(){
     console.log("----- INIT GUI");
+
+    $("#robusOnOff").prop("disabled",true);
+
     var parent = $("#divAnims").find("[name=listAnims]");
     var tanim = parent.find(".single-anim:first");
     tanim.hide();
@@ -474,8 +505,9 @@ MisGUI.prototype.init =function(){
     for(var i=1;i<6;i++) {
         var clone = model.clone();
         clone.data("index",i);
-        clone.find(".cmd").data("index",i);
-        clone.find(".cmdTog").data("index",i);
+        clone.find("*").data("index",i);
+        //clone.find(".cmd").data("index",i);
+        //clone.find(".cmdTog").data("index",i);
         clone.insertAfter(after);
         after = clone;
     }
@@ -488,11 +520,31 @@ MisGUI.prototype.init =function(){
     model.find(".midi-blinker").bind("mouseover", frontBlinkInfo);
     for(var i=1;i<6;i++) {
         var clone = model.clone();
-        clone.find(".cmdTog").data("index",i);
         clone.data("index",i);
+        clone.find("*").data("index",i);
+        //clone.find(".cmdTog").data("index",i);
         clone.appendTo(parent);
         clone.find(".midi-blinker").bind("mouseover", frontBlinkInfo);
+        clone.find(".midi-blinker").css("display", "none");
     }
+
+    //!!! right click & context menu  DONOT WORK !!! ?????? 
+    $("#divMotors").find('div').on('click',function(e){
+        if( e.metaKey || e.altKey || e.shiftKey || e.ctrlKey ){//ctrl doesnt work!!!
+            var index = $(this).data("index");
+            if(index != undefined){
+                openDxlControl(index);
+            }
+        }
+    });
+    $("#divMotorSettings").find('div').on('click',function(e){
+        if( e.metaKey || e.altKey || e.shiftKey || e.ctrlKey ){//ctrl doesnt work!!!
+            var index = $(this).data("index");
+            if(index != undefined){
+                openDxlControl(index);
+            }
+        }
+    });
 
     //this.motorMappings = $("#divMotors .number-for-motor"); //cec
     //this.motorMappings = $("#divMotorSettings .set-value");
@@ -543,17 +595,39 @@ MisGUI.prototype.init =function(){
         this.inputVals.eq(i).val(0);
         $(this.inputVals[i]).data("index",i);
     }
+
     this.inputVals.on("change",function(){
         var index = $(this).data("index");
         var mode = dxlManager.getMode(index);
         var val = $(this).val();
-        console.log("num_rotary change:",index,mode,val);
-        if(mode==0)
-            self.angle(index,val);
-        else
-            self.speed(index,val);
+        //console.log("num_rotary change:",index,mode,val);
+        if(mode==0){
+            dxlManager.setAngle(index,val);
+            //self.angle(index,val); //rem called by dxlManager
+        }
+        else{
+            dxlManager.setSpeed(index,val);
+            //self.speed(index,val); //rem called by dxlManager
+        }
     });
-    //
+    this.inputVals.on("keydown",function(ev){
+        //console.log("inputVals.on(keydown):",ev);
+        if(ev.keyCode==13){
+            var index = $(this).data("index");
+            var mode = dxlManager.getMode(index);
+            var val = $(this).val();
+            if(mode==0){
+                dxlManager.setAngle(index,val);
+            }
+            else{
+                dxlManager.setSpeed(index,val);
+            }    
+        }
+    });
+
+
+
+
 
     $("#divMotorSettings .cmd").on('change',function(){
         var index = $(this).data("index");
@@ -568,7 +642,7 @@ MisGUI.prototype.init =function(){
         var v = this.checked ? 1 : 0;
         var index = $(this).data("index");
         var cmd = this.name;
-        console.log("toggle:",index," ",cmd," ",v);
+        //console.log("cmdTog:",index," ",cmd," ",v);
         if(self[this.name])
             self[cmd](index,v);
         else
@@ -576,14 +650,10 @@ MisGUI.prototype.init =function(){
     });
 
     $("#motor-freeze").on('click',function(){
-        console.log("*** mototor stop all");
-        //dxlManager.stopAll();
-        for (var i = 0; i < dxlManager.motors.length; i++) {
-            //misGUI.speed(i,0); // POURQUOI CA NE MARCHE PAS? Exactement la même méthode que celle depuis onMidi()...
-            //misGUI.angle(i,0);
-        }
-
-        //dxlManager.freeze = !dxlManager.freeze;
+        if($('#motor-freeze').is(":checked"))
+            dxlManager.freezeAllMotors();
+        else
+            dxlManager.unfreezeAllMotors();
     });
 
     $("button.start-rec").on("click",function() {
@@ -640,16 +710,37 @@ MisGUI.prototype.init =function(){
     });
 
     $("#anim-freeze").on('click',function(){
-        console.log("*** anim stop all");
-        dxlManager.stopAllAnims();
-        //TODO: put speed to zero for all motors
+        if($('#anim-freeze').is(":checked")){
+            console.log("*** anim stop all");
+            dxlManager.stopAllAnims();
+            dxlManager.stopAllMotors();
+        }
     });
 
     $("#sensor-freeze").on('click',function(){
-        console.log("*** sensor stop all");
+        if($('#sensor-freeze').is(":checked")){
+            console.log("*** sensor freeze all");
+            sensorManager.freezeAllSensors();
+            dxlManager.stopAllMotors();
+        }else{
+            console.log("*** sensor unfreeze all");
+            sensorManager.unfreezeAllSensors();
+        }
     });
 
+    // hide default animation, also when no animations are loaded
+    var parent = $("#sortable-anim");
+    var model = parent.find(".single-anim:first");
+    model.hide();
+
+    // hide default sensor, also when no sensors are loaded
+    var parentS = $(".sensors").find("[name=listSensors]");
+    var modelS = parentS.find(".single-sensor:first");
+    modelS.hide();
+
     $("#btScan").on("click",function() {
+        $("#btScan").css('background', 'white');
+		$("#btScan").css('color', 'black');
         dxlManager.startScan();
     });
 
@@ -671,8 +762,9 @@ MisGUI.prototype.init =function(){
     */
     $("#btAdvID").on("change",function() {
         var id = $("#btAdvID").val();
-        console.log("#btDxlRefresh click ",id);
+        //console.log("#btDxlRefresh click ",id);
         self.clearDxlRegs(+id);
+        dxlManager.startReadDxl(+id); //async >> showDxlReg            
     });
     $("#btAdvID").keypress(function(e){
         if(e.which==13){
@@ -685,7 +777,7 @@ MisGUI.prototype.init =function(){
 
     //ROBUS
     var robs = $("#robusRobots");
-    var bt   = $("#robusOnOff");
+    var bt   = $("#robusOnOff2");
     robs.on("click",function(){
         bt.prop("class","disconnected").text("OFF");
     });    
@@ -713,20 +805,28 @@ MisGUI.prototype.init =function(){
     });
     $("#robusReset").on('click',function(){
         robusManager.reset();
-        $(robusOnOff).prop("class","disconnected").text("OFF");        
+        $("#robusOnOff2").prop("class","disconnected").text("OFF");        
         $("#robusTxt").val("");        
     });
 
-    console.log("==================");
-    $("#divOSC").find(".cmdString").change(function(){
-        console.log("IPchange:");
+    divOsc = $("#divOSC");
+    divOsc.find("#btOSC").click(function(){
+        console.log("osc ON",this.checked);
+        oscManager.onOff(this.checked);
+    });
+    divOsc.find(".cmdInt").change(function(){
+        console.log("osc:",this.name);
+        oscManager.changeParam(this.name,parseInt($(this).val()));
+    });
+    divOsc.find(".cmdString").change(function(){
+        console.log("osc:",this.name);
+        oscManager.changeParam(this.name,$(this).val());
+    });
+    divOsc.on("mouseenter",function(){
+        console.log("divOSC:mouseenter");
+        misGUI.scanIPv4();
     });
 
-    var divOsc = $("#divOSC").find(".cmdInt");
-    console.log("divosc:",divOsc.length);
-    $("#divOSC").find(".cmdInt").change(function(){
-        console.log("Portchange:");
-    });
 
     $("#addEmptySensor").on("click",function(){
         sensorManager.addEmptySensor();
@@ -742,11 +842,13 @@ MisGUI.prototype.init =function(){
         
     });
 
+    
+
     $(".midiPlug").bind("mouseenter", midiPanelOver);//mouseover
-        function midiPanelOver(){
-            console.log("midi over");
-            misGUI.scanMidiPorts();
-        }
+    function midiPanelOver(){
+        console.log("midi over");
+        misGUI.scanMidiPorts();
+    }
     
 
     //this.scanSerial();    /*Didier*/
@@ -757,6 +859,9 @@ MisGUI.prototype.init =function(){
 }//init
 
 
+MisGUI.prototype.enableOSC = function(onoff){
+    $("#divOSC").find("#btOSC").prop("checked",onoff);
+}
 
 MisGUI.prototype.showOSC = function(settings){
     console.log("==========showosc:",settings);
@@ -771,8 +876,7 @@ MisGUI.prototype.clearDxlRegs = function(id) {
     var inputs = $("#divDxlReg :input");
     inputs.val('?');
     $("#btAdvID").val(id);
-    dxlManager.startReadDxl(id); //async >> showDxlReg
-
+    //dxlManager.startReadDxl(id); //async >> showDxlReg
 }
 
 MisGUI.prototype.showDxlReg = function(id,addr,val){
@@ -784,8 +888,8 @@ MisGUI.prototype.showDxlReg = function(id,addr,val){
 }
 
 
-//????
-MisGUI.prototype.setDxlReg=function(i,name,val){
+//TODELETE
+MisGUI.prototype.setDxlRegDEL=function(i,name,val){
     var inp = $( "#divDxlReg #addr"+i).eq(0);
     console.log("inputs:",inp.length);
     if(inp.length<1){
@@ -837,6 +941,7 @@ MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
     //var parent = $("#divAnims").find("[name=listAnims]");
     var parent = $("#sortable-anim");
     var model = parent.find(".single-anim:first");
+    model.hide();
     var clone = model.clone();
     clone.attr('data-id', animId); //select only find attr
     clone.children().data("id", animId); //only first level !!! !!! !!!
@@ -879,6 +984,9 @@ MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
         dxlManager.stopAnim($(this).data("id"));
         UIstopAnim(this);
     });
+
+
+    clone.find(".loop").css("opacity",0.6);
 
     clone.find(".loop").on("click", function () {
         var onoff = UIloopAnim(this);
@@ -983,7 +1091,6 @@ MisGUI.prototype.divSensor = function(sensorId){
 
 MisGUI.prototype.addSensor = function(settings, id){
     //console.log("CLONE",id);
-    console.log("MisGUI:addSensor " + settings.name);
     var self = this;
     var parent = $(".sensors").find("[name=listSensors]");
     var model = parent.find(".single-sensor:first");
@@ -1018,7 +1125,8 @@ MisGUI.prototype.addSensor = function(settings, id){
             sensorManager.onName($(this).data("id"), $(this).val());
     });
 
-    // clone.find(".tolerance")
+
+    // clone.find("[name=tolerance]") //(".tolerance")
     //     .val(settings.tolerance)
     //     .on("input",function(){
     //         sensorManager.onTolerance($(this).data("id"), $(this).val());
@@ -1027,6 +1135,7 @@ MisGUI.prototype.addSensor = function(settings, id){
     //         sensorAnimWidth(clone.find(".sensor-range"), settings.valMin, settings.valMax, settings.threshold, settings.tolerance);
     //         //clone inside callback ????
     //     });
+
 
     // clone.find(".close").on("click", function () {
     //     //self.removeSensor($(this).data("id"));
@@ -1182,6 +1291,7 @@ MisGUI.prototype.changeSensor = function(settings, id){
     
     ssor.find("[name=cm9Enabled]").attr('checked',settings.cm9Enabled);
     ssor.find("[name=cm9Pin]").val(settings.cm9Pin);
+    ssor.find("[name=mobilizingEnabled]").attr('checked',settings.mobilizingEnabled);
     ssor.find("[name=fromMotorEnabled]").attr('checked',settings.fromMotorEnabled);
     ssor.find("[name=fromMotorIndex]").val(settings.fromMotorIndex);
     ssor.find("[name=toMotorEnabled]").attr('checked',settings.toMotorEnabled);
@@ -1203,13 +1313,15 @@ MisGUI.prototype.selectSensorAnim = function(sensorID, wich, name){
 
 MisGUI.prototype.setSensorValue = function(sensorID, sensorValue, percent){
     var div = this.divSensor(sensorID);
-    div.find(".live-value").html(sensorValue);
+    div.find(".live-value").html(sensorValue.toString().substr(0,6));
+    if(percent < 0 ) percent = 0;
+    if(percent > 100) percent = 100;
     div.find(".live-value-ui").css("left", percent+"%");
 }
 
 MisGUI.prototype.getSensorTolerance = function(sensorID){
     var div = this.divSensor(sensorID);
-    return div.find(".tolerance").value();
+    return div.find("[name=tolerance]")/*(".tolerance")*/.value();
 }
 MisGUI.prototype.setSensorTolerance = function(sensorID,val){
     var div = this.divSensor(sensorID);
@@ -1229,8 +1341,8 @@ MisGUI.prototype.setSensorAnims = function(names){
     
     var sel = $("#sortable-sens").find("[class*='listAnims']"); //listAnims-1 & listAnims-2
     
-    console.log("setSensorAnims:",names);
-    console.log("selectanims:",sel.length);
+    //console.log("setSensorAnims:",names);
+    //console.log("selectanims:",sel.length);
 
     sel.empty();
     sel.append($("<option value=" + "'" + "none" + "'>" + "none" + "</option>"));
@@ -1335,7 +1447,7 @@ MisGUI.prototype.scanMidiPorts = function(){
                 //console.log("Found midi port: " + n);
                 midiPortManager.addMidiPort(n,i);
                 sel.append($("<input class=" + "'" + "styled-checkbox small" + "'" + "type=" + "'" + "checkbox"
-                + "'" + "id=" + "'" + n + "'>" + n + "<br>"));
+                + "'" + "id=" + "'" + n + "'>&nbsp;" + n + "<br>"));
             }else
                 break;
         }
@@ -1366,8 +1478,11 @@ MisGUI.prototype.scanMidiPorts = function(){
 };
 
 
-MisGUI.prototype.simSelectMidiPorts = function(){
+MisGUI.prototype.simSelectMidiPorts = function(midiEnabled){
 
+    //if(midiEnabled){
+        $('#btmidi').prop("checked",midiEnabled);
+    //}
     $("#midi-available :input[type='checkbox']").each(
         function() {
             var portName =  $(this).prop("id");
@@ -1419,17 +1534,19 @@ MisGUI.prototype.scanIPv4 = function(){
 
 }
 
+var use_robus = false;
+
 MisGUI.prototype.robusOnOff = function(onoff){
     if(onoff){
-        $(robusOnOff).prop("class","connected").text("ON");
+        $("#robusOnOff2").prop("class","connected").text("ON");
         var txt = robusManager.getInfo();
         $("#robusTxt").val(txt);        
     }
     else
-        $(robusOnOff).prop("class","disconnected").text("OFF");
+        $("#robusOnOff2").prop("class","disconnected").text("OFF");
 };
 MisGUI.prototype.robusWait = function(text){
-        $(robusOnOff).prop("class","disconnected").text("WAIT");
+        $("#robusOnOff2").prop("class","disconnected").text("WAIT");
 };
 MisGUI.prototype.robusInfo = function(text){
     $("#robusTxt").val(text);
@@ -1448,12 +1565,49 @@ MisGUI.prototype.blockUI=function(block){
 }
 
 MisGUI.prototype.scanProgress =function(val){
-    $("#scanProgress").val(val);
+    //console.log("scanProgress:",val);
+    if(val >= $("#scanProgress").attr('max') - 1){ // TODO: talk about the progress bar with Didier!
+        $("#scanProgress").val(0);
+        $("#btScan").css('background', 'transparent');
+		$("#btScan").css('color', 'white');
+    }
+    else{
+        $("#scanProgress").val(val);
+    }
 }
 
-MisGUI.prototype.temperature = function(index,val){
-    $(".thermo").eq(index).html(val+"°");
+MisGUI.prototype.temperature = function(index,value){
+    var prevt = parseInt($(".thermo").eq(index).html());
+    $(".thermo").eq(index).html(value+"°");
+    if(prevt==value)
+        return;
+    var motodiv = $(".single-motor").eq(index);
+    if(value>=68){
+        motodiv.css("background", "rgba(255,82,97,0.5)");
+        motodiv.css("opacity", "0.3");
+        motodiv.css("pointer-events", "none");
+        motodiv.find(".thermo").css("color", "#FF7F52");
+        //$("#alertThermo").css("display", "block");
+        //$("#alertThermo").append('<p>Attention ! le moteur '+ $(".single-motor").eq(index).find(".motor-index").html() +' est en surchauffe, il est arrêté.</p>')
+        //$("#alertThermo").find('.close-modale').bind('click', function(event) {
+        //    $("#alertThermo").css("display", "none");
+        //    $("#alertThermo p").remove();
+        //});
+    }
+    else if(value>=60){
+        motodiv.css("opacity", "1");
+        motodiv.find(".thermo").css("color", "#FF7F52");
+        motodiv.css("pointer-events", "auto");
+    }
+    else{
+        motodiv.css("opacity", "1");
+        motodiv.find(".thermo").css("color", "#99FF00");
+        motodiv.css("background", "");
+        motodiv.css("pointer-events", "auto");
+    }
+
 }
+
 
 MisGUI.prototype.setSensorRange = function(id,min,max,tolerance,threshold){
     console.log("setSensorRange:");
@@ -1462,8 +1616,9 @@ MisGUI.prototype.setSensorRange = function(id,min,max,tolerance,threshold){
     // sensorAnimWidth(div.find(".sensor-range"),min,max,threshold,tolerance);
 }
 
-// var minVal = $('#min-value-sensors').val();
-// var maxVal = $('#max-value-sensors').val();
+
+
+
 
 // updateSlider(
 //     $("#sortable-sens-output .animation .minval").val(), 
@@ -1592,59 +1747,44 @@ $("input.btnGlobalSensors").bind('click', function() {
 
 // var clockForThermo = setInterval(function(){ thermoCheck()}, 1000);
 
-
-function thermoCheck(){
-
-    for (var i = 0; i < $(".single-motor").length; i++) {
-        $(".single-motor").eq(i).find(".thermo").html(Math.round(Math.random()*80));
-
-
-        var value = $(".single-motor").eq(i).find(".thermo").html();
-        value = parseInt(value);
-
-        
-        if(value>=70){
-            $(".single-motor").eq(i).css("background", "rgba(255,82,97,0.5)");
-            $(".single-motor").eq(i).css("opacity", "0.3");
-            $(".single-motor").eq(i).css("pointer-events", "none");
-            $(".single-motor").eq(i).find(".thermo").css("color", "#FF7F52");
-
-            $("#alertThermo").css("display", "block");
-
-            $("#alertThermo").append('<p>Attention ! le moteur '+ $(".single-motor").eq(i).find(".motor-index").html() +' est en surchauffe, il est arrêté.</p>')
-
-            $("#alertThermo").find('.close-modale').bind('click', function(event) {
-                $("#alertThermo").css("display", "none");
-                $("#alertThermo p").remove();
-            });
-
-        }
-        else if(value>=60){
-            $(".single-motor").eq(i).css("opacity", "1");
-            $(".single-motor").eq(i).find(".thermo").css("color", "#FF7F52");
-            $(".single-motor").eq(i).css("pointer-events", "auto");
-
-        }
-        else{
-            $(".single-motor").eq(i).css("opacity", "1");
-            $(".single-motor").eq(i).find(".thermo").css("color", "#99FF00");
-            $(".single-motor").eq(i).css("background", "");
-            $(".single-motor").eq(i).css("pointer-events", "auto");
-
-
-        }
-
-
-    };
-
-    
-    
-}
+//TODO DB call this func
 
 
 // Midi frontBlink info
+var clockForMidiBlink = setInterval(function(){ checkMidiBlink()}, 500);
 
-parseBlinker();
+function checkMidiBlink(){
+    var elmt = $(".motors-settings .midi-chanel");
+    for (var i = 0; i < elmt.length; i++) {
+        
+        var settingTarget = $(".motors-settings .single-motor").eq(i);
+        var infoChanel = settingTarget.find('.midi-chanel option:selected' ).val();
+        var indexMapping = settingTarget.find('.midiMapping').val();
+        var infoMode;
+        if(settingTarget.find('.toggle-small').eq(1).find('input[type="checkbox"]:checked')[0]){
+            infoMode = "Note";
+        }else{
+            infoMode = "CC";
+        }
+
+        //console.log("midi infos: motor",i,infoChanel,indexMapping,infoMode);
+        if(motorMappingManager.isMappingActive(i)){
+            $('.allMotors').find('.single-motor').eq(i).find('.midi-blinker').css("display", "block");
+        }else{
+            $('.allMotors').find('.single-motor').eq(i).find('.midi-blinker').css("display", "none");
+        }
+    }
+    motorMappingManager.setAllMappingActive(false);
+
+}
+
+MisGUI.prototype.setMidiBlinkOn = function(motorIndex){
+    $('.allMotors').find('.single-motor').eq(motorIndex).find('.midi-blinker').css("display", "block");
+}
+
+
+
+//parseBlinker();
 function parseBlinker(){
     var elmt = $(".motors-settings .midi-chanel");
     for (var i = 0; i < elmt.length; i++) {
@@ -1679,12 +1819,23 @@ function frontBlinkInfo(){
 
 }
 
+/*
+MisGUI.prototype.showCm9Num = function(onoff){
+    if(onoff)$("#numCm9").show();
+    else($("#numCm9").hide());
+}
+*/
 
+$(".cm9Plug").on("mouseover",function(){
+    //console.log("cm9Plug mouseover");
+    cm9Com.checkConnection();
+})
 
 $(".midiPlug").bind("mouseover", midiPanelOver);
 function midiPanelOver(){
     console.log("midi over");
 }
+
 
 
 
@@ -1853,6 +2004,25 @@ $("#sortable-sens-output section").contextmenu(function(e) {
     $(this).addClass('selected');
 
     
+$("#changeDxlID").keypress(function(e){
+    //console.log("KEY:",e);
+    if(e.key=='Enter'){
+        var prevID = parseInt($("#btAdvID").val());
+        if(isNaN(prevID)){
+            alert("Scan a valid Motor");
+            return;
+        }
+        var newID = parseInt($(this).val());
+        if(isNaN(newID)||(newID<1)||(newID>253)){
+            alert("Not a valid Dynamixel ID");
+            return;
+        }
+        if( confirm("Change dynamixel ID #"+prevID+"  to  #"+newID+" ?") ){
+            misGUI.clearDxlRegs(newID);
+            $("#btAdvID").val(newID);
+            dxlManager.changeDxlID(prevID,newID); //->startReadDxl(newID)
+        }
+    }
 });
 
 
@@ -1909,3 +2079,14 @@ function removeOutput(){
 }
 
 
+$("#closeDxl").on('click',function(){
+    $("#dynamixel-ctrl").css("display","none");
+})
+var openDxlControl = function(index){
+    $("#dynamixel-ctrl").css("display", "block");
+    var dxlID = dxlManager.getIDByIndex(index);
+    $("#btAdvID").val(dxlID);
+    console.log("dxlCtrl:",index,dxlID);
+    misGUI.clearDxlRegs(dxlID); //refresh
+    dxlManager.startReadDxl(dxlID); //async >> showDxlReg            
+}

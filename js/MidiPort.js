@@ -64,11 +64,19 @@ MidiPort = function () {
             // if it is CC, we take the controller value
             if(midiPortManager.enabled){
                 if(cmd == "CC"){
+                    motorMappingManager.setMappingToActive("midi",self.portName,cmd,msg[1]);
                     if(motorMappingManager.isMapped("midi",self.portName,cmd,msg[1])){
                         var motorIDs = motorMappingManager.getMotorIndex("midi",self.portName,cmd,msg[1]);
                         for(var i=0; i<motorIDs.length; i++){
                             dxlManager.onMidi(motorIDs[i], "midi", msg[2]);
                         }
+                    }else if(motorMappingManager.isMapped("midi",self.portName,cmd,32 - msg[1])){ // STOP BUTTONS
+                        var motorIDs = motorMappingManager.getMotorIndex("midi",self.portName,cmd,32-msg[1]);
+                        for(var i=0; i<motorIDs.length; i++){
+                            dxlManager.onMidi(motorIDs[i], "midi", 127.0*0.5);
+                        }
+                    }else if(msg[1] == 42) {// BIG STOP BUTTON
+                        dxlManager.stopAllMotors();
                     }
                     if(sensorManager.isMapped("sensor",self.portName,cmd,msg[1])){
                         var mappedSensors = sensorManager.getSensorIds("sensor",self.portName,cmd,msg[1]);
@@ -81,6 +89,7 @@ MidiPort = function () {
                     var channel;
                     if(msg[0] <= 143) channel = msg[0] - 128 + 1; // notes OFF
                     else channel = msg[0] - 144 + 1; // notes ON
+                    motorMappingManager.setMappingToActive("midi",self.portName,cmd,channel);
                     //console.log("chanel ",channel);
                     if(motorMappingManager.isMapped("midi",self.portName,cmd,channel)){
                         var motorIDs = motorMappingManager.getMotorIndex("midi",self.portName,cmd,channel);

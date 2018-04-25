@@ -54,8 +54,8 @@ SensorManager.prototype.loadSensorSettings = function () {
             this.sensors[id]= new Sensor(); //TODO? new Sensor(id) 
             this.sensors[id].ID = id;
             this.sensors[id].copySettings(s.sensors[i]);
-            console.log("s... ",this.sensors[id].s);
-            console.log("s... ",this.sensors[id].s.cm9Pin);
+            //console.log("s... ",this.sensors[id].s);
+            //console.log("s... ",this.sensors[id].s.cm9Pin);
         }
 
         //settingsManager.copyPasteFromUserFolder("sensors.json");
@@ -142,13 +142,13 @@ SensorManager.prototype.handlePinValues=function(vals){
 }
 
 //Motor position -> sensor.s.fromMotorIndex
-SensorManager.prototype.handleDxlPos=function(index,val){
-    //console.log("handleDxlPos:",index,val);
+SensorManager.prototype.handleDxlPos=function(index,nval){
+    //console.log("handleDxlPos:",index,nval);
     $.each(this.sensors,function(i,sensor) {
         //console.log("handleDxlPos:",i,sensor.s.fromMotorEnabled);
         if(sensor.s.fromMotorEnabled){
             if(+sensor.s.fromMotorIndex == index){
-                sensor.onValue(val);
+                sensor.onNormValue(nval);
             }
         }
     });        
@@ -229,7 +229,7 @@ SensorManager.prototype.removeAllSensors = function(){
 }
 
 SensorManager.prototype.removeSensor = function(id){
-    console.log("removing:",id);
+    console.log("Sensors removing:",id);
     if( id in this.sensors){
         misGUI.removeSensor(id);
         this.sensors[id].discard();
@@ -239,6 +239,18 @@ SensorManager.prototype.removeSensor = function(id){
         console.log("afterRemove:",id);
     }
 
+}
+
+SensorManager.prototype.freezeAllSensors = function(){
+    for(id in this.sensors){
+        var s = this.sensors[id].freezeSensor();
+    }
+}
+
+SensorManager.prototype.unfreezeAllSensors = function(){
+    for(id in this.sensors){
+        var s = this.sensors[id].unfreezeSensor();
+    }
 }
 
 SensorManager.prototype.getSensorSetting = function(id,wich){

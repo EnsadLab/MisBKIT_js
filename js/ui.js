@@ -93,7 +93,6 @@ function modaleGear(){
 	// mod.append('<button class="close-modale"><img src="assets/close.png" alt=""></button>');
 
 	mod.find('.close-modale').bind('click', function(event) {
-		// $(this).remove();
 		mod.css("display", "none");
 		console.log("close "+ target);
 	});
