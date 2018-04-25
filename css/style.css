@@ -1365,6 +1365,10 @@ button.sensorsBTN img, button.animBTN img{
 }
 
 
+.live-view .live-value-ui{
+	top:-5px;
+}
+
 
 
 .select-anim-1, .select-anim-2{

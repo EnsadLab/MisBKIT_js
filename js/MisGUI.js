@@ -2002,7 +2002,7 @@ function removeSensor(){
 $("#sortable-sens-output section").contextmenu(function(e) {
     contextmenuBox(e.pageX, e.pageY);
     $(this).addClass('selected');
-
+});
     
 $("#changeDxlID").keypress(function(e){
     //console.log("KEY:",e);
@@ -2082,6 +2082,8 @@ function removeOutput(){
 $("#closeDxl").on('click',function(){
     $("#dynamixel-ctrl").css("display","none");
 })
+
+
 var openDxlControl = function(index){
     $("#dynamixel-ctrl").css("display", "block");
     var dxlID = dxlManager.getIDByIndex(index);
