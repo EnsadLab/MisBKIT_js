@@ -258,17 +258,17 @@ SensorManager.prototype.onName = function(id,val){
     this.saveSensorSettings();
 }
 
-SensorManager.prototype.onTolerance = function(id,val){
-    this.sensors[id].s.tolerance = parseInt(val);
-    //console.log("changeTolerance:",id,val);
-    this.saveSensorSettings();
-}
+// SensorManager.prototype.onTolerance = function(id,val){
+//     this.sensors[id].s.tolerance = parseInt(val);
+//     //console.log("changeTolerance:",id,val);
+//     this.saveSensorSettings();
+// }
 
-SensorManager.prototype.onThreshold = function(id,val){
-    this.sensors[id].s.threshold = parseInt(val);
-    //console.log("changeTheshold:",id,val);
-    //this.saveSensorSettings(); //done when slider stops cf MisGUI
-}
+// SensorManager.prototype.onThreshold = function(id,val){
+//     this.sensors[id].s.threshold = parseInt(val);
+//     //console.log("changeTheshold:",id,val);
+//     //this.saveSensorSettings(); //done when slider stops cf MisGUI
+// }
 
 SensorManager.prototype.onChangeAnim = function(id,wich,txt){
     console.log("changed anim:",id,wich,txt);

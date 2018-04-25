@@ -33,6 +33,8 @@
     $( "#sortable-anim" ).disableSelection();
     $( "#sortable-sens" ).sortable();
 	$( "#sortable-sens" ).disableSelection();
+	$( "#sortable-sens-output" ).sortable();
+	$( "#sortable-sens-output" ).disableSelection();
 
 
     //cf MisGUI  $("button.start-rec").bind("click", UIstartRec);
