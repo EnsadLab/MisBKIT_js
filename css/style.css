@@ -1310,7 +1310,6 @@ button.sensorsBTN img, button.animBTN img{
 
 .sensor-setting{
 	width: 100%;
-    border-top: rgba(0,255,153,0.5) 1px solid;
     position: relative;
     top: 85%;
     height:100px;
@@ -1350,6 +1349,8 @@ button.sensorsBTN img, button.animBTN img{
     color: rgba(0,255,153,1);
     font-size: 50px;
     text-align: left;
+    border-bottom:1px solid rgba(0,255,153,0.3);
+    height:29px;
 }
 
 
