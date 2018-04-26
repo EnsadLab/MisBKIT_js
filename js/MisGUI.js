@@ -1088,10 +1088,6 @@ MisGUI.prototype.addSensor = function(settings, id){
     //clone.children().data("id", id); //only first level !!! !!! !!!
     clone.find('*').data("id", id); //only first level !!! !!! !!!
 
-    //toleranceUI(clone.find(".tolerance-ui"), settings.tolerance, settings.threshold, settings.valMin, settings.valMax);
-    //sensorAnimWidth appelle toleranceUI
-    sensorAnimWidth(clone.find(".sensor-range"), settings.valMin, settings.valMax, settings.threshold, settings.tolerance);
-
     //clone.find("input").attr('data-id', id);
     //clone.find("button").attr('data-id', id);
     //clone.find("button").attr('data-id', id);
@@ -1117,21 +1113,23 @@ MisGUI.prototype.addSensor = function(settings, id){
             sensorManager.onName($(this).data("id"), $(this).val());
     });
 
-    clone.find("[name=tolerance]") //(".tolerance")
-        .val(settings.tolerance)
-        .on("input",function(){
-            sensorManager.onTolerance($(this).data("id"), $(this).val());
-            //toleranceUI(clone.find(".tolerance-ui"), settings.tolerance, settings.threshold, settings.valMin, settings.valMax);
-            clone.find(".slider-range").slider("option","toler",settings.tolerance);
-            sensorAnimWidth(clone.find(".sensor-range"), settings.valMin, settings.valMax, settings.threshold, settings.tolerance);
-            //clone inside callback ????
-        });
 
-    clone.find(".close").on("click", function () {
-        //self.removeSensor($(this).data("id"));
-        console.log("guiremove:",$(this).data("id"));
-        sensorManager.removeSensor($(this).data("id"));
-    });
+    // clone.find("[name=tolerance]") //(".tolerance")
+    //     .val(settings.tolerance)
+    //     .on("input",function(){
+    //         sensorManager.onTolerance($(this).data("id"), $(this).val());
+    //         //toleranceUI(clone.find(".tolerance-ui"), settings.tolerance, settings.threshold, settings.valMin, settings.valMax);
+    //         clone.find(".slider-range").slider("option","toler",settings.tolerance);
+    //         sensorAnimWidth(clone.find(".sensor-range"), settings.valMin, settings.valMax, settings.threshold, settings.tolerance);
+    //         //clone inside callback ????
+    //     });
+
+
+    // clone.find(".close").on("click", function () {
+    //     //self.removeSensor($(this).data("id"));
+    //     console.log("guiremove:",$(this).data("id"));
+    //     sensorManager.removeSensor($(this).data("id"));
+    // });
 
 
     this.setSensorAnims();
@@ -1156,34 +1154,35 @@ MisGUI.prototype.addSensor = function(settings, id){
     rng.find(".currentV").html(thres);
     rng.find(".maxV").html(smax);
     
-    clone.find(".slider-range").slider({
-        min: smin,
-        max: smax,
-        value: thres,
-        toler: 789,
-        slide: function( ev, ui ) {
-            //console.log("slidetol:",$(this).slider("option","toler"));
-            var id = $(this).data("id");
-            var v  = $(this).slider("value");
-            $(this).parent().find(".currentV").html(v);        
-            sensorManager.onThreshold(id,v);
-            // sensorAnimWidth(ev, min, max, v);
-            //console.log("slide:",id,min,max);
-            //sensorAnimWidth(clone.find(".sensor-range"), min, max, v, settings.tolerance); 
-            //GRRRRRRRRRRRRRRRRRRRRRR min max settings !!!!!
-            sensorAnimWidth(clone.find(".sensor-range")
-                    , $(this).slider("option","min")
-                    , $(this).slider("option","max")
-                    , v
-                    , $(this).slider("option","toler")
-            );
-        },
-        stop: function(ev,ui) {
-            var v  = $(this).slider("value");
-            sensorManager.onThreshold(id,v);
-            sensorManager.saveSensorSettings();            
-        }
-    });
+    // clone.find(".slider-range").slider({
+    // $(".sensor-setting-more").find(".slider-range").slider({
+    //     min: smin,
+    //     max: smax,
+    //     value: thres,
+    //     toler: 789,
+    //     slide: function( ev, ui ) {
+    //         //console.log("slidetol:",$(this).slider("option","toler"));
+    //         var id = $(this).data("id");
+    //         var v  = $(this).slider("value");
+    //         $(this).parent().find(".currentV").html(v);        
+    //         // sensorManager.onThreshold(id,v);
+    //         // sensorAnimWidth(ev, min, max, v);
+    //         //console.log("slide:",id,min,max);
+    //         //sensorAnimWidth(clone.find(".sensor-range"), min, max, v, settings.tolerance); 
+    //         //GRRRRRRRRRRRRRRRRRRRRRR min max settings !!!!!
+    //         sensorAnimWidth($(this).find(".sensor-range")
+    //                 , $(this).slider("option","min")
+    //                 , $(this).slider("option","max")
+    //                 , v
+    //                 , $(this).slider("option","toler")
+    //         );
+    //     },
+    //     stop: function(ev,ui) {
+    //         var v  = $(this).slider("value");
+    //         // sensorManager.onThreshold(id,v);
+    //         sensorManager.saveSensorSettings();            
+    //     }
+    // });
 
     clone.find(".cmdOnOff").on("click",function(){
         console.log("cmdOnOff:",$(this).data("id"),this.name,this.checked ? true : false);
@@ -1207,8 +1206,8 @@ MisGUI.prototype.addSensor = function(settings, id){
     //indexMotor();
 
 
-    clone.find(".moreSensorSetting").bind('click', sensorSettings);
-    clone.find(".options .cmdOnOff").bind('click', echoActiveSetting);
+    // clone.find(".moreSensorSetting").bind('click', sensorSettings);
+    // clone.find(".options .cmdOnOff").bind('click', echoActiveSetting);
 
     //Didier ...
     /*
@@ -1602,97 +1601,66 @@ MisGUI.prototype.setSensorRange = function(id,min,max,tolerance,threshold){
     console.log("setSensorRange:");
     var div = this.divSensor(id);
     //toleranceUI(div.find(".tolerance-ui"),tolerance,threshold,min,max);
-    sensorAnimWidth(div.find(".sensor-range"),min,max,threshold,tolerance);
-}
-
-function sensorAnimWidth(element, min, max, cur, tolVal){
-
-    selec = element.parent();
-    
-    //var total = max+Math.abs(min) //MAIS ... nooooon GRRRRR
-    var total = Math.abs(max-min);
-    
-    percent = Math.abs(cur-min)*100/total;
-
-    ///console.log("sensorAnimWidth:",min,max,cur,percent);
-    
-    var anim1 = selec.find(".select-anim-1");
-    var anim2 = selec.find(".select-anim-2");
-    var curentVal = selec.find(".currentV");
-    var tol_ui = selec.find(".tolerance-ui");
-    var tol_Val = parseInt(tolVal);
-    var til_Val_input = selec.find("[name=tolerance]");//(".tolerance");
-
-
-    anim1.width(parseInt(percent)+"%");
-    anim2.width(parseInt(100-percent)+"%");
-
-    curentVal.css("left", percent-50+"%");
-    til_Val_input.css("left", percent-10+"%");
-
-
-    toleranceUI(tol_ui, tolVal, cur, min, max);
-
+    // sensorAnimWidth(div.find(".sensor-range"),min,max,threshold,tolerance);
 }
 
 
 
-function toleranceUI(element, val, cur, min, max){
 
-    //var total = max+Math.abs(min) //again !!! GRRRR
-    var total = Math.abs(max-min);
-    
-    element.width(val*100/total + "%");
 
-    percent = Math.abs(min-cur)*100/total;
-   
-    var half_w = parseInt(element[0].style.width)/2;
-    //console.log(percent);
-
-    element.css("left", percent - half_w +"%");
-
-}
+// updateSlider(
+//     $("#sortable-sens-output .animation .minval").val(), 
+//     $("#sortable-sens-output .animation .maxval").val(), 
+//     $("#sortable-sens-output .animation .tolerance").val(), 
+//     $("#sortable-sens-output .animation .slider-range").data("default")
+// );
 
 
 
-function sensorSettings(){
-
-    var target = $(this).parent().parent().children();
-    target.addClass('blury')
-    var settings = $(this).parent().parent().find(".sensor-setting-more")
-    settings.removeClass('blury')
-    settings.css("display", "block");
-
-    // NEW
-    $(".sensor-setting-more").bind("mouseenter", stopScroll);
-    $(".sensor-setting-more").bind("mouseleave", initScroll);
-    $(".select-setting").on('change', selectSettings);
 
 
 
-    $(this).parent().parent().find("button.set").bind("click", function(event) {
-        settings.css("display", "none");        
-        target.removeClass('blury');
 
-    });
-}
+// function sensorSettings(){
+
+//     var target = $(this).parent().parent().children();
+//     target.addClass('blury')
+//     var settings = $(this).parent().parent().find(".sensor-setting-more")
+//     settings.removeClass('blury')
+//     settings.css("display", "block");
+
+//     // NEW
+//     $(".sensor-setting-more").bind("mouseenter", stopScroll);
+//     $(".sensor-setting-more").bind("mouseleave", initScroll);
+//     $(".select-setting").on('change', selectSettings);
+
+
+
+//     $(this).parent().parent().find("button.set").bind("click", function(event) {
+//         settings.css("display", "none");        
+//         target.removeClass('blury');
+
+//     });
+// }
 
 // SCroll gestion
-function initScroll(e){
-    $(".sensors").css("overflow", "auto");
-}
-function stopScroll(e){
-    $(".sensors").css("overflow", "hidden");
-}
+// function initScroll(e){
+//     $(".sensors").css("overflow", "auto");
+// }
+// function stopScroll(e){
+//     $(".sensors").css("overflow", "hidden");
+// }
 
 
-function selectSettings() {
-    var target = $(this).val();
-    if(target){
-        $(".options").children().css("display", "none");
-        $("."+target).css("display", "block");
-    }
-}
+
+
+// function selectSettings() {
+//     var target = $(this).val();
+//     if(target){
+//         $(".options").children().css("display", "none");
+//         $("."+target).css("display", "block");
+//     }
+// }
 
 
 
@@ -1857,6 +1825,173 @@ function midiPanelOver(){
 }
 
 
+
+
+
+
+
+////NEW ALEX
+
+
+// À initialiser je sais pas trop comment...
+var minVal = 0;
+var maxVal = 100;
+var curVal = 50;
+var tolVal = 45;
+
+
+
+
+$(".sensor-setting-more").find(".slider-range").slider({
+    min: minVal,
+    max: maxVal,
+    value: curVal,
+    toler: tolVal,
+    slide: function( ev, ui ) {
+        console.log("slidetol:",$(this).slider("option","toler"));
+        var id = $(this).data("id");
+        var v  = $(this).slider("value");
+        $(this).parent().find(".currentV").html(v);        
+        // sensorManager.onThreshold(id,v);
+        // sensorAnimWidth(ev, min, max, v);
+        //console.log("slide:",id,min,max);
+        //sensorAnimWidth(clone.find(".sensor-range"), min, max, v, settings.tolerance); 
+        //GRRRRRRRRRRRRRRRRRRRRRR min max settings !!!!!
+        sensorAnimWidth($(this).find(".sensor-range")
+                , $(this).slider("option","min")
+                , $(this).slider("option","max")
+                , v
+                , tolVal
+        );
+
+        /// v = current value udated;
+
+    },
+    stop: function(ev,ui) {
+        var v  = $(this).slider("value");
+        // sensorManager.onThreshold(id,v);
+        sensorManager.saveSensorSettings(); 
+
+        /// v = current value udated;
+
+    }
+}); 
+
+
+
+
+
+
+
+//Update des inputs
+$(".tolerance").on('input', changeTolerence);
+$(".minval").on('input', changeMin);
+$(".maxval").on('input', changeMax);
+
+
+function changeTolerence(element){
+    tolVal = $(this).val();
+    sensorAnimWidth(element, minVal, maxVal, curVal, tolVal);
+}
+
+function changeMin(element){
+    minVal = $(this).val();
+    sensorAnimWidth(element, minVal, maxVal, curVal, tolVal);
+}
+
+function changeMax(element){
+    maxVal = $(this).val();
+    sensorAnimWidth(element, minVal, maxVal, curVal, tolVal);
+}
+
+
+
+
+function sensorAnimWidth(element, min, max, cur, tolVal){
+
+    minVal = min;
+    maxVal = max;
+    curVal = cur;
+    tolVal = tolVal;
+
+    selec = $("#sortable-sens-output .animation");
+
+    var total = Math.abs(max-min);
+    
+    percent = Math.abs(cur-min)*100/total;
+    
+    var anim1 = selec.find(".select-anim-1");
+    var anim2 = selec.find(".select-anim-2");
+    var curentVal = selec.find(".currentV");
+    var tol_ui = selec.find(".tolerance-ui");
+    var tol_Val = parseInt(tolVal);
+    var til_Val_input = selec.find(".tolerance");
+
+
+
+    anim1.width(parseInt(percent)+"%");
+    anim2.width(parseInt(100-percent)+"%");
+
+    curentVal.css("left", percent-50+"%");
+    til_Val_input.css("left", percent-10+"%");
+
+
+    toleranceUI(tol_ui, tolVal, cur, min, max);
+
+    /// curVal = current value udated;
+
+
+}
+
+
+
+function toleranceUI(element, val, cur, min, max){
+
+    //var total = max+Math.abs(min) //again !!! GRRRR
+    var total = Math.abs(max-min);
+    
+    element.width(val*100/total + "%");
+
+    percent = Math.abs(min-cur)*100/total;
+   
+    var half_w = parseInt(element[0].style.width)/2;
+    //console.log(percent);
+
+    element.css("left", percent - half_w +"%");
+
+}
+
+
+$(".single-sensor").bind("click", selectSensor);
+
+function selectSensor(){
+    $(".single-sensor").removeClass("activ");
+    $(this).addClass("activ");
+
+    //// Load sensor-setting-more
+    
+
+    /// hide element
+    $(".sensor-setting-more .input-wrapper").find("section[name='cm9']").hide();//?show()
+
+    // $(".sensor-setting-more .input-wrapper").find("section[name='cm9']").hide();
+}
+
+$(".single-sensor .close").bind("click", removeSensor);
+
+function removeSensor(){
+    $(this).parent().remove();
+    //UPDATE Sensor...
+}
+
+
+
+//RIGHT CLICK FOR OUTPUT
+$("#sortable-sens-output section").contextmenu(function(e) {
+    contextmenuBox(e.pageX, e.pageY);
+    $(this).addClass('selected');
+});
+    
 $("#changeDxlID").keypress(function(e){
     //console.log("KEY:",e);
     if(e.key=='Enter'){
@@ -1880,9 +2015,63 @@ $("#changeDxlID").keypress(function(e){
 
 
 
+function contextmenuBox(x, y){
+
+    if($(".context-box")){
+        $(".context-box").remove();
+        $("#sortable-sens-output section").removeClass('selected');
+    }
+
+    var div = document.createElement("DIV");
+    div.className = "context-box";
+    div.style.left = x+"px";
+    div.style.top = y+"px";
+
+    var span1 = document.createElement("SPAN");
+    span1.innerHTML = "Edit";
+    span1.className = "edit-context";
+
+
+    var span2 = document.createElement("SPAN");
+    span2.innerHTML = "Remove";
+    span2.className = "remove-output";
+
+
+    div.appendChild(span1);
+    div.appendChild(span2);
+
+
+    document.body.appendChild(div);
+
+    $(".remove-output").bind("click", removeOutput);
+
+    $("body").bind("click", removeContext);
+
+}
+
+function removeContext(){
+    if($(".context-box")){
+        $(".context-box").remove();
+        $("#sortable-sens-output section").removeClass('selected');      
+    }
+}
+
+function removeOutput(){
+    var id = $("#sortable-sens-output .selected").attr('id');
+    console.log(id);
+
+    $("#sortable-sens-output .selected").remove();
+    
+    /// Update removed output.
+
+}
+
+
 $("#closeDxl").on('click',function(){
     $("#dynamixel-ctrl").css("display","none");
 })
+
+
 var openDxlControl = function(index){
     $("#dynamixel-ctrl").css("display", "block");
     var dxlID = dxlManager.getIDByIndex(index);

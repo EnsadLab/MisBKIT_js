@@ -69,7 +69,7 @@
 				<div id="divOSC" class="plug">
 					<p>
 						OSC  <span class="status"></span>
-						<input id="btOSC" type="checkbox" class="small warning cmdOnOff" name ="enable"title="enable/disable">
+						<input id="btOSC" type="checkbox" class="small warning cmdOnOff" name ="enable" title="enable/disable">
 					</p>
 					<div class="content advanced">
 						<br>OSC :<br>
@@ -370,247 +370,309 @@
 			<div class="sensors">
 				<ul id="sortable-sens" name="listSensors">
 
-
 				<!-- SIngle Sensors -->
-					<li class="single-sensor ui-state-default">
-
+					<!-- <li class="single-sensor ui-state-default">
 						<button class="close"><img src="assets/close.png" alt=""></button>
 						<input type="checkbox" class="power float-left cmdTog" name ="sensorOnOff" title="enable/disable">
 
 						<input type="text" class="float-left medium" placeholder="Sensor name" name="sensorName" size="58">
 
-						
+						<p class="info medium-75 float-left">CM9 to OSC</p>
 						<div class="sensor-setting">
-							<div class="live-value">?</div>
 							<div class="live-value-ui">•</div>
-							<!-- Pour modifier la position du curseur, il faut traduire la valeur en % et ajouter ce script : $(".live-value-ui").css("left", val+"%");
-							-->
-							<div class="select-anim-1">
-								<!-- animation 1 -->
-								<select class="listAnims-1 active" name="anim1" id="">
-									<option value="">Animation 1</option>
-									<option value="">Animation 2</option>
-									<option value="">Animation 3</option>
-									<option value="">Animation 4</option>
-								</select>
-							</div>
-
-
-							<div class="select-anim-2">
-								<!-- animation 2 -->
-								<select class= "listAnims-2" name="anim2" id="">
-									<option value="">Animation 1</option>
-									<option value="">Animation 2</option>
-									<option value="">Animation 3</option>
-									<option value="">Animation 4</option>
-								</select>
-							</div>
-							
-							<div class="tolerance-ui"></div>
-
-							<div class="sensor-range">
-								 <div class="minV">...</div>
-								 <div class="maxV">...</div>
-								 <div class="currentV">...</div>
-								 <div class="slider-range" data-min="0" data-max="100" data-default= "50" ></div>
-								 
-							</div>
-							<!--<input type="number" class="tolerance small" placeholder="tolerance" name="">-->
-							
-							<div class="large">
-								<br>
-								<div class="large float-left">
-									<h4 class="text-left">Tolerance :</h4>
-										<input type="number" class="small  tiny cmdInt" placeholder="tolerance" name="tolerance">			
-								</div>
-								<div class="medium float-left">
-									<h4 class="text-left">Min value :</h4>
-									<input type="number" class="small  tiny cmdInt" placeholder="min value" name="valMin">
-									
-								</div>
-								<div class="medium float-right">
-									<h4 class="text-right">Max value :</h4>
-									<input type="number" class="small text-right tiny cmdInt" placeholder="max value" name="valMax">
-								</div>
-							</div>
-
 						</div>
+					</li> -->
+				<!-- END SIngle Sensors -->
 
 
-						<!-- <div class="large text-left">
-							<button class="moreSensorSetting float-left"><img src="assets/settings.png"></button>
-							<section class="medium info echo float-left">Midi</section>
 
-						</div> -->
 
+
+				<!-- SIngle Sensors -->
+					<li class="single-sensor ui-state-default activ">
+						<button class="close"><img src="assets/close.png" alt=""></button>
+						<input type="checkbox" class="power float-left cmdTog" name ="sensorOnOff" title="enable/disable">
+
+						<input type="text" class="float-left medium" placeholder="Sensor name" name="sensorName" size="58">
+
+						<p class="info medium-75 float-left">CM9 to OSC</p>
+						<div class="sensor-setting">
+							<div class="live-value-ui">•</div>
+						</div>
+					</li>
+				<!-- END SIngle Sensors -->
+
+				<!-- SIngle Sensors -->
+					<li class="single-sensor ui-state-default ">
+						<button class="close"><img src="assets/close.png" alt=""></button>
+						<input type="checkbox" class="power float-left cmdTog" name ="sensorOnOff" title="enable/disable">
+
+						<input type="text" class="float-left medium" placeholder="Sensor name" name="sensorName" size="58">
+
+						<p class="info medium-75 float-left">CM9 to OSC</p>
+						<div class="sensor-setting">
+							<div class="live-value-ui">•</div>
+						</div>
+					</li>
+				<!-- END SIngle Sensors -->
+				
+				</ul>
+
+				<div class="sensor-setting-more">
+					<select name="input" id="" class="large">
+						<option>Select Input</option>
+						<option value="">____</option>
+					</select>
+					<div class="input-wrapper">
+
+						<!-- INPUT -->
 						
+						<section name="cm9">
+							<div class="medium float-left ">
+								<input type="checkbox" class=" small cmdOnOff" name ="mobilizingEnabled" title="enable/disable">	
+								<h4>CM9</h4>	
+							</div>
+						</section>
 
-						<div class="sensor-setting-more clear">
-							
-							<!-- <h3>Settings</h3> -->
-							
 
-							<h3>Input</h3>
-							<h3>Output</h3>
-							<section>
-
-								<div class="medium float-left">
-									<input type="checkbox" class=" small cmdOnOff" name ="cm9Enabled" title="enable/disable">	
-									<h4>CM9</h4>	
-								</div>
-								
-								<div class="medium float-left text-center">
-									<input type="number" class="medium tiny cmdInt" placeholder="Pin" name="cm9Pin">
-								</div>
-								
-							</section>					
-
-							<section>
+						<section>
+							<div class="medium float-left ">
 								<input type="checkbox" class="small cmdOnOff" name ="oscEnabled" title="enable/disable">
 								<h4>OSC</h4>
-								<!-- <div class="info">adresse : /sensor/proximity</div> -->
-								<!-- <input type="text" class="OSC-setting" placeholder="OSC adress" name=""> -->
+							</div>
+
+							<div class="medium float-left text-right">
+								<input type="text" class="large tiny" placeholder="adress" name="">
+							</div>
 								
-							</section>
+						</section>
 
-							<!--
-							<section>
-								<!-- Input -->
-								<!--
-								<input type="checkbox" class="small cmdOnOff" name ="mobilizingEnabledInpput" title="enable/disable">	
+						<section>
+							<div class="medium float-left ">
+								<input type="checkbox" class="small cmdOnOff" name ="oscEnabled" title="enable/disable">
+								<h4>Mobilizing</h4>
+							</div>
 
-								<h4>Mobilizing</h4>							
-							</section>-->
-							<!--
-							<section>
-								<!-- output -->
-								<!--
-								<input type="checkbox" class="small cmdOnOff" name ="mobilizingEnabledOutput" title="enable/disable">	
-								<h4>Mobilizing</h4>							
-							</section>-->
-
-
-							<section>
-								<div class="medium float-left">
-									<input type="checkbox" class="small cmdOnOff" name ="fromMotorEnabled" title="enable/disable">	
-									<h4>Motor Mapping</h4>
-								</div>
-
-								<div class="medium float-right text-right">
-									<input type="number" class="medium tiny float-right cmdInt" placeholder="index" name="fromMotorIndex">
-								</div>						
-							</section>	
-
-
-							<section>
-								<div class="medium float-left">
-									<input type="checkbox" class="small cmdOnOff" name ="toMotorEnabled" title="enable/disable">	
-									<h4>Motor Mapping</h4>
-								</div>
-
-								<div class="medium float-right text-right">
-									<input type="number" class="medium tiny float-right cmdInt" placeholder="index" name="toMotorIndex">
-								</div>
-
-							</section>
-
-							<section class="hight">
-								<div class="large float-left">
-									<input type="checkbox" class="small cmdOnOff" name ="midiEnabled"title="enable/disable">
-									<h4>Midi</h4>
-								</div>
+							<div class="medium float-left text-right">
+								<input type="text" class="large tiny" placeholder="adress" name="">
+							</div>
 								
-								<div class="large float-left">
-									<div class="medium float-left">
-										<label class="toggle-small">
-								  			<input type="checkbox" class="cmdTog cmdOnOff" name="midiCmd">
-								  			<div class="slider midi round"></div>
-										</label>
-									</div>
-									<div class="medium float-right text-right">
-										<input type="number" class="medium-75 tiny cmdInt"  placeholder="index" name="midiMapping">
-										
-									</div>
-									<div class="large">
-										<select class= " tiny large cmdString"  id="" name="midiPort">
-											<option value="">midi 1</option>
-											<option value="midi 2">midi 2</option>
-											<option value="">midi 3</option>
-											<option value="">midi 4</option>
-										</select>
-									</div>
-								</div>
+						</section>
 
-							</section>
-							<section>
-								<!-- output -->
-								
-								<input type="checkbox" class="small cmdOnOff" name ="mobilizingEnabled" title="enable/disable">	
-								<h4>Mobilizing</h4>							
-							</section>
+						
 
-							<!--<section>
-								<input type="checkbox" class=" cmdOnOff small" name ="oscEnabled" title="enable/disable">
-								<h4>OSC</h4>-->
-								<!-- <div class="info">adresse : /sensor/proximity</div> -->
-								<!-- <input type="text" class="OSC-setting" placeholder="OSC adress" name=""> -->
-								
-							<!--</section>-->
+						<section class="hight">
+							<div class="large float-left">
+								<input type="checkbox" class="small cmdOnOff" name ="midiEnabled" title="enable/disable">
+								<h4>Midi</h4>
+							</div>
 							
-
-							<!-- <div class="options">
-								<section class="osc">
-									<input type="checkbox" class="osc-btn cmdOnOff" name ="oscEnabled" title="enable/disable" data-label="OSC">
-									<div class="info">adresse : /sensor/proximity</div>
-									<input type="number" class="small" placeholder="port" name="">
-								</section>
-
-								<section class="midi">
-									<input type="checkbox" class="midi-btn cmdOnOff" name ="midiEnabled"title="enable/disable" data-label="Midi">
-									<select class="medium cmdString"  id="" name="midiPort">
+							<div class="large float-left">
+								<div class="medium float-left">
+									<label class="toggle-small">
+							  			<input type="checkbox" class="cmdTog" name="midiCmd">
+							  			<div class="slider midi round"></div>
+									</label>
+								</div>
+								<div class="medium float-right text-right">
+									<input type="number" class="medium-75 tiny" placeholder="index">
+									
+								</div>
+								<div class="large">
+									<select class= " tiny large cmdString"  id="" name="midiPort">
 										<option value="">midi 1</option>
-										<option value="">midi 2</option>
+										<option value="midi 2">midi 2</option>
 										<option value="">midi 3</option>
 										<option value="">midi 4</option>
 									</select>
-									<br>
-									<div class="large">
-										<label class="toggle-small">
-								  	
-									  	<input type="checkbox" class="cmdTog cmdOnOff" name="midiCmd">
-									  	<div class="slider midi round"></div>
-										</label>
+								</div>
+							</div>
 
-										<input type="number" class="small cmdInt" placeholder="nb" name="midiMapping">
-									</div>
-								</section>
-								<section class="cm9">
-									<input type="checkbox" class="CM9-btn cmdOnOff" name ="cm9Enabled" title="enable/disable" data-label="CM9">
-									<input type="number" class="small cmdInt" placeholder="PIN" name="cm9Pin" title="Analog Pin">
-								</section>
-								<section class="mapto">
-									<input type="checkbox" class="power cmdOnOff" name ="toMotorEnabled" data-label="Map to motor">
-									<input type="number" class="small cmdInt" placeholder="nb" name="toMotorIndex">
-								</section>
-								<section class="mapfrom">
-									<input type="checkbox" class="power cmdOnOff" name ="fromMotorEnabled" data-label="Map from motor">
-									<input type="number" class="small cmdInt" placeholder="nb" name="fromMotorIndex">
-								</section>
-							</div> -->
+						</section>
 
+						<section>
+							<div class="medium float-left">
+								<input type="checkbox" class="small cmdOnOff" name ="fromMotorEnabled" title="enable/disable">	
+								<h4>Motor Mapping</h4>
+							</div>
+
+							<div class="medium float-right text-right">
+								<input type="number" class="medium tiny float-right" placeholder="index" name="">
+							</div>						
+						</section>	
+
+
+					</div>
+
+					<div class="live-view">
+						<div class="info small float-left text-left">
+							min <br><br>
+							<input type="number" id="min-value-sensors" class="medium tiny" value="0">
 						</div>
+						<div class="small float-left text-center">
+							<span class="live-value">50</span>
+						</div>
+						<div class="info small float-right text-right">
+							max <br><br>
+							<input type="number" id="max-value-sensors" class="medium tiny" value="100">
+						</div>
+						<div class="live-value-ui">•</div>
+					</div>
+					<select name="output" id="" class="large">
+						<option>Add output</option>
+						<option value="">____</option>
+					</select>
+					<div>
+
+						<ul id="sortable-sens-output" name="listOutput">
+						<!-- OUTPUT -->
+
+							<!-- À refaire -->
+							<li class="ui-state-default">
+
+								<section class="animation" id="animation-switcher" name="animation">
+									<div class="large float-left ">
+										<input type="checkbox" class="small cmdOnOff" name ="oscEnabled" title="enable/disable">
+										<h4>Animations switcher</h4>
+									</div>
+
+									<div class="large float-left">
+										<br>
+										<div class="select-anim-1">
+
+											<select class="listAnims-1 active" name="anim1" id="">
+												<option value="">Animation 1</option>
+												<option value="">Animation 2</option>
+												<option value="">Animation 3</option>
+												<option value="">Animation 4</option>
+											</select>
+										</div>
 
 
-					</li>
-					<!-- END SIngle Sensors -->
+										<div class="select-anim-2">
+
+											<select class= "listAnims-2" name="anim2" id="">
+												<option value="">Animation 1</option>
+												<option value="">Animation 2</option>
+												<option value="">Animation 3</option>
+												<option value="">Animation 4</option>
+											</select>
+										</div>
 
 
+										<div class="tolerance-ui"></div>
+
+										<div class="sensor-range">
+											 <!-- <div class="minV">...</div>
+											 <div class="maxV">...</div> -->
+											 <div class="currentV">...</div>
+											 <div class="slider-range" data-min="0" data-max="100" data-default= "50" ></div>
+											 
+										</div>
+										<div class="large">
+											<div class="large float-left">
+												<h4 class="text-left">Tolerance :</h4>
+												<input type="number" class="tolerance small" placeholder="tolerance" value="20" name="">
+											</div>
+											<div class="medium float-left">
+												<h4 class="text-left">Min value :</h4>
+												<input type="number" class=" minval small  tiny cmdInt" placeholder="min value" name="valMin">
+												
+											</div>
+											<div class="medium float-right">
+												<h4 class="text-right">Max value :</h4>
+												<input type="number" class=" maxval small text-right tiny cmdInt" placeholder="max value" name="valMax">
+											</div>
+										</div>
+								
+									</div>
+										
+								</section>
+							</li>
 
 
+							<li class="ui-state-default">
+								<section>
+									<div class="medium float-left ">
+										<input type="checkbox" class="small cmdOnOff" name ="oscEnabled" title="enable/disable">
+										<h4>OSC</h4>
+									</div>
 
 
+									<div class="medium float-left text-right">
+										<input type="text" class="large tiny" placeholder="adress" name="">
+									</div>
+										
+								</section>
+							</li>
 							
-				</ul>
+
+							<li class="ui-state-default">
+								<section>
+									<div class="medium float-left">
+										<input type="checkbox" class="small cmdOnOff" name ="tomotor" title="enable/disable">	
+										<h4>Motor Mapping</h4>
+									</div>
+
+									<div class="medium float-right text-right">
+
+										<input type="number" class="medium tiny float-right" placeholder="index" name="">
+									</div>
+
+								</section>
+							</li>
+							
+							<li class="ui-state-default">
+								<section class="hight">
+									<div class="large float-left">
+										<input type="checkbox" class="small cmdOnOff" name ="midiEnabled" title="enable/disable">
+										<h4>Midi</h4>
+									</div>
+									
+									<div class="large float-left">
+										<div class="medium float-left">
+											<label class="toggle-small">
+									  			<input type="checkbox" class="cmdTog" name="midiCmd">
+									  			<div class="slider midi round"></div>
+											</label>
+										</div>
+										<div class="medium float-right text-right">
+											<input type="number" class="medium-75 tiny" placeholder="index">
+											
+										</div>
+										<div class="large">
+											<select class= " tiny large cmdString"  id="" name="midiPort">
+												<option value="">midi 1</option>
+												<option value="midi 2">midi 2</option>
+												<option value="">midi 3</option>
+												<option value="">midi 4</option>
+											</select>
+										</div>
+									</div>
+
+								</section>
+							</li>
+							
+							<li class="ui-state-default">
+								<section>
+									<div class="medium float-left ">
+										<input type="checkbox" class="small cmdOnOff" name ="oscEnabled" title="enable/disable">
+										<h4>Mobilizing</h4>
+									</div>
+
+									<div class="medium float-left text-right">
+										<input type="text" class="large tiny" placeholder="adress" name="">
+									</div>
+										
+								</section>
+							</li>
+						</ul>
+
+					</div>
+
+				</div>
+				
+
 			</div>
 		</div>
 		

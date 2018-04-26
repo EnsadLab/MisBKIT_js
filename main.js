@@ -38,8 +38,8 @@ app.on('ready', function() {
 
   //mainWindow.show();
   ////////// TO PUT IN COMMENT WHEN EXPORTING
-  if(app.getAppPath().includes("/Didier/"))
-    mainWindow.webContents.openDevTools();
+  // if(app.getAppPath().includes("/Didier/"))
+  mainWindow.webContents.openDevTools();
 
 
   mainWindow.on('close', function() {
