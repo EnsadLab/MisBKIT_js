@@ -51,7 +51,7 @@ function MisGUI(){
 
 
     $('#btcm9').on('click',function(){
-        console.log("btcm9 click",this.checked);
+        //console.log("btcm9 click",this.checked);
         //var cl = $(this).prop("class");
         if(this.checked){
             cm9Com.open();
@@ -487,7 +487,7 @@ MisGUI.prototype.selectMidiMappingPort = function(motorID, name){
 MisGUI.prototype.init =function(){
     console.log("----- INIT GUI");
 
-    $("#robusOnOff").prop("disabled",true);
+    //DB deleted $("#robusOnOff").prop("disabled",true);
 
     var parent = $("#divAnims").find("[name=listAnims]");
     var tanim = parent.find(".single-anim:first");
@@ -528,21 +528,10 @@ MisGUI.prototype.init =function(){
         clone.find(".midi-blinker").css("display", "none");
     }
 
-    //!!! right click & context menu  DONOT WORK !!! ?????? 
-    $("#divMotors").find('div').on('click',function(e){
-        if( e.metaKey || e.altKey || e.shiftKey || e.ctrlKey ){//ctrl doesnt work!!!
-            var index = $(this).data("index");
-            if(index != undefined){
-                openDxlControl(index);
-            }
-        }
-    });
-    $("#divMotorSettings").find('div').on('click',function(e){
-        if( e.metaKey || e.altKey || e.shiftKey || e.ctrlKey ){//ctrl doesnt work!!!
-            var index = $(this).data("index");
-            if(index != undefined){
-                openDxlControl(index);
-            }
+    $(".single-motor").contextmenu(function() {
+        var index = $(this).data("index");
+        if(index != undefined){
+            openDxlControl(index);
         }
     });
 
@@ -562,7 +551,6 @@ MisGUI.prototype.init =function(){
         //console.log("misgui:: setmidimotormapping will be called", index, val);          
         motorMappingManager.setMidiMotorMappingIndex(index,parseInt(val)); // Gui only treats CC midi mappings for now
     });
-
 
     //create rotaries
     var svgAngles = $(".rotAngle");

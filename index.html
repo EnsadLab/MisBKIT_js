@@ -109,15 +109,54 @@
 					</div>
 
 				</div>
-				<!--
-				<div id="robusPlug" class="plug">
+				
+				<div id="robusPlug" class="plug robusManager">
 					<p>
 						ROBUS  <span class="status"></span>
-						<input id="robusOnOff" type="checkbox" class="small" name ="enable" title="enable/disable">
+						<input id="robusOnOff" type="checkbox" class="small stopAll" func="enable" title="enable/disable">
 					</p>
 					<div class="content">
-						<br>Robots :<br>
-						<br>
+						<br>Robots :
+						<hr>
+						<label class="toggle-small">
+							<input type="checkbox" func="serialWifi"  >
+							<div class="slider serial round" css=""></div>
+						</label>
+						<select func="selectPort" class= "small tiny" style="width:250px;"></select>
+
+
+						<button func="onClick" name="#1">Button1</button> <br>
+						<input type="text" func="onText"><br>
+						<input type="number" func="onNum1"><br>
+						<input type="number" func="onNum2"><br>
+						<select func="onSelect" class= "small tiny">
+								<option>none</option>
+								<option value="opt 1">opt 1</option>
+								<option value="opt 2">opt 2</option>
+								<option value="opt 3">opt 3</option>
+								<option value="opt 4">opt 4</option>
+						</select>
+						<div class="robusbot" style="display:none;">
+								<hr>
+								<font color='gray' size="2">
+								Alias: <input func="robAlias" type=text style="width:80px;">
+								Id: <input func="robId" type="text" style="width:30px;">
+								Type: <input func="robType" type="text" style="width:100px;"><br>
+								p1:<input func="robP1" type="text" style="width:50px;">
+								p5:<input func="robP5" type="text" style="width:50px;">
+								p6:<input func="robP6" type="text" style="width:50px;">
+								p7:<input func="robP7" type="text" style="width:50px;">
+								p8:<input func="robP8" type="text" style="width:50px;">
+								p9:<input func="robP9" type="text" style="width:50px;">
+								
+								
+								</font>
+								<input type="text" func="botText">
+								<input type="number" func="botNum">		
+						</div>
+
+						
+  
 						<!--input type="text" name="rien"-->
 						<!--
 						<textarea id="robusRobots" rows=6 cols=15>octo_wifi</textarea>
@@ -126,17 +165,20 @@
 							<button id="robusReset" class="disconnected" >RESET</button>
 							<button id="robusInfo"  class="disconnected" >info</button>
 						</div>
+						-->
 						<!--
 						<br>
 						<textarea id="robusTxt" rows=18 cols=15>message</textarea>
-						--> <!--
+						--> 
 					</div>
 				</div>
-				-->
+				
 
 				<!--div class="plug" >
+					<p>
 						ADVANCED :
 						<button class="gear"><img src="assets/settings.png"></button>
+					</p>
 						<input type="text" size="3">
 				</div-->
 
@@ -572,7 +614,7 @@
 			</div>
 		</div>
 		
-		<div class="modale draggable" id="dynamixel-ctrl">
+		<div class="modale draggable" id="dynamixel-ctrl" style="display: none;">
 			<button id="closeDxl" class="close-modale"><img src="assets/close.png" alt=""></button>
 			<input type="text" size="5" id="btAdvID"><label for="">[ID]</label>
 			&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;

@@ -23,7 +23,8 @@ var dialog = remote.dialog;
 const OS = require('os');
 
 const udp  = require('dgram');
-const osc  = require('osc-min'); 
+const osc  = require('osc-min');
+const serialPort = require('serialport');
 
 var fs = null;
 
@@ -151,6 +152,7 @@ function showConfig(show){
 window.onbeforeunload=function(){
         //cm9Com.close();
         //dxlManager.serialOnOff(false);
+        robusManager.closeSerial();
         dxlManager.saveSettings();
         sensorManager.saveSensorSettings();
         settingsManager.saveSettings();
