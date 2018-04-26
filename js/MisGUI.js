@@ -100,6 +100,141 @@ function MisGUI(){
 
 }; //MisGUI
 
+
+/*
+  ex: cloneElement(".single-gizmo",42);
+  ex: cloneElement(".single-gizmo","giz42");
+  ex: cloneElement(".single-gizmo");
+ */
+MisGUI.prototype.cloneElement = function(selector,eltID){ //eltID may be a string
+    var model = $(selector).first();      //model MUST be first ---> insertAfter
+    if(model.length>0){
+        var clone = model.clone(true);
+        if(eltID != undefined){           //set eltID to all clone elts
+            clone.attr("eltID",eltID);
+            clone.find("*").attr("eltID",eltID);
+        }
+        clone.insertAfter(model);
+        clone.show();
+    }
+}
+
+/*
+  ex: removeElement(".single-gizmo","giz42");
+*/
+MisGUI.prototype.removeElement = function(selector,eltID){
+    var elt = $(selector);
+    if(eltID != undefined){
+        elt = elt.filter("[eltID="+eltID+"]"); //.first(); ALL?
+    }
+    console.log("MisGUI.removing:",elt);
+    elt.remove();  
+}
+
+/*
+ex: html : <div class="myManager">
+             <input func="myfunc" ...>
+           </div>
+    
+    initGUIfunction( myManager, "myManager");
+    
+    -> manager.cmd(func,eltID,value);
+
+    ex:
+    myManager.prototype.cmd = function(func,eltID,value){
+        if( this[func]{
+            if( eltID == undefined )
+                this[func](value);
+            else
+                this[func](eltID,value);
+        }
+    }
+
+    className is for use with   setManagerValue() below
+
+*/
+MisGUI.prototype.initManagerFunctions = function(manager,className){
+    var parents = $("."+className);
+    parents.find("*").each(function( eltID ) {
+        var func = $(this).attr("func");
+        if(func){
+            if(manager[func]){
+                $(this).prop("manager",manager); //inutile ? keep manager 
+                switch($(this).prop("type")){
+                    case "text":
+                    case "number":
+                        $(this).on("keydown",function(e){
+                            if(e.keyCode==13) //trigger change when enter even if not modified
+                                $(this).trigger("change");                            
+                        });
+                    case "select-one": //select
+                        $(this).on("change",function(){
+                            $(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());                            
+                        });
+                        break;
+                    case "checkbox":
+                        $(this).on("change",function(){
+                            $(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).prop("checked"));                            
+                        });
+                        break;
+                    case "submit":  //button
+                        //console.log("button",$(this).attr("func"));
+                        $(this).on("click",function(){
+                            manager.cmd($(this).attr("eltID"),$(this).attr("name")); //name ... à discuter                           
+                        });
+                        break;
+                    default:
+                        console.log("initManagerFunctions:* type unhandled *",$(this));    
+                    break;
+                    
+                }
+            }
+        }
+    });
+}
+
+/*
+
+*/
+MisGUI.prototype.setManagerValue = function( className , func , value , eltID){
+    //console.log("GUIvalue:",select , func, value , eltID);
+    var elt = $('.'+className+" [func="+func+"]");
+    if(eltID != undefined){
+        elt = elt.filter("[eltID="+eltID+"]")
+    }
+    //if(sel.is("input")) ... hard way
+    switch(elt.prop("type")){
+        case "select-one":
+            if(Array.isArray(value)){ //fill options with value(s)
+                var prev = elt.val();
+                console.log("select-one.previous:",prev);
+                elt.empty();
+                for(var i=0;i<value.length;i++){
+                    if(value[i].length>0)
+                        elt.append($("<option value=" + "'" + value[i] + "'>" + value[i] + "</option>"));
+                }
+                if(prev)elt.val(prev);
+                else elt.val(value[0]);
+                elt.trigger("change");
+            }
+            else
+                elt.val(value);            
+            break;
+        case "text":
+        case "number":
+            elt.val(value);
+            break;
+        case "checkbox":
+            elt.prop("checked",value);    
+            break;
+        default:
+            console.log("GUIvalue:type unhandled:",func,elt.prop("type"));
+    }
+}
+
+
+
+
 MisGUI.prototype.glou = function(){
     console.log("--------GLOU----------");
 };

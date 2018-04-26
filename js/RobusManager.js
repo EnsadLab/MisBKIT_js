@@ -67,7 +67,7 @@ var removeElement = function(selector,eltID){
     elt.remove();  
 }
 
-
+//TODO ---> misGUI
 var initGUIfunctions = function(manager,className){
     var parents = $("."+className);
     parents.find("*").each(function( eltID ) {
@@ -125,12 +125,15 @@ class RobusManager{
         this.buffer = Buffer.alloc(1024);
 
 
-        initGUIfunctions(this,this.className);
-        cloneElement(".robusbot",3);
-        cloneElement(".robusbot",2);
-        cloneElement(".robusbot",1);
-        removeElement(".robusbot",3);
+    }
 
+    init(){
+        //tests
+        misGUI.initManagerFunctions(this,this.className);
+        misGUI.cloneElement(".robusbot",3);
+        misGUI.cloneElement(".robusbot",2);
+        misGUI.cloneElement(".robusbot",1);
+        misGUI.removeElement(".robusbot",3);
     }
 
     // "cmd" 42 value
@@ -160,14 +163,14 @@ class RobusManager{
 
     onText(txt){
         console.log("robus.ontext:",txt)
-        setGUIvalue( "robusManager","onSelect", txt);
-        setGUIvalue( "robusManager","botNum",txt, 43);
+        misGUI.setManagerValue( "robusManager","onSelect", txt);
+        misGUI.setManagerValue( "robusManager","botNum",txt, 43);
     };
     onNum1(n){
         console.log("robus.onNum1:",n);
-        setGUIvalue("robusManager","onNum2", n);
-        if(n==0)setGUIvalue("robusManager","serialWifi",false);
-        else if(n==1)setGUIvalue("robusManager","serialWifi",true);
+        misGUI.setManagerValue("robusManager","onNum2", n);
+        if(n==0)misGUI.setManagerValue("robusManager","serialWifi",false);
+        else if(n==1)misGUI.setManagerValue("robusManager","serialWifi",true);
 
     }
     onNum2(n){
@@ -184,7 +187,7 @@ class RobusManager{
         setGUIvalue("robusManager","enable",false);
         if(!onoff){ //serial
             this.scanSerials(function(names){
-                setGUIvalue("robusManager","selectPort",names);
+                misGUI.setManagerValue("robusManager","selectPort",names);
             });
         }
         else{ //wifi

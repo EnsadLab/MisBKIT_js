@@ -182,6 +182,9 @@ window.onload = function() {
     //oscManager.open();
 
     oscMobilizing = new OscMobilizing();
+
+    robusManager.init();
+
     //dxlManager.loadSettings(); //-> now called from settingsManager when directories are ready
     
     //try{ cm9Com = new SerialClass(); }catch(e){}
