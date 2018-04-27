@@ -171,6 +171,7 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                         $(this).on("change",function(){
                             $(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());                            
                         });
+                        console.log($("function",this.val));
                         break;
                     case "checkbox":
                         $(this).on("change",function(){
@@ -203,6 +204,7 @@ MisGUI.prototype.setManagerValue = function( className , func , value , eltID){
         elt = elt.filter("[eltID="+eltID+"]")
     }
     //if(sel.is("input")) ... hard way
+    console.log("MngValue:",elt.prop("type"))
     switch(elt.prop("type")){
         case "select-one":
             if(Array.isArray(value)){ //fill options with value(s)
@@ -225,20 +227,39 @@ MisGUI.prototype.setManagerValue = function( className , func , value , eltID){
             elt.val(value);
             break;
         case "checkbox":
-            elt.prop("checked",value);    
+            if(elt.is(".onoff")) this.onoffState(elt,value); //ON , OFF , ERROR
+            else elt.prop("checked",value);    
             break;
         default:
             console.log("GUIvalue:type unhandled:",func,elt.prop("type"));
     }
 }
 
-
-
-
-MisGUI.prototype.glou = function(){
-    console.log("--------GLOU----------");
-};
-
+/*
+  <input type="checkbox" func="xxx" class="onoff"> 
+*/
+MisGUI.prototype.onoffState = function( dolzis , state){
+    console.log("MisGUI.prototype.checkState",state);
+    switch(state){
+        case false:
+        case "OFF":
+        case 0:
+            dolzis.prop("checked",false);
+            dolzis.removeClass("error");
+            break;            
+        case true:
+        case "ON":
+        case 1:
+            dolzis.removeClass("error");
+            dolzis.prop("checked",true);
+            break;
+        case "ERROR":
+        case 3:
+            dolzis.addClass("error");
+            dolzis.prop("checked",false);
+            break;
+    }
+}
 
 MisGUI.prototype.cmd = function(cmd,index,args) {
     console.log("gui command: ",index," cmd:",cmd," arg:",args);
