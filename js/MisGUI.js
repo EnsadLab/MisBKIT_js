@@ -155,11 +155,11 @@ ex: html : <div class="myManager">
 */
 MisGUI.prototype.initManagerFunctions = function(manager,className){
     var parents = $("."+className);
-    parents.find("*").each(function( eltID ) {
+    parents.find("*").each(function(i) {
         var func = $(this).attr("func");
         if(func){
             if(manager[func]){
-                $(this).prop("manager",manager); //inutile ? keep manager 
+                $(this).prop("manager",manager); //inutile ? keep manager ?
                 switch($(this).prop("type")){
                     case "text":
                     case "number":
@@ -180,7 +180,7 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                     case "submit":  //button
                         //console.log("button",$(this).attr("func"));
                         $(this).on("click",function(){
-                            manager.cmd($(this).attr("eltID"),$(this).attr("name")); //name ... à discuter                           
+                            manager.cmd($(this).attr("func"),$(this).attr("eltID")); //value? ... à discuter                           
                         });
                         break;
                     default:
