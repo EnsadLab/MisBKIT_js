@@ -22,9 +22,9 @@ To create a package :
   
 * in the project folder:
 
-  MACOS   : electron-packager . --platform=darwin --arch=x64 --overwrite --icon=misbkit.icns
+  - OS X    : electron-packager . --platform=darwin --arch=x64 --overwrite --icon=misbkit.icns
   
-  LINUX   : electron-packager . --platform=linux --arch=x64 --overwrite --icon=misbkit.icns
+  - LINUX   : electron-packager . --platform=linux --arch=x64 --overwrite --icon=misbkit.icns
   
-  WINDOWS : electron-packager . --platform=win32 --arch=x64 --overwrite --icon=misbkit.icns
+  - WINDOWS : electron-packager . --platform=win32 --arch=x64 --overwrite --icon=misbkit.icns
   
