@@ -12,5 +12,16 @@ pour installer electron simplement:
     - npm install electron --save-dev
     - npm install electron -g
 
-    (en fait je ne sais pas si celui avec --save-dev est indipensable)
+---------------------------------------------
 
+To create a package : 
+
+* install electron packager :
+  - npm i electron-packager
+  ( www.npmjs.com/package/electron-packager )
+  
+* in the project folder:
+  MACOS   : electron-packager . --platform=darwin --arch=x64 --overwrite --icon=misbkit.icns
+  LINUX   : electron-packager . --platform=linux --arch=x64 --overwrite --icon=misbkit.icns
+  WINDOWS : electron-packager . --platform=win32 --arch=x64 --overwrite --icon=misbkit.icns
+  
