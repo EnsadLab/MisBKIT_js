@@ -21,7 +21,10 @@ To create a package :
   ( www.npmjs.com/package/electron-packager )
   
 * in the project folder:
+
   MACOS   : electron-packager . --platform=darwin --arch=x64 --overwrite --icon=misbkit.icns
+  
   LINUX   : electron-packager . --platform=linux --arch=x64 --overwrite --icon=misbkit.icns
+  
   WINDOWS : electron-packager . --platform=win32 --arch=x64 --overwrite --icon=misbkit.icns
   
