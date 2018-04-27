@@ -2040,7 +2040,7 @@ function changeMax(element){
 }
 
 
-
+// Est-ce que je peux encore pusher???
 
 function sensorAnimWidth(element, min, max, cur, tolVal){
 
