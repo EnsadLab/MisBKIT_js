@@ -1349,8 +1349,18 @@ button.sensorsBTN img, button.animBTN img{
     color: rgba(0,255,153,1);
     font-size: 50px;
     text-align: left;
-    border-bottom:1px solid rgba(0,255,153,0.3);
     height:29px;
+}
+
+.green-bar{
+	background: rgba(0,255,153,0.5);
+	height:1px;
+	position: relative;
+	top:-2px;
+}
+
+.sensor-setting-more .green-bar{
+	top:70px;
 }
 
 
