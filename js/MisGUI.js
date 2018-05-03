@@ -131,6 +131,16 @@ MisGUI.prototype.removeElement = function(selector,eltID){
     elt.remove();  
 }
 
+MisGUI.prototype.hideElement = function(selector,eltID){
+    var elt = $(selector);
+    if(eltID != undefined){
+        elt = elt.filter("[eltID="+eltID+"]"); //.first(); ALL?
+    }
+    console.log("MisGUI.removing:",elt);
+    elt.hide();  
+}
+
+
 /*
 ex: html : <div class="myManager">
              <input func="myfunc" ...>
@@ -153,6 +163,9 @@ ex: html : <div class="myManager">
     className is for use with   setManagerValue() below
 
 */
+
+
+
 MisGUI.prototype.initManagerFunctions = function(manager,className){
     var parents = $("."+className);
     parents.find("*").each(function(i) {
@@ -160,6 +173,8 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
         if(func){
             if(manager[func]){
                 $(this).prop("manager",manager); //inutile ? keep manager ?
+                //console.log("TEST????",$(this).prop("type"));
+
                 switch($(this).prop("type")){
                     case "text":
                     case "number":
@@ -168,13 +183,20 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                                 $(this).trigger("change");                            
                         });
                     case "select-one": //select
+                        //console.log("***",$(this)); 
                         $(this).on("change",function(){
-                            $(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());                            
+                            // CEC: !!!!! Prob avec prop("manager").. pas bien stocké dans la balise
+                            //$(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());                           
+                            manager.cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val(),$(this).attr("param")); 
                         });
                         break;
                     case "checkbox":
                         $(this).on("change",function(){
-                            $(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).prop("checked"));                            
+                            //console.log("manager", $(this).prop("manager"));
+                            //console.log("checkbox...",func,$(this).attr("name"));
+                            // CEC: !!!!! Prob avec prop("manager").. pas bien stocké dans la balise
+                            // $(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).prop("checked"));   
+                            manager.cmd($(this).attr("func"),$(this).attr("eltID"),$(this).prop("checked"),$(this).attr("param"));                         
                         });
                         break;
                     case "submit":  //button
@@ -196,11 +218,14 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
 /*
 
 */
-MisGUI.prototype.setManagerValue = function( className , func , value , eltID){
-    //console.log("GUIvalue:",select , func, value , eltID);
+MisGUI.prototype.setManagerValue = function( className , func , value , eltID, param){
+    //console.log("GUIvalue:",className , func, value , eltID, param);
     var elt = $('.'+className+" [func="+func+"]");
     if(eltID != undefined){
         elt = elt.filter("[eltID="+eltID+"]")
+    }
+    if(param != undefined){
+        elt = elt.filter("[param="+param+"]");
     }
     //if(sel.is("input")) ... hard way
     switch(elt.prop("type")){
@@ -217,8 +242,8 @@ MisGUI.prototype.setManagerValue = function( className , func , value , eltID){
                 else elt.val(value[0]);
                 elt.trigger("change");
             }
-            else
-                elt.val(value);            
+            else{
+                elt.val(value);            }
             break;
         case "text":
         case "number":
@@ -1094,7 +1119,8 @@ MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
             dxlManager.removeAnim(animId);
         }
         console.log("GUI.killanim:");
-        self.setSensorAnims();  //?????      
+        //self.setSensorAnims();  //?????      
+        MisGUI_sensors.setSensorAnims();
     });
 
     clone.find(".play").on("click", function () {
@@ -1121,7 +1147,8 @@ MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
         .on("change", function () {
             var zis = $(this);
             dxlManager.renameAnim(zis.data("id"), zis.val());
-            self.setSensorAnims();
+            //self.setSensorAnims();
+            MisGUI_sensors.setSensorAnims();
         });
 
     clone.find("[name=animKey]")
@@ -1144,7 +1171,8 @@ MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
     clone.insertAfter(model);
     clone.show();
 
-    this.setSensorAnims();
+    //this.setSensorAnims();
+    MisGUI_sensors.setSensorAnims();
     
 }
 
@@ -1594,9 +1622,12 @@ MisGUI.prototype.scanMidiPorts = function(){
             var m = motorMappingManager.motorMappings[i].m;
             this.updateMidiMotorSelection(m.motorIndex,m.port,midiPortManager.midiPorts);
         }
+
+        sensorManager.updateMidiPorts();
+        /*
         for(id in sensorManager.sensors){
             this.changeSensor(sensorManager.sensors[id].s,id)
-        }
+        }*/
     }
 };
 
@@ -1960,172 +1991,6 @@ function midiPanelOver(){
 }
 
 
-
-
-
-
-
-////NEW ALEX
-
-
-// À initialiser je sais pas trop comment...
-var minVal = 0;
-var maxVal = 100;
-var curVal = 50;
-var tolVal = 45;
-
-
-
-
-$(".sensor-setting-more").find(".slider-range").slider({
-    min: minVal,
-    max: maxVal,
-    value: curVal,
-    toler: tolVal,
-    slide: function( ev, ui ) {
-        console.log("slidetol:",$(this).slider("option","toler"));
-        var id = $(this).data("id");
-        var v  = $(this).slider("value");
-        $(this).parent().find(".currentV").html(v);        
-        // sensorManager.onThreshold(id,v);
-        // sensorAnimWidth(ev, min, max, v);
-        //console.log("slide:",id,min,max);
-        //sensorAnimWidth(clone.find(".sensor-range"), min, max, v, settings.tolerance); 
-        //GRRRRRRRRRRRRRRRRRRRRRR min max settings !!!!!
-        sensorAnimWidth($(this).find(".sensor-range")
-                , $(this).slider("option","min")
-                , $(this).slider("option","max")
-                , v
-                , tolVal
-        );
-
-        /// v = current value udated;
-
-    },
-    stop: function(ev,ui) {
-        var v  = $(this).slider("value");
-        // sensorManager.onThreshold(id,v);
-        sensorManager.saveSensorSettings(); 
-
-        /// v = current value udated;
-
-    }
-}); 
-
-
-
-
-
-
-
-//Update des inputs
-$(".tolerance").on('input', changeTolerence);
-$(".minval").on('input', changeMin);
-$(".maxval").on('input', changeMax);
-
-
-function changeTolerence(element){
-    tolVal = $(this).val();
-    sensorAnimWidth(element, minVal, maxVal, curVal, tolVal);
-}
-
-function changeMin(element){
-    minVal = $(this).val();
-    sensorAnimWidth(element, minVal, maxVal, curVal, tolVal);
-}
-
-function changeMax(element){
-    maxVal = $(this).val();
-    sensorAnimWidth(element, minVal, maxVal, curVal, tolVal);
-}
-
-
-// Est-ce que je peux encore pusher???
-
-function sensorAnimWidth(element, min, max, cur, tolVal){
-
-    minVal = min;
-    maxVal = max;
-    curVal = cur;
-    tolVal = tolVal;
-
-    selec = $("#sortable-sens-output .animation");
-
-    var total = Math.abs(max-min);
-    
-    percent = Math.abs(cur-min)*100/total;
-    
-    var anim1 = selec.find(".select-anim-1");
-    var anim2 = selec.find(".select-anim-2");
-    var curentVal = selec.find(".currentV");
-    var tol_ui = selec.find(".tolerance-ui");
-    var tol_Val = parseInt(tolVal);
-    var til_Val_input = selec.find(".tolerance");
-
-
-
-    anim1.width(parseInt(percent)+"%");
-    anim2.width(parseInt(100-percent)+"%");
-
-    curentVal.css("left", percent-50+"%");
-    til_Val_input.css("left", percent-10+"%");
-
-
-    toleranceUI(tol_ui, tolVal, cur, min, max);
-
-    /// curVal = current value udated;
-
-
-}
-
-
-
-function toleranceUI(element, val, cur, min, max){
-
-    //var total = max+Math.abs(min) //again !!! GRRRR
-    var total = Math.abs(max-min);
-    
-    element.width(val*100/total + "%");
-
-    percent = Math.abs(min-cur)*100/total;
-   
-    var half_w = parseInt(element[0].style.width)/2;
-    //console.log(percent);
-
-    element.css("left", percent - half_w +"%");
-
-}
-
-
-$(".single-sensor").bind("click", selectSensor);
-
-function selectSensor(){
-    $(".single-sensor").removeClass("activ");
-    $(this).addClass("activ");
-
-    //// Load sensor-setting-more
-    
-
-    /// hide element
-    $(".sensor-setting-more .input-wrapper").find("section[name='cm9']").hide();//?show()
-
-    // $(".sensor-setting-more .input-wrapper").find("section[name='cm9']").hide();
-}
-
-$(".single-sensor .close").bind("click", removeSensor);
-
-function removeSensor(){
-    $(this).parent().remove();
-    //UPDATE Sensor...
-}
-
-
-
-//RIGHT CLICK FOR OUTPUT
-$("#sortable-sens-output section").contextmenu(function(e) {
-    contextmenuBox(e.pageX, e.pageY);
-    $(this).addClass('selected');
-});
     
 $("#changeDxlID").keypress(function(e){
     //console.log("KEY:",e);
@@ -2148,58 +2013,6 @@ $("#changeDxlID").keypress(function(e){
     }
 });
 
-
-
-function contextmenuBox(x, y){
-
-    if($(".context-box")){
-        $(".context-box").remove();
-        $("#sortable-sens-output section").removeClass('selected');
-    }
-
-    var div = document.createElement("DIV");
-    div.className = "context-box";
-    div.style.left = x+"px";
-    div.style.top = y+"px";
-
-    var span1 = document.createElement("SPAN");
-    span1.innerHTML = "Edit";
-    span1.className = "edit-context";
-
-
-    var span2 = document.createElement("SPAN");
-    span2.innerHTML = "Remove";
-    span2.className = "remove-output";
-
-
-    div.appendChild(span1);
-    div.appendChild(span2);
-
-
-    document.body.appendChild(div);
-
-    $(".remove-output").bind("click", removeOutput);
-
-    $("body").bind("click", removeContext);
-
-}
-
-function removeContext(){
-    if($(".context-box")){
-        $(".context-box").remove();
-        $("#sortable-sens-output section").removeClass('selected');      
-    }
-}
-
-function removeOutput(){
-    var id = $("#sortable-sens-output .selected").attr('id');
-    console.log(id);
-
-    $("#sortable-sens-output .selected").remove();
-    
-    /// Update removed output.
-
-}
 
 
 $("#closeDxl").on('click',function(){
