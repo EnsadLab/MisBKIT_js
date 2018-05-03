@@ -129,6 +129,7 @@ class RobusManager{
 
     init(){
         //tests
+        console.log("classname robus:", this.className);
         misGUI.initManagerFunctions(this,this.className);
         misGUI.cloneElement(".robusbot",3);
         misGUI.cloneElement(".robusbot",2);

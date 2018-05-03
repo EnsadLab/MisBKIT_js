@@ -2,6 +2,14 @@
 * Created by Cecile on 27/07/17.
 */
 
+var connections = [
+    "cm9",
+    "osc",
+    "midi",
+    "motor",
+    "mobilizing", 
+    "animations",
+]
 
 Sensor = function () {
 
@@ -16,18 +24,28 @@ Sensor = function () {
         valMax: 100,
         anim1: "none", //TODO: change later in an array or not?
         anim2: "none",
-        oscEnabled: false,
-        mobilizingEnabled: false,
-        midiEnabled: false,
-        midiPort: "",
-        midiCmd: false, //true:note, false:CC
-        midiMapping: 0,
-        cm9Enabled: false,
+        oscEnabledInput: false,
+        oscEnabledOutput: false,
+        mobilizingEnabledInput: false,
+        mobilizingEnabledOutput: false,
+        midiEnabledInput: false,
+        midiPortInput: "",
+        midiCmdInput: false, //true:note, false:CC
+        midiMappingInput: 0,
+        midiEnabledOutput: false,
+        midiPortOutput: "",
+        midiCmdOutput: false, //true:note, false:CC
+        midiMappingOutput: 0,
+        cm9EnabledInput: false,
         cm9Pin: 0,        
-        fromMotorEnabled: false,
+        motorEnabledInput: false,
         fromMotorIndex: 0,        
-        toMotorEnabled: false,
-        toMotorIndex: 0
+        motorEnabledOutput: false,
+        toMotorIndex: 0,
+        animationsEnabledOutput: false,
+        ID_gui: -1,
+        input_entry: "",
+        output_entries:[]
     };
     //Suggestion:
     //   cm9:{ enabled:false , val:7 },
@@ -41,6 +59,7 @@ Sensor = function () {
 
     this.freeze = true;
     this.enabled = false;
+    this.textDescription = "";
 };
 
 Sensor.prototype.copySettings = function(s){
@@ -83,7 +102,7 @@ Sensor.prototype.onValue = function(val){
             });
         }
     }
-    misGUI.setSensorValue(this.ID,val,nv*100);    
+    MisGUI_sensors.setSensorValue(this.ID,val,nv*100);    
 }
 
 Sensor.prototype.init = function(){
@@ -130,7 +149,8 @@ Sensor.prototype.onName = function(txt){
         //cm9Com.removeCallback(+this.s.pin);
         //robusManager.removeCallback(this.s.address,this.s.name);
         this.init();
-        misGUI.changeSensor(this.s,this.ID);
+        //TODO TODO:
+        //misGUI.changeSensor(this.s,this.ID);
     }
 }
 

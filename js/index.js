@@ -173,16 +173,17 @@ window.onload = function() {
     oscManager = new OscManager();
     dxlManager = new DxlManager();
     sensorManager = new SensorManager();
+    
     try{ midiPortManager = new MidiPortManager(); }catch(e){console.log(e);}
     misGUI     = new MisGUI();
     misGUI.init();
-
+    sensorManager.init();
     settingsManager.loadSettings();
 
     //oscManager.open();
 
     oscMobilizing = new OscMobilizing();
-
+    
     robusManager.init();
 
     //dxlManager.loadSettings(); //-> now called from settingsManager when directories are ready

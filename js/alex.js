@@ -31,10 +31,23 @@
 	// Sortable Elements
 	$( "#sortable-anim" ).sortable();
     $( "#sortable-anim" ).disableSelection();
-    $( "#sortable-sens" ).sortable();
+	//$( "#sortable-sens" ).sortable();
+	$( "#sortable-sens" ).sortable({
+		stop: function( event, ui ) {
+			console.log("sortable-sens stop");
+		}
+	  });
 	$( "#sortable-sens" ).disableSelection();
-	$( "#sortable-sens-output" ).sortable();
-	$( "#sortable-sens-output" ).disableSelection();
+	//$( "#sortable-sens-output" ).sortable();
+	$( "#sortable-sens-output" ).sortable({
+		start: function(event, ui){
+			console.log("sortable-sens-output::start!!!");
+		},
+		stop: function( event, ui ) {
+			console.log("sortable-sens-output:stop!!!");
+		},
+	  });
+	//$( "#sortable-sens-output" ).disableSelection();
 
 
     //cf MisGUI  $("button.start-rec").bind("click", UIstartRec);
