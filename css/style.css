@@ -1286,7 +1286,7 @@ button.sensorsBTN img, button.animBTN img{
 
 .single-sensor input[type="text"]{
 	margin: 1% 0%;
-    width: 40%;
+    width: 70%;
     text-align: left;
 }
 
@@ -1697,7 +1697,7 @@ h3{
 }
 
 .sensor-setting-more section.animation{
-    height: 250px;
+    height: 160px;
 }
 
 .sensor-setting-more section input.cmdOnOff{

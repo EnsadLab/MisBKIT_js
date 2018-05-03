@@ -109,16 +109,54 @@
 					</div>
 
 				</div>
-				<!--
-				<div id="robusPlug" class="plug">
+				
+				<div id="robusPlug" class="plug robusManager">
 					<p>
 						ROBUS  <span class="status"></span>
-
-						<input id="robusOnOff" type="checkbox" class="small" name ="enable" title="enable/disable">
+						<input id="robusOnOff" type="checkbox" class="small stopAll" func="enable" title="enable/disable">
 					</p>
 					<div class="content">
-						<br>Robots :<br>
-						<br>
+						<br>Robots :
+						<hr>
+						<label class="toggle-small">
+							<input type="checkbox" func="serialWifi"  >
+							<div class="slider serial round" css=""></div>
+						</label>
+						<select func="selectPort" class= "small tiny" style="width:250px;"></select>
+
+
+						<button func="onClick" name="#1">Button1</button> <br>
+						<input type="text" func="onText"><br>
+						<input type="number" func="onNum1"><br>
+						<input type="number" func="onNum2"><br>
+						<select func="onSelect" class= "small tiny">
+								<option>none</option>
+								<option value="opt 1">opt 1</option>
+								<option value="opt 2">opt 2</option>
+								<option value="opt 3">opt 3</option>
+								<option value="opt 4">opt 4</option>
+						</select>
+						<div class="robusbot" style="display:none;">
+								<hr>
+								<font color='gray' size="2">
+								Alias: <input func="robAlias" type=text style="width:80px;">
+								Id: <input func="robId" type="text" style="width:30px;">
+								Type: <input func="robType" type="text" style="width:100px;"><br>
+								p1:<input func="robP1" type="text" style="width:50px;">
+								p5:<input func="robP5" type="text" style="width:50px;">
+								p6:<input func="robP6" type="text" style="width:50px;">
+								p7:<input func="robP7" type="text" style="width:50px;">
+								p8:<input func="robP8" type="text" style="width:50px;">
+								p9:<input func="robP9" type="text" style="width:50px;">
+								
+								
+								</font>
+								<input type="text" func="botText">
+								<input type="number" func="botNum">		
+						</div>
+
+						
+  
 						<!--input type="text" name="rien"-->
 						<!--
 						<textarea id="robusRobots" rows=6 cols=15>octo_wifi</textarea>
@@ -127,17 +165,20 @@
 							<button id="robusReset" class="disconnected" >RESET</button>
 							<button id="robusInfo"  class="disconnected" >info</button>
 						</div>
+						-->
 						<!--
 						<br>
 						<textarea id="robusTxt" rows=18 cols=15>message</textarea>
-						--> <!--
+						--> 
 					</div>
 				</div>
-				-->
+				
 
 				<!--div class="plug" >
+					<p>
 						ADVANCED :
 						<button class="gear"><img src="assets/settings.png"></button>
+					</p>
 						<input type="text" size="3">
 				</div-->
 
@@ -326,8 +367,8 @@
 
 				</ul>
 			</div>
-			<div class="sensors">
-				<ul id="sortable-sens" name="listSensors">
+			<div class="sensors sensorManager">
+				<ul id="sortable-sens" name="listSensors" >
 
 				<!-- SIngle Sensors -->
 					<!-- <li class="single-sensor ui-state-default">
@@ -348,41 +389,32 @@
 
 
 				<!-- SIngle Sensors -->
-					<li class="single-sensor ui-state-default activ">
-						<button class="close"><img src="assets/close.png" alt=""></button>
-						<input type="checkbox" class="power float-left cmdTog" name ="sensorOnOff" title="enable/disable">
+					<li class="single-sensor ui-state-default activ" func="selectSensor" type="submit">
+						<button class="close" func="removeSensor"><img src="assets/close.png" alt=""></button>
+						<input type="checkbox" func="enable" class="power float-left cmdTog" name ="sensorOnOff" title="enable/disable">
 
-						<input type="text" class="float-left medium" placeholder="Sensor name" name="sensorName" size="58">
+						<input type="text" func="onNameText" class="float-left medium" placeholder="Sensor name" name="sensorName" size="58">
 
-						<p class="info medium-75 float-left">CM9 to OSC</p>
+						<p class="info medium-75 float-left" func="textDescription" type="text">CM9 to OSC aaaaaaaaaabbbbbbbbbb</p>
 						<div class="sensor-setting">
 							<div class="live-value-ui">•</div>
 							<div class="green-bar"></div>
 						</div>
 					</li>
 				<!-- END SIngle Sensors -->
+			
+		
 
-				<!-- SIngle Sensors -->
-					<li class="single-sensor ui-state-default ">
-						<button class="close"><img src="assets/close.png" alt=""></button>
-						<input type="checkbox" class="power float-left cmdTog" name ="sensorOnOff" title="enable/disable">
-
-						<input type="text" class="float-left medium" placeholder="Sensor name" name="sensorName" size="58">
-
-						<p class="info medium-75 float-left">CM9 to OSC</p>
-						<div class="sensor-setting">
-							<div class="live-value-ui">•</div>
-							<div class="green-bar"></div>
-						</div>
-					</li>
-				<!-- END SIngle Sensors -->
-				
 				</ul>
 
-				<div class="sensor-setting-more">
-					<select name="input" id="" class="large">
+				<div class="sensor-setting-more" eltID="default">
+					<select name="input" func="onSelectInput" id="" class="large">
 						<option>Select Input</option>
-						<option value="">____</option>
+						<option value="cm9">CM9</option>
+						<option value="osc">OSC</option>
+						<option value="midi">Midi</option>
+						<option value="motor">Mapping from motor</option>
+						<option value="mobilizing">Mobilizing</option>
 					</select>
 					<div class="input-wrapper">
 
@@ -390,57 +422,56 @@
 						
 						<section name="cm9">
 							<div class="medium float-left ">
-								<input type="checkbox" class=" small cmdOnOff" name ="mobilizingEnabled" title="enable/disable">	
+								<input type="checkbox" func="changeSettingsVariable" class=" small cmdOnOff" param="cm9EnabledInput" title="enable/disable">	
 								<h4>CM9</h4>	
 							</div>
+							<div class="medium float-left text-right">
+								<input type="number" func="changeSettingsVariable" class="medium tiny float-right" placeholder="pin number" param="cm9Pin"> <!--class="large tiny"-->
+							</div>
 						</section>
 
 
-						<section>
+						<section name="osc">
 							<div class="medium float-left ">
-								<input type="checkbox" class="small cmdOnOff" name ="oscEnabled" title="enable/disable">
+								<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="oscEnabledInput" title="enable/disable">
 								<h4>OSC</h4>
 							</div>
-
+							<!--
 							<div class="medium float-left text-right">
 								<input type="text" class="large tiny" placeholder="adress" name="">
 							</div>
-								
+						-->	
 						</section>
 
-						<section>
+						<section name="mobilizing">
 							<div class="medium float-left ">
-								<input type="checkbox" class="small cmdOnOff" name ="oscEnabled" title="enable/disable">
+								<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="mobilizingEnabledInput" title="enable/disable">
 								<h4>Mobilizing</h4>
-							</div>
-
-							<div class="medium float-left text-right">
-								<input type="text" class="large tiny" placeholder="adress" name="">
 							</div>
 								
 						</section>
 
 						
 
-						<section class="hight">
+						<section class="hight" name="midi">
 							<div class="large float-left">
-								<input type="checkbox" class="small cmdOnOff" name ="midiEnabled" title="enable/disable">
+								<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="midiEnabledInput" title="enable/disable">
 								<h4>Midi</h4>
 							</div>
 							
 							<div class="large float-left">
 								<div class="medium float-left">
 									<label class="toggle-small">
-							  			<input type="checkbox" class="cmdTog" name="midiCmd">
+							  			<input type="checkbox" func="changeSettingsVariable"  class="cmdTog" param="midiCmdInput">
 							  			<div class="slider midi round"></div>
 									</label>
 								</div>
 								<div class="medium float-right text-right">
-									<input type="number" class="medium-75 tiny" placeholder="index">
+									<input type="number" func="changeSettingsVariable" class="medium-75 tiny" placeholder="index" param="midiMappingInput">
 									
 								</div>
 								<div class="large">
-									<select class= " tiny large cmdString"  id="" name="midiPort">
+									<select class= " tiny large cmdString" func="onMidiInput" id="" name="midiPortInput">
 										<option value="">midi 1</option>
 										<option value="midi 2">midi 2</option>
 										<option value="">midi 3</option>
@@ -451,14 +482,14 @@
 
 						</section>
 
-						<section>
+						<section name="motor">
 							<div class="medium float-left">
-								<input type="checkbox" class="small cmdOnOff" name ="fromMotorEnabled" title="enable/disable">	
+								<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="motorEnabledInput" title="enable/disable">	
 								<h4>Motor Mapping</h4>
 							</div>
 
 							<div class="medium float-right text-right">
-								<input type="number" class="medium tiny float-right" placeholder="index" name="">
+								<input type="number" func="changeSettingsVariable" class="medium tiny float-right" placeholder="index" param="fromMotorIndex">
 							</div>						
 						</section>	
 
@@ -468,21 +499,25 @@
 					<div class="live-view">
 						<div class="info small float-left text-left">
 							min <br><br>
-							<input type="number" id="min-value-sensors" class="medium tiny" value="0">
+							<input type="number" func="onMinValue" name="min-value-sensors" class="medium tiny" value="0">
 						</div>
 						<div class="small float-left text-center">
-							<span class="live-value">50</span>
+							<span class="live-value">20</span>
 						</div>
 						<div class="info small float-right text-right">
 							max <br><br>
-							<input type="number" id="max-value-sensors" class="medium tiny" value="100">
+							<input type="number" func="onMaxValue" name="max-value-sensors" class="medium tiny" value="100">
 						</div>
 						<div class="live-value-ui">•</div>
 						<div class="green-bar"></div>
 					</div>
-					<select name="output" id="" class="large">
+					<select name="output" func="onSelectOutput" id="" class="large">
 						<option>Add output</option>
-						<option value="">____</option>
+						<option value="animations">Trigger animation</option>
+						<option value="osc">send OSC messages</option>
+						<option value="midi">send Midi</option>
+						<option value="motor">Map values to motor</option>
+						<option value="mobilizing">send to Mobilizing</option>
 					</select>
 					<div>
 
@@ -490,52 +525,68 @@
 						<!-- OUTPUT -->
 
 							<!-- À refaire -->
-							<li class="ui-state-default">
+							<li class="ui-state-default" name="animations">
 
-								<section class="animation" id="animation-switcher" name="animation">
+								<section class="animation" id="animation-switcher" name="animations">
 									<div class="large float-left ">
-										<input type="checkbox" class="small cmdOnOff" name ="oscEnabled" title="enable/disable">
+										<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="animationsEnabledOutput" title="enable/disable">
 										<h4>Animations switcher</h4>
 									</div>
 
 									<div class="large float-left">
 										<br>
+										<!--
 										<div class="select-anim-1">
 
-											<select class="listAnims-1 active" name="anim1" id="">
+											<select class="listAnims-1 active" func="onChangeAnim" param="anim1" name="anim1" id="">
 												<option value="">Animation 1</option>
 												<option value="">Animation 2</option>
 												<option value="">Animation 3</option>
 												<option value="">Animation 4</option>
 											</select>
 										</div>
+									-->
+									<div class="select-anim-1">
 
+										<select class="listAnims-1 active" func="onChangeAnim" param="anim1" id="">
+											<option value="">test 1</option>
+											<option value="">test 2</option>
+											<option value="">Animation 3</option>
+											<option value="">Animation 4</option>
+										</select>
+									</div>
 
 										<div class="select-anim-2">
 
-											<select class= "listAnims-2" name="anim2" id="">
-												<option value="">Animation 1</option>
-												<option value="">Animation 2</option>
-												<option value="">Animation 3</option>
-												<option value="">Animation 4</option>
+											<select class= "listAnims-2" func="onChangeAnim" param="anim2" id="">
+												<option value="">test 1</option>
+												<option value="">test 2</option>
+												<option value="">test 3</option>
+												<option value="">test 4</option>
 											</select>
 										</div>
 
-
+										
 										<div class="tolerance-ui"></div>
 
 										<div class="sensor-range">
 											 <!-- <div class="minV">...</div>
 											 <div class="maxV">...</div> -->
+
+											 
 											 <div class="currentV">...</div>
+
+											 <!--<input type="number" class=" currentV small  tiny cmdInt" placeholder="..." name="threshold">-->
+
 											 <div class="slider-range" data-min="0" data-max="100" data-default= "50" ></div>
 											 
 										</div>
 										<div class="large">
 											<div class="large float-left">
 												<h4 class="text-left">Tolerance :</h4>
-												<input type="number" class="tolerance small" placeholder="tolerance" value="20" name="">
+												<input type="number" func="onTolerance" name="tolerance-sensors" class="tolerance small" placeholder="tolerance" value="20" >
 											</div>
+											<!--
 											<div class="medium float-left">
 												<h4 class="text-left">Min value :</h4>
 												<input type="number" class=" minval small  tiny cmdInt" placeholder="min value" name="valMin">
@@ -545,6 +596,7 @@
 												<h4 class="text-right">Max value :</h4>
 												<input type="number" class=" maxval small text-right tiny cmdInt" placeholder="max value" name="valMax">
 											</div>
+											-->
 										</div>
 								
 									</div>
@@ -553,57 +605,58 @@
 							</li>
 
 
-							<li class="ui-state-default">
-								<section>
+							<li class="ui-state-default" name="osc">
+								<section name="osc">
 									<div class="medium float-left ">
-										<input type="checkbox" class="small cmdOnOff" name ="oscEnabled" title="enable/disable">
+										<input type="checkbox"  func="changeSettingsVariable" class="small cmdOnOff" param ="oscEnabledOutput" title="enable/disable">
 										<h4>OSC</h4>
 									</div>
 
-
+									<!--
 									<div class="medium float-left text-right">
 										<input type="text" class="large tiny" placeholder="adress" name="">
 									</div>
+									-->
 										
 								</section>
 							</li>
 							
 
-							<li class="ui-state-default">
-								<section>
+							<li class="ui-state-default" name="motor">
+								<section name="motor">
 									<div class="medium float-left">
-										<input type="checkbox" class="small cmdOnOff" name ="tomotor" title="enable/disable">	
+										<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="motorEnabledOutput" title="enable/disable">	
 										<h4>Motor Mapping</h4>
 									</div>
 
 									<div class="medium float-right text-right">
 
-										<input type="number" class="medium tiny float-right" placeholder="index" name="">
+										<input type="number" func="changeSettingsVariable" class="medium tiny float-right" placeholder="index" param="toMotorIndex">
 									</div>
 
 								</section>
 							</li>
 							
-							<li class="ui-state-default">
-								<section class="hight">
+							<li class="ui-state-default" name="midi">
+								<section class="hight" name="midi">
 									<div class="large float-left">
-										<input type="checkbox" class="small cmdOnOff" name ="midiEnabled" title="enable/disable">
+										<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="midiEnabledOutput" title="enable/disable">
 										<h4>Midi</h4>
 									</div>
 									
 									<div class="large float-left">
 										<div class="medium float-left">
 											<label class="toggle-small">
-									  			<input type="checkbox" class="cmdTog" name="midiCmd">
+									  			<input type="checkbox"  class="cmdTog" func="changeSettingsVariable" param="midiCmdOutput">
 									  			<div class="slider midi round"></div>
 											</label>
 										</div>
 										<div class="medium float-right text-right">
-											<input type="number" class="medium-75 tiny" placeholder="index">
+											<input type="number" func="changeSettingsVariable" class="medium-75 tiny" placeholder="index" param="midiMappingOutput">
 											
 										</div>
 										<div class="large">
-											<select class= " tiny large cmdString"  id="" name="midiPort">
+											<select class= " tiny large cmdString" func="onMidiOutput" id="" name="midiPortOutput">
 												<option value="">midi 1</option>
 												<option value="midi 2">midi 2</option>
 												<option value="">midi 3</option>
@@ -615,17 +668,17 @@
 								</section>
 							</li>
 							
-							<li class="ui-state-default">
-								<section>
+							<li class="ui-state-default" name="mobilizing">
+								<section name="mobilizing">
 									<div class="medium float-left ">
-										<input type="checkbox" class="small cmdOnOff" name ="oscEnabled" title="enable/disable">
+										<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="mobilizingEnabledOutput" title="enable/disable">
 										<h4>Mobilizing</h4>
 									</div>
-
+									<!--
 									<div class="medium float-left text-right">
 										<input type="text" class="large tiny" placeholder="adress" name="">
 									</div>
-										
+									-->
 								</section>
 							</li>
 						</ul>
@@ -638,7 +691,7 @@
 			</div>
 		</div>
 		
-		<div class="modale draggable" id="dynamixel-ctrl">
+		<div class="modale draggable" id="dynamixel-ctrl" style="display: none;">
 			<button id="closeDxl" class="close-modale"><img src="assets/close.png" alt=""></button>
 			<input type="text" size="5" id="btAdvID"><label for="">[ID]</label>
 			&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
@@ -731,6 +784,7 @@
 			<script src="js/DxlMotor.js"></script>
 			<script src="js/DxlManager.js"></script>
 			<script src="js/MisGUI.js"></script>
+			<script src="js/MisGUI_sensors.js"></script>
 			<script src="js/index.js"></script>
 			<script src="js/Robus.js"></script>
 			<script src="js/RobusManager.js"></script>

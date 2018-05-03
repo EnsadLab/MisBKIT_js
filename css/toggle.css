@@ -227,5 +227,17 @@ input:checked + .slider:after{
   left:-20%;
 }
 
+/*ROBUS serial/wifi*/
+.toggle-small .slider.serial:after{
+	content:"Serial";
+	font-weight: 700;
+	background:none;
+	top: 10px;
+  left:22%;
+}
+.toggle-small input:checked + .slider.serial:after{
+	content:"Wifi";
+  left:-20%;
+}
 
 

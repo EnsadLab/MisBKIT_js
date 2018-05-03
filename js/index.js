@@ -23,7 +23,8 @@ var dialog = remote.dialog;
 const OS = require('os');
 
 const udp  = require('dgram');
-const osc  = require('osc-min'); 
+const osc  = require('osc-min');
+const serialPort = require('serialport');
 
 var fs = null;
 
@@ -151,6 +152,7 @@ function showConfig(show){
 window.onbeforeunload=function(){
         //cm9Com.close();
         //dxlManager.serialOnOff(false);
+        robusManager.closeSerial();
         dxlManager.saveSettings();
         sensorManager.saveSensorSettings();
         settingsManager.saveSettings();
@@ -171,15 +173,19 @@ window.onload = function() {
     oscManager = new OscManager();
     dxlManager = new DxlManager();
     sensorManager = new SensorManager();
+    
     try{ midiPortManager = new MidiPortManager(); }catch(e){console.log(e);}
     misGUI     = new MisGUI();
     misGUI.init();
-
+    sensorManager.init();
     settingsManager.loadSettings();
 
     //oscManager.open();
 
     oscMobilizing = new OscMobilizing();
+    
+    robusManager.init();
+
     //dxlManager.loadSettings(); //-> now called from settingsManager when directories are ready
     
     //try{ cm9Com = new SerialClass(); }catch(e){}
