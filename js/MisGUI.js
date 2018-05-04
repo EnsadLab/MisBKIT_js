@@ -109,7 +109,11 @@ function MisGUI(){
 MisGUI.prototype.cloneElement = function(selector,eltID){ //eltID may be a string
     var model = $(selector).first();      //model MUST be first ---> insertAfter
     if(model.length>0){
+        console.log("model manager:",model.prop("manager"));
         var clone = model.clone(true);
+        if(model.prop("manager")!=undefined){
+            clone.find("*").prop("manager",model.prop("manager")); //was undefined ?
+        }
         if(eltID != undefined){           //set eltID to all clone elts
             clone.attr("eltID",eltID);
             clone.find("*").attr("eltID",eltID);
@@ -157,9 +161,11 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
     var parents = $("."+className);
     parents.find("*").each(function(i) {
         var func = $(this).attr("func");
+        $(this).prop("manager",manager); //inutile ? keep manager ?
         if(func){
-            if(manager[func]){
-                $(this).prop("manager",manager); //inutile ? keep manager ?
+            console.log("CLONE:",$(this).prop("manager"),$(this).attr("func"),$(this).prop("type"));
+            //if(manager[func]){
+                //$(this).prop("manager",manager); //inutile ? keep manager ?
                 switch($(this).prop("type")){
                     case "text":
                     case "number":
@@ -169,9 +175,10 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                         });
                     case "select-one": //select
                         $(this).on("change",function(){
+                            console.log("select:",$(this).prop("manager"),$(this).attr("func"),$(this).attr("eltID"));
                             $(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());                            
                         });
-                        console.log($("function",this.val));
+                        //console.log($("function",this.val));
                         break;
                     case "checkbox":
                         $(this).on("change",function(){
@@ -189,7 +196,7 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                     break;
                     
                 }
-            }
+            //}
         }
     });
 }
@@ -208,16 +215,21 @@ MisGUI.prototype.setManagerValue = function( className , func , value , eltID){
     switch(elt.prop("type")){
         case "select-one":
             if(Array.isArray(value)){ //fill options with value(s)
-                var prev = elt.val();
-                console.log("select-one.previous:",prev);
-                elt.empty();
-                for(var i=0;i<value.length;i++){
-                    if(value[i].length>0)
-                        elt.append($("<option value=" + "'" + value[i] + "'>" + value[i] + "</option>"));
-                }
-                if(prev)elt.val(prev);
-                else elt.val(value[0]);
-                elt.trigger("change");
+                console.log("select:values[:",value);
+                elt.each(function(i) {  //value != for each ones
+                    var prev = $(this).val();
+                    console.log("select:prev:",prev);
+                    $(this).empty();
+                    for(var i=0;i<value.length;i++){
+                        if(value[i].length>0)
+                            $(this).append($("<option value=" + "'" + value[i] + "'>" + value[i] + "</option>"));
+                    }
+                    if(prev!=null){
+                        $(this).val(prev);
+                    //else $(this).val(value[0]);
+                        $(this).trigger("change");
+                    }
+                });
             }
             else
                 elt.val(value);            
@@ -413,10 +425,10 @@ MisGUI.prototype.joint = function(index){
 };
 MisGUI.prototype.wheel =function(index){
     dxlManager.cmd("wheel",index);
-    this.rotAngles[index].show(false);
-    this.rotSpeeds[index].show(true);
-    this.rotSpeeds[index].setValue(0);
-    this.speed(index,0);
+    this.rotAngles[+index].show(false);
+    this.rotSpeeds[+index].show(true);
+    this.rotSpeeds[+index].setValue(0);
+    this.speed(+index,0);
 };
 
 MisGUI.prototype.onRotary = function(val,rot){
@@ -656,14 +668,11 @@ MisGUI.prototype.init =function(){
     var model = $("#divMotorSettings .single-motor");
     var after = model;
     model.data("index",0);
-    model.find(".cmdTog").data("index",0);
-    model.find(".cmd").data("index",0);
+    model.find("*").data("index",0);
     for(var i=1;i<6;i++) {
         var clone = model.clone();
         clone.data("index",i);
         clone.find("*").data("index",i);
-        //clone.find(".cmd").data("index",i);
-        //clone.find(".cmdTog").data("index",i);
         clone.insertAfter(after);
         after = clone;
     }
@@ -672,13 +681,11 @@ MisGUI.prototype.init =function(){
     var parent = $("#divMotors");
     model = parent.find(".single-motor");
     model.data("index",0);
-    model.find(".cmdTog").data("index",0);
-    model.find(".midi-blinker").bind("mouseover", frontBlinkInfo);
+    model.find("*").data("index",0);
     for(var i=1;i<6;i++) {
         var clone = model.clone();
         clone.data("index",i);
         clone.find("*").data("index",i);
-        //clone.find(".cmdTog").data("index",i);
         clone.appendTo(parent);
         clone.find(".midi-blinker").bind("mouseover", frontBlinkInfo);
         clone.find(".midi-blinker").css("display", "none");
@@ -786,7 +793,7 @@ MisGUI.prototype.init =function(){
         var v = this.checked ? 1 : 0;
         var index = $(this).data("index");
         var cmd = this.name;
-        //console.log("cmdTog:",index," ",cmd," ",v);
+        console.log("cmdTog:",index," ",cmd," ",v);
         if(self[this.name])
             self[cmd](index,v);
         else
