@@ -78,7 +78,7 @@ MidiPort = function () {
                     }else if(msg[1] == 42) {// BIG STOP BUTTON
                         dxlManager.stopAllMotors();
                     }
-                    if(sensorManager.isMapped("sensor",self.portName,cmd,msg[1])){
+                    if(sensorManager.isMapped("sensor",self.portName,cmd,msg[1])){     
                         var mappedSensors = sensorManager.getSensorIds("sensor",self.portName,cmd,msg[1]);
                         for(var i=0; i<mappedSensors.length; i++){
                             //console.log("CC",mappedSensors[i],msg[2]);

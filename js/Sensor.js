@@ -90,7 +90,7 @@ Sensor.prototype.onValue = function(val){
             dxlManager.onNormControl(this.s.toMotorIndex,nv);
         }
         //TODO anims
-        sensorManager.handleSensorValue(this.ID,val); 
+        if(this.s.animationsEnabledOutput) sensorManager.handleSensorValueForAnims(this.ID,val); 
         if(this.s.oscEnabledOutput) oscManager.sendSensorMessage(this.ID,val);
         if(this.s.mobilizingEnabledOutput){
             //console.log("send sensor:",this.s.name,nv);

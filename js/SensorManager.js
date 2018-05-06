@@ -71,8 +71,8 @@ class SensorManager{
             misGUI.setManagerValue("sensorManager","onMidiOutput",sensor.s.midiPortOutput,sensor.ID);
 
             //TEST
-            MisGUI_sensors.highlightAnim("S0","listAnims-1");
-            MisGUI_sensors.highlightAnim("S1","listAnims-2");
+            //MisGUI_sensors.highlightAnim("S0","listAnims-1");
+            //MisGUI_sensors.highlightAnim("S1","listAnims-2");
 
             // add selected output entries
             MisGUI_sensors.hideAllOutputEntries(sensor.ID);
@@ -156,10 +156,12 @@ class SensorManager{
         }*/
 
         // put every on/off button to false!
+        /*
         $.each(connections,function(i,name){
             misGUI.setManagerValue("sensorManager","changeSettingsVariable",false,eltID,name+"EnabledInput");
             misGUI.setManagerValue("sensorManager","changeSettingsVariable",false,eltID,name+"EnabledOutput");
-        });
+        });*/
+
         var sensor = this.getSensorWithID(eltID);
         if(sensor != undefined){
             sensor.discard();
@@ -191,6 +193,10 @@ class SensorManager{
         misGUI.cloneElement(".single-sensor",sensor.ID); 
         misGUI.cloneElement(".sensor-setting-more",sensor.ID);  
         this.onSelectInput(sensor.ID,"default");
+        MisGUI_sensors.initMidiInput(sensor.ID);
+        MisGUI_sensors.initMidiOutput(sensor.ID);
+        MisGUI_sensors.initSlider(sensor.ID,sensor.s.valMin, sensor.s.valMax,sensor.s.threshold,sensor.s.tolerance);
+        MisGUI_sensors.setSensorAnims();
         MisGUI_sensors.hideAllOutputEntries(sensor.ID);
         MisGUI_sensors.selectSensor(sensor.ID);
         misGUI.setManagerValue("sensorManager","onNameText",sensor.s.name,sensor.ID);
@@ -247,17 +253,27 @@ class SensorManager{
     
             // disable previous selected entry - diable all entries
             $.each(connections,function(i,name){
+                var k = name + "EnabledInput";
+                sensorManager.getSensorWithID(eltID).s[k] = false;
                 misGUI.setManagerValue("sensorManager","changeSettingsVariable",false,eltID,name+"EnabledInput");
             });
             
             // enable current selected entry
+            //console.log("A",input,this.getSensorWithID(eltID).s.midiEnabledInput,this.getSensorWithID(eltID).s["midiEnabledInput"]);
+ 
+            var k = input + "EnabledInput";
+            this.getSensorWithID(eltID).s[k] = true;
+    
             MisGUI_sensors.selectEntry(eltID, input);
             misGUI.setManagerValue("sensorManager","changeSettingsVariable",true,eltID,input+"EnabledInput");
+            //console.log("B",this.getSensorWithID(eltID).s.midiEnabledInput,this.getSensorWithID(eltID).s["midiEnabledInput"]);
             this.updateTextDescription(eltID);
             this.saveSensorSettings();
         }
 
     }
+
+    coucou(){console.log("coucou");}
 
     onSelectOutput(eltID, output){
         console.log("add output selection:",output);
@@ -266,6 +282,8 @@ class SensorManager{
             if(!sensor.s.output_entries.includes(output)){
                 sensor.s.output_entries.push(output);
             }
+            var k = output + "EnabledOutput";
+            sensor.s[k] = true;
             misGUI.setManagerValue("sensorManager","changeSettingsVariable",true,eltID,output+"EnabledOutput");
             MisGUI_sensors.addEntry(eltID,output);
             // CEC: put it back to default state.. to be discussed
@@ -279,18 +297,23 @@ class SensorManager{
         
         if(this.getSensorWithID(id) != undefined){
             var sensor = this.getSensorWithID(id);
-            if(sensor.s.input_entry != "default"){
+            
+            if(sensor.s.input_entry == "default"){
+                sensor.textDescription = "to ";
+            }else{
                 sensor.textDescription = sensor.s.input_entry + " to ";
             }
+            var index = 0;
             for(var i=0; i<sensor.s.output_entries.length;i++){
                 if( sensor.s.output_entries[i] != "default"){
-                    if(i != 0) sensor.textDescription += " / "
+                    if(index != 0) sensor.textDescription += " / " // != 1 because of "default" value
                     sensor.textDescription += sensor.s.output_entries[i];
+                    index++;
                 }
             }
             console.log("textDescription",sensor.textDescription);
             //misGUI.setManagerValue("sensorManager","textDescription",sensor.textDescription,sensor.ID);
-            if(sensor.textDescription.length == 0) sensor.textDescription = "no selected input/outputs";
+            if(sensor.textDescription.length == 0 || sensor.textDescription == "to ") sensor.textDescription = "no selected input/outputs";
             MisGUI_sensors.updateTextDescription(sensor.ID,sensor.textDescription);
         }
     }
@@ -375,6 +398,8 @@ class SensorManager{
             if (index > -1) {
                 this.getSensorWithID(eltID).s.output_entries.splice(index, 1);
             }
+            var k = output+"EnabledOutput";
+            this.getSensorWithID(eltID).s[k] = false;
             misGUI.setManagerValue("sensorManager","changeSettingsVariable",false,eltID,output+"EnabledOutput");
             this.updateTextDescription(eltID);
             this.saveSensorSettings();
@@ -419,7 +444,6 @@ class SensorManager{
         if(sensor != undefined){
             var mappped_arg = Math.round(arg*(sensor.s.valMax-sensor.s.valMin)/127 + sensor.s.valMin);
             sensor.onValue(mappped_arg);
-            //console.log("midi value", mappped_arg);
         }
     }
 
@@ -448,22 +472,27 @@ class SensorManager{
         return sensorIDs;
     }
 
-    handleSensorValue(sensorID, sensorValue){
+    handleSensorValueForAnims(sensorID, sensorValue){
+        //console.log("handleSensorValue",sensorID,sensorValue);
         var sensor = this.getSensorWithID(sensorID);
-        if(sensor != undefined && sensorValue >= sensor.s.valMin && sensorValue < (sensor.s.threshold-sensor.s.tolerance)){ 
+        //TODO TODO: check when tolerance is entered as a string type..
+        //console.log(sensor.s.threshold,sensor.s.tolerance,sensor.s.valMin,sensor.s.valMax);
+        if(sensor != undefined && sensorValue >= sensor.s.valMin && sensorValue < (sensor.s.threshold-parseInt(sensor.s.tolerance))){ 
             sensor.area = 0;
             //console.log("sensor area 0");
             if(sensor.oldArea != sensor.area){
                 // trigger animation 1
                 //console.log("Trigger left animation ",sensor.s.anim1);
+                MisGUI_sensors.highlightAnim(sensorID,"listAnims-1");
                 this.startAnim(sensor.s.anim1, sensor.s.anim2);
             }
-        }else if(sensorValue >= (sensor.s.threshold + sensor.s.tolerance)){
+        }else if(sensor != undefined && sensorValue >= (sensor.s.threshold + parseInt(sensor.s.tolerance))){
             sensor.area = 1;
             //console.log("sensor area 1");
             if(sensor.oldArea != sensor.area){
                 // trigger animation 2
                 //console.log("Trigger right animation ",sensor.s.anim2);
+                MisGUI_sensors.highlightAnim(sensorID,"listAnims-2");
                 this.startAnim(sensor.s.anim2, sensor.s.anim1);
             }
         }
