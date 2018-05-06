@@ -236,7 +236,7 @@ MisGUI_sensors.setSensorValue = function(eltID, sensorValue, percent){
     div.find(".live-value-ui").css("left", percent+"%");
     var divThumbnail = $(".sensor-setting").filter("[eltID="+ eltID + "]");
     divThumbnail.find(".live-value-ui").css("left", percent+"%");
-    console.log("value",sensorValue);
+   // console.log("value",sensorValue);
 }
 
 
