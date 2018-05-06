@@ -335,7 +335,8 @@ OscManager.prototype.initCm9Receiver = function(){
 
 OscManager.prototype.sendSensorMessage = function(sensorID,sensorVal){
 
-    var sensor = sensorManager.sensors[sensorID];
+    var sensor = sensorManager.getSensorWithID(sensorID);//sensorManager.sensors[sensorID];
+    if(sensor == undefined) return;
 
     // /mbk/sensors sensorName sensorValue sensorMin sensorMax   
     buf = osc.toBuffer({
@@ -343,6 +344,8 @@ OscManager.prototype.sendSensorMessage = function(sensorID,sensorVal){
         args: [sensor.s.name,sensorVal,sensor.s.valMin,sensor.s.valMax] 
     });
     
+   // console.log("remote port",this.s.oscRemotePort);
+
     //this.udpUserSender.send(buf, 0, buf.length, this.outportUser, "localhost");
     this.udpUserSender.send(buf, 0, buf.length, this.s.oscRemotePort, this.s.oscRemoteIP);
     
@@ -352,7 +355,7 @@ OscManager.prototype.sendSensorMessage = function(sensorID,sensorVal){
         args: [sensor.s.name]
     });
  
-    this.udpUserSender.send(buf, 0, buf.length, this.oscRemotePort, this.s.oscRemoteIP );
+    this.udpUserSender.send(buf, 0, buf.length, this.s.oscRemotePort, this.s.oscRemoteIP );
 }
 
 
