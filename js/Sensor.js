@@ -3,6 +3,7 @@
 */
 
 var connections = [
+    "default",
     "cm9",
     "osc",
     "midi",

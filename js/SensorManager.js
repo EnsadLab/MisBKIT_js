@@ -149,22 +149,53 @@ class SensorManager{
 
     removeSensor(eltID,arg){
         console.log("sensorManager.removeSensor", eltID);
+
+        /*
+        for(var index in this.sensors){
+            console.log("REMOVE TEST: sesnsor: ",this.sensors[index].ID);
+        }*/
+
         // put every on/off button to false!
         $.each(connections,function(i,name){
             misGUI.setManagerValue("sensorManager","changeSettingsVariable",false,eltID,name+"EnabledInput");
             misGUI.setManagerValue("sensorManager","changeSettingsVariable",false,eltID,name+"EnabledOutput");
         });
+        var sensor = this.getSensorWithID(eltID);
+        if(sensor != undefined){
+            sensor.discard();
+        }
+        var index = this.sensors.indexOf(sensor);
+
+        if(index != -1){
+            this.sensors.splice(index,1);
+        }
         MisGUI_sensors.removeSensor(eltID);
+
         /*
-        if( id in this.sensors){
-        misGUI.removeSensor(id);
-        this.sensors[id].discard();
-        delete this.sensors[id];
-        }
-        for( id in this.sensors ){
-            console.log("afterRemove:",id);
-        }
-        */
+        for(var index in this.sensors){
+            console.log("REMOVE TEST: sesnsor: ",this.sensors[index].ID);
+        }*/
+
+        this.saveSensorSettings();
+
+    }
+
+    addEmptySensor (){
+        //console.log("SensorManager.addEmptySensor");
+        var id = "S"+this.sensorID; 
+        var sensor = new Sensor();
+        sensor.ID = id;
+        sensor.s.name = "Sensor_name"; // (+ this.sensorID;) to confusing when a previous sensor is there with same id
+        sensor.s.ID_gui = this.sensors.length + 1;
+        this.sensors.push(sensor);
+        misGUI.cloneElement(".single-sensor",sensor.ID); 
+        misGUI.cloneElement(".sensor-setting-more",sensor.ID);  
+        this.onSelectInput(sensor.ID,"default");
+        MisGUI_sensors.hideAllOutputEntries(sensor.ID);
+        MisGUI_sensors.selectSensor(sensor.ID);
+        misGUI.setManagerValue("sensorManager","onNameText",sensor.s.name,sensor.ID);
+        this.updateTextDescription(sensor.ID);
+        this.sensorID++;      
     }
 
     enable(eltID,onoff){
@@ -222,6 +253,7 @@ class SensorManager{
             // enable current selected entry
             MisGUI_sensors.selectEntry(eltID, input);
             misGUI.setManagerValue("sensorManager","changeSettingsVariable",true,eltID,input+"EnabledInput");
+            this.updateTextDescription(eltID);
             this.saveSensorSettings();
         }
 
@@ -247,13 +279,18 @@ class SensorManager{
         
         if(this.getSensorWithID(id) != undefined){
             var sensor = this.getSensorWithID(id);
-            sensor.textDescription = sensor.s.input_entry + " to ";
+            if(sensor.s.input_entry != "default"){
+                sensor.textDescription = sensor.s.input_entry + " to ";
+            }
             for(var i=0; i<sensor.s.output_entries.length;i++){
-                if(i != 0) sensor.textDescription += " / "
-                sensor.textDescription += sensor.s.output_entries[i];
+                if( sensor.s.output_entries[i] != "default"){
+                    if(i != 0) sensor.textDescription += " / "
+                    sensor.textDescription += sensor.s.output_entries[i];
+                }
             }
             console.log("textDescription",sensor.textDescription);
             //misGUI.setManagerValue("sensorManager","textDescription",sensor.textDescription,sensor.ID);
+            if(sensor.textDescription.length == 0) sensor.textDescription = "no selected input/outputs";
             MisGUI_sensors.updateTextDescription(sensor.ID,sensor.textDescription);
         }
     }
@@ -484,7 +521,7 @@ class SensorManager{
     getSensorWithPin(sensorPin){
         var result = undefined;  
         $.each(this.sensors, function(i,sensor) {
-            //console.log("pin:",sensorPin,sensor.s.pin);
+            console.log("pin:",sensorPin,sensor.s.pin);
             if( sensor.s.cm9Pin == sensorPin){
                 result = sensor;
                 return false; //break
