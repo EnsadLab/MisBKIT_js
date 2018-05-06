@@ -103,7 +103,7 @@ Sensor.prototype.onValue = function(val){
             });
         }
         if(this.s.midiEnabledOutput) {
-            midiPortManager.sendMidi(this.s.midiPortOutput,this.s.midiCmdOutput,this.s.midiMappingOutput);
+            midiPortManager.sendMidi(this.s.midiPortOutput,this.s.midiCmdOutput,this.s.midiMappingOutput,val);
         }
     }
     MisGUI_sensors.setSensorValue(this.ID,val,nv*100);    

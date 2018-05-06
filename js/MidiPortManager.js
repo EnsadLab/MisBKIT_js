@@ -107,10 +107,10 @@ MidiPortManager.prototype.addMidiPort = function(portName, portID){
     
 };
 
-MidiPortManager.prototype.sendMidi = function(portName, cmd, index){
+MidiPortManager.prototype.sendMidi = function(portName, cmd, index, val){
     for(var i=0; i<this.midiPorts.length; i++){
         if(this.midiPorts[i].portName == portName){
-            this.midiPorts[i].sendMidi(cmd,index);
+            this.midiPorts[i].sendMidi(cmd,index,val);
         }
     }
 }

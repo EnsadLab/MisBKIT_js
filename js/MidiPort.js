@@ -115,7 +115,7 @@ MidiPort = function () {
 
 };
 
-MidiPort.prototype.sendMidi = function(cmd,index){
+MidiPort.prototype.sendMidi = function(cmd,index,val){
     console.log("sending midi:");
     this.midiOut.sendMessage([176,22,1]);
 }
