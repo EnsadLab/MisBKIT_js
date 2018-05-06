@@ -200,6 +200,8 @@ class SensorManager{
         MisGUI_sensors.hideAllOutputEntries(sensor.ID);
         MisGUI_sensors.selectSensor(sensor.ID);
         misGUI.setManagerValue("sensorManager","onNameText",sensor.s.name,sensor.ID);
+        sensor.s.enabled = true;
+        misGUI.setManagerValue("sensorManager","enable",true,sensor.ID);
         this.updateTextDescription(sensor.ID);
         this.sensorID++;      
     }

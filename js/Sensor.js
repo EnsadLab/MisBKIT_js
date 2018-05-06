@@ -59,7 +59,7 @@ Sensor = function () {
     this.freeze = false;
 
     this.freeze = true;
-    this.enabled = false;
+    this.enabled = false; //TODO TODO: check all this different enabled...??
     this.textDescription = "";
 };
 
