@@ -494,14 +494,14 @@ class SensorManager{
     }
 
     freezeAllSensors(){
-        for(id in this.sensors){
-            var s = this.sensors[id].freezeSensor();
+        for(var index in this.sensors){
+            this.sensors[index].freezeSensor();
         }
     }
     
     unfreezeAllSensors(){
-        for(id in this.sensors){
-            var s = this.sensors[id].unfreezeSensor();
+        for(var index in this.sensors){
+            this.sensors[index].unfreezeSensor();
         }
     }
     
@@ -541,7 +541,7 @@ class SensorManager{
             var sensor = sensorManager.getSensorWithID(eltID);
             if(sensor != undefined){
                 sensor.s.ID_gui = index;
-                console.log("list with eltID",eltID,sensor.s.ID_gui);
+                //console.log("list with eltID",eltID,sensor.s.ID_gui);
             }
         });
         
