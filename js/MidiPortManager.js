@@ -107,6 +107,14 @@ MidiPortManager.prototype.addMidiPort = function(portName, portID){
     
 };
 
+MidiPortManager.prototype.sendMidi = function(portName, cmd, index){
+    for(var i=0; i<this.midiPorts.length; i++){
+        if(this.midiPorts[i].portName == portName){
+            this.midiPorts[i].sendMidi(cmd,index);
+        }
+    }
+}
+
 MidiPortManager.prototype.hidePortsFromGUI = function(){
     for(var i=0; i<this.midiPorts.length; i++){
         this.midiPorts[i].enabledOnGUI = false;
