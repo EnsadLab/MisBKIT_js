@@ -31,7 +31,8 @@
 	// Sortable Elements
 	$( "#sortable-anim" ).sortable();
     $( "#sortable-anim" ).disableSelection();
-	//$( "#sortable-sens" ).sortable();
+	
+	 
 	$( "#sortable-sens" ).sortable({
 		stop: function( event, ui ) {
 			console.log("sortable-sens stop");
@@ -39,6 +40,9 @@
 	  });
 	$( "#sortable-sens" ).disableSelection();
 	//$( "#sortable-sens-output" ).sortable();
+	/*
+	  take it now for now, because it is not working
+	  
 	$( "#sortable-sens-output" ).sortable({
 		start: function(event, ui){
 			console.log("sortable-sens-output::start!!!");
@@ -47,7 +51,7 @@
 			console.log("sortable-sens-output:stop!!!");
 		},
 	  });
-	//$( "#sortable-sens-output" ).disableSelection();
+	  */
 
 
     //cf MisGUI  $("button.start-rec").bind("click", UIstartRec);

@@ -70,10 +70,16 @@ class SensorManager{
             misGUI.setManagerValue("sensorManager","onMidiInput",sensor.s.midiPortInput,sensor.ID);
             misGUI.setManagerValue("sensorManager","onMidiOutput",sensor.s.midiPortOutput,sensor.ID);
 
+            //TEST
+            MisGUI_sensors.highlightAnim("S0","listAnims-1");
+            MisGUI_sensors.highlightAnim("S1","listAnims-2");
+
             // add selected output entries
             MisGUI_sensors.hideAllOutputEntries(sensor.ID);
             $.each(sensor.s.output_entries,function(j,output){
-                MisGUI_sensors.addEntry(sensor.ID,output);
+                //MisGUI_sensors.addEntry(sensor.ID,output);
+                MisGUI_sensors.showEntry(sensor.ID,output);
+                
             });
             
         });
@@ -149,6 +155,16 @@ class SensorManager{
             misGUI.setManagerValue("sensorManager","changeSettingsVariable",false,eltID,name+"EnabledOutput");
         });
         MisGUI_sensors.removeSensor(eltID);
+        /*
+        if( id in this.sensors){
+        misGUI.removeSensor(id);
+        this.sensors[id].discard();
+        delete this.sensors[id];
+        }
+        for( id in this.sensors ){
+            console.log("afterRemove:",id);
+        }
+        */
     }
 
     enable(eltID,onoff){
@@ -220,6 +236,9 @@ class SensorManager{
             }
             misGUI.setManagerValue("sensorManager","changeSettingsVariable",true,eltID,output+"EnabledOutput");
             MisGUI_sensors.addEntry(eltID,output);
+            // CEC: put it back to default state.. to be discussed
+            misGUI.setManagerValue("sensorManager","onSelectOutput","default",eltID);
+            this.updateTextDescription(eltID);
             this.saveSensorSettings();
         }
     }
@@ -241,19 +260,34 @@ class SensorManager{
 
     onMinValue(eltID, value){
         console.log("sensorManager.onMinValue",eltID,value);
-        if(this.getSensorWithID(eltID) != undefined){
-            this.getSensorWithID(eltID).s.valMin = parseInt(value);
-            this.saveSensorSettings();
+        var sensor = this.getSensorWithID(eltID);
+        if(sensor != undefined){
+            if(value < sensor.s.valMax){
+                sensor.s.valMin = parseInt(value);
+                MisGUI_sensors.changeMin(eltID,value);  
+                this.saveSensorSettings();
+            }else{ // restore previous value
+                misGUI.setManagerValue("sensorManager","onMinValue",sensor.s.valMin,sensor.ID);
+                MisGUI_sensors.changeMin(eltID,sensor.s.valMin);
+            }
+            this.checkThreshold(eltID);
         }
-        MisGUI_sensors.changeMin(eltID,value);   
+         
     }
 
     onMaxValue(eltID, value){
         console.log("sensorManager.onMaxValue",eltID,value);
         var sensor = this.getSensorWithID(eltID);
         if(sensor!= undefined){
-            this.getSensorWithID(eltID).s.valMax = parseInt(value);
-            this.saveSensorSettings();
+            if(value > sensor.s.valMin ){
+                sensor.s.valMax = parseInt(value);
+                MisGUI_sensors.changeMax(eltID,value);
+                this.saveSensorSettings();
+            }else{ // restore previous value
+                misGUI.setManagerValue("sensorManager","onMaxValue",sensor.s.valMax,sensor.ID);
+                MisGUI_sensors.changeMax(eltID,sensor.s.valMax);
+            }
+            this.checkThreshold(eltID);
         }
         MisGUI_sensors.changeMax(eltID,value); 
         
@@ -273,6 +307,20 @@ class SensorManager{
             this.getSensorWithID(eltID).s.threshold = parseInt(value);
             this.saveSensorSettings();
         }
+        MisGUI_sensors.changeThreshold(eltID,value);
+    }
+
+    checkThreshold(eltID){
+        var sensor = this.getSensorWithID(eltID);
+        if(sensor != undefined){
+            if(sensor.s.threshold < sensor.s.valMin){
+                sensor.s.threshold = sensor.s.valMin;
+                MisGUI_sensors.changeThreshold(eltID,sensor.s.threshold);
+            }else if(sensor.s.threshold > sensor.s.valMax){
+                sensor.s.threshold = sensor.s.valMax;
+                MisGUI_sensors.changeThreshold(eltID,sensor.s.threshold);
+            }
+        }
     }
 
     onChangeAnim(eltID,txt,wich){
@@ -291,6 +339,7 @@ class SensorManager{
                 this.getSensorWithID(eltID).s.output_entries.splice(index, 1);
             }
             misGUI.setManagerValue("sensorManager","changeSettingsVariable",false,eltID,output+"EnabledOutput");
+            this.updateTextDescription(eltID);
             this.saveSensorSettings();
         }
     }
@@ -333,7 +382,7 @@ class SensorManager{
         if(sensor != undefined){
             var mappped_arg = Math.round(arg*(sensor.s.valMax-sensor.s.valMin)/127 + sensor.s.valMin);
             sensor.onValue(mappped_arg);
-            console.log("midi value", mappped_arg);
+            //console.log("midi value", mappped_arg);
         }
     }
 
@@ -403,6 +452,70 @@ class SensorManager{
     
     }
 
+
+
+    //called by cm9Manager // array of sensor values, one loop.
+    handlePinValues(vals){
+        var nbv = vals.length;
+        $.each(this.sensors,function(i,sensor) {
+            if( sensor.s.cm9EnabledInput ){
+                var pin = +sensor.s.cm9Pin;
+                if( (pin>=0)&&(pin<nbv) ){
+                    sensor.onValue(vals[pin]);
+                }
+            }
+        });
+    }
+
+    //Motor position -> sensor.s.fromMotorIndex
+    handleDxlPos(index,nval){
+        //console.log("handleDxlPos:",index,nval);
+        $.each(this.sensors,function(i,sensor) {
+            //console.log("handleDxlPos:",i,sensor.s.motorEnabledInput);
+            if(sensor.s.motorEnabledInput){
+                if(+sensor.s.fromMotorIndex == index){
+                    sensor.onNormValue(nval);
+                }
+            }
+        });        
+    }
+
+
+    getSensorWithPin(sensorPin){
+        var result = undefined;  
+        $.each(this.sensors, function(i,sensor) {
+            //console.log("pin:",sensorPin,sensor.s.pin);
+            if( sensor.s.cm9Pin == sensorPin){
+                result = sensor;
+                return false; //break
+            }
+        });    
+        return result;
+    }
+
+    freezeAllSensors(){
+        for(id in this.sensors){
+            var s = this.sensors[id].freezeSensor();
+        }
+    }
+    
+    unfreezeAllSensors(){
+        for(id in this.sensors){
+            var s = this.sensors[id].unfreezeSensor();
+        }
+    }
+    
+
+    // Simulates the reloading of the sensors.json file //voir index.js keydown Didier
+    onKeyCode(char){
+        console.log("METAKEY",+char);
+        if(char=='M'){ // reset the gui according to the changed elements in the json
+            console.log("Resetting sensor settings into GUI");
+            this.loadSensorSettings();
+            this.saveSensorSettings(); // weird but works like this... bug..
+        }
+    }
+
     getSensorWithID(ID){
         return this.sensors.find(function(sensor){
             return sensor.ID == ID;
@@ -419,6 +532,18 @@ class SensorManager{
 
     //method called when the application is closed
     saveSensorSettings() {
+
+        // save sensor order
+        var items = $(".sensors #sortable-sens").children();
+        $.each(items,function(index,item){
+            //console.log(item);
+            var eltID = $(item).attr("eltID");
+            var sensor = sensorManager.getSensorWithID(eltID);
+            if(sensor != undefined){
+                sensor.s.ID_gui = index;
+                console.log("list with eltID",eltID,sensor.s.ID_gui);
+            }
+        });
         
         var s = {}; //settings
         s.sensors = [];

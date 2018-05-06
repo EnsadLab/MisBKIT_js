@@ -83,15 +83,15 @@ Sensor.prototype.onValue = function(val){
     var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin);
     this.currValue = val;
     if(this.s.enabled){
-        if( this.s.toMotorEnabled ){
+        if( this.s.motorEnabledOutput ){
             //var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin)
             console.log("to motor:",this.s.toMotorIndex,nv);
             dxlManager.onNormControl(this.s.toMotorIndex,nv);
         }
         //TODO anims
         sensorManager.handleSensorValue(this.ID,val); 
-        if(this.s.oscEnabled) oscManager.sendSensorMessage(this.ID,val);
-        if(this.s.mobilizingEnabled){
+        if(this.s.oscEnabledOutput) oscManager.sendSensorMessage(this.ID,val);
+        if(this.s.mobilizingEnabledOutput){
             //console.log("send sensor:",this.s.name,nv);
             oscMobilizing.sendOSC({
                 address:"/mbk/sensor",
