@@ -58,7 +58,7 @@ OscManager.prototype.open = function(){
     console.log("OscManager.open:");
 
     this.initUserReceiver();
-    //this.initCm9Receiver();
+    this.initCm9Receiver();
 }
 
 OscManager.prototype.close= function(){
@@ -89,6 +89,9 @@ OscManager.prototype.initUserReceiver = function(){
             }else if(rcv.address.startsWith("/mbk/motors")){
                 console.log("osc msg:",rcv.address);
                 oscManager.handleMotorMessage(rcv);
+            }else if(rcv.address.startsWith("/mbk/sensors")){
+                console.log("osc msg:",rcv.address);
+                oscManager.handleSensorMessage(rcv);
             }else{
                 console.log("invalid OSC message: " + rcv);
             }
@@ -294,6 +297,7 @@ OscManager.prototype.getArgInAdress = function(adrSrc,adrCmp){
     return parseInt(adrSrc.substring(adrCmp.length));
 }
 
+// CEC: plus utile.. Didier, enlève si t'es ok
 OscManager.prototype.initCm9Receiver = function(){
     
     var inport = 5555;
@@ -331,7 +335,8 @@ OscManager.prototype.initCm9Receiver = function(){
 
 OscManager.prototype.sendSensorMessage = function(sensorID,sensorVal){
 
-    var sensor = sensorManager.sensors[sensorID];
+    var sensor = sensorManager.getSensorWithID(sensorID);//sensorManager.sensors[sensorID];
+    if(sensor == undefined) return;
 
     // /mbk/sensors sensorName sensorValue sensorMin sensorMax   
     buf = osc.toBuffer({
@@ -339,6 +344,8 @@ OscManager.prototype.sendSensorMessage = function(sensorID,sensorVal){
         args: [sensor.s.name,sensorVal,sensor.s.valMin,sensor.s.valMax] 
     });
     
+   // console.log("remote port",this.s.oscRemotePort);
+
     //this.udpUserSender.send(buf, 0, buf.length, this.outportUser, "localhost");
     this.udpUserSender.send(buf, 0, buf.length, this.s.oscRemotePort, this.s.oscRemoteIP);
     
@@ -348,7 +355,7 @@ OscManager.prototype.sendSensorMessage = function(sensorID,sensorVal){
         args: [sensor.s.name]
     });
  
-    this.udpUserSender.send(buf, 0, buf.length, this.oscRemotePort, this.s.oscRemoteIP );
+    this.udpUserSender.send(buf, 0, buf.length, this.s.oscRemotePort, this.s.oscRemoteIP );
 }
 
 
@@ -363,27 +370,9 @@ OscManager.prototype.handleSensorMessage = function(rcv){
     console.log("handling sensor message");
     
     // updates the gui according to the values received from OSC
-    var sensor = sensorManager.getSensorWithPin(sensorPin);
-    sensor.onValue(sensorVal);
+    // var sensor = sensorManager.getSensorWithPin(sensorPin);
+    // if sensor.oscEnabledInput.......
+    // sensor.onValue(sensorVal);
     
-
-    // forwards the message to the user applications
-    // /mbk/sensors sensorName sensorValue sensorMin sensorMax   
-    buf = osc.toBuffer({
-        address: "/mbk/sensors",
-        args: [sensor.s.name,sensorVal,sensor.s.valMin,sensor.s.valMax] 
-    });
-    
-    //this.udpUserSender.send(buf, 0, buf.length, this.outportUser, "localhost");
-    this.udpUserSender.send(buf, 0, buf.length, this.s.oscRemotePort, this.s.oscRemoteIP);
-
-    // concat messages into the adress for programs that handle osc messages only with one parameter
-    buf = osc.toBuffer({
-        address: "/mbk/sensors/" + sensorVal + "/" + sensor.s.valMin + "/" + sensor.s.valMax,
-        args: [sensor.s.name]
-    });
-
-    //this.udpUserSender.send(buf, 0, buf.length, this.outportUser, "localhost");
-    this.udpUserSender.send(buf, 0, buf.length, this.s.oscRemotePort, this.s.oscRemoteIP);
 
 }

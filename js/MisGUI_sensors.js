@@ -29,12 +29,25 @@ MisGUI_sensors.selectEntry = function(eltID,entryName){
 }
 
 MisGUI_sensors.hideAllOutputEntries = function(eltID,entryName){
-    $(".sensor-setting-more").find("[id=sortable-sens-output]").filter("[eltID="+ eltID + "]").find("li").hide();
+    //$(".sensor-setting-more").find("[id=sortable-sens-output]").filter("[eltID="+ eltID + "]").find("li").hide();
+    $(".sensor-setting-more #sortable-sens-output").filter("[eltID="+ eltID + "]").find("section").hide();
+   
+}
+
+MisGUI_sensors.showEntry = function(eltID,entryName){
+    //$(".sensor-setting-more").find("[id=sortable-sens-output]").filter("[eltID="+ eltID + "]").find("li[name="+entryName+"]").show();
+   $(".sensor-setting-more #sortable-sens-output").filter("[eltID="+ eltID + "]").find("section[name="+entryName+"]").show();
+   
 }
 
 MisGUI_sensors.addEntry = function(eltID,entryName){
-    $(".sensor-setting-more").find("[id=sortable-sens-output]").filter("[eltID="+ eltID + "]").find("li[name="+entryName+"]").show();
+    //$(".sensor-setting-more").find("[id=sortable-sens-output]").filter("[eltID="+ eltID + "]").find("li[name="+entryName+"]").show();
+    $(".sensor-setting-more #sortable-sens-output").find("section[name="+entryName+"]").filter("[eltID="+ eltID + "]").show();    
+    var list = $(".sensor-setting-more #sortable-sens-output").filter("[eltID="+ eltID + "]");
+    var items = list.children();
+    list.find("li[name="+entryName+"]").insertBefore(items.first());
 }
+
 
 MisGUI_sensors.initMidiInput = function(eltID){
     var midiSelection = $(".sensor-setting-more .input-wrapper").filter("[eltID="+ eltID + "]").find("[name=midiPortInput]");
@@ -93,10 +106,27 @@ MisGUI_sensors.changeTolerence = function(eltID,tolerance){
     this.sensorAnimWidth(eltID, min, max, value, tolerance);
 }
 
+MisGUI_sensors.changeThreshold = function(eltID,threshold){
+    var sel = $(".sensor-setting-more").filter("[eltID="+ eltID + "]").find(".slider-range");
+    var min = sel.slider( "option", "min" );
+    var max = sel.slider( "option", "max" );
+    sel.slider( "option", "value", threshold);
+    var tolerance = sel.slider( "option", "toler");
+    var selec = $("#sortable-sens-output .currentV").filter("[eltID="+ eltID + "]");
+    selec.html(threshold);
+    this.sensorAnimWidth(eltID, min, max, threshold, tolerance);
+
+}
+
+MisGUI_sensors.highlightAnim = function(eltID,animName){
+    $(".sensor-setting-more").find("[class*='listAnims']").filter("[eltID="+ eltID + "]").removeClass("active");
+    var sel = $(".sensor-setting-more ."+animName).filter("[eltID="+ eltID + "]").addClass("active");
+}
+
 
 MisGUI_sensors.sensorAnimWidth = function(eltID, min, max, cur, tolVal){
 
-    //console.log("sensorAnimWidth",min,max,cur,tolVal);
+    console.log("sensorAnimWidth",min,max,cur,tolVal);
     minVal = min;
     maxVal = max;
     curVal = cur;
@@ -132,6 +162,7 @@ MisGUI_sensors.sensorAnimWidth = function(eltID, min, max, cur, tolVal){
 
 MisGUI_sensors.toleranceUI = function(element, val, cur, min, max){
 
+    console.log("toleranceUI",val);
     //var total = max+Math.abs(min) //again !!! GRRRR
     var total = Math.abs(max-min);
     
@@ -163,7 +194,6 @@ MisGUI_sensors.initSlider = function(eltID,minVal,maxVal,threshold,tolVal){
         value: threshold,
         toler: tolVal,
         slide: function( ev, ui ) {
-            //console.log("slidetol:",$(this).slider("option","toler"));
             var id = $(this).data("id");
             var v  = $(this).slider("value");
             $(this).parent().find(".currentV").html(v); 
@@ -171,13 +201,13 @@ MisGUI_sensors.initSlider = function(eltID,minVal,maxVal,threshold,tolVal){
                     ,  $(this).slider("option","min")
                     ,  $(this).slider("option","max")
                     , v
-                    , tolVal
+                    , $(this).slider("option","toler")
             );
     
             /// v = current value udated;
 
-
-            //// alex $(this).parent().find(".currentV").val(v);
+            // select threshold.. not working in html..
+            // $(this).parent().find(".currentV").val(v);
     
         },
         stop: function(ev,ui) {
@@ -193,6 +223,7 @@ MisGUI_sensors.initSlider = function(eltID,minVal,maxVal,threshold,tolVal){
     MisGUI_sensors.sensorAnimWidth(eltID,minVal, maxVal, threshold, tolVal);
     var selec = $("#sortable-sens-output .currentV").filter("[eltID="+ eltID + "]");
     selec.html(threshold);
+    //selec.val(threshold);
     
 
 }
@@ -205,7 +236,7 @@ MisGUI_sensors.setSensorValue = function(eltID, sensorValue, percent){
     div.find(".live-value-ui").css("left", percent+"%");
     var divThumbnail = $(".sensor-setting").filter("[eltID="+ eltID + "]");
     divThumbnail.find(".live-value-ui").css("left", percent+"%");
-    console.log("value",sensorValue);
+   // console.log("value",sensorValue);
 }
 
 
@@ -304,8 +335,9 @@ function removeOutput(){
 
     console.log("REMOVE OUTPUT ENTRY",eltID,name);
 
-    $("#sortable-sens-output .selected").hide();
-    $("#sortable-sens-output section").removeClass('selected');  
+
+    $(".sensor-setting-more #sortable-sens-output .selected").filter("[eltID="+ eltID + "]").hide();
+    $("#sortable-sens-output section").filter("[eltID="+ eltID + "]").removeClass('selected');  
     
     /// Update removed output.
     sensorManager.removeOutput(eltID,name);

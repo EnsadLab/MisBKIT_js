@@ -27,6 +27,7 @@ MidiPort = function () {
     this.enabled = false;
     this.enabledOnGUI = false;
     this.midiIn = new MIDI.input();
+    this.midiOut = new MIDI.output();
     this.callback = null;
     this.portName = "";
     this.portID = 0;
@@ -78,7 +79,7 @@ MidiPort = function () {
                     }else if(msg[1] == 42) {// BIG STOP BUTTON
                         dxlManager.stopAllMotors();
                     }
-                    if(sensorManager.isMapped("sensor",self.portName,cmd,msg[1])){
+                    if(sensorManager.isMapped("sensor",self.portName,cmd,msg[1])){     
                         var mappedSensors = sensorManager.getSensorIds("sensor",self.portName,cmd,msg[1]);
                         for(var i=0; i<mappedSensors.length; i++){
                             //console.log("CC",mappedSensors[i],msg[2]);
@@ -114,6 +115,11 @@ MidiPort = function () {
 
 };
 
+MidiPort.prototype.sendMidi = function(cmd,index,val){
+    console.log("sending midi:");
+    this.midiOut.sendMessage([176,22,1]);
+}
+
 MidiPort.prototype.close = function(n) {
     this.enabled = false;
 }
@@ -122,6 +128,7 @@ MidiPort.prototype.close = function(n) {
 MidiPort.prototype.open = function () {
     console.log("OPENING MIDI PORT: " + this.portName + " on port ID: " + this.portID);
     this.midiIn.openPort(this.portID);
+    this.midiOut.openPort(this.portID);
     this.enabled = true;
     return this.enabled;
 }

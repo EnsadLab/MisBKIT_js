@@ -435,7 +435,7 @@
 
 				<div class="sensor-setting-more" eltID="default">
 					<select name="input" func="onSelectInput" id="" class="large">
-						<option>Select Input</option>
+						<option value="default">Select Input</option>
 						<option value="cm9">CM9</option>
 						<option value="osc">OSC</option>
 						<option value="midi">Midi</option>
@@ -537,8 +537,8 @@
 						<div class="live-value-ui">•</div>
 						<div class="green-bar"></div>
 					</div>
-					<select name="output" func="onSelectOutput" id="" class="large">
-						<option>Add output</option>
+					<select name="output" func="onSelectOutput" id="output" class="large">
+						<option value="default">Add output</option>
 						<option value="animations">Trigger animation</option>
 						<option value="osc">send OSC messages</option>
 						<option value="midi">send Midi</option>
@@ -574,6 +574,7 @@
 									-->
 									<div class="select-anim-1">
 
+										<!--<select class="listAnims-1 active" func="onChangeAnim" param="anim1" id="">-->
 										<select class="listAnims-1 active" func="onChangeAnim" param="anim1" id="">
 											<option value="">test 1</option>
 											<option value="">test 2</option>
@@ -594,17 +595,18 @@
 
 										
 										<div class="tolerance-ui"></div>
-
+										
 										<div class="sensor-range">
-											 <!-- <div class="minV">...</div>
-											 <div class="maxV">...</div> -->
+											<!-- <div class="minV">...</div>
+											 <div class="maxV">...</div>-->
 
 											 
 											 <div class="currentV">...</div>
 
-											 <!--<input type="number" class=" currentV small  tiny cmdInt" placeholder="..." name="threshold">-->
+											<!-- <input type="number" class=" currentV small  tiny cmdInt" placeholder="..." name="threshold">-->
+											 <!--<input type="number" class=" currentV small tiny" placeholder="...">-->
 
-											 <div class="slider-range" data-min="0" data-max="100" data-default= "50" ></div>
+											<div class="slider-range" data-min="0" data-max="100" data-default= "50" ></div>
 											 
 										</div>
 										<div class="large">

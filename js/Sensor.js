@@ -3,6 +3,7 @@
 */
 
 var connections = [
+    "default",
     "cm9",
     "osc",
     "midi",
@@ -58,7 +59,7 @@ Sensor = function () {
     this.freeze = false;
 
     this.freeze = true;
-    this.enabled = false;
+    this.enabled = false; //TODO TODO: check all this different enabled...??
     this.textDescription = "";
 };
 
@@ -83,15 +84,15 @@ Sensor.prototype.onValue = function(val){
     var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin);
     this.currValue = val;
     if(this.s.enabled){
-        if( this.s.toMotorEnabled ){
+        if( this.s.motorEnabledOutput ){
             //var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin)
             console.log("to motor:",this.s.toMotorIndex,nv);
             dxlManager.onNormControl(this.s.toMotorIndex,nv);
         }
         //TODO anims
-        sensorManager.handleSensorValue(this.ID,val); 
-        if(this.s.oscEnabled) oscManager.sendSensorMessage(this.ID,val);
-        if(this.s.mobilizingEnabled){
+        if(this.s.animationsEnabledOutput) sensorManager.handleSensorValueForAnims(this.ID,val); 
+        if(this.s.oscEnabledOutput) oscManager.sendSensorMessage(this.ID,val);
+        if(this.s.mobilizingEnabledOutput){
             //console.log("send sensor:",this.s.name,nv);
             oscMobilizing.sendOSC({
                 address:"/mbk/sensor",
@@ -100,6 +101,9 @@ Sensor.prototype.onValue = function(val){
                     {type:'f',value:nv}
                 ]
             });
+        }
+        if(this.s.midiEnabledOutput) {
+            midiPortManager.sendMidi(this.s.midiPortOutput,this.s.midiCmdOutput,this.s.midiMappingOutput,val);
         }
     }
     MisGUI_sensors.setSensorValue(this.ID,val,nv*100);    

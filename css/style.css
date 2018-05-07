@@ -1713,6 +1713,8 @@ h3{
 }
 
 /*.sensor-setting-more */.info{
+	word-wrap: break-word;
+	white-space: nowrap;
 	font-size: 10px;
 	color:rgba(255,255,255,0.5);
 	/*width: 80%;*/
