@@ -109,7 +109,7 @@ function MisGUI(){
 MisGUI.prototype.cloneElement = function(selector,eltID){ //eltID may be a string
     var model = $(selector).first();      //model MUST be first ---> insertAfter
     if(model.length>0){
-        console.log("model manager:",model.prop("manager"));
+        //console.log("model manager:",model.prop("manager"));
         var clone = model.clone(true);
         if(model.prop("manager")!=undefined){
             clone.find("*").prop("manager",model.prop("manager")); //was undefined ?
@@ -135,6 +135,16 @@ MisGUI.prototype.removeElement = function(selector,eltID){
     elt.remove();  
 }
 
+MisGUI.prototype.hideElement = function(selector,eltID){
+    var elt = $(selector);
+    if(eltID != undefined){
+        elt = elt.filter("[eltID="+eltID+"]"); //.first(); ALL?
+    }
+    console.log("MisGUI.removing:",elt);
+    elt.hide();  
+}
+
+
 /*
 ex: html : <div class="myManager">
              <input func="myfunc" ...>
@@ -157,46 +167,58 @@ ex: html : <div class="myManager">
     className is for use with   setManagerValue() below
 
 */
+
+
+
 MisGUI.prototype.initManagerFunctions = function(manager,className){
     var parents = $("."+className);
     parents.find("*").each(function(i) {
         var func = $(this).attr("func");
         $(this).prop("manager",manager); //inutile ? keep manager ?
         if(func){
-            console.log("CLONE:",$(this).prop("manager"),$(this).attr("func"),$(this).prop("type"));
-            //if(manager[func]){
-                //$(this).prop("manager",manager); //inutile ? keep manager ?
-                switch($(this).prop("type")){
-                    case "text":
-                    case "number":
-                        $(this).on("keydown",function(e){
-                            if(e.keyCode==13) //trigger change when enter even if not modified
-                                $(this).trigger("change");                            
-                        });
-                    case "select-one": //select
-                        $(this).on("change",function(){
-                            console.log("select:",$(this).prop("manager"),$(this).attr("func"),$(this).attr("eltID"));
-                            $(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());                            
-                        });
-                        //console.log($("function",this.val));
-                        break;
-                    case "checkbox":
-                        $(this).on("change",function(){
-                            $(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).prop("checked"));                            
-                        });
-                        break;
-                    case "submit":  //button
-                        //console.log("button",$(this).attr("func"));
-                        $(this).on("click",function(){
-                            manager.cmd($(this).attr("func"),$(this).attr("eltID")); //value? ... à discuter                           
-                        });
-                        break;
-                    default:
-                        console.log("initManagerFunctions:* type unhandled *",$(this));    
+            console.log("INIT:",$(this).prop("tagName"),$(this).prop("type"));
+
+            //TODO ??? click on <p> , <span> , <textarea> ...
+            //console.log("INIT:",$(this).prop("manager"),$(this).attr("func"),$(this).prop("type"));
+
+            //$(this).prop("manager",manager); //inutile ? keep manager ?
+            switch($(this).prop("type")){
+                case "text":
+                case "number":
+                    $(this).on("keydown",function(e){
+                        if(e.keyCode==13) //trigger change when enter even if not modified
+                            $(this).trigger("change");                            
+                    });
+                case "select-one": //select
+                    //console.log("***",$(this)); 
+                    $(this).on("change",function(){
+                        console.log("select:",$(this).prop("manager"),$(this).attr("func"),$(this).attr("eltID"));
+                        //$(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());                            
+                        // CEC: !!!!! Prob avec prop("manager").. pas bien stocké dans la balise
+                        //$(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());                           
+                        manager.cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val(),$(this).attr("param")); 
+                    });
+                    //console.log($("function",this.val));
                     break;
-                    
-                }
-            //}
+                case "checkbox":
+                    $(this).on("change",function(){
+                        //console.log("manager", $(this).prop("manager"));
+                        //console.log("checkbox...",func,$(this).attr("name"));
+                        // CEC: !!!!! Prob avec prop("manager").. pas bien stocké dans la balise
+                        // $(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).prop("checked"));   
+                        manager.cmd($(this).attr("func"),$(this).attr("eltID"),$(this).prop("checked"),$(this).attr("param"));                         
+                    });
+                    break;
+                case "submit":  //button
+                    //console.log("button",$(this).attr("func"));
+                    $(this).on("click",function(){
+                        manager.cmd($(this).attr("func"),$(this).attr("eltID")); //value? ... à discuter                           
+                    });
+                    break;
+                default:
+                    console.log("initManagerFunctions: UNHANDLED:",$(this).prop("tagName"),$(this).prop("type"));    
+                break   
+            }
         }
     });
 }
@@ -204,18 +226,34 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
 /*
 
 */
-MisGUI.prototype.setManagerValue = function( className , func , value , eltID){
-    //console.log("GUIvalue:",select , func, value , eltID);
+MisGUI.prototype.setManagerValue = function( className , func , value , eltID, param){
+    //console.log("GUIvalue:",className , func, value , eltID, param);
     var elt = $('.'+className+" [func="+func+"]");
     if(eltID != undefined){
         elt = elt.filter("[eltID="+eltID+"]")
     }
-    //if(sel.is("input")) ... hard way
-    console.log("MngValue:",elt.prop("type"))
-    switch(elt.prop("type")){
-        case "select-one":
+    if(param != undefined){
+        elt = elt.filter("[param="+param+"]");
+    }
+    console.log("GUIvalue:",className,func,elt.prop("tagName"),elt.prop("type")); //,value);   
+    switch(elt.prop("tagName")){
+        case "INPUT":
+            switch( elt.prop("type") ){
+                case "text":
+                case "number":
+                    elt.val(value);
+                    break;
+                case "checkbox":
+                    if(elt.is(".onoff")) this.onoffState(elt,value); //ON , OFF , ERROR
+                    else elt.prop("checked",value);    
+                    break;
+                default:
+                    console.log("GUIvalue: not handled: INPUT:",elt.prop("type"));
+            }
+            break;
+        case "SELECT":
             if(Array.isArray(value)){ //fill options with value(s)
-                console.log("select:values[:",value);
+                //console.log("select:values[]:"); //,value);
                 elt.each(function(i) {  //value != for each ones
                     var prev = $(this).val();
                     console.log("select:prev:",prev);
@@ -231,24 +269,64 @@ MisGUI.prototype.setManagerValue = function( className , func , value , eltID){
                     }
                 });
             }
-            else
-                elt.val(value);            
-            break;
-        case "text":
-        case "number":
-            elt.val(value);
-            break;
-        case "checkbox":
-            if(elt.is(".onoff")) this.onoffState(elt,value); //ON , OFF , ERROR
-            else elt.prop("checked",value);    
+            else{
+                elt.val(value);
+            }
+            break;            
+        case "P":
+        case "SPAN":
+        case "TEXTAREA":
+            elt.text(value); // elt.html(value); //TO DISCUSS
             break;
         default:
-            console.log("GUIvalue:type unhandled:",func,elt.prop("type"));
+            console.log("GUIvalue: not handled:",elt.prop("tagName"),elt.prop("type"));
     }
+    /*
+    //console.log("MngValue:",elt.prop("tagName"),elt.prop("type"));
+    if(elt.is("p")||elt.is("span")||elt.is("textarea")){
+        elt.text(value); // elt.html(value); //TO DISCUSS 
+    }
+    else{ //input select ...
+        switch(elt.prop("type")){
+            case "select-one":
+                if(Array.isArray(value)){ //fill options with value(s)
+                    console.log("select:values[:",value);
+                    elt.each(function(i) {  //value != for each ones
+                        var prev = $(this).val();
+                        console.log("select:prev:",prev);
+                        $(this).empty();
+                        for(var i=0;i<value.length;i++){
+                            if(value[i].length>0)
+                                $(this).append($("<option value=" + "'" + value[i] + "'>" + value[i] + "</option>"));
+                        }
+                        if(prev!=null){
+                            $(this).val(prev);
+                        //else $(this).val(value[0]);
+                            $(this).trigger("change");
+                        }
+                    });
+                }
+                else{
+                    elt.val(value);            }
+                break;
+            case "text":
+            case "number":
+                elt.val(value);
+                break;
+            case "checkbox":
+                if(elt.is(".onoff")) this.onoffState(elt,value); //ON , OFF , ERROR
+                else elt.prop("checked",value);    
+                break;
+            default:
+                console.log("GUIvalue:type unhandled:",func,elt.prop("type"));
+        }
+    }
+    */
 }
 
 /*
   <input type="checkbox" func="xxx" class="onoff"> 
+  onoffState( $(this),"ERROR");
 */
 MisGUI.prototype.onoffState = function( dolzis , state){
     console.log("MisGUI.prototype.checkState",state);
@@ -287,7 +365,7 @@ MisGUI.prototype.openOSC = function(remoteAddr,remotePort) {
 */
 
 MisGUI.prototype.cm9State=function(state){
-    console.log("MisGUI.prototype.cm9State",state);
+    console.log("??????????? DELETE ???????????? MisGUI.prototype.cm9State",state);
     var bt = $("#btcm9");
     switch(state){
         case "ON":
@@ -1122,7 +1200,8 @@ MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
             dxlManager.removeAnim(animId);
         }
         console.log("GUI.killanim:");
-        self.setSensorAnims();  //?????      
+        //self.setSensorAnims();  //?????      
+        MisGUI_sensors.setSensorAnims();
     });
 
     clone.find(".play").on("click", function () {
@@ -1149,7 +1228,8 @@ MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
         .on("change", function () {
             var zis = $(this);
             dxlManager.renameAnim(zis.data("id"), zis.val());
-            self.setSensorAnims();
+            //self.setSensorAnims();
+            MisGUI_sensors.setSensorAnims();
         });
 
     clone.find("[name=animKey]")
@@ -1172,7 +1252,8 @@ MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
     clone.insertAfter(model);
     clone.show();
 
-    this.setSensorAnims();
+    //this.setSensorAnims();
+    MisGUI_sensors.setSensorAnims();
     
 }
 
@@ -1622,9 +1703,12 @@ MisGUI.prototype.scanMidiPorts = function(){
             var m = motorMappingManager.motorMappings[i].m;
             this.updateMidiMotorSelection(m.motorIndex,m.port,midiPortManager.midiPorts);
         }
+
+        sensorManager.updateMidiPorts();
+        /*
         for(id in sensorManager.sensors){
             this.changeSensor(sensorManager.sensors[id].s,id)
-        }
+        }*/
     }
 };
 
@@ -1988,172 +2072,6 @@ function midiPanelOver(){
 }
 
 
-
-
-
-
-
-////NEW ALEX
-
-
-// À initialiser je sais pas trop comment...
-var minVal = 0;
-var maxVal = 100;
-var curVal = 50;
-var tolVal = 45;
-
-
-
-
-$(".sensor-setting-more").find(".slider-range").slider({
-    min: minVal,
-    max: maxVal,
-    value: curVal,
-    toler: tolVal,
-    slide: function( ev, ui ) {
-        console.log("slidetol:",$(this).slider("option","toler"));
-        var id = $(this).data("id");
-        var v  = $(this).slider("value");
-        $(this).parent().find(".currentV").html(v);        
-        // sensorManager.onThreshold(id,v);
-        // sensorAnimWidth(ev, min, max, v);
-        //console.log("slide:",id,min,max);
-        //sensorAnimWidth(clone.find(".sensor-range"), min, max, v, settings.tolerance); 
-        //GRRRRRRRRRRRRRRRRRRRRRR min max settings !!!!!
-        sensorAnimWidth($(this).find(".sensor-range")
-                , $(this).slider("option","min")
-                , $(this).slider("option","max")
-                , v
-                , tolVal
-        );
-
-        /// v = current value udated;
-
-    },
-    stop: function(ev,ui) {
-        var v  = $(this).slider("value");
-        // sensorManager.onThreshold(id,v);
-        sensorManager.saveSensorSettings(); 
-
-        /// v = current value udated;
-
-    }
-}); 
-
-
-
-
-
-
-
-//Update des inputs
-$(".tolerance").on('input', changeTolerence);
-$(".minval").on('input', changeMin);
-$(".maxval").on('input', changeMax);
-
-
-function changeTolerence(element){
-    tolVal = $(this).val();
-    sensorAnimWidth(element, minVal, maxVal, curVal, tolVal);
-}
-
-function changeMin(element){
-    minVal = $(this).val();
-    sensorAnimWidth(element, minVal, maxVal, curVal, tolVal);
-}
-
-function changeMax(element){
-    maxVal = $(this).val();
-    sensorAnimWidth(element, minVal, maxVal, curVal, tolVal);
-}
-
-
-
-
-function sensorAnimWidth(element, min, max, cur, tolVal){
-
-    minVal = min;
-    maxVal = max;
-    curVal = cur;
-    tolVal = tolVal;
-
-    selec = $("#sortable-sens-output .animation");
-
-    var total = Math.abs(max-min);
-    
-    percent = Math.abs(cur-min)*100/total;
-    
-    var anim1 = selec.find(".select-anim-1");
-    var anim2 = selec.find(".select-anim-2");
-    var curentVal = selec.find(".currentV");
-    var tol_ui = selec.find(".tolerance-ui");
-    var tol_Val = parseInt(tolVal);
-    var til_Val_input = selec.find(".tolerance");
-
-
-
-    anim1.width(parseInt(percent)+"%");
-    anim2.width(parseInt(100-percent)+"%");
-
-    curentVal.css("left", percent-50+"%");
-    til_Val_input.css("left", percent-10+"%");
-
-
-    toleranceUI(tol_ui, tolVal, cur, min, max);
-
-    /// curVal = current value udated;
-
-
-}
-
-
-
-function toleranceUI(element, val, cur, min, max){
-
-    //var total = max+Math.abs(min) //again !!! GRRRR
-    var total = Math.abs(max-min);
-    
-    element.width(val*100/total + "%");
-
-    percent = Math.abs(min-cur)*100/total;
-   
-    var half_w = parseInt(element[0].style.width)/2;
-    //console.log(percent);
-
-    element.css("left", percent - half_w +"%");
-
-}
-
-
-$(".single-sensor").bind("click", selectSensor);
-
-function selectSensor(){
-    $(".single-sensor").removeClass("activ");
-    $(this).addClass("activ");
-
-    //// Load sensor-setting-more
-    
-
-    /// hide element
-    $(".sensor-setting-more .input-wrapper").find("section[name='cm9']").hide();//?show()
-
-    // $(".sensor-setting-more .input-wrapper").find("section[name='cm9']").hide();
-}
-
-$(".single-sensor .close").bind("click", removeSensor);
-
-function removeSensor(){
-    $(this).parent().remove();
-    //UPDATE Sensor...
-}
-
-
-
-//RIGHT CLICK FOR OUTPUT
-$("#sortable-sens-output section").contextmenu(function(e) {
-    contextmenuBox(e.pageX, e.pageY);
-    $(this).addClass('selected');
-});
     
 $("#changeDxlID").keypress(function(e){
     //console.log("KEY:",e);
@@ -2176,58 +2094,6 @@ $("#changeDxlID").keypress(function(e){
     }
 });
 
-
-
-function contextmenuBox(x, y){
-
-    if($(".context-box")){
-        $(".context-box").remove();
-        $("#sortable-sens-output section").removeClass('selected');
-    }
-
-    var div = document.createElement("DIV");
-    div.className = "context-box";
-    div.style.left = x+"px";
-    div.style.top = y+"px";
-
-    var span1 = document.createElement("SPAN");
-    span1.innerHTML = "Edit";
-    span1.className = "edit-context";
-
-
-    var span2 = document.createElement("SPAN");
-    span2.innerHTML = "Remove";
-    span2.className = "remove-output";
-
-
-    div.appendChild(span1);
-    div.appendChild(span2);
-
-
-    document.body.appendChild(div);
-
-    $(".remove-output").bind("click", removeOutput);
-
-    $("body").bind("click", removeContext);
-
-}
-
-function removeContext(){
-    if($(".context-box")){
-        $(".context-box").remove();
-        $("#sortable-sens-output section").removeClass('selected');      
-    }
-}
-
-function removeOutput(){
-    var id = $("#sortable-sens-output .selected").attr('id');
-    console.log(id);
-
-    $("#sortable-sens-output .selected").remove();
-    
-    /// Update removed output.
-
-}
 
 
 $("#closeDxl").on('click',function(){
