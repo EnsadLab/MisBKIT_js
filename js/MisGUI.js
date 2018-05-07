@@ -235,7 +235,7 @@ MisGUI.prototype.setManagerValue = function( className , func , value , eltID, p
     if(param != undefined){
         elt = elt.filter("[param="+param+"]");
     }
-    console.log("GUIvalue:",className,func,elt.prop("tagName"),elt.prop("type")); //,value);   
+    //console.log("GUIvalue:",className,func,elt.prop("tagName"),elt.prop("type")); //,value);   
     switch(elt.prop("tagName")){
         case "INPUT":
             switch( elt.prop("type") ){
