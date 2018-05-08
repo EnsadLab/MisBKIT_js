@@ -7,15 +7,32 @@
   },
   "webSocket": "none",
   "midiEnabled": true,
-  "midiPorts": [],
-  "anims": [],
+  "midiPorts": [
+    "misB Bus 1"
+  ],
+  "anims": [
+    {
+      "name": "anim1",
+      "key": ""
+    },
+    {
+      "name": "anim2",
+      "key": "2"
+    },
+    {
+      "name": "anim_0_positiveWheel",
+      "key": ""
+    }
+  ],
+  "sensors": [
+  ],
   "motors": [
     {
-      "id": 15,
+      "id": 0,
       "enabled": false,
       "model": -1,
       "clockwise": true,
-      "mode": -1,
+      "mode": 0,
       "jointSpeed": 0,
       "angleMin": -150,
       "angleMax": 150,
@@ -28,7 +45,7 @@
       "enabled": false,
       "model": -1,
       "clockwise": true,
-      "mode": -1,
+      "mode": 1,
       "jointSpeed": 0,
       "angleMin": -150,
       "angleMax": 150,
@@ -37,7 +54,7 @@
       "torqueMax": 1023
     },
     {
-      "id": 12,
+      "id": 0,
       "enabled": false,
       "model": -1,
       "clockwise": true,
