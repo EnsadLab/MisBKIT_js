@@ -86,7 +86,7 @@ Sensor.prototype.onValue = function(val){
     if(this.s.enabled){
         if( this.s.motorEnabledOutput ){
             //var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin)
-            console.log("to motor:",this.s.toMotorIndex,nv);
+            //console.log("to motor:",this.s.toMotorIndex,nv);
             dxlManager.onNormControl(this.s.toMotorIndex,nv);
         }
         //TODO anims

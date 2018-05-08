@@ -33,6 +33,7 @@ MidiPort = function () {
     this.portID = 0;
     var self = this;
 
+    
     this.midiIn.on('message', function (dt, msg) {
         if(self.enabled) {
 
@@ -45,9 +46,9 @@ MidiPort = function () {
             
             /*
             if(msg[0] >= 128 && msg[0] <= 159)
-                console.log("midi note:", msg[0], msg[1], msg[2]);
+                console.log("RECEIVING midi note:", msg[0], msg[1], msg[2]);
             else if(msg[0] >= 176 && msg[0] <= 191)
-                console.log("midi CC:", msg[0], msg[1], msg[2]);
+                console.log("RECEIVING midi CC:", msg[0], msg[1], msg[2]);
             */
 
             //!! when sending from the midi controller, the distinction between
@@ -88,21 +89,21 @@ MidiPort = function () {
                     }
                 }else if(cmd == "note"){ // if it is note, we take the channel value (-> no controller value)
                     var channel;
-                    if(msg[0] <= 143) channel = msg[0] - 128 + 1; // notes OFF
-                    else channel = msg[0] - 144 + 1; // notes ON
+                    if(msg[0] <= 143) channel = msg[0] - 128;// + 1; // notes OFF
+                    else channel = msg[0] - 144;// + 1; // notes ON
                     motorMappingManager.setMappingToActive("midi",self.portName,cmd,channel);
                     //console.log("chanel ",channel);
                     if(motorMappingManager.isMapped("midi",self.portName,cmd,channel)){
                         var motorIDs = motorMappingManager.getMotorIndex("midi",self.portName,cmd,channel);
                         for(var i=0; i<motorIDs.length; i++){
-                            dxlManager.onMidi(motorIDs[i], "midi", msg[1]); //quick n dirty
+                            dxlManager.onMidi(motorIDs[i], "midi", msg[2]); //quick n dirty
                         }
                     }
                     if(sensorManager.isMapped("sensor",self.portName,cmd,channel)){
                         var mappedSensors = sensorManager.getSensorIds("sensor",self.portName,cmd,channel);
                         for(var i=0; i<mappedSensors.length; i++){
                             //console.log("note",mappedSensors[i],msg[1]);
-                            sensorManager.onMidi(mappedSensors[i],"sensor",msg[1]);
+                            sensorManager.onMidi(mappedSensors[i],"sensor",msg[2]);
                         }
                     }
                 }
@@ -112,12 +113,21 @@ MidiPort = function () {
                 self.callback(msg[1], msg[2] / 127);
         }
     });
+    
 
 };
 
 MidiPort.prototype.sendMidi = function(cmd,index,val){
-    console.log("sending midi:");
-    this.midiOut.sendMessage([176,22,1]);
+    
+    var arg_0;
+    if(cmd){ // note
+        arg_0 = +index + 144;
+    }else{ // cc
+        arg_0 = +index + 176;
+    }
+    val = parseFloat(val) * 127.0;
+    //console.log("SENDING midi:",cmd," // ",arg_0,index,val);
+    this.midiOut.sendMessage([arg_0,index,val]); // 2nd argument? Since index is already included in first arg.
 }
 
 MidiPort.prototype.close = function(n) {

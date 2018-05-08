@@ -32,7 +32,7 @@ MidiPortManager.prototype.open = function (p) {
     }*/
 
     if(isNaN(p)){
-        //console.log("OPENING midi by name",p);
+        console.log("OPENING midi by name",p);
         var found = false;
         for(var i=0; i<this.midiPorts.length; i++){
             if(this.midiPorts[i].portName == p){
@@ -45,6 +45,7 @@ MidiPortManager.prototype.open = function (p) {
             console.log("MidiPortManager::close -> portname " + p + " has not been founded. Should not happen");
         }
     }else if((p>=0)&&(p<this.midiPorts.length)){
+        console.log("OPENING midi by name",p);
         var found = false;
         for(var i=0; i<this.midiPorts.length; i++){
             if(this.midiPorts[i].portID == p){

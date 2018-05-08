@@ -380,17 +380,17 @@ OscManager.prototype.handleSensorMessage = function(rcv,mobz_connexion){
     //console.log("handling sensor message:",adr + " with " + nb_args + " args");
     if(adr == "/mbk/sensors"){ //mbk/sensors/ sensor_name value minValue maxValue OR /mbk/sensors/ sensor_name value
         var sensor_name = rcv.args[0].value;
-        var value = parseInt(rcv.args[1].value);
+        var value = parseFloat(rcv.args[1].value);
         if(nb_args == 4){
-            var minValue = rcv.args[2].value;
-            var maxValue = rcv.args[3].value;
+            var minValue = parseFloat(rcv.args[2].value);
+            var maxValue = parseFloat(rcv.args[3].value);
             sensorManager.onOscMessage(sensor_name,value,mobilizing,parseInt(minValue),parseInt(maxValue));
         }else{
             sensorManager.onOscMessage(sensor_name,value,mobilizing);
         }
     }else if(adr.startsWith(cmp = "/mbk/sensors/")){ //mbk/sensors/sensorName value
         var sensor_name = this.getStringInAdress(adr,cmp);
-        var value = parseInt(rcv.args[0].value);
+        var value = parseFloat(rcv.args[0].value);
         sensorManager.onOscMessage(sensor_name,value,mobilizing);
     }
     

@@ -128,6 +128,7 @@ class SensorManager{
             misGUI.cloneElement(".single-sensor",sensorID); 
             misGUI.cloneElement(".sensor-setting-more",sensorID);  
             this.initSensor(sensorID);
+            MisGUI_sensors.selectSensor(sensorID);
         }
     }
 
@@ -136,16 +137,14 @@ class SensorManager{
         robusManager.reset(); //DB important: remove allcallbacks // CEC: Didier? est-ce toujours nécessaire?
         this.sensorID = 0;
         for(var index in this.sensor_files){
-            console.log("?????loading sensor",this.sensor_files[index].name);
             sensorManager.loadSensorFromJson(this.sensorFolder + this.sensor_files[index].name + ".json");
-            console.log("???????",this.sensors.length);
         }
         this.init();
         robusManager.connect(); // CEC: Didier? est-ce toujours nécessaire?
     }
 
     loadSensorFromJson(fullFilenamePath){
-        console.log("????!------loadSensor",fullFilenamePath);
+        console.log("!------loadSensor",fullFilenamePath);
         var json;
         try{
             json = fs.readFileSync(fullFilenamePath, 'utf8');
@@ -225,13 +224,6 @@ class SensorManager{
             console.log("REMOVE TEST: sesnsor: ",this.sensors[index].ID);
         }*/
 
-        // put every on/off button to false!
-        /*
-        $.each(connections,function(i,name){
-            misGUI.setManagerValue("sensorManager","changeSettingsVariable",false,eltID,name+"EnabledInput");
-            misGUI.setManagerValue("sensorManager","changeSettingsVariable",false,eltID,name+"EnabledOutput");
-        });*/
-
         var sensor = this.getSensorWithID(eltID);
         if(sensor != undefined){
             sensor.discard();
@@ -265,6 +257,8 @@ class SensorManager{
         this.onSelectInput(sensor.ID,"default");
         MisGUI_sensors.initMidiInput(sensor.ID);
         MisGUI_sensors.initMidiOutput(sensor.ID);
+        misGUI.setManagerValue("sensorManager","onMidiInput",sensor.s.midiPortInput,sensor.ID);
+        misGUI.setManagerValue("sensorManager","onMidiOutput",sensor.s.midiPortOutput,sensor.ID);
         MisGUI_sensors.initSlider(sensor.ID,sensor.s.valMin, sensor.s.valMax,sensor.s.threshold,sensor.s.tolerance);
         MisGUI_sensors.setSensorAnims();
         MisGUI_sensors.hideAllOutputEntries(sensor.ID);
@@ -502,6 +496,8 @@ class SensorManager{
         $.each(this.sensors, function(i, sensor){
             MisGUI_sensors.initMidiInput(sensor.ID);
             MisGUI_sensors.initMidiOutput(sensor.ID);
+            misGUI.setManagerValue("sensorManager","onMidiInput",sensor.s.midiPortInput,sensor.ID);
+            misGUI.setManagerValue("sensorManager","onMidiOutput",sensor.s.midiPortOutput,sensor.ID);
         });
     }
 
