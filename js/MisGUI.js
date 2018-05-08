@@ -865,6 +865,20 @@ MisGUI.prototype.init =function(){
         }
     });
 
+    $("#loadSensor").on("click",function(){
+        //dialog.showOpenDialog({properties:['multiSelections']},function(filenames) {
+        // /* versionHTML
+        dialog.showOpenDialog({properties:['openFile','multiSelections']},function(filenames) {
+            if(filenames){
+                for(var i=0;i<filenames.length;i++) {
+                    //console.log("FILENAME",filenames[i]);
+                    sensorManager.loadSensorFromGUI(filenames[i]);
+                }
+            }
+        });
+        // * /
+    });
+
     $("#sensor-freeze").on('click',function(){
         if($('#sensor-freeze').is(":checked")){
             console.log("*** sensor freeze all");
@@ -979,6 +993,8 @@ MisGUI.prototype.init =function(){
     $("#addEmptySensor").on("click",function(){
         sensorManager.addEmptySensor();
     })
+
+
     
     //MOBILIZING : test de data-func
     $("#mbzOnOff").on("change",function(){

@@ -99,7 +99,7 @@ class OscMobilizing{
 
             self.oscPort.on('osc',function(msg){
                 //console.log("mob osc:",msg);
-                oscManager.handleMessage(msg);
+                oscManager.handleMessage(msg,true);
                 /* // pour tests
                 var addr = msg.address;
                 var val  = msg.args[0].value;

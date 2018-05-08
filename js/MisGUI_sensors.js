@@ -74,7 +74,7 @@ MisGUI_sensors.initMidiOutput = function(eltID){
 //TODO TODO: move this to setManagerValue??? elt.val(value); doesnt work for <p>
 MisGUI_sensors.updateTextDescription = function(eltID,txt){
     $(".single-sensor").filter("[eltID="+ eltID + "]").find("[func=textDescription]").text(txt);
-    console.log("<p> type ??? ",$(".single-sensor").filter("[eltID="+ eltID + "]").find("[func=textDescription]").attr("type"));
+    //console.log("<p> type ??? ",$(".single-sensor").filter("[eltID="+ eltID + "]").find("[func=textDescription]").attr("type"));
 }
 
 
@@ -181,13 +181,13 @@ MisGUI_sensors.toleranceUI = function(element, val, cur, min, max){
 
 MisGUI_sensors.initSlider = function(eltID,minVal,maxVal,threshold,tolVal){
 
-    console.log("minVal",minVal,maxVal,threshold,tolVal);
+    //console.log("minVal",minVal,maxVal,threshold,tolVal);
 
     minVal = parseInt(minVal);
     maxVal = parseInt(maxVal);
     tolVal = parseInt(tolVal);
     threshold = parseInt(threshold);
-    console.log("minVal2",minVal);
+    //console.log("minVal2",minVal);
     $(".sensor-setting-more").filter("[eltID="+ eltID + "]").find(".slider-range").slider({
         min: minVal,
         max: maxVal,

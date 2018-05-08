@@ -8,7 +8,9 @@ class SensorManager{
         this.sensors = []; // CEC: changed from object to array; -> much more practical for the sorting
         // or just convert it to array to sort and then again to object.. was practical to do sensors[ID]
         this.configurationFolder = "";
+        this.sensorFolder = "";
         this.sensorID = 0;
+        this.sensor_files = [];
     }
 
     cmpReverse(a,b) {
@@ -29,6 +31,8 @@ class SensorManager{
 
     init(){
 
+        console.log("sensorManager.init",this.sensors.length);
+
         misGUI.initManagerFunctions(this,this.className);
 
         this.sensors.sort(this.cmpReverse);
@@ -43,45 +47,7 @@ class SensorManager{
         this.sensors.sort(this.cmp);
 
         $.each(this.sensors, function(i,sensor){
-            $.each(sensor.s,function(settings_name,value){
-                //console.log(settings_name, value);
-                misGUI.setManagerValue("sensorManager","changeSettingsVariable",value,sensor.ID,settings_name);
-            });
-            // for those where func != changeSettingsVariable
-            misGUI.setManagerValue("sensorManager","enable",sensor.s.enabled,sensor.ID);
-            misGUI.setManagerValue("sensorManager","onNameText",sensor.s.name,sensor.ID);
-            misGUI.setManagerValue("sensorManager","onMinValue",sensor.s.valMin,sensor.ID);
-            misGUI.setManagerValue("sensorManager","onMaxValue",sensor.s.valMax,sensor.ID);
-            misGUI.setManagerValue("sensorManager","onTolerance",sensor.s.tolerance,sensor.ID);
-            misGUI.setManagerValue("sensorManager","onThreshold",sensor.s.threshold,sensor.ID);
-            sensorManager.updateTextDescription(sensor.ID);
-
-            MisGUI_sensors.initSlider(sensor.ID,sensor.s.valMin, sensor.s.valMax,sensor.s.threshold,sensor.s.tolerance);
-            MisGUI_sensors.setSensorAnims();
-            //misGUI.setManagerValue("sensorManager","onChangeAnim",sensor.s.anim1,sensor.ID,"anim1"); // not working.. done now in setSensorAnims method
-            //misGUI.setManagerValue("sensorManager","onChangeAnim",sensor.s.anim2,sensor.ID,"anim2"); // not working.. done now in setSensorAnims method
-            
-            // select input entry
-            sensorManager.onSelectInput(sensor.ID,sensor.s.input_entry);
-
-            // init midi inputs and outputs
-            MisGUI_sensors.initMidiInput(sensor.ID);
-            MisGUI_sensors.initMidiOutput(sensor.ID);
-            misGUI.setManagerValue("sensorManager","onMidiInput",sensor.s.midiPortInput,sensor.ID);
-            misGUI.setManagerValue("sensorManager","onMidiOutput",sensor.s.midiPortOutput,sensor.ID);
-
-            //TEST
-            //MisGUI_sensors.highlightAnim("S0","listAnims-1");
-            //MisGUI_sensors.highlightAnim("S1","listAnims-2");
-
-            // add selected output entries
-            MisGUI_sensors.hideAllOutputEntries(sensor.ID);
-            $.each(sensor.s.output_entries,function(j,output){
-                //MisGUI_sensors.addEntry(sensor.ID,output);
-                MisGUI_sensors.showEntry(sensor.ID,output);
-                
-            });
-            
+            sensorManager.initSensor(sensor.ID);
         });
 
 
@@ -93,10 +59,114 @@ class SensorManager{
 
     }
 
+    initSensor(eltID){
+
+        var sensor = this.getSensorWithID(eltID);
+        if(sensor == undefined) return;
+
+        $.each(sensor.s,function(settings_name,value){
+            //console.log(settings_name, value);
+            misGUI.setManagerValue("sensorManager","changeSettingsVariable",value,sensor.ID,settings_name);
+        });
+        // for those where func != changeSettingsVariable
+        misGUI.setManagerValue("sensorManager","enable",sensor.s.enabled,sensor.ID);
+        misGUI.setManagerValue("sensorManager","onNameText",sensor.s.name,sensor.ID);
+        misGUI.setManagerValue("sensorManager","onMinValue",sensor.s.valMin,sensor.ID);
+        misGUI.setManagerValue("sensorManager","onMaxValue",sensor.s.valMax,sensor.ID);
+        misGUI.setManagerValue("sensorManager","onTolerance",sensor.s.tolerance,sensor.ID);
+        misGUI.setManagerValue("sensorManager","onThreshold",sensor.s.threshold,sensor.ID);
+        sensorManager.updateTextDescription(sensor.ID);
+
+        MisGUI_sensors.initSlider(sensor.ID,sensor.s.valMin, sensor.s.valMax,sensor.s.threshold,sensor.s.tolerance);
+        MisGUI_sensors.setSensorAnims();
+        //misGUI.setManagerValue("sensorManager","onChangeAnim",sensor.s.anim1,sensor.ID,"anim1"); // not working.. done now in setSensorAnims method
+        //misGUI.setManagerValue("sensorManager","onChangeAnim",sensor.s.anim2,sensor.ID,"anim2"); // not working.. done now in setSensorAnims method
+        
+        // select input entry
+        sensorManager.onSelectInput(sensor.ID,sensor.s.input_entry);
+
+        // init midi inputs and outputs
+        MisGUI_sensors.initMidiInput(sensor.ID);
+        MisGUI_sensors.initMidiOutput(sensor.ID);
+        misGUI.setManagerValue("sensorManager","onMidiInput",sensor.s.midiPortInput,sensor.ID);
+        misGUI.setManagerValue("sensorManager","onMidiOutput",sensor.s.midiPortOutput,sensor.ID);
+
+        //TEST
+        //MisGUI_sensors.highlightAnim("S0","listAnims-1");
+        //MisGUI_sensors.highlightAnim("S1","listAnims-2");
+
+        // add selected output entries
+        MisGUI_sensors.hideAllOutputEntries(sensor.ID);
+        $.each(sensor.s.output_entries,function(j,output){
+            //MisGUI_sensors.addEntry(sensor.ID,output);
+            MisGUI_sensors.showEntry(sensor.ID,output);
+            
+        });
+    }
+
     // called from settingsManager when json settings file had been read
-    folderIsReady(configurationFolder){
+    /*folderIsReady(configurationFolder){
         this.configurationFolder = configurationFolder;
         this.loadSensorSettings();
+    }*/
+
+    // new one!!!!
+    folderIsReady(sensorFolder){
+        this.sensorFolder = sensorFolder;
+        //this.loadSensorSettings();
+        this.loadSensors();
+    }
+
+    setLoadedSensors(sensor_files){
+        console.log("setLoadedSensors",sensor_files);
+        this.sensor_files = sensor_files;
+    }
+
+    loadSensorFromGUI(filename){
+        var sensorID = this.loadSensorFromJson(filename);
+        if(sensorID != undefined){
+            misGUI.cloneElement(".single-sensor",sensorID); 
+            misGUI.cloneElement(".sensor-setting-more",sensorID);  
+            this.initSensor(sensorID);
+        }
+    }
+
+    loadSensors(){
+        console.log("!------loadSensors-----------------");
+        robusManager.reset(); //DB important: remove allcallbacks // CEC: Didier? est-ce toujours nécessaire?
+        this.sensorID = 0;
+        for(var index in this.sensor_files){
+            console.log("?????loading sensor",this.sensor_files[index].name);
+            sensorManager.loadSensorFromJson(this.sensorFolder + this.sensor_files[index].name + ".json");
+            console.log("???????",this.sensors.length);
+        }
+        this.init();
+        robusManager.connect(); // CEC: Didier? est-ce toujours nécessaire?
+    }
+
+    loadSensorFromJson(fullFilenamePath){
+        console.log("????!------loadSensor",fullFilenamePath);
+        var json;
+        try{
+            json = fs.readFileSync(fullFilenamePath, 'utf8');
+        }catch(err){
+            if (err.code === 'ENOENT') {
+                console.log("File " + fullFilenamePath + " not found!");
+            }else{
+                console.log("Problem loading " + fullFilenamePath + " file");
+            }
+        }
+        if (json) {
+            // create new sensors from the json file
+            console.log("adding new sensor",this.sensors.length);
+            var s = JSON.parse(json);
+            var sensor = new Sensor();
+            sensor.ID = "S"+this.sensorID++;
+            sensor.copySettings(s);
+            this.sensors.push(sensor);
+            return sensor.ID;
+        }
+        
     }
 
     loadSensorSettings() {
@@ -206,6 +276,10 @@ class SensorManager{
         this.sensorID++;      
     }
 
+    loadSensor(filename){
+        console.log("loading sensor",filename);
+    }
+
     enable(eltID,onoff){
         console.log("sensorManager.enable:",onoff);
         this.getSensorWithID(eltID).s.enabled = onoff;
@@ -275,7 +349,6 @@ class SensorManager{
 
     }
 
-    coucou(){console.log("coucou");}
 
     onSelectOutput(eltID, output){
         console.log("add output selection:",output);
@@ -460,6 +533,28 @@ class SensorManager{
         }
         return false;
     }
+
+    onOscMessage(sensor_name,value,mobilizing,minValue,maxValue){
+        console.log("onOscMessage",sensor_name,value,minValue,maxValue);
+        var sensor = this.getSensorWithName(sensor_name);
+        if(sensor != undefined){
+            var mapped_arg = value;
+            if(minValue != undefined && maxValue != undefined){
+                mapped_arg = Math.round((value-minValue)*(sensor.s.valMax-sensor.s.valMin)/(maxValue-minValue) + parseInt(sensor.s.valMin));
+                //mappped_arg = Math.round((value -minValue)*(maxValue-minValue));
+            }else{
+                //console.log("value",value);
+                //console.log("(sensor.s.valMax-sensor.s.valMin) ",(sensor.s.valMax-sensor.s.valMin) );
+                //console.log("value*(sensor.s.valMax-sensor.s.valMin) ",value*(sensor.s.valMax-sensor.s.valMin) );
+                //console.log("value*(sensor.s.valMax-sensor.s.valMin)+valMin ",value*(sensor.s.valMax-sensor.s.valMin)+sensor.s.valMin );
+                mapped_arg = Math.round(value*(sensor.s.valMax-sensor.s.valMin) + parseInt(sensor.s.valMin));
+                //console.log("mapped_arg",mapped_arg);
+            }
+            if((sensor.s.oscEnabledInput && !mobilizing) || (sensor.s.mobilizingEnabledInput && mobilizing)){
+                sensor.onValue(mapped_arg);
+            }
+        }
+    }
     
     getSensorIds(type,port,cmd,nbID){
         var sensorIDs = new Array();
@@ -590,6 +685,12 @@ class SensorManager{
         });
     }
 
+    getSensorWithName(name){
+        return this.sensors.find(function(sensor){
+            return sensor.s.name = name;
+        });
+    }
+
 
     getSensorSetting(eltID,wich){
         var sensor = this.getSensorWithID(eltID);
@@ -613,16 +714,17 @@ class SensorManager{
             }
         });
         
-        var s = {}; //settings
-        s.sensors = [];
+        var s = {}; //sensor settings
 
         $.each(this.sensors, function(i,sensor) {
-            s.sensors.push(sensor.getSettings());
+            for(var k in sensor.s){
+                s[k]=sensor.s[k];
+            }
+            var json = JSON.stringify(s, null, 2);
+            //console.log(json);
+            settingsManager.saveToSensorFolder(sensor.s.name + ".json",json);
         });    
 
-        var json = JSON.stringify(s, null, 2);
-        settingsManager.saveToConfigurationFolder("sensors.json",json);
-        //console.log(json);
     }
 
 }

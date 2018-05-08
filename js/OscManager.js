@@ -4,7 +4,7 @@
 
 /**
  * note(Didier)
- * sensorSimulator            oscP5 8888 , remote 5555
+ * sensorSimulator            oscP5 8888 , remote 4444
  * animationTrigger           oscP5 6666 , remote 4444
  * motorTrigger               oscP5 6666,  remote 4444
  * multipleAnimationTrigger : oscP5 6666 , remote 4444
@@ -58,7 +58,7 @@ OscManager.prototype.open = function(){
     console.log("OscManager.open:");
 
     this.initUserReceiver();
-    this.initCm9Receiver();
+    //this.initCm9Receiver();
 }
 
 OscManager.prototype.close= function(){
@@ -79,7 +79,7 @@ OscManager.prototype.initUserReceiver = function(){
     var inport = this.s.oscLocalPort; //4444;
     this.oscUserReceiver = udp.createSocket("udp4", function(msg, rinfo) {
         var error, error1;
-        console.log("osc rcv");
+        //console.log("osc rcv");
         try {
             var rcv = osc.fromBuffer(msg);
             var adr = rcv.address;
@@ -109,7 +109,7 @@ OscManager.prototype.initUserReceiver = function(){
 
 //... mobilizing ... in progress
 //TODO split
-OscManager.prototype.handleMessage = function(rcv){
+OscManager.prototype.handleMessage = function(rcv,mobz_connexion){
     var adr = rcv.address;
     if(adr.startsWith("/mbk/anims")){
         //console.log("mbz msg:",rcv.address,rcv.args[0].value);
@@ -117,6 +117,8 @@ OscManager.prototype.handleMessage = function(rcv){
     }else if(rcv.address.startsWith("/mbk/motors")){
         console.log("OSC.handleMessage:",rcv.address);
         oscManager.handleMotorMessage2(rcv);
+    }else if(rcv.address.startsWith("/mbk/sensors")){
+        oscManager.handleSensorMessage(rcv,mobz_connexion);
     }else{
         console.log("invalid OSC message: " + rcv);
     }
@@ -294,7 +296,14 @@ OscManager.prototype.setMode = function(motorIndex, mode){
 
 
 OscManager.prototype.getArgInAdress = function(adrSrc,adrCmp){
+    console.log("getArgInAdress",adrSrc,adrCmp);
     return parseInt(adrSrc.substring(adrCmp.length));
+}
+
+
+OscManager.prototype.getStringInAdress = function(adrSrc,adrCmp){
+    console.log("getArgInAdress",adrSrc,adrCmp);
+    return adrSrc.substring(adrCmp.length);
 }
 
 // CEC: plus utile.. Didier, enlève si t'es ok
@@ -359,20 +368,30 @@ OscManager.prototype.sendSensorMessage = function(sensorID,sensorVal){
 }
 
 
-// TODO: Simulation pour l'instant...
-// enlever?
-OscManager.prototype.handleSensorMessage = function(rcv){
+
+OscManager.prototype.handleSensorMessage = function(rcv,mobz_connexion){
 
     var adr = rcv.address;
-    var sensorPin = rcv.args[0].value;
-    var sensorVal = rcv.args[1].value;
+    var nb_args = rcv.args.length;
 
-    console.log("handling sensor message");
-    
-    // updates the gui according to the values received from OSC
-    // var sensor = sensorManager.getSensorWithPin(sensorPin);
-    // if sensor.oscEnabledInput.......
-    // sensor.onValue(sensorVal);
-    
+    var mobilizing = true;
+    if(mobz_connexion == undefined) mobilizing = false;
 
+    //console.log("handling sensor message:",adr + " with " + nb_args + " args");
+    if(adr == "/mbk/sensors"){ //mbk/sensors/ sensor_name value minValue maxValue OR /mbk/sensors/ sensor_name value
+        var sensor_name = rcv.args[0].value;
+        var value = parseInt(rcv.args[1].value);
+        if(nb_args == 4){
+            var minValue = rcv.args[2].value;
+            var maxValue = rcv.args[3].value;
+            sensorManager.onOscMessage(sensor_name,value,mobilizing,parseInt(minValue),parseInt(maxValue));
+        }else{
+            sensorManager.onOscMessage(sensor_name,value,mobilizing);
+        }
+    }else if(adr.startsWith(cmp = "/mbk/sensors/")){ //mbk/sensors/sensorName value
+        var sensor_name = this.getStringInAdress(adr,cmp);
+        var value = parseInt(rcv.args[0].value);
+        sensorManager.onOscMessage(sensor_name,value,mobilizing);
+    }
+    
 }

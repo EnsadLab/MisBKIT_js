@@ -106,6 +106,7 @@ DxlManager.prototype.saveSettings = function () {
     
     s.midiPorts = [];
     s.anims = [];
+    s.sensors = [];
     s.motors = [];
 
     
@@ -119,6 +120,10 @@ DxlManager.prototype.saveSettings = function () {
     //TODO GUI order
     for (var k in this.animations) {
         s.anims.push({name: this.animations[k].fileName, key: this.animations[k].keyCode});
+    }
+
+    for(var index in sensorManager.sensors){
+        s.sensors.push({name: sensorManager.sensors[index].s.name});
     }
 
     var nbm = this.motors.length;
@@ -173,6 +178,9 @@ DxlManager.prototype.loadSettings = function () {
             console.log("animkey:",anim.keycode);
             anim.load(s.anims[i].name);
         }
+
+        sensorManager.setLoadedSensors(s.sensors);
+       
 
         console.log("trying to open midiport:",this.midiPort);
         midiPortManager.openMidiAtStart(s.midiEnabled);
