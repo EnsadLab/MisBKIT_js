@@ -1,159 +1,315 @@
 
-const LuosSerial = require('serialport');
+const SerialLib = require('serialport');
 const WebSocket = require('websocket').w3cwebsocket;
 const dns = require('dns');
 
-
-
-//TODO ---> misGUI
-var setGUIvalue = function( className , func , value , eltID){
-    //console.log("GUIvalue:",select , func, value , eltID);
-    var elt = $('.'+className+" [func="+func+"]");
-    if(eltID){
-        elt = elt.filter("[eltID="+eltID+"]")
-    }
-    //console.log("setGUIvalue->",func,elt.length);//.prop("type"));
-    //if(sel.is("input"))
-    switch(elt.prop("type")){
-        case "select-one":
-            if(Array.isArray(value)){ //fill options with value(s)
-                var prev = elt.val();
-                console.log("select-one.previous:",prev);
-                elt.empty();
-                for(var i=0;i<value.length;i++){
-                    if(value[i].length>0)
-                        elt.append($("<option value=" + "'" + value[i] + "'>" + value[i] + "</option>"));
-                }
-                if(prev)elt.val(prev);
-                else elt.val(value[0]);
-                elt.trigger("change");
-            }
-            else
-                elt.val(value);            
-            break;
-        case "text":
-        case "number":
-            elt.val(value);
-            break;
-        case "checkbox":
-            elt.prop("checked",value);    
-            break;
-        default:
-            console.log("GUIvalue:type unhandled:",func,elt.prop("type"));
-    }
-}
+$("#robusOnOff").on("mouseover",function(){
+    console.log("robusOnOff mouseover");
+    robusManager.scanSerials();
+})
 
 //TODO ---> misGUI
-var cloneElement = function(selector,eltID){ //eltID may be a string
-    var model = $(selector).first();
-    if(model.length>0){
-        var clone = model.clone(true);
-        if(eltID){ //set eltID to all clone elts
-            clone.attr("eltID",eltID);
-            clone.find("*").attr("eltID",eltID);
-        }
-        clone.insertAfter(model);
-        clone.show();
-    }
-}
-
-//TODO ---> MISGUI
-var removeElement = function(selector,eltID){
-    var elt = $(selector);
+var robusWifiSerial=function( wifi, eltID){
+    var jqw = $('.robusManager [func=setWifiName]');
+    var jqs = $('.robusManager [func=selectPort]');
     if(eltID != undefined){
-        elt = elt.filter("[eltID="+eltID+"]"); //.first(); ALL?
+        jqw = jqw.filter("[eltID="+eltID+"]");
+        jqs = jqs.filter("[eltID="+eltID+"]");        
     }
-    console.log("removing:",elt);
-    elt.remove();  
+    if(wifi){ jqs.hide(); jqw.show(); }
+    else { jqw.hide(); jqs.show(); }
 }
 
-//TODO ---> misGUI
-var initGUIfunctions = function(manager,className){
-    var parents = $("."+className);
-    parents.find("*").each(function( eltID ) {
-        var func = $(this).attr("func");
-        if(func){
-            if(manager[func]){
-                $(this).prop("manager",manager); //inutile
-                switch($(this).prop("type")){
-                    case "text":
-                    case "number":
-                        $(this).on("keydown",function(e){
-                            if(e.keyCode==13){
-                            //manager.cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());
-                            //return false;
-                            $(this).trigger("change");
-                            }                            
-                        });
-                    case "select-one": //select
-                        $(this).on("change",function(){
-                            manager.cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());                            
-                        });
-                        break;
-                    case "checkbox":
-                        $(this).on("change",function(){
-                            manager.cmd($(this).attr("func"),$(this).attr("eltID"),$(this).prop("checked"));                            
-                        });
-                        break;
-                    case "submit":  //button
-                        console.log("button",$(this).attr("func"));
-                        $(this).on("click",function(){
-                            manager.cmd($(this).attr("name"),$(this).attr("eltID"));                            
-                        });
-                        break;
-                    default:
-                        console.log("initGUIfunctions:* type unknown *",$(this));    
-                    break;
-                    
-                }
+
+class LuosSerial{
+    constructor(bot){
+        this.portName = "";
+        this.serialPort = null;
+        this.bufferHead = 0;
+        this.buffer = Buffer.alloc(1024);
+        this.luosBot = bot;
+    }
+
+    close(){
+        console.log("closing serial:",this.serialName);
+        if(this.serialPort != null){
+            this.serialPort.close();
+            this.serialPort = null;
+        }
+    }
+    open(name){
+        this.close();
+        this.portName = name;
+        console.log("serial opening:",name);
+
+        var self = this;
+        this.serialPort = new SerialLib(this.serialName,{baudRate:57600});
+        this.bufferHead = 0;
+        this.serialPort.on('open',()=>{
+            console.log("luosSerial OPENNED");
+            misGUI.setManagerValue("robusManager","enable",true);
+            self.detectDecount = 1000;
+            self.timedDetection();
+        });
+        //this.serialPort.pipe(myparser); marche pas ????
+        this.serialPort.on('data',(rcv)=>{
+            self.detectDecount = 0; //stop request
+            for(var i=0;i<rcv.length;i++){
+                self.rcvByte(rcv[i]);
+            }   
+        });
+        this.serialPort.on('error',(err)=>{
+            console.log("luos Serial ERROR",err);
+            misGUI.setManagerValue("robusManager","enable","ERROR");
+            self.serialPort = null;
+        });
+
+    }
+
+}
+
+
+class LuosBot{
+    constructor(id){
+        this.id = id;
+        this.alias = "";
+        this.modules = {};
+        this.isOnWifi = true; //true = wifi; false = serial
+        this.wifiName   = undefined;
+        this.serialName = undefined;
+        this.serialPort = null;
+        this.detectDecount = 0;
+        this.gotBase = false;        
+        this.bufferHead = 0;
+        this.buffer = Buffer.alloc(1024);
+    }
+
+    enable(onoff){
+        console.log("LuosBot:enable:",this.id,onoff);
+        if(onoff){
+            if(this.isOnWifi) console.log("LuosBot:openwifi:",this.id,this.wifiName);
+            else{
+                console.log("LuosBot:openserial:",this.id,this.serialName);
+                this.openSerial();  
             }
         }
-    });
+        else{
+            if(this.isOnWifi) this.closeWifi();
+            else this.closeSerial();            
+        }
+    }
 
+    update(json){
+        //var str = json.toString('ascii');
+        //console.log("json:",str);
+        try{
+            var msg = JSON.parse(json);
+            console.log("Luos:",this.id,msg);
+            if(!this.gotBase){
+                console.log("Luos:",this.gotBase);
+                this.initModules(msg.modules);
+            }
+        }catch(err){
+            console.log("****bad json****",err);
+        } //Bad json
+        
+    }
+
+    initModules(modules){
+        //console.log("robus first:",modules);
+        this.gotBase = true;
+        var names = [];
+        var params = [];
+        for(var i=0;i<modules.length;i++){
+            var m = modules[i];
+            if( m.type == "gate"){
+                console.log("gate:",m);
+                /*
+                var alias = m.alias;
+                names.push(m.alias);
+                for( var p in m){
+                    if((p!="id")&&(p!="alias")&&(p!="type"))
+                        params.push(p);
+                }
+                */
+            }
+        }
+        /*
+        console.log(" names:",names);
+        console.log(" params:",params);
+        misGUI.setManagerValue("robusManager","selectModule",names);
+        misGUI.setManagerValue("robusManager","selectParam",params);
+        */
+    }
+
+
+
+
+    closeSerial(){
+        console.log("closing serial:",this.id,this.serialName);
+        if(this.serialPort != null){
+            this.serialPort.close();
+            this.serialPort = null;
+        }
+        misGUI.setManagerValue("robusbot","enable",false,this.id);
+        this.gotBase = false;
+    }
+
+    openSerial(){
+        this.closeSerial();
+        if(this.serialName==undefined)
+            return;
+
+        console.log("serial opening:",name);
+        var self = this;
+        this.serialPort = new SerialLib(this.serialName,{baudRate:57600});
+        this.bufferHead = 0;
+        this.serialPort.on('open',()=>{
+            console.log("luosSerial OPENNED",this.id);
+            misGUI.setManagerValue("robusbot","enable",true,this.id);
+            this.gotBase = false;
+            self.detectDecount = 1000;
+            self.timedDetection();
+        });
+        //this.serialPort.pipe(myparser); marche pas ????
+        this.serialPort.on('data',(rcv)=>{
+            self.detectDecount = 0; //stop request
+            for(var i=0;i<rcv.length;i++){
+                var c = rcv[i];
+                self.buffer[this.bufferHead]=c;
+                if(c==0xA){ //lf
+                    var line=self.buffer.slice(0,self.bufferHead+1);
+                    self.bufferHead = 0;
+                    self.update( line );
+                }
+                else if(++this.bufferHead>1022){ //!!! OVERFLOW
+                    this.bufferHead=0; //forget ?
+                    console.log("**** Luos overflow ****:",this.id);
+                }
+            }
+        });
+        this.serialPort.on('error',(err)=>{
+            console.log("luos Serial ERROR:",this.id,err);
+            misGUI.setManagerValue("robusManager","enable","ERROR",this.id);
+            self.serialPort = null;
+        });        
+    }//openSerial
+
+    timedDetection(){
+        if(--this.detectDecount>0){
+            if(this.serialPort != null){
+                console.log("send detection",this.detectDecount);
+                this.serialPort.write('{"detection":{}}\r');
+                setTimeout(this.timedDetection.bind(this),200);
+            }
+            else{
+                console.log("serialPort NULL ???");
+                misGUI.setManagerValue("robusManager","enable","ERROR");
+            }            
+        }
+        else
+            console.log("end detection",this.detectDecount);        
+    }
+
+    
+    closeWifi(){
+        console.log("closing wifi:",this.id);        
+        misGUI.setManagerValue("robusbot","enable",false,this.id);
+    }
+
+    serialWifi(onoff){ //true = wifi; false = serial
+        console.log("isWifi:",this.id,onoff);
+        this.isOnWifi = onoff;
+        this.closeSerial();
+        this.closeWifi();
+        if(!onoff){ //serial
+            robusManager.scanSerials(function(names){
+                misGUI.setManagerValue("robusManager","selectPort",names); //all selectors
+            });
+        }
+        else{ //wifi
+            //this.closeWebSocket();
+        }
+        robusWifiSerial(onoff,this.id);     
+    }
+    
+    selectPort(name){
+        console.log("luosBotselectPort:",this.id,name);
+        this.closeSerial();
+        this.serialName = name;
+    }
+
+    setWifiName(name){
+        console.log("luosBot:setWifiName:",this.id,name);
+        this.wifiName = name;
+    }
 }
 
-// "robus/func/eltID values"
 
 class RobusManager{
     constructor(){
-        this.robots = {};
+        this.nextBotIndex = 0;
+        this.luosBots = {};
         this.className = "robusManager";
+        this.wifiName   = "";
         this.serialName = null; //noSelection
         this.serialPort = null;
         this.detectDecount = 0;
         this.bufferHead = 0;
         this.buffer = Buffer.alloc(1024);
 
+        this.firstMsg = true;
 
     }
 
     init(){
-        //tests
-        console.log("classname robus:", this.className);
+        console.log("ROBUSmanager:",this);
         misGUI.initManagerFunctions(this,this.className);
-        misGUI.cloneElement(".robusbot",3);
-        misGUI.cloneElement(".robusbot",2);
-        misGUI.cloneElement(".robusbot",1);
-        misGUI.removeElement(".robusbot",3);
+        this.addLuosBot();
+
+        //Test : misGUI.setManagerValue("robusManager","plugInfo","!SPANTEXT!");
+        //Test : misGUI.setManagerValue("robusManager","textArea","bla bla\nyoupiyoupa");
+    }
+
+    addLuosBot(){
+        var id = "LB"+this.nextBotIndex;
+        this.nextBotIndex++;        
+        console.log("addLuosBot:",id);
+        this.luosBots[id]=new LuosBot(id); 
+        misGUI.cloneElement( ".robusbot",id);       
     }
 
     // "cmd" 42 value
     cmd(func,eltID,arg){
         console.log("robusCmd:",func,eltID,arg);
-        if(this[func]){
-            if(eltID!=undefined)this[func](eltID,arg);
-            else this[func](arg);
+        if( eltID == undefined){
+            if(this[func])
+            this[func](arg);
+        }
+        else{
+            this.luosBots[eltID][func](arg);
         }
     }
 
     enable(onoff){
+        for( var botid in this.luosBots ){
+            console.log("--------botID:",botid);
+            this.luosBots[botid].enable(false);
+        }
+
         console.log("robusManager.enable:",onoff);
         if(onoff){
+            this.firstMsg = true;
             if(this.serialName){
+                misGUI.setManagerValue("robusManager","enable",true);
                 this.openSerial();
+            }
+            else{
+                misGUI.setManagerValue("robusManager","enable","ERROR");
             }
         }
         else{
+            misGUI.setManagerValue("robusManager","enable",false);
             this.closeSerial();
         }
     }
@@ -176,25 +332,27 @@ class RobusManager{
     }
     onNum2(n){
         console.log("robus.onNum2:",n);
-        setGUIvalue( "robusManager","onText", n);
-        setGUIvalue( "robusManager","botNum", n , 42);
+        misGUI.setManagerValue( "robusManager","onText", n);
+        misGUI.setManagerValue( "robusManager","botNum", n , 42);
     }
     onSelect(str){
         console.log("robus.onSelect:",str);        
     }
 
-    serialWifi(onoff){
+    serialWifi(onoff){ //true = wifi; false = serial
         console.log("serialWifi",onoff);
-        setGUIvalue("robusManager","enable",false);
+        robusWifiSerial(onoff);        
         if(!onoff){ //serial
             this.scanSerials(function(names){
                 misGUI.setManagerValue("robusManager","selectPort",names);
             });
         }
         else{ //wifi
+            misGUI.setManagerValue("robusManager","enable",false);
             this.closeSerial();
         } 
     }
+
     selectPort(port){
         console.log("robus.selectPort:",port);
         this.serialName = port;
@@ -209,22 +367,6 @@ class RobusManager{
 
 
 
-/*
-    scanSerialPorts(callback){
-        SerialPort.list().then(function(ports){
-            //console.log("then...",ports);
-            for(var i=0;i<ports.length;i++){
-                //console.log(ports[i].manufacturer);
-                if(ports[i].manufacturer == "Pollen Robotics"){
-                    console.log('----GOT ONE:',ports[i].comName);
-                    openLuos(ports[i].comName);
-                    setupStep = 1;
-                }
-            }
-        });
-    
-    }
-*/
 
 
     // connect() : connect all 'robots'
@@ -317,6 +459,7 @@ class RobusManager{
 
 
     closeSerial(){
+        console.log("Luos closing serial ")
         if(this.serialPort){
             this.serialPort.close();
             this.serialPort = null;
@@ -324,11 +467,15 @@ class RobusManager{
     }
 
     showModules( bot ){
+        if(!this.gotBase){
+            this.initModules(bot);
+        }
+        /*
         var modules = bot.modules; //0 = gate
         for(var i=1;i<modules.length;i++){
             var m = modules[i];
             var cm = this.className;
-            setGUIvalue( cm,"robAlias",m.alias, i);
+            misGUI.setManagerValue( cm,"robAlias",m.alias, i);
             setGUIvalue( cm,"robId",m.id, i);
             setGUIvalue( cm,"robType",m.type, i);
             setGUIvalue( cm,"robType",m.type, i);
@@ -339,22 +486,43 @@ class RobusManager{
             setGUIvalue( cm,"robP8",m.p8, i);
             setGUIvalue( cm,"robP9",m.p9, i);
         }
+        */
     }
 
+    initModules(bot){
+        console.log("robus first:",bot);
+        this.firstMsg = false;
+        var names = [];
+        var params = [];
+        var mods = bot.modules;
+        for(var i=0;i<mods.length;i++){
+            var m = mods[i];
+            if( m.type != "gate"){
+                var alias = m.alias;
+                //this.modules[alias] = m;
+                names.push(m.alias);
+                for( var p in m){
+                    if((p!="id")&&(p!="alias")&&(p!="type"))
+                        params.push(p);
+                }
+            }
+        }
+        console.log(" names:",names);
+        console.log(" params:",params);
+        misGUI.setManagerValue("robusManager","selectModule",names);
+        misGUI.setManagerValue("robusManager","selectParam",params);
+    }
 
     rcvByte(c){
         this.buffer[this.bufferHead]=c;
-        if(this.bufferHead>1022){ //!!! OVERFLOW
-            this.bufferHead=0;
+        if(this.bufferHead>1023){ //!!! OVERFLOW
+            this.bufferHead=0; //forget ?
             console.log("overflow");
         }
         else if(c==0xA){
             var line=this.buffer.slice(0,this.bufferHead+1);
             try{
-                var robot = JSON.parse(line);
-                console.log(robot);
-                this.showModules(robot);
-
+                this.showModules(JSON.parse(line));
             }catch(err){}
             this.bufferHead=0;
         }
@@ -362,68 +530,23 @@ class RobusManager{
             this.bufferHead++;
         }    
     }
-
-    timedDetection(){
-        if(--this.detectDecount>0){
-            console.log("send detection")
-            if(this.serialPort){
-                this.serialPort.write('{"detection":{}}\r');
-                setTimeout(this.timedDetection.bind(this),250);
-            }
-        }            
-    }
     
-    openSerial(){
-        var self = this;
-        console.log("openLuos...",this.serialName);
-        this.serialPort = new LuosSerial(this.serialName,{baudRate:57600});
-        this.serialPort.on('open',()=>{
-            console.log("OPENNED");
-            self.detectDecount = 1000;
-            self.timedDetection();
-        });
-        //this.serialPort.pipe(myparser); marche pas ????
-        this.serialPort.on('data',(rcv)=>{
-            self.detectDecount = 0; //stop request
-            for(var i=0;i<rcv.length;i++){
-                self.rcvByte(rcv[i]);
-            }    
-        });
-        this.serialPort.on('error',(err)=>{
-            console.log("luos Serial ERROR",err);
-            self.serialPort = null;
-        });
-    }
-
     scanSerials(callback){ //filter only pollen
         var names = [];
-        LuosSerial.list(function(err, ports) {
+        SerialLib.list(function(err, ports) {
             if (err)
                 console.log("robus.scanSerials ERROR:", err);
             else {
                 for (var i = 0; i < ports.length; i++) {
-                    if(ports[i].manufacturer == "Pollen Robotics")
+                    //if(ports[i].manufacturer == "Pollen Robotics")
                         names.push(ports[i].comName);
                 }
+                misGUI.setManagerValue("robusManager","selectPort",names); //PLANTAGE !!!!
+                //misGUI.setManagerValue("robusManager","botNum",4567); //ok
             }
             if(callback)
                 callback(names);
-        });
-            
-        /*
-        serialPort.list().then(function(ports){ //new serialport version
-            ports.forEach(function(port){
-                //console.log(port.manufacturer);            
-                if(port.manufacturer == "Pollen Robotics"){
-                    //console.log('----GOT Pollen:',port.comName);
-                    names.push(port.comName);
-                    //openLuos(port.comName);
-                }
-            });
-            if(callback)
-                callback(names);
-        });
-        */
+        });            
     }
 
 

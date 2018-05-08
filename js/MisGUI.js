@@ -109,7 +109,11 @@ function MisGUI(){
 MisGUI.prototype.cloneElement = function(selector,eltID){ //eltID may be a string
     var model = $(selector).first();      //model MUST be first ---> insertAfter
     if(model.length>0){
+        //console.log("model manager:",model.prop("manager"));
         var clone = model.clone(true);
+        if(model.prop("manager")!=undefined){
+            clone.find("*").prop("manager",model.prop("manager")); //was undefined ?
+        }
         if(eltID != undefined){           //set eltID to all clone elts
             clone.attr("eltID",eltID);
             clone.find("*").attr("eltID",eltID);
@@ -170,46 +174,50 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
     var parents = $("."+className);
     parents.find("*").each(function(i) {
         var func = $(this).attr("func");
+        $(this).prop("manager",manager); //inutile ? keep manager ?
         if(func){
-            if(manager[func]){
-                $(this).prop("manager",manager); //inutile ? keep manager ?
-                //console.log("TEST????",$(this).prop("type"));
+            console.log("INIT:",$(this).prop("tagName"),$(this).prop("type"));
 
-                switch($(this).prop("type")){
-                    case "text":
-                    case "number":
-                        $(this).on("keydown",function(e){
-                            if(e.keyCode==13) //trigger change when enter even if not modified
-                                $(this).trigger("change");                            
-                        });
-                    case "select-one": //select
-                        //console.log("***",$(this)); 
-                        $(this).on("change",function(){
-                            // CEC: !!!!! Prob avec prop("manager").. pas bien stocké dans la balise
-                            //$(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());                           
-                            manager.cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val(),$(this).attr("param")); 
-                        });
-                        break;
-                    case "checkbox":
-                        $(this).on("change",function(){
-                            //console.log("manager", $(this).prop("manager"));
-                            //console.log("checkbox...",func,$(this).attr("name"));
-                            // CEC: !!!!! Prob avec prop("manager").. pas bien stocké dans la balise
-                            // $(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).prop("checked"));   
-                            manager.cmd($(this).attr("func"),$(this).attr("eltID"),$(this).prop("checked"),$(this).attr("param"));                         
-                        });
-                        break;
-                    case "submit":  //button
-                        //console.log("button",$(this).attr("func"));
-                        $(this).on("click",function(){
-                            manager.cmd($(this).attr("func"),$(this).attr("eltID")); //value? ... à discuter                           
-                        });
-                        break;
-                    default:
-                        console.log("initManagerFunctions:* type unhandled *",$(this));    
+            //TODO ??? click on <p> , <span> , <textarea> ...
+            //console.log("INIT:",$(this).prop("manager"),$(this).attr("func"),$(this).prop("type"));
+
+            //$(this).prop("manager",manager); //inutile ? keep manager ?
+            switch($(this).prop("type")){
+                case "text":
+                case "number":
+                    $(this).on("keydown",function(e){
+                        if(e.keyCode==13) //trigger change when enter even if not modified
+                            $(this).trigger("change");                            
+                    });
+                case "select-one": //select
+                    //console.log("***",$(this)); 
+                    $(this).on("change",function(){
+                        console.log("select:",$(this).prop("manager"),$(this).attr("func"),$(this).attr("eltID"));
+                        //$(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());                            
+                        // CEC: !!!!! Prob avec prop("manager").. pas bien stocké dans la balise
+                        //$(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());                           
+                        manager.cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val(),$(this).attr("param")); 
+                    });
+                    //console.log($("function",this.val));
                     break;
-                    
-                }
+                case "checkbox":
+                    $(this).on("change",function(){
+                        //console.log("manager", $(this).prop("manager"));
+                        //console.log("checkbox...",func,$(this).attr("name"));
+                        // CEC: !!!!! Prob avec prop("manager").. pas bien stocké dans la balise
+                        // $(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).prop("checked"));   
+                        manager.cmd($(this).attr("func"),$(this).attr("eltID"),$(this).prop("checked"),$(this).attr("param"));                         
+                    });
+                    break;
+                case "submit":  //button
+                    //console.log("button",$(this).attr("func"));
+                    $(this).on("click",function(){
+                        manager.cmd($(this).attr("func"),$(this).attr("eltID")); //value? ... à discuter                           
+                    });
+                    break;
+                default:
+                    console.log("initManagerFunctions: UNHANDLED:",$(this).prop("tagName"),$(this).prop("type"));    
+                break   
             }
         }
     });
@@ -227,43 +235,121 @@ MisGUI.prototype.setManagerValue = function( className , func , value , eltID, p
     if(param != undefined){
         elt = elt.filter("[param="+param+"]");
     }
-    //if(sel.is("input")) ... hard way
-    switch(elt.prop("type")){
-        case "select-one":
+    //console.log("GUIvalue:",className,func,elt.prop("tagName"),elt.prop("type")); //,value);   
+    switch(elt.prop("tagName")){
+        case "INPUT":
+            switch( elt.prop("type") ){
+                case "text":
+                case "number":
+                    elt.val(value);
+                    break;
+                case "checkbox":
+                    if(elt.is(".onoff")) this.onoffState(elt,value); //ON , OFF , ERROR
+                    else elt.prop("checked",value);    
+                    break;
+                default:
+                    console.log("GUIvalue: not handled: INPUT:",elt.prop("type"));
+            }
+            break;
+        case "SELECT":
             if(Array.isArray(value)){ //fill options with value(s)
-                var prev = elt.val();
-                console.log("select-one.previous:",prev);
-                elt.empty();
-                for(var i=0;i<value.length;i++){
-                    if(value[i].length>0)
-                        elt.append($("<option value=" + "'" + value[i] + "'>" + value[i] + "</option>"));
-                }
-                if(prev)elt.val(prev);
-                else elt.val(value[0]);
-                elt.trigger("change");
+                //console.log("select:values[]:"); //,value);
+                elt.each(function(i) {  //value != for each ones
+                    var prev = $(this).val();
+                    console.log("select:prev:",prev);
+                    $(this).empty();
+                    for(var i=0;i<value.length;i++){
+                        if(value[i].length>0)
+                            $(this).append($("<option value=" + "'" + value[i] + "'>" + value[i] + "</option>"));
+                    }
+                    if(prev!=null){
+                        $(this).val(prev);
+                    //else $(this).val(value[0]);
+                        $(this).trigger("change");
+                    }
+                });
             }
             else{
-                elt.val(value);            }
-            break;
-        case "text":
-        case "number":
-            elt.val(value);
-            break;
-        case "checkbox":
-            elt.prop("checked",value);    
+                elt.val(value);
+            }
+            break;            
+        case "P":
+        case "SPAN":
+        case "TEXTAREA":
+            elt.text(value); // elt.html(value); //TO DISCUSS
             break;
         default:
-            console.log("GUIvalue:type unhandled:",func,elt.prop("type"));
+            console.log("GUIvalue: not handled:",elt.prop("tagName"),elt.prop("type"));
     }
+    /*
+    //console.log("MngValue:",elt.prop("tagName"),elt.prop("type"));
+    if(elt.is("p")||elt.is("span")||elt.is("textarea")){
+        elt.text(value); // elt.html(value); //TO DISCUSS 
+    }
+    else{ //input select ...
+        switch(elt.prop("type")){
+            case "select-one":
+                if(Array.isArray(value)){ //fill options with value(s)
+                    console.log("select:values[:",value);
+                    elt.each(function(i) {  //value != for each ones
+                        var prev = $(this).val();
+                        console.log("select:prev:",prev);
+                        $(this).empty();
+                        for(var i=0;i<value.length;i++){
+                            if(value[i].length>0)
+                                $(this).append($("<option value=" + "'" + value[i] + "'>" + value[i] + "</option>"));
+                        }
+                        if(prev!=null){
+                            $(this).val(prev);
+                        //else $(this).val(value[0]);
+                            $(this).trigger("change");
+                        }
+                    });
+                }
+                else{
+                    elt.val(value);            }
+                break;
+            case "text":
+            case "number":
+                elt.val(value);
+                break;
+            case "checkbox":
+                if(elt.is(".onoff")) this.onoffState(elt,value); //ON , OFF , ERROR
+                else elt.prop("checked",value);    
+                break;
+            default:
+                console.log("GUIvalue:type unhandled:",func,elt.prop("type"));
+        }
+    }
+    */
 }
 
-
-
-
-MisGUI.prototype.glou = function(){
-    console.log("--------GLOU----------");
-};
-
+/*
+  <input type="checkbox" func="xxx" class="onoff"> 
+  onoffState( $(this),"ERROR");
+*/
+MisGUI.prototype.onoffState = function( dolzis , state){
+    console.log("MisGUI.prototype.checkState",state);
+    switch(state){
+        case false:
+        case "OFF":
+        case 0:
+            dolzis.prop("checked",false);
+            dolzis.removeClass("error");
+            break;            
+        case true:
+        case "ON":
+        case 1:
+            dolzis.removeClass("error");
+            dolzis.prop("checked",true);
+            break;
+        case "ERROR":
+        case 3:
+            dolzis.addClass("error");
+            dolzis.prop("checked",false);
+            break;
+    }
+}
 
 MisGUI.prototype.cmd = function(cmd,index,args) {
     console.log("gui command: ",index," cmd:",cmd," arg:",args);
@@ -279,7 +365,7 @@ MisGUI.prototype.openOSC = function(remoteAddr,remotePort) {
 */
 
 MisGUI.prototype.cm9State=function(state){
-    console.log("MisGUI.prototype.cm9State",state);
+    console.log("??????????? DELETE ???????????? MisGUI.prototype.cm9State",state);
     var bt = $("#btcm9");
     switch(state){
         case "ON":
@@ -417,10 +503,10 @@ MisGUI.prototype.joint = function(index){
 };
 MisGUI.prototype.wheel =function(index){
     dxlManager.cmd("wheel",index);
-    this.rotAngles[index].show(false);
-    this.rotSpeeds[index].show(true);
-    this.rotSpeeds[index].setValue(0);
-    this.speed(index,0);
+    this.rotAngles[+index].show(false);
+    this.rotSpeeds[+index].show(true);
+    this.rotSpeeds[+index].setValue(0);
+    this.speed(+index,0);
 };
 
 MisGUI.prototype.onRotary = function(val,rot){
@@ -660,14 +746,11 @@ MisGUI.prototype.init =function(){
     var model = $("#divMotorSettings .single-motor");
     var after = model;
     model.data("index",0);
-    model.find(".cmdTog").data("index",0);
-    model.find(".cmd").data("index",0);
+    model.find("*").data("index",0);
     for(var i=1;i<6;i++) {
         var clone = model.clone();
         clone.data("index",i);
         clone.find("*").data("index",i);
-        //clone.find(".cmd").data("index",i);
-        //clone.find(".cmdTog").data("index",i);
         clone.insertAfter(after);
         after = clone;
     }
@@ -676,13 +759,11 @@ MisGUI.prototype.init =function(){
     var parent = $("#divMotors");
     model = parent.find(".single-motor");
     model.data("index",0);
-    model.find(".cmdTog").data("index",0);
-    model.find(".midi-blinker").bind("mouseover", frontBlinkInfo);
+    model.find("*").data("index",0);
     for(var i=1;i<6;i++) {
         var clone = model.clone();
         clone.data("index",i);
         clone.find("*").data("index",i);
-        //clone.find(".cmdTog").data("index",i);
         clone.appendTo(parent);
         clone.find(".midi-blinker").bind("mouseover", frontBlinkInfo);
         clone.find(".midi-blinker").css("display", "none");
@@ -790,7 +871,7 @@ MisGUI.prototype.init =function(){
         var v = this.checked ? 1 : 0;
         var index = $(this).data("index");
         var cmd = this.name;
-        //console.log("cmdTog:",index," ",cmd," ",v);
+        console.log("cmdTog:",index," ",cmd," ",v);
         if(self[this.name])
             self[cmd](index,v);
         else

@@ -146,7 +146,7 @@ class Cm9TCPclient{
             self.toSend = "";
             self.ready = true;
             dxlManager.cm9OnOff(true);  //mmmm
-            misGUI.cm9Info("---OK---"); //mmmmm        
+            misGUI.cm9Info(" connection ... ..."); //mmmmm        
             self.socket.write("version\n");
         })
     };
@@ -206,8 +206,6 @@ class Cm9TCPclient{
         this.flushed = true;    
     }
 
-    //DELETED sendCallback(){ //pop sendStack
-
     //---------------------------    
     intervalWait(){        
         if(--this.timerCount <= 0){
@@ -229,11 +227,6 @@ class Cm9TCPclient{
             clearInterval(this.timer);
     }
 
-    //DELETED timedPause(){
-    //DELETED pushPause(duration,msg){
-    //DELETED onCmd(msg){
-
-    //-----------
     onAnalogs(str){ //"analogs 1 2 ...]
         var arr= str.split(/,| /);
         var len = arr.length-1;//arr[0]="analogs"

@@ -152,7 +152,7 @@ function showConfig(show){
 window.onbeforeunload=function(){
         //cm9Com.close();
         //dxlManager.serialOnOff(false);
-        robusManager.closeSerial();
+        robusManager.enable(false);
         dxlManager.saveSettings();
         sensorManager.saveSensorSettings();
         settingsManager.saveSettings();

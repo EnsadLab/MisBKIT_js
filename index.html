@@ -24,7 +24,7 @@
 						CM9 <!--span class="status" id="cm9Text"></span-->
 						<!-- TODO cf MisGUI $('#btcm9').on('click'... ON OFF ERROR -->
 
-						<input id="btcm9" type="checkbox" class="small cmdTog" name ="enable" title="enable/disable"> 
+						<input id="btcm9" type="checkbox" class="small onoff" name ="enable" title="enable/disable"> 
 					</p>
 
 					<div id="cm9Content" class="content">
@@ -112,33 +112,57 @@
 				
 				<div id="robusPlug" class="plug robusManager">
 					<p>
-						ROBUS  <span class="status"></span>
-						<input id="robusOnOff" type="checkbox" class="small stopAll" func="enable" title="enable/disable">
+						LUOS  <span func="spanText" class="status"></span>
+						<input func="enable" id="robusOnOff" type="checkbox" class="small onoff" title="enable/disable">
 					</p>
 					<div class="content">
 						<br>Robots :
-						<hr>
+						<!--hr>
 						<label class="toggle-small">
-							<input type="checkbox" func="serialWifi"  >
+							<input type="checkbox" func="serialWifi" checked="false">
 							<div class="slider serial round" css=""></div>
-						</label>
-						<select func="selectPort" class= "small tiny" style="width:250px;"></select>
+						</label-->
+						<!--select func="selectPort"  class= "small tiny" style="width:250px;"></select-->
+						<!--input  func="setWifiName" type="text" style="width:250px;" placeholder="websoket">
+						<button class="close"><img src="assets/close.png" alt=""></button>
+						<br-->
 
+						<!--button func="onClick" name="#1">Button1</button-->
+						<!--hr>
+						 <span func="plugInfo">info-info-info</span>
+						 <br>
+						 <textarea func="textArea" rows=6 cols=15>octo_wifi</textarea>
 
-						<button func="onClick" name="#1">Button1</button> <br>
-						<input type="text" func="onText"><br>
+						<hr-->
+
+						 <!--input type="text" func="onText"><br>
 						<input type="number" func="onNum1"><br>
-						<input type="number" func="onNum2"><br>
-						<select func="onSelect" class= "small tiny">
+						<input type="number" func="onNum2"><br-->
+						<!--select func="onSelect" class= "small tiny">
 								<option>none</option>
 								<option value="opt 1">opt 1</option>
 								<option value="opt 2">opt 2</option>
 								<option value="opt 3">opt 3</option>
 								<option value="opt 4">opt 4</option>
-						</select>
+						</select-->
 						<div class="robusbot" style="display:none;">
 								<hr>
-								<font color='gray' size="2">
+								<input func="enable" id="robusOnOff" type="checkbox" class="small onoff" title="enable/disable">
+								<font color='lightblue' size="2">
+									Alias: <input func="robAlias" type=text style="width:80px;">
+									Id: <input func="robId" type="text" style="width:30px;">
+									Type: <input func="robType" type="text" style="width:100px;">
+									<button class="close"><img src="assets/close.png" alt=""></button>
+								</font>
+								<br>
+								<label class="toggle-small">
+									<input type="checkbox" func="serialWifi" checked="false">
+									<div class="slider serial round" css=""></div>
+								</label>
+								<select func="selectPort"  class= "small tiny" style="width:250px; display:none;"></select>
+								<input  func="setWifiName" type="text" style="width:250px;" placeholder="websoket">
+								<br>
+								<font color='lightblue' size="2">
 								Alias: <input func="robAlias" type=text style="width:80px;">
 								Id: <input func="robId" type="text" style="width:30px;">
 								Type: <input func="robType" type="text" style="width:100px;"><br>
@@ -148,11 +172,14 @@
 								p7:<input func="robP7" type="text" style="width:50px;">
 								p8:<input func="robP8" type="text" style="width:50px;">
 								p9:<input func="robP9" type="text" style="width:50px;">
-								
-								
-								</font>
+
+								module:<select func="selectModule" class="small tiny" style="width:150px;"></select>
+								pin:<select func="selectParam" class="small tiny" style="width:100px;"></select>
+								val:<input func="robVal" type="text" style="width:50px;">
 								<input type="text" func="botText">
-								<input type="number" func="botNum">		
+								<input type="number" func="botNum">
+							</font>
+	
 						</div>
 
 						
@@ -190,7 +217,6 @@
 			<div class="motors" >
 				<div class="motors-btn-group">
 					<h2>Motors</h2>
-					<!--<input type="checkbox" class="small cmdTog btnGlobalMotor" title="enable/disable">--> 
 					<input type="checkbox" class="small btnGlobalMotor" id ="motor-freeze" title="enable/disable"> 
 					<button class="advanced gear float-right small"><img src="assets/settings.png" alt=""></button>
 
@@ -312,13 +338,13 @@
 			<div class="left-side">
 				<div class="head">
 					<div class="tab">
-						<h2 id="anims">Animations</h2><input type="checkbox" class="small cmdTog btnGlobalAnim" id="anim-freeze" name ="enable"title="enable/disable"> 
+						<h2 id="anims">Animations</h2><input type="checkbox" class="small btnGlobalAnim" id="anim-freeze" name ="enable"title="enable/disable"> 
 					</div>
 
 					<!-- //////////// -->
 				<!-- !!!!!!!!!!!!!!!!!!! REMOVED SENSOR TAB -->
 					<div class="tab">
-						<h2 id="sens">Sensors </h2> <input type="checkbox" class="small cmdTog btnGlobalSensors" id="sensor-freeze" name ="enable"title="enable/disable">
+						<h2 id="sens">Sensors </h2> <input type="checkbox" class="small btnGlobalSensors" id="sensor-freeze" name ="enable"title="enable/disable">
 					</div>
 				
 
