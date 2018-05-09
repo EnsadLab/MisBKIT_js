@@ -10,6 +10,7 @@ var connections = [
     "motor",
     "mobilizing", 
     "animations",
+    "robus",
 ]
 
 Sensor = function () {
@@ -44,6 +45,7 @@ Sensor = function () {
         motorEnabledOutput: false,
         toMotorIndex: 0,
         animationsEnabledOutput: false,
+        robusEnabledInput: false,
         ID_gui: -1,
         input_entry: "",
         output_entries:[]
