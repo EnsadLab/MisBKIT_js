@@ -39,7 +39,7 @@ app.on('ready', function() {
   //mainWindow.show();
   ////////// TO PUT IN COMMENT WHEN EXPORTING
   appPath = app.getAppPath(); 
-  if(appPath.includes("/Didier/")||appPath.includes("cecilebucher"))
+  if(appPath.includes("/Didier/")||appPath.includes("/cecilebucher/"))
     mainWindow.webContents.openDevTools();
 
 
