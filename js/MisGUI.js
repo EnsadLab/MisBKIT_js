@@ -733,8 +733,6 @@ MisGUI.prototype.selectMidiMappingPort = function(motorID, name){
 MisGUI.prototype.init =function(){
     console.log("----- INIT GUI");
 
-    //DB deleted $("#robusOnOff").prop("disabled",true);
-
     var parent = $("#divAnims").find("[name=listAnims]");
     var tanim = parent.find(".single-anim:first");
     tanim.hide();
@@ -1019,6 +1017,7 @@ MisGUI.prototype.init =function(){
     });
 
     //ROBUS
+    /*
     var robs = $("#robusRobots");
     var bt   = $("#robusOnOff2");
     robs.on("click",function(){
@@ -1051,6 +1050,7 @@ MisGUI.prototype.init =function(){
         $("#robusOnOff2").prop("class","disconnected").text("OFF");        
         $("#robusTxt").val("");        
     });
+    */
 
     divOsc = $("#divOSC");
     divOsc.find("#btOSC").click(function(){
@@ -1785,8 +1785,7 @@ MisGUI.prototype.scanIPv4 = function(){
 
 }
 
-var use_robus = false;
-
+/*
 MisGUI.prototype.robusOnOff = function(onoff){
     if(onoff){
         $("#robusOnOff2").prop("class","connected").text("ON");
@@ -1805,7 +1804,7 @@ MisGUI.prototype.robusInfo = function(text){
 MisGUI.prototype.robusAppendInfo = function(text){
     $("#robusTxt").val($("#robusTxt").val()+text);
 };
-
+*/
 
 
 MisGUI.prototype.blockUI=function(block){

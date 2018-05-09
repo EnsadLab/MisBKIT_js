@@ -113,10 +113,12 @@
 				<div id="robusPlug" class="plug robusManager">
 					<p>
 						LUOS  <span func="spanText" class="status"></span>
-						<input func="enable" id="robusOnOff" type="checkbox" class="small onoff" title="enable/disable">
+						<input func="freeze" id="robusOnOff" type="checkbox" class="small onoff" title="enable/disable">
 					</p>
 					<div class="content">
 						<br>Robots :
+						<button func="addLuosBot" class="float-right"> Add Luos Bot</button>
+						<br>
 						<!--hr>
 						<label class="toggle-small">
 							<input type="checkbox" func="serialWifi" checked="false">
@@ -147,22 +149,21 @@
 						</select-->
 						<div class="robusbot" style="display:none;">
 								<hr>
-								<input func="enable" id="robusOnOff" type="checkbox" class="small onoff" title="enable/disable">
-								<font color='lightblue' size="2">
-									Alias: <input func="robAlias" type=text style="width:80px;">
-									Id: <input func="robId" type="text" style="width:30px;">
-									Type: <input func="robType" type="text" style="width:100px;">
-									<button class="close"><img src="assets/close.png" alt=""></button>
-								</font>
-								<br>
+								<input func="enable" id="robusOnOff" type="checkbox" class="power" title="enable/disable">
 								<label class="toggle-small">
 									<input type="checkbox" func="serialWifi" checked="false">
 									<div class="slider serial round" css=""></div>
 								</label>
 								<select func="selectPort"  class= "small tiny" style="width:250px; display:none;"></select>
 								<input  func="setWifiName" type="text" style="width:250px;" placeholder="websoket">
+								<button func="killme" class="close"><img src="assets/close.png" alt=""></button>
 								<br>
 								<font color='lightblue' size="2">
+									Base: <input func="robAlias" type=text style="width:80px;">
+									Id: <input func="robId" type="text" style="width:30px;">
+									Type: <input func="robType" type="text" style="width:100px;">
+								</font>
+								<!--font color='lightblue' size="2">
 								Alias: <input func="robAlias" type=text style="width:80px;">
 								Id: <input func="robId" type="text" style="width:30px;">
 								Type: <input func="robType" type="text" style="width:100px;"><br>
@@ -178,7 +179,7 @@
 								val:<input func="robVal" type="text" style="width:50px;">
 								<input type="text" func="botText">
 								<input type="number" func="botNum">
-							</font>
+							</font-->
 	
 						</div>
 

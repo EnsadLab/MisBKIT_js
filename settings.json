@@ -1,5 +1,5 @@
 {
-  "cm9Num": 1,
+  "cm9Num": 0,
   "oscPorts": {
     "oscRemoteIP": "localhost",
     "oscLocalPort": 4444,
@@ -7,30 +7,30 @@
   },
   "webSocket": "none",
   "midiEnabled": true,
-  "midiPorts": [
-    "misB Bus 1"
-  ],
+  "midiPorts": [],
   "anims": [
     {
       "name": "anim1",
-      "key": ""
+      "key": "k"
     },
     {
       "name": "anim2",
-      "key": "2"
-    },
-    {
-      "name": "anim_0_positiveWheel",
-      "key": ""
+      "key": "a"
     }
   ],
   "sensors": [
+    {
+      "name": "Analog9_motor0"
+    },
+    {
+      "name": "Moto0_moto1"
+    }
   ],
   "motors": [
     {
-      "id": 0,
+      "id": 1,
       "enabled": false,
-      "model": -1,
+      "model": 12,
       "clockwise": true,
       "mode": 0,
       "jointSpeed": 0,
@@ -58,7 +58,7 @@
       "enabled": false,
       "model": -1,
       "clockwise": true,
-      "mode": -1,
+      "mode": 1,
       "jointSpeed": 0,
       "angleMin": -150,
       "angleMax": 150,
@@ -71,7 +71,7 @@
       "enabled": false,
       "model": -1,
       "clockwise": true,
-      "mode": -1,
+      "mode": 1,
       "jointSpeed": 0,
       "angleMin": -150,
       "angleMax": 150,
@@ -84,7 +84,7 @@
       "enabled": false,
       "model": -1,
       "clockwise": true,
-      "mode": -1,
+      "mode": 1,
       "jointSpeed": 0,
       "angleMin": -150,
       "angleMax": 150,
@@ -97,7 +97,7 @@
       "enabled": false,
       "model": -1,
       "clockwise": true,
-      "mode": -1,
+      "mode": 0,
       "jointSpeed": 0,
       "angleMin": -150,
       "angleMax": 150,

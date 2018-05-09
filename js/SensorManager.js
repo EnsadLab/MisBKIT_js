@@ -140,7 +140,7 @@ class SensorManager{
             sensorManager.loadSensorFromJson(this.sensorFolder + this.sensor_files[index].name + ".json");
         }
         this.init();
-        robusManager.connect(); // CEC: Didier? est-ce toujours nécessaire?
+        //robusManager.connect(); // CEC: Didier? est-ce toujours nécessaire? NON
     }
 
     loadSensorFromJson(fullFilenamePath){

@@ -55,8 +55,8 @@ try {
         //alert("Quit the program?");
         settingsManager.saveSettings();
         motorMappingManager.saveMappingSettings();
-        robusManager.reset();
-        cm9Com.removeAllCallbacks();
+        robusManager.stopAll();
+        //cm9Com.removeAllCallbacks();
         cm9Com.close();
         oscMobilizing.close();
         
