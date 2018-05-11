@@ -262,14 +262,18 @@ MisGUI.prototype.setManagerValue = function( className , func , value , eltID, p
                         if(value[i].length>0)
                             $(this).append($("<option value=" + "'" + value[i] + "'>" + value[i] + "</option>"));
                     }
-                    if(prev!=null){
-                        $(this).val(prev);
-                    //else $(this).val(value[0]);
+                    if( (prev==null)||(prev=="default") ){
+                        $(this).val(value[0]);
                         $(this).trigger("change");
+                    }
+                    else{
+                        $(this).val(prev);
                     }
                 });
             }
             else{
+                var exist = $(this).find("option[value='"+value+"']").length;
+                console.log("?????exist?????:",func,value,exist);
                 elt.val(value);
             }
             break;            

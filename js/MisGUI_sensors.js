@@ -276,6 +276,12 @@ MisGUI_sensors.setSensorAnims = function(names){
     });
 }
 
+MisGUI_sensors.initRobusSelect = function(gate,modules){
+    var sels = $(".robusInput select").filter("[param='module']");; //[param*=module]");
+    console.log("initRobusSelect:",sels.length);
+}
+
+
 // END MisGUI_sensors NAMESPACE simulation
 
 

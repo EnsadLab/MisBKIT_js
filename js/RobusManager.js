@@ -75,17 +75,17 @@ class LuosBot{
     constructor(id){
         this.id = id;
         this.enabled = false; 
-        this.alias = "";
-        this.modules = {};
+        this.gateAlias = undefined;
+        this.modules = undefined;
         this.isOnWifi = true; //true = wifi; false = serial
         this.wifiName   = undefined;
         this.serialName = undefined;
         this.serialPort = null;
         this.detectDecount = 0;
-        this.gotBase = false;        
+        this.gotBase = false;
         this.bufferHead = 0;
         this.buffer = Buffer.alloc(1024);
-        this.sensors = {};
+        //this.sensors = {};
     }
 
     enable(onoff){
@@ -99,12 +99,10 @@ class LuosBot{
         }
     }
 
-
-
     update(json){
         try{
             var msg = JSON.parse(json);
-            console.log("Luos:",this.id,msg);
+            //console.log("Luos:",this.id,msg);
             if(!this.gotBase){
                 this.initModules(msg.modules);
             }
@@ -112,25 +110,20 @@ class LuosBot{
                 var arr = msg.modules;
                 for(var i=0;i<arr.length;i++){
                     var m = arr[i];
-                    for( var s in this.sensors ){
-                        if( m[s.pin] ){
-                            console.log("robusensor:",m.alias,s.pin,m[s.pin]);
-                        }
+                    if(m.type != "gate"){
+                        m.gate = this.gateAlias;
+                        sensorManager.onRobusValue(m);
                     }
                 } 
             }
+            this.modules = msg.modules;
         }catch(err){
             console.log("luos:bad json");
         } //Bad json        
     }
 
-    addSensor(alias,pin){
-        this.sensors[alias+"/"+pin]={};
-    }    
-    removeSensor(alias,pin){
-    }    
-
-
+    //DELETED addSensorEmiter(alias,pin)
+    //DELETED removeSensorEmiter(alias,pin){
 
     initModules(modules){
         //console.log("robus first:",modules);
@@ -140,30 +133,27 @@ class LuosBot{
             var m = modules[i];
             if( m.type == "gate"){
                 this.gotBase = true;
-                console.log("gate:",m);
+                this.gateAlias = m.alias;
+                console.log("ROBUS:gate:",m);
+                //info:
                 misGUI.setManagerValue( "robusbot","robAlias",m.alias,this.id);
                 misGUI.setManagerValue( "robusbot","robId",m.id, this.id);
                 misGUI.setManagerValue( "robusbot","robType",m.type, this.id);
-    
-    
-                /*
-                var alias = m.alias;
+            }
+            /*
+            else{
                 names.push(m.alias);
                 for( var p in m){
                     if((p!="id")&&(p!="alias")&&(p!="type"))
                         params.push(p);
                 }
-                */
             }
+            */
         }
-        /*
-        console.log(" names:",names);
-        console.log(" params:",params);
-        misGUI.setManagerValue("robusManager","selectModule",names);
-        misGUI.setManagerValue("robusManager","selectParam",params);
-        */
+        
+        sensorManager.robusInitSelections(); //(re)initialise la GUI
     }
-
+    
     open(){
         if(this.enabled){
             if(this.isOnWifi){
@@ -181,14 +171,12 @@ class LuosBot{
         else this.closeSerial();                
     }
 
-
     closeSerial(){
         console.log("closing serial:",this.id,this.serialName);
         if(this.serialPort != null){
             this.serialPort.close();
             this.serialPort = null;
         }
-        //misGUI.setManagerValue("robusbot","enable",false,this.id); //frozen?
         this.gotBase = false;
     }
 
@@ -199,7 +187,7 @@ class LuosBot{
             return;
         }
 
-        console.log("serial opening:",name);
+        console.log("robus opening:",name);
         var self = this;
         this.serialPort = new SerialLib(this.serialName,{baudRate:57600});
         this.bufferHead = 0;
@@ -213,7 +201,7 @@ class LuosBot{
         });
         //this.serialPort.pipe(myparser); marche pas ????
         this.serialPort.on('data',(rcv)=>{
-            self.detectDecount = 0; //stop request
+            self.detectDecount = 0; //stop detection request
             for(var i=0;i<rcv.length;i++){
                 var c = rcv[i];
                 self.buffer[this.bufferHead]=c;
@@ -297,6 +285,7 @@ class RobusManager{
         this.className = "robusManager";
         this.nextBotIndex = 0;
         this.luosBots = {};
+        this.sensors = {}; //sensors may exist before gates 
     }
 
     init(){
@@ -305,7 +294,7 @@ class RobusManager{
         this.addLuosBot();
     }
 
-    // "cmd" 42 value
+    // "cmd" "LB42" value
     cmd(func,eltID,arg){
         console.log("robusCmd:",func,eltID,arg);
         if( eltID == undefined){
@@ -339,6 +328,8 @@ class RobusManager{
         }
     }
 
+    //DELETED addSensorEmitter(sensorID,params){
+
     freeze(onoff){
         console.log("robusManager.enable:",onoff);
         if(onoff){
@@ -353,6 +344,17 @@ class RobusManager{
         }
         misGUI.setManagerValue("robusManager","freeze",onoff);
     }
+
+    getGates(){ //TODO
+        return ["gate","gate0","gate1","gate2"];
+    }
+    getModules(gate){ //TODO
+        return ["L0_2","L0_1","L0_3","L0_4"];
+    }
+    getPins(gate,module){ //TODO
+        return ["p0","p5","p6","p7","p8","p9"];
+    }
+
 
     // connect() : connect all 'robots'
     /*
@@ -375,7 +377,6 @@ class RobusManager{
         close("octo_wifi") ou close()
         close the websocket
         !!! dont clear callbacks ( so callbacks after connect()  
-    */
     close(botname){
         if(botname in this.robots){
             this.robots[botanme].close();
@@ -386,26 +387,8 @@ class RobusManager{
             });
         }
     }
-
-    //close all robots , remove callbacks , forget robots
-    reset(){ //clean all
-        
-        $.each(this.robots, function(i,rob) {
-            rob.close();
-            rob.removeAllCallbacks();
-        });
-        /*
-        var robs = this.robots;
-        Object.keys(robs).map(function(key,eltID) {
-            console.log("!delelte:",key,eltID);
-            delete robs[key];
-        });
-        */
-        this.robots={};
-    }
-
-
-
+    */
+    /*
     //example  robusManager.setCallback("octo-wifi","distance3",this.myfunc.bind(this));
     setCallback(rob,module,cb){
         console.log("robAddr:",rob);
@@ -418,7 +401,9 @@ class RobusManager{
             //... connect automatically ? 
         }                   
     }
+    */
 
+    /*
     //removeCallback() remove all callbacks
     //removeCallback("octo_wifi")   remove all callbacks from  octo_wifi
     //removeCallback("octo_wifi","potard2") remove only one callback
@@ -443,7 +428,7 @@ class RobusManager{
         });
         return txt;
     }
-
+    */
 
 
     showModules( bot ){
