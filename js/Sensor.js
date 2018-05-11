@@ -46,6 +46,7 @@ Sensor = function () {
         toMotorIndex: 0,
         animationsEnabledOutput: false,
         robusEnabledInput: false,
+        robusInputParams: {gate:"gate",module:"",pin:""},
         ID_gui: -1,
         input_entry: "",
         output_entries:[]
@@ -163,7 +164,7 @@ Sensor.prototype.onName = function(txt){
 Sensor.prototype.discard = function(){
     this.s.enabled = false; //just in case 
     //cm9Com.removeCallback(+this.s.pin);
-    robusManager.removeCallback(this.s.address,this.s.name);   
+    //robusManager.removeCallback(this.s.address,this.s.name);   
 }
 
 Sensor.prototype.freezeSensor = function(){
@@ -179,3 +180,4 @@ Sensor.prototype.unfreezeSensor = function(){
         this.freeze = false;
     }
 }
+
