@@ -349,8 +349,8 @@ OscManager.prototype.sendSensorMessage = function(sensorID,sensorVal){
 
     // /mbk/sensors sensorName sensorValue sensorMin sensorMax   
     buf = osc.toBuffer({
-        address: "/mbk/sensors/"+sensor.s.name,
-        args: [sensorVal,sensor.s.valMin,sensor.s.valMax] 
+        address: "/mbk/sensor/"+sensor.s.name,
+        args: [sensorVal] //,sensor.s.valMin,sensor.s.valMax] 
     });
     
    // console.log("remote port",this.s.oscRemotePort);

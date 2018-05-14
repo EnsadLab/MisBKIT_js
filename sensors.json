@@ -1,6 +1,7 @@
 {
   "sensors": [
     {
+      "savecount" : 0,
       "device": "CM9",
       "address": "0",
       "name": "CM9-Potentiometre",

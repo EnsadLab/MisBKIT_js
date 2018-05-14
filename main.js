@@ -49,7 +49,7 @@ app.on('ready', function() {
   });
 
   mainWindow.on('closed', function() {
-    console.log(" closed ...");
+    console.log(" ... closed");
     mainWindow = null;
   });
 
@@ -69,7 +69,7 @@ ipc.on('devTools', function (event,arg) {
 
 
 ipc.on('message', function (event,arg) {
-  console.log("message:evt:",arg," arg:",arg);
+  console.log("message:evt:",arg);
 });
 
 ipc.on('console', function (event,arg) {

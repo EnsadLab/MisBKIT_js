@@ -118,7 +118,6 @@ class SensorManager{
     }
 
     setLoadedSensors(sensor_files){
-        console.log("setLoadedSensors",sensor_files);
         this.sensor_files = sensor_files;
     }
 
@@ -133,7 +132,6 @@ class SensorManager{
     }
 
     loadSensors(){
-        console.log("!------loadSensors-----------------");
         this.sensorID = 0;
         for(var index in this.sensor_files){
             sensorManager.loadSensorFromJson(this.sensorFolder + this.sensor_files[index].name + ".json");
@@ -143,7 +141,6 @@ class SensorManager{
     }
 
     loadSensorFromJson(fullFilenamePath){
-        console.log("!------loadSensor",fullFilenamePath);
         var json;
         try{
             json = fs.readFileSync(fullFilenamePath, 'utf8');
@@ -722,11 +719,11 @@ class SensorManager{
     }
 
     onRobusParam(eltID,value,param){
-        console.log("onRobusParam:",eltID,value,param);
+        //console.log("onRobusParam:",eltID,value,param);
         var sensor = this.getSensorWithID(eltID);
         if(sensor != undefined){
             sensor.s.robusParams[param]=value;
-            console.log("robusParam:",sensor.s.robusParams);
+            //console.log("robusParam:",sensor.s.robusParams);
             //robusManager.addSensorEmitter(eltID,sensor.s.robusParams);
 
         }
@@ -735,10 +732,10 @@ class SensorManager{
     //event {gate: ,alias: ,p0:value ,p1:value ,...}
     onRobusValue(event){
         for(var i=0; i<this.sensors.length;i++){
-            if(this.sensors[i].s.input_entry=="robus"){
+            if( this.sensors[i].s.robusEnabledInput ){ //this.sensors[i].s.input_entry=="robus"){
                 var p = this.sensors[i].s.robusParams;
                 if(event.gate==p.gate && event.alias==p.module ){
-                    console.log("onRobusValue:",p.pin);
+                    //console.log("onRobusValue:",p.pin);
                     if(event[p.pin])
                         this.sensors[i].onValue(event[p.pin]);
                 }
@@ -749,7 +746,7 @@ class SensorManager{
     //className , func , value , eltID, param
     robusInitSelections(){
         var gates = robusManager.getGates();
-        console.log("robusInitSelections:",gates)
+        //console.log("robusInitSelections:",gates)
         for(var i=0; i<this.sensors.length;i++){
             var sensor = this.sensors[i];
             if(this.sensors[i].s.input_entry=="robus"){ //?do it for all sensors?

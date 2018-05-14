@@ -21,12 +21,12 @@ const ipc = require('electron').ipcRenderer;
 var remote = require('electron').remote;
 var dialog = remote.dialog;
 const OS = require('os');
+var fs = require('fs');
 
 const udp  = require('dgram');
 const osc  = require('osc-min');
 const serialPort = require('serialport');
 
-var fs = null;
 
 var settingsManager = null; //cf SettingsManager.js
 var dxlManager = null;
@@ -39,30 +39,25 @@ var cm9Com     = null;
 var robusManager = null;
 var oscMobilizing = null;
 
-try {
-    fs = require('fs');
-    console.log("USE FS");
-    //var remote = require('electron').remote;
-    //var dialog = remote.require('dialog');
-    ipc.on("close",function(e,arg){
+
+//ipc.on('close) is called before onbeforeunload
+window.onbeforeunload=function(){
+    ipc.send("message","onbeforeunload!");
+}
+
+ipc.on("close",function(e,arg){
+        ipc.send("message","onclose");
         dxlManager.stopAll();
-        sleep(2);
-        dxlManager.stopAll();
-        sleep(2);
-        dxlManager.stopAll();
-        dxlManager.saveSettings();
-        //sleep(5);
-        //alert("Quit the program?");
+        var c = dxlManager.saveSettings();
+        ipc.send("message","savecount:"+c);
+        //alert("Quit MisBkit");
         settingsManager.saveSettings();
         motorMappingManager.saveMappingSettings();
-        robusManager.stopAll();
-        //cm9Com.removeAllCallbacks();
-        cm9Com.close();
+        sensorManager.saveSensorSettings();
         oscMobilizing.close();
-        
-    });
-
-}catch(e){}
+        robusManager.stopAll();
+        cm9Com.close();
+});
 
 
 /*
@@ -149,14 +144,6 @@ function showConfig(show){
 };
 
 
-window.onbeforeunload=function(){
-        //cm9Com.close();
-        //dxlManager.serialOnOff(false);
-        robusManager.enable(false);
-        dxlManager.saveSettings();
-        sensorManager.saveSensorSettings();
-        settingsManager.saveSettings();
-}
 
 //$(function() {
 window.onload = function() {

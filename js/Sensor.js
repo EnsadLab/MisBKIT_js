@@ -94,7 +94,7 @@ Sensor.prototype.onValue = function(val){
         }
         //TODO anims
         if(this.s.animationsEnabledOutput) sensorManager.handleSensorValueForAnims(this.ID,val); 
-        if(this.s.oscEnabledOutput) oscManager.sendSensorMessage(this.ID,val);
+        if(this.s.oscEnabledOutput) oscManager.sendSensorMessage(this.ID,nv);
         if(this.s.mobilizingEnabledOutput){
             //console.log("send sensor:",this.s.name,nv);
             oscMobilizing.sendOSC({

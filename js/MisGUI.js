@@ -176,7 +176,7 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
         var func = $(this).attr("func");
         $(this).prop("manager",manager); //inutile ? keep manager ?
         if(func){
-            console.log("INIT:",$(this).prop("tagName"),$(this).prop("type"));
+            //console.log("INIT:",$(this).prop("tagName"),$(this).prop("type"));
 
             //TODO ??? click on <p> , <span> , <textarea> ...
             //console.log("INIT:",$(this).prop("manager"),$(this).attr("func"),$(this).prop("type"));
@@ -192,7 +192,7 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                 case "select-one": //select
                     //console.log("***",$(this)); 
                     $(this).on("change",function(){
-                        console.log("select:",$(this).prop("manager"),$(this).attr("func"),$(this).attr("eltID"));
+                        //console.log("select:",$(this).prop("manager"),$(this).attr("func"),$(this).attr("eltID"));
                         //$(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());                            
                         // CEC: !!!!! Prob avec prop("manager").. pas bien stocké dans la balise
                         //$(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());                           
@@ -256,7 +256,7 @@ MisGUI.prototype.setManagerValue = function( className , func , value , eltID, p
                 //console.log("select:values[]:"); //,value);
                 elt.each(function(i) {  //value != for each ones
                     var prev = $(this).val();
-                    console.log("select:prev:",prev);
+                    //console.log("select:prev:",prev);
                     $(this).empty();
                     for(var i=0;i<value.length;i++){
                         if(value[i].length>0)
@@ -272,8 +272,8 @@ MisGUI.prototype.setManagerValue = function( className , func , value , eltID, p
                 });
             }
             else{
-                var exist = $(this).find("option[value='"+value+"']").length;
-                console.log("?????exist?????:",func,value,exist);
+                //var exist = $(this).find("option[value='"+value+"']").length;
+                //console.log("?????exist?????:",func,value,exist);
                 elt.val(value);
             }
             break;            
@@ -735,7 +735,7 @@ MisGUI.prototype.selectMidiMappingPort = function(motorID, name){
 }
 
 MisGUI.prototype.init =function(){
-    console.log("----- INIT GUI");
+    console.log("----- INIT GUI -----");
 
     var parent = $("#divAnims").find("[name=listAnims]");
     var tanim = parent.find(".single-anim:first");

@@ -15,7 +15,7 @@ MotorMappingManager.prototype.folderIsReady = function(configurationFolder){
 }
 
 MotorMappingManager.prototype.loadMappingSettings = function () {
-    
+    console.log("loadMappingSettings********************");
     var json;
     
     try{

@@ -59,6 +59,9 @@ const ADDR_TEMPERATURE = 43;
 
 function DxlManager(){
     //this.pause = 0;   //>0 dont sync speeds & goals
+
+    this.savecount = 0;
+
     this.motors = [];
     this.recIndices = [];
     this.recording  = false;
@@ -96,6 +99,7 @@ function DxlManager(){
 
 DxlManager.prototype.saveSettings = function () {
     var s = {}; //settings
+    s.savecount = ++this.savecount;
     s.cm9Num = cm9Com.num;
     //s.serialPort = cm9Com.serialName;
     //s.midiPort = midiPortManager.getCurrentPortName();
@@ -125,6 +129,8 @@ DxlManager.prototype.saveSettings = function () {
     for(var index in sensorManager.sensors){
         s.sensors.push({name: sensorManager.sensors[index].s.name});
     }
+    console.log("setLoadedSensors:",s.sensors);
+
 
     var nbm = this.motors.length;
     for (var i = 0; i < nbm; i++) {
@@ -134,6 +140,8 @@ DxlManager.prototype.saveSettings = function () {
     var json = JSON.stringify(s, null, 2);
     fs.writeFileSync(__dirname + "/settings.json", json);
     console.log(json);
+
+    return this.savecount;
 }
 
 DxlManager.prototype.loadSettings = function () {
@@ -143,6 +151,10 @@ DxlManager.prototype.loadSettings = function () {
         var s = JSON.parse(json);
         //this.serialPort = s.serialPort;
         //cm9Com.serialName = s.serialPort;
+
+        if(s.savecount)
+            this.savecount = s.savecount; //DEBUG
+
         if(s.cm9Num){
             cm9Com.changeCm9(+s.cm9Num);
             misGUI.setCM9Num(+s.cm9Num);
@@ -180,7 +192,6 @@ DxlManager.prototype.loadSettings = function () {
         }
 
         sensorManager.setLoadedSensors(s.sensors);
-       
 
         console.log("trying to open midiport:",this.midiPort);
         midiPortManager.openMidiAtStart(s.midiEnabled);

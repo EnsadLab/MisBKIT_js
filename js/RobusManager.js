@@ -111,7 +111,7 @@ class LuosBot{
                 for(var i=0;i<arr.length;i++){
                     var m = arr[i];
                     if(m.type != "gate"){
-                        m.gate = this.gateAlias;
+                        m.gate = this.gateAlias; //for sensor
                         sensorManager.onRobusValue(m);
                     }
                 } 
@@ -172,7 +172,7 @@ class LuosBot{
     }
 
     closeSerial(){
-        console.log("closing serial:",this.id,this.serialName);
+        console.log("robus closing serial:",this.id,this.serialName);
         if(this.serialPort != null){
             this.serialPort.close();
             this.serialPort = null;
@@ -289,7 +289,7 @@ class RobusManager{
     }
 
     init(){
-        console.log("ROBUSmanager:",this);
+        //console.log("ROBUSmanager:",this);
         misGUI.initManagerFunctions(this,this.className);
         this.addLuosBot();
     }
@@ -315,7 +315,7 @@ class RobusManager{
     addLuosBot(){
         var id = "LB"+this.nextBotIndex;
         this.nextBotIndex++;        
-        console.log("addLuosBot:",id);
+        //console.log("addLuosBot:",id);
         this.luosBots[id]=new LuosBot(id); 
         misGUI.cloneElement( ".robusbot",id);       
     }
@@ -345,11 +345,28 @@ class RobusManager{
         misGUI.setManagerValue("robusManager","freeze",onoff);
     }
 
-    getGates(){ //TODO
-        return ["gate","gate0","gate1","gate2"];
+    getBotByGate(gate){
+        for( var botid in this.luosBots ){
+            if(this.luosBots[botid].gateAlias == gate)
+                return this.luosBots[botid];
+        }
+        return undefined;        
+    }
+
+    getGates(){
+        var gates = [];
+        for( var botid in this.luosBots ){
+            if(this.luosBots[botid].gateAlias != undefined)
+                gates.push(this.luosBots[botid].gateAlias);
+        }
+        if(gates.length==0)
+            gates.push("gate");
+        return gates;
     }
     getModules(gate){ //TODO
-        return ["L0_2","L0_1","L0_3","L0_4"];
+        var bot = this.getBotByGate(gate);
+        //...
+        return ["L0_1","L0_2","L0_3","L0_4"];
     }
     getPins(gate,module){ //TODO
         return ["p0","p5","p6","p7","p8","p9"];
@@ -462,17 +479,14 @@ class RobusManager{
             else {
                 for (var i = 0; i < ports.length; i++) {
                     //console.log("serials:",ports[i].comName,ports[i].manufacturer);
-                    if(ports[i].manufacturer == "Pollen Robotics")
-                        names.push(ports[i].comName);
-                    if(ports[i].manufacturer == "Pollen-Robotics") //!!!
+                    if( (ports[i].manufacturer == "Pollen Robotics")||
+                        (ports[i].manufacturer == "Pollen-Robotics")) //!!!
                         names.push(ports[i].comName);
                 }
-                misGUI.setManagerValue("robusManager","selectPort",names); //PLANTAGE !!!!
-                //misGUI.setManagerValue("robusManager","botNum",4567); //ok
+                misGUI.setManagerValue("robusManager","selectPort",names);
             }
             if(callback)
                 callback(names);
         });            
     }
-
 };
