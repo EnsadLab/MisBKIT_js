@@ -1,0 +1,243 @@
+/*SWITCHER*/
+
+/*toggle-small*/
+.toggle-small {
+  position: relative;
+  display: inline-block;
+  width: 70px;
+  height: 22px;
+  vertical-align: -webkit-baseline-middle;
+  letter-spacing: 0px!important;
+  /*margin-left: 3%;	*/
+}
+
+.toggle-small input {display:none;}
+
+.toggle-small  .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.1);
+  /*border:2px solid white;*/
+  -webkit-transition: 300ms ease-out;
+  transition: 300ms ease-out;
+}
+
+.toggle-small:hover .slider{
+  background-color: rgba(0,0,0,0.3);
+  transition: 300ms ease-out;
+}
+
+.toggle-small .slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 3px;
+  background-color: #FFF;
+  -webkit-transition: 300ms ease-out;
+  transition: 300ms ease-out;
+}
+
+.toggle-small .slider:after{
+	margin-top:-5px;
+	font-size: 10px;
+	background-repeat: no-repeat;
+	background-size:auto 70%;
+	height:85%;
+	background-position: -10px center;
+	position: absolute;
+  width: 100%;
+  text-align: center;
+  color:#FFF;
+  -webkit-transition: 300ms ease-out;
+	transition: 300ms ease-out;
+}
+
+.toggle-small input:checked + .slider:after {
+  color: #3D1EFF;
+}
+
+.toggle-small input:checked + .slider {
+  background:rgba(255, 255, 255, 0.1);
+}
+
+.toggle-small:hover input:checked + .slider {
+  background:rgba(255, 255, 255, 0.3);
+  transition: 300ms ease-out;
+}
+
+.toggle-small input:checked + .slider:before {
+  transform: translateX(45px);
+  background-color: #3D1EFF;
+}
+
+.toggle-small input:checked + .slider:after{
+	margin-top:-5px;
+	font-size: 10px;
+	/*content:"";*/
+	/*background:url('../assets/clockwise-reverse.png');*/
+	height: 85%;
+}
+
+/* Rounded sliders */
+.toggle-small .slider.round {
+  border-radius: 34px;
+}
+
+.toggle-small .slider.round:before {
+  border-radius: 50%;
+}
+
+
+
+/*switch*/
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 160px;
+  height: 34px;
+  /*top: 25px;  didier*/
+  /*left: 25px; didier*/
+}
+
+.switch input {display:none;}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.2);
+  /*border:2px solid white;*/
+  -webkit-transition: 300ms ease-out;
+  transition: 300ms ease-out;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: #1CE3FF;
+  -webkit-transition: 300ms ease-out;
+  transition: 300ms ease-out;
+}
+
+.slider:after{
+  	content:"Joint";
+  	position: absolute;
+    width: 100%;
+    text-align: center;
+    top: 7px;
+    color:#1CE3FF;
+    -webkit-transition: 300ms ease-out;
+  	transition: 300ms ease-out;
+}
+
+input:checked + .slider:after {
+  color: #FEC500;
+}
+
+input:focus + .slider {
+
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(125px);
+  -ms-transform: translateX(125px);
+  transform: translateX(125px);
+  background-color: #FEC500;
+
+}
+
+input:checked + .slider:after{
+	content:"Wheel";
+}
+
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/*slider*/
+.slider-range{
+	clear:both;
+}
+
+.ui-slider .ui-slider-handle {
+    background: white;
+    border-radius: 100px;
+    top: -2.5em;
+}
+
+
+
+
+/*//////////////////*/
+/*SPECIAL SETTINGS*/
+/*//////////////////*/
+
+
+/*CLOCK SETTINGS*/
+.toggle-small .slider.clock:after{
+	content:"";
+	background:url('../assets/clockwise.png');
+	background-repeat: no-repeat;
+	background-size:auto 70%;
+	background-position: center center;
+	top: 7px;
+}
+.toggle-small input:checked + .slider.clock:after{
+	content:"";
+	background:url('../assets/clockwise-reverse.png');
+	background-repeat: no-repeat;
+	background-size:auto 70%;
+	background-position: center center;
+}
+
+
+
+
+/*MIDI SETTINGS*/
+.toggle-small .slider.midi:after{
+	content:"CC";
+	font-weight: 700;
+	background:none;
+	top: 10px;
+  left:22%;
+}
+.toggle-small input:checked + .slider.midi:after{
+	content:"Note";
+	/*font-weight: 700;*/
+	/*background:none;*/
+  left:-20%;
+}
+
+/*ROBUS serial/wifi*/
+.toggle-small .slider.serial:after{
+	content:"Serial";
+	font-weight: 700;
+	background:none;
+	top: 10px;
+  left:22%;
+}
+.toggle-small input:checked + .slider.serial:after{
+	content:"Wifi";
+  left:-20%;
+}
+
+
