@@ -1,3 +1,38 @@
+
+## Structure
+ - classes
+ - export/require ( aulieu de <script> dans html )
+ - generaliser  input(s)-process-output(s)
+
+## Settings
+- motors settings --> SettingsManager
+- project settings ( --> choisir un path ? ) --> open project = open folder
+- load Anim / load Sensor à ouvrir dans le bon dossier
+
+## GUI
+- cleaning !
+- name of "manager" functions ?
+- argument = objet ?  cmd({ eltID:xxx , func:xxxx , param:xxxx })
+- eviter tout appel direct ? ( GUI externe ? )
+- tooltips
+- Motors : button "position zero" + reglage de cette position (bouton ou number ?) 
+- temperature : à verifier ( j'ai viré les alerts, qui s'affichaient constament )
+
+
+## Sensors
+- One inputEnabled in place of xxxxEnabledInput ( or inputParam = {enabled:true
+- isMapped + onMidi  en une seule passe ? ( pareil pour motorMappingManager ? )
+- input right click ( ou <button> gear ) pour advanced settings
+- animation input
+
+## OSC-mobilizing 
+- à unifier ( j'ai essayé d'éviter de toucher à l'osc existant )
+- doc OSC
+
+***
+***
+OLD WORK
+**
 ## commentaires
 
 - J'ai implémenté ce que j'ai pu. En gros, les capteurs, j'ai pas encore touché, car y'a trop de modifs qu'Alex doit faire. J'y toucherai du coup la semaine prochaine.
