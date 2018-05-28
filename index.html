@@ -576,14 +576,16 @@
 
 						</section>
 
-						<section class="sinusInput" name="sinus"> <!-- pour test-->
+						<section class="hight sinusInput" name="sinus">
 							<div class="medium float-left">
 								<input func="inputOnOff" type="checkbox" class="small cmdOnOff" title="enable/disable">
 								<h4>Sinus</h4>
 							</div>
-							<div class="medium float-right text-right">
+							<div class="medium float-left text-left">
 								<button class="gear tiny" func="setPopupValues" data-id="sinusPopup"><img src="assets/settings.png"></button>
 							</div>
+							Period(seconds):<input func="inputParam" param="period" type="number" class="medium tiny float-right" placeholder="1" param="">
+
 						</section>
 
 						<section class="randomInput" name="random"> <!-- pour test-->
@@ -798,19 +800,10 @@
 
 		<div class="modale draggable sensorManager sinusPopup" id="sinusPopup" style="display: none; width:550px">
 			<button class="close-modale"><img src="assets/close.png" alt=""></button>
-			<!-- input type="text" size="10" func="rndName"><label for="">Name</label><br-->
-			Sinus: ><span func="sinusName"></span>
+			Sinus(just for testing): ><span func="sinusName"></span>
 			<hr>
 			<font color='lightgreen'>
 			<label class="label100">Period : </label><input func="inputParam" param="period" type="text" size="4">
-			<!--
-			<label class="label100">Val 1 Min : </label><input func="sinusParam" param="v1min" type="text" size="5">
-			<label class="label100">Val 2 Min : </label><input func="sinusParam" param="v2min" type="text" size="5">
-			<br>				
-			<label class="label100">Period Max : </label><input func="sinusParam" param="periodMax" type="text" size="4">
-			<label class="label100">Val 1 Max : </label><input func="sinusParam" param="v1max" type="text" size="5">
-			<label class="label100">Val 2 Max : </label><input func="sinusParam" param="v2max" type="text" size="5">
-			-->
 			</font>
 			<br>
 			<hr>
@@ -820,11 +813,11 @@
 			<button id="closeDxl" class="close-modale"><img src="assets/close.png" alt=""></button>
 			<!-- input type="text" size="10" func="rndName"><label for="">Name</label><br-->
 			Random: > <span func="randomName"></span>
-			<button class="sensorsBTN float-right"><img src="assets/add.png" id="loadAnim"> Add Disturb</button>
+			<button class="sensorsBTN float-right"><img src="assets/add.png" id="loadAnim">Add Disturb</button>
 
 			<hr>
 			<font color='lightgreen'>
-				<label class="label100">Period Min : </label><input func="inputParam" param="periodMin" type="text" size="4">
+			<label class="label100">Period Min : </label><input func="inputParam" param="periodMin" type="text" size="4">
 			<label class="label100">Val 1 Min : </label><input func="inputParam" param="v1min" type="text" size="5">
 			<label class="label100">Val 2 Min : </label><input func="inputParam" param="v2min" type="text" size="5">
 			<br>				
@@ -912,6 +905,8 @@
 			<script src="js/jquery-ui-1.11.4/jquery-ui.js"></script>
 			<script src="libs/jquery.blockUI.js"></script>
 
+			<!--script src="js/MisBKIT.js"></script-->
+			
 			<script src="js/SerialClass.js"></script>
 			<script src="js/SettingsManager.js"></script>
 			<script src="js/MidiPort.js"></script>

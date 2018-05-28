@@ -47,14 +47,14 @@ Sensor = function () {
         motorEnabledOutput: false,
         toMotorIndex: 0,
         animationsEnabledOutput: false,
-        //inputParams: TODO
-        inputEnabled: false,
         robusEnabledInput: false,
         robusInputParams: {gate:"gate",module:"",pin:""},
         sinusEnabledInput: false,
-        sinusParams: {enabled:false,period:1,offset:0,current:0},
+        sinusParams: {period:5,offset:0,current:0},
         randomEnabledInput: false,
         randomParams: {type:"simple",step:0,periodMin:1,periodMax:5,v1min:0,v1max:100,v2min:0,v2max:100},
+        inputEnabled: false, //TODO?
+        //inputParams: TODO ?
         ID_gui: -1,
         input_entry: "",
         output_entries:[]

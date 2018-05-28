@@ -2,6 +2,18 @@
 * Created by Cecile on 27/07/17.
 */
 
+/*
+* Didier:
+* questions:
+* isMapped & onMidi ne peuvent-ils être dans le même fonction ? 
+* (idem avec dxl)
+*
+* un seul inputEnabled, au lieu de xxxxEnabled ? 
+* ou bien inputDatas = {enabled:true , ... ... ...}
+*
+*/
+
+
 class SensorManager{
     constructor(){
         this.className = "sensorManager";
@@ -273,10 +285,11 @@ class SensorManager{
         var sensor = this.getSensorWithID(eltID); 
         this.getSensorWithID(eltID).s.enabled = onoff;
         this.saveSensorSettings();
-    
+        /*
         if(sensor.s.input_entry=="random"){
             console.log("RANDOM onoff:",onoff);
         }
+        */
 
         /*for(var i=0; i<this.sensors.length;i++){
             console.log("test",i,this.sensors[i].ID,this.sensors[i].s.enabled);
@@ -287,7 +300,7 @@ class SensorManager{
         console.log("sensorManager.enableInput:",eltID,onoff,param);
         var sensor = this.getSensorWithID(eltID);
         if(sensor){
-            sensor.inputEnabled = onoff;
+            //sensor.inputEnabled = onoff; //remplacer xxxEnabledInput
             sensor.inputOnOff(onoff,param);
         }
     }
@@ -757,7 +770,8 @@ class SensorManager{
         console.log("onRobusParam:",eltID,value,param);
         var sensor = this.getSensorWithID(eltID);
         if(sensor != undefined){
-            sensor.s.robusParams[param]=value;
+            console.log("robusParams:",sensor.s);
+            sensor.s.robusInputParams[param]=value;
             //console.log("robusParam:",sensor.s.robusParams);
             //robusManager.addSensorEmitter(eltID,sensor.s.robusParams);
 
@@ -768,7 +782,7 @@ class SensorManager{
     onRobusValue(event){
         for(var i=0; i<this.sensors.length;i++){
             if( this.sensors[i].s.robusEnabledInput ){ //this.sensors[i].s.input_entry=="robus"){
-                var p = this.sensors[i].s.robusParams;
+                var p = this.sensors[i].s.robusInputParams;
                 if(event.gate==p.gate && event.alias==p.module ){
                     //console.log("onRobusValue:",p.pin);
                     if(event[p.pin])
@@ -785,9 +799,9 @@ class SensorManager{
             var sensor = this.sensors[i];
             if(this.sensors[i].s.input_entry=="robus"){ //?do it for all sensors?
                 misGUI.setManagerValue("robusInput","onRobusParam",gates,sensor.ID,"gate");
-                var modules = robusManager.getModules(sensor.s.robusParams);
+                var modules = robusManager.getModules(sensor.s.robusInputParams);
                 misGUI.setManagerValue("robusInput","onRobusParam",modules,sensor.ID,"module");
-                var pins = robusManager.getPins(sensor.s.robusParams);
+                var pins = robusManager.getPins(sensor.s.robusInputParams);
                 misGUI.setManagerValue("robusInput","onRobusParam",pins,sensor.ID,"pin");
             }
         }

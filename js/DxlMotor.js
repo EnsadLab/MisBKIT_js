@@ -14,9 +14,10 @@
 const DXL_OFF = -1; //RELAX
 const DXL_JOINT = 0;
 const DXL_WHEEL = 1;
-//multitour ...
+//TODO multitour ...
 
-//TODO copy ?
+
+
 function Dxl(index){
     this.m = { //settings
         id:0,

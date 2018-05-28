@@ -364,11 +364,13 @@ class RobusManager{
         return gates;
     }
     getModules(gate){ //TODO
+        console.log("luos.getModules")
         var bot = this.getBotByGate(gate);
         //...
         return ["L0_1","L0_2","L0_3","L0_4"];
     }
     getPins(gate,module){ //TODO
+        console.log("luos.getPins")
         return ["p0","p5","p6","p7","p8","p9"];
     }
 

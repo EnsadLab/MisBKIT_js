@@ -1,15 +1,7 @@
 /**
  * Created by Didier on 27/04/16.
  */
-/*
- TODO static: ?
- num speed/joint -> dxlspeed  //DONE
- mapping sensor -> motor      //DONE
- OSC -> ... //????
- CM9 deconnectée : ajouter class warning bt CM9 ... 
- fausse valeur scan //CM9 //DONE
- temperature //TODO
-*/
+
 
 
 const MAX_SERVOS = 6;

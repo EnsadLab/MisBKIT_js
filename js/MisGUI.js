@@ -21,6 +21,10 @@ function MisGUI(){
     ];
 
     $( "#dialog" ).dialog( "close" );
+    
+    //prevent scrolling with mousewheel
+    $(".rotAngle").on("mousewheel",function(e){e.preventDefault();}); //<<<index.js
+    $(".rotSpeed").on("mousewheel",function(e){e.preventDefault();}); //<<<index.js
 
     /*Didier
     $('#selectSerial').change(function(){
