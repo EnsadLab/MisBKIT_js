@@ -10,13 +10,16 @@
 - load Anim / load Sensor à ouvrir dans le bon dossier
 
 ## GUI
-- cleaning !
-- name of "manager" functions ?
+- cleaning ! (j'ai commencé à cleaner les motors dans MisGUI)
+- name of "manager" functions, a revoir ?
 - argument = objet ?  cmd({ eltID:xxx , func:xxxx , param:xxxx })
-- eviter tout appel direct ? ( GUI externe ? )
-- tooltips
 - Motors : button "position zero" + reglage de cette position (bouton ou number ?) 
 - temperature : à verifier ( j'ai viré les alerts, qui s'affichaient constament )
+- Sensors: bouton d'autocalibration
+- Sensors: filtres :  click droit + settings ?
+- Animation: pouvoir parametrer un "generateur" ? ( sinus,random, .... )
+- tooltips
+- ((( eviter tout appel direct ? ( GUI externe ? ) ???? )))
 
 
 ## Sensors
