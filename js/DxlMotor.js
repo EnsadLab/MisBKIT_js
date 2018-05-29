@@ -18,40 +18,45 @@ const DXL_WHEEL = 1;
 
 
 
-function Dxl(index){
-    this.m = { //settings
-        id:0,
-        enabled: false,
-        model:-1, //AX12 par defaut
-        clockwise:true,
-        mode:DXL_OFF, //0:joint 1:wheel //default=wheel
-        jointSpeed: 0, //[-100 100] !!! 0 = speedMax !!!
-        angleMin: -150,
-        angleMax: 150,
-        speedMin: -100,
-        speedMax: 100,
-        torqueMax: 1023
-    };
+//function Dxl(index){
+//module.exports =  //later
+class Dxl{
+    constructor(index){
+        this.m = { //settings
+            id:0,
+            dxlID:0,  //same param in html/misGUI 
+            enabled: false,
+            model:-1, //AX12 par defaut
+            clockwise:true,
+            mode:DXL_OFF, //0:joint 1:wheel //default=wheel
+            jointSpeed: 0, //[-100 100] !!! 0 = speedMax !!!
+            angleMin: -150,
+            angleMax: 150,
+            speedMin: -100,
+            speedMax: 100,
+            torqueMax: 1023
+        };
 
-    this.index   = index;
-    this.enabled = false;
-    this.rec = false;
-    this.timeOfRequest = 0;
-    this._currPos = NaN;
-    this._curAngle = 0;
-    this.dxlGoal = 512;
-    this.wantedAngle  = 0;
-    this.dxlSpeed = 0;
-    this.wantedSpeed  = 0;
-    this.wantedTorque = NaN;
-    this._taskCount = 0;
-    this._regRead = -1;
-    this._gotModel = false;
-    this.limitCW  = 0;
-    this.limitCCW = 1023; //AX12
-    this.angleRef  = 300; //AX12
-    this.temperature = 0;
-    this.freeze = false;
+        this.index   = index;
+        this.enabled = false;
+        this.rec = false;
+        this.timeOfRequest = 0;
+        this._currPos = NaN;
+        this._curAngle = 0;
+        this.dxlGoal = 512;
+        this.wantedAngle  = 0;
+        this.dxlSpeed = 0;
+        this.wantedSpeed  = 0;
+        this.wantedTorque = NaN;
+        this._taskCount = 0;
+        this._regRead = -1;
+        this._gotModel = false;
+        this.limitCW  = 0;
+        this.limitCCW = 1023; //AX12
+        this.angleRef  = 300; //AX12
+        this.temperature = 0;
+        this.freeze = false;
+    }
 }
 
 Dxl.prototype.sendGoalSpeed = function(){
@@ -172,7 +177,8 @@ Dxl.prototype.dxlID = function(id){
         this.m.model = -1; 
         this._gotModel = false;
     }
-    this.m.id = +id;
+    this.m.id = +id;    //id to deprecate
+    this.m.dxlID = +id; // same as html param >>> misGUI
     
     if(this.m.id>0){
         if( this._gotModel == false){
@@ -302,7 +308,7 @@ Dxl.prototype.joint = function(){
     this.m.mode = DXL_JOINT;
     this.speed(this.m.jointSpeed);
     misGUI.angle(this.index,this.wantedAngle); //updated by currPos
-    console.log("----- Dxl.joint: ----",this.m.mode,this._curAngle);
+    console.log("----- Dxl.joint: ----",this.index,this.m.mode,this._curAngle);
     if(this.m.id>0){
         if(this.m.model==-1){ //ask for model
             console.log("-----------askForModel");
@@ -321,7 +327,7 @@ Dxl.prototype.wheel = function(){
     this.m.mode = DXL_WHEEL;
     this.dxlSpeed = 0;
     this.wantedSpeed = 0;
-    console.log("----- Dxl.wheel: ----",this.m.mode);
+    console.log("----- Dxl.wheel: ----",this.index,this.m.mode);
     return this;
 };
 
@@ -348,6 +354,30 @@ Dxl.prototype.currPos = function(p){
         return a;
     }
     return this.wantedAngle;
+}
+
+//val = angle ou speed en fonction du mode courant 
+Dxl.prototype.onValue =function(val){ //angle en°  ou  speed[0-100]
+    if(this.m.mode==0) {
+        this.angle(val);
+        misGUI.angle(this.index,val );
+    }
+    else {
+        this.speed(val);
+        misGUI.speed(this.index,val);
+    }
+}
+
+//val = angle ou speed en fonction du mode courant 
+Dxl.prototype.onNormValue =function(val){ //angle  ou  speed normalisé
+    if(val<0)val=0;
+    if(val>1)val=1;
+    if(this.m.mode==0) {
+        misGUI.angle(index, this.nAngle(val) );
+    }
+    else {
+        misGUI.speed(index, this.nSpeed(val) );
+    }
 }
 
 Dxl.prototype.angle = function(a){
@@ -401,8 +431,8 @@ Dxl.prototype.nSpeed = function(s) {
 };
 
 Dxl.prototype.clockwise = function(val){
-    this.m.clockwise = (val==0); //0:CW 1:CCW
-    //console.log("Dxl.clockwise:",this.m.clockwise);
+    this.m.clockwise = val; //0:CW 1:CCW
+    console.log("Dxl.clockwise:",this.m.clockwise);
     return this;
 }
 

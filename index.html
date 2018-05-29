@@ -236,17 +236,17 @@
 
 				</div>
 
-				<div id="divMotors" class="allMotors">
+				<div id="divMotors" class="allMotors dxlManager">
 
 					<!-- SINGLE MOTOR -->
 					<div class="single-motor">
 						<div class="midi-blinker" title="midi chanel - note/cc">•</div>
 						<div class="left-col">
-							<div class="motor-index">1</div>
-							<div class="identity">10</div>
-							<input type="checkbox" class="power cmdTog" name ="enable"
+							<div class="motor-index"><span param="index">1</span></div>
+							<div class="identity"><span param="dxlID">42</span></div>
+							<input func="dxlEnable" param="enabled" type="checkbox" class="power" 
 								   title="enable/disable">
-							<input type="checkbox" class="rec cmdTog"   name="recCheck"
+							<input func="checkRec" param="rec" type="checkbox" class="rec"
 								   title="check for next record">
 							
 						</div>
@@ -259,48 +259,42 @@
 							<img src="assets/thermometer.png" class="ico-thermo" alt="">
 							<div class="thermo">_</div>
 							<label class="switch">
-							  <input type="checkbox" class="cmdTog" name="mode">
+							  <input func="dxlMode" type="checkbox">  <!--class="cmdTog"-->
 							  <div class="slider round"></div>
 							</label>
-							<!--label class="switch-clock">
-							  <input type="checkbox" class="cmdTog" name="clockwise">
-							  <div class="slider round"></div>
-							</label-->
-							
 						</div>
-						<!--Didier: essai d'ajout d'un input number-->
-						<input type="number" class="num_rotary" placeholder="angle/speed" name="">
+						<!--Didier: ajout d'un input number-->
+						<input func="onControl" type="number" class="num_rotary" placeholder="angle/speed">
 					</div>
 
 				</div>
 
 
 				<!-- Advanced Motors -->
-				<div id="divMotorSettings" class="motors-settings">
+				<div id="divMotorSettings" class="motors-settings dxlManager">
 					<!-- AREVOIR : bouton tools ...  -->
 					<!--div-->
 					
-
 					<!-- SINGLE MOTOR Advanced-->
 					<div class="single-motor">
 						<div class="left-col">
 							<div class="identity">
 								<label for="">id :</label>
-								<input type="number" class=" small cmd" name="dxlID" placeholder="01">
+								<input func="dxlID" param="dxlID" type="number" class="small" placeholder="0" min="0" max="253">
 							</div>
 						</div>
 						<div class="advanced">
 							<ul>
-								<li><input type="number" class="small cmd" name="angleMin" placeholder="Angle Min"><label for="">Angle Min </label></li>
-								<li><input type="number" class="small cmd" name="angleMax" placeholder="Angle Max"><label for="">Angle Max </label></li>
-								<li><input type="number" class="small cmd" name="speedMin" placeholder="Speed Min"><label for="">Speed Min </label></li>
-								<li><input type="number" class="small cmd" name="speedMax" placeholder="Speed Max"><label for="">Speed Max </label></li>
+								<li><input func="dxlParam" param="angleMin" type="number" class="small"  placeholder="Angle Min"><label for="">Angle Min </label></li>
+								<li><input func="dxlParam" param="angleMax" type="number" class="small"  placeholder="Angle Max"><label for="">Angle Max </label></li>
+								<li><input func="dxlParam" param="speedMin" type="number" class="small"  placeholder="Speed Min"><label for="">Speed Min </label></li>
+								<li><input func="dxlParam" param="speedMax" type="number" class="small"  placeholder="Speed Max"><label for="">Speed Max </label></li>
 							</ul>
 							
 						</div>
 						<div class="properties">
 							<label class="toggle-small">
-							  <input type="checkbox" class="cmdTog" name="clockwise">
+							  <input func="dxlParam" param="clockwise" type="checkbox"> <!--class="cmdTog" name="clockwise"-->
 							  <div class="slider clock round"></div>
 							</label>
 						</div>

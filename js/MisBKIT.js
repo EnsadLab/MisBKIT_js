@@ -22,16 +22,19 @@ module.exports = class MisBKIT{
         motorMappingManager = new MotorMappingManager();
 
         oscManager = new OscManager();
+
         dxlManager = new DxlManager();
+
         sensorManager = new SensorManager();
     
         try{ midiPortManager = new MidiPortManager(); }catch(e){console.log(e);}
 
+        oscMobilizing = new OscMobilizing();        
+
         sensorManager.init();
         settingsManager.loadSettings();
-        oscMobilizing = new OscMobilizing();        
         robusManager.init();
-        dxlManager.update(); //start
+        dxlManager.init(); //start
 
     }
 

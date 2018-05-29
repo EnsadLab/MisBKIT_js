@@ -1,4 +1,5 @@
 
+
 function MisGUI(){
     var self = this;
     this.rotAngles =[];
@@ -21,7 +22,7 @@ function MisGUI(){
     ];
 
     $( "#dialog" ).dialog( "close" );
-    
+
     //prevent scrolling with mousewheel
     $(".rotAngle").on("mousewheel",function(e){e.preventDefault();}); //<<<index.js
     $(".rotSpeed").on("mousewheel",function(e){e.preventDefault();}); //<<<index.js
@@ -207,6 +208,7 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                 case "checkbox":
                     $(this).on("change",function(){
                         //console.log("manager", $(this).prop("manager"));
+                        console.log("manager:chk:", $(this).attr("eltID"));
                         //console.log("checkbox...",func,$(this).attr("name"));
                         // CEC: !!!!! Prob avec prop("manager").. pas bien stocké dans la balise
                         // $(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).prop("checked"));   
@@ -234,7 +236,7 @@ MisGUI.prototype.setEltID=function(classname,id){
 
 MisGUI.prototype.changeSettings = function(className,func,params,eltID){
     for( var p in params ){
-        this.setManagerValue(className,func,params[p],eltID,p);
+        this.setManagerValue(className,func,params[p],eltID,p);//class func val id param
     }
 }
 
@@ -445,37 +447,34 @@ MisGUI.prototype.midiPortManager = function(name) {
 
 
 MisGUI.prototype.dxlID =function(index,val) {
-    console.log("MisGUI.dxlID:", val);
-    dxlManager.cmd("dxlID",index,+val);
-    //var div = $("#divMotors .single-motor").eq(index);
-    //div.find(".identity").text(val); //TODO .showParams -> #dxlID
+    console.log("**************MisGUI.dxlID:", val);
     this.getMotorUI(index).find(".identity").text(+val);
-    this.getMotorStg(index).find("[name=dxlID]").val(+val);
+    this.getMotorStg(index).find("[param=dxlID]").val(+val); //name ou func ? param ?
 }
 
 MisGUI.prototype.clockwise =function(index,val){
-    dxlManager.cmd("clockwise",index,+val);
+    console.log("********************MisGUI.prototype.clockwise",val);
+    dxlManager.cmdOld("clockwise",index,+val);
 }
 
 MisGUI.prototype.angleMin =function(index,val){
-    dxlManager.cmd("angleMin",index,+val);
+    //dxlManager.cmdOld("angleMin",index,+val);
     this.rotAngles[index]
         .setDomain(+val)
         .setRange(+val)
         .setMinMax(+val);
 }
 MisGUI.prototype.angleMax =function(index,val){
-    val = +val;
-    dxlManager.cmd("angleMax",index,val);
+    //dxlManager.cmdOld("angleMax",index,val);
     this.rotAngles[index]
-        .setDomain(undefined,val)
-        .setRange(undefined,val)
-        .setMinMax(undefined,val);
+        .setDomain(undefined,+val)
+        .setRange(undefined,+val)
+        .setMinMax(undefined,+val);
 }
 MisGUI.prototype.speedMin =function(index,val){
     //console.log("GUI.speedMin",val);
     val=+val;
-    dxlManager.cmd("speedMin",index,val);
+    dxlManager.cmdOld("speedMin",index,val);
     this.rotSpeeds[index]
         .setDomain(-175,175)
         .setRange(val,undefined)
@@ -484,7 +483,7 @@ MisGUI.prototype.speedMin =function(index,val){
 }
 MisGUI.prototype.speedMax =function(index,val){
     val=+val;
-    dxlManager.cmd("speedMax",index,val);
+    dxlManager.cmdOld("speedMax",index,val);
     this.rotSpeeds[index]
         .setDomain(-175,175)
         .setRange(undefined,val)
@@ -504,10 +503,12 @@ MisGUI.prototype.midiMode =function(index,value){
 MisGUI.prototype.mode =function(index,value){
     //console.log("MisGUI.mode:",index,value);
     switch(value){
+        case false:
         case "J":
         case 0:
             this.joint(index);
             break;
+        case true:
         case "W":
         case 1:
             this.wheel(index);
@@ -516,12 +517,12 @@ MisGUI.prototype.mode =function(index,value){
 }
 
 MisGUI.prototype.joint = function(index){
-    dxlManager.cmd("joint",index);
+    dxlManager.cmdOld("joint",index);
     this.rotSpeeds[index].show(false);
     this.rotAngles[index].show(true);
 };
 MisGUI.prototype.wheel =function(index){
-    dxlManager.cmd("wheel",index);
+    dxlManager.cmdOld("wheel",index);
     this.rotAngles[+index].show(false);
     this.rotSpeeds[+index].show(true);
     this.rotSpeeds[+index].setValue(0);
@@ -531,7 +532,7 @@ MisGUI.prototype.wheel =function(index){
 MisGUI.prototype.onRotary = function(val,rot){
     var i=rot.userData.i; 
     //console.log("on rotary");
-    dxlManager.cmd(rot.userData.f,i,val);
+    dxlManager.cmdOld(rot.userData.f,i,val); //"angle" "velocity"
     this.inputVals.eq(i).val(val.toFixed(1));
 };
 
@@ -598,7 +599,7 @@ MisGUI.prototype.normValue=function(index,val)
 MisGUI.prototype.recCheck=function(index,val)
 {
     console.log("recCheck:[",index,"]",val);
-    dxlManager.cmd("recCheck",index,val);
+    dxlManager.cmdOld("recCheck",index,val);
 }
 
 
@@ -634,7 +635,7 @@ MisGUI.prototype.toggleAdvanced = function(onoff){
             console.log("DBG-check:",i," ",chk);
             parseBlinker();
             if(chk)
-                dxlManager.cmd("enable",i,true);
+                dxlManager.cmdOld("enable",i,true);
 
         }
     }
@@ -649,19 +650,20 @@ MisGUI.prototype.motorSettings = function(index,s){
     }
 
     var parent = this.getMotorUI(index);
-    parent.find(".identity").text(s.id);
+    //parent.find(".identity").text(s.id);
+    parent.find("[param=dxlID]").text(s.id);
     parent.find("[name=enable]").prop("checked",s.enabled);
     parent.find("[name=mode]").prop( "checked",((s.mode==1)||(s.mode=="W")) );
     parent.find(".motor-index").text(index);
 
     var parent = this.getMotorStg(index);
 
-    parent.find("[name=dxlID]").val(s.id);
-    parent.find("[name=clockwise]").prop("checked",!s.clockwise);
-    parent.find("[name=angleMin]").val(s.angleMin);
-    parent.find("[name=angleMax]").val(s.angleMax);
-    parent.find("[name=speedMin]").val(s.speedMin); //*(100/1023));
-    parent.find("[name=speedMax]").val(s.speedMax); //*(100/1023));
+    parent.find("[param=dxlID]").val(s.id);
+    parent.find("[param=clockwise]").prop("checked",s.clockwise);
+    parent.find("[param=angleMin]").val(s.angleMin);
+    parent.find("[param=angleMax]").val(s.angleMax);
+    parent.find("[param=speedMin]").val(s.speedMin); //*(100/1023));
+    parent.find("[param=speedMax]").val(s.speedMax); //*(100/1023));
 
     $(".thermo").eq(index).html("-°");
 
@@ -762,12 +764,15 @@ MisGUI.prototype.init =function(){
     //var parent = $("#dxlConfig");
     var model = $("#divMotorSettings .single-motor");
     var after = model;
-    model.data("index",0);
-    model.find("*").data("index",0);
-    for(var i=1;i<6;i++) {
+    model.data("index",0); model.find("*").data("index",0); //old
+    model.attr("eltID",0);
+    model.find("*").attr("eltID",0);
+for(var i=1;i<6;i++) {
         var clone = model.clone();
-        clone.data("index",i);
-        clone.find("*").data("index",i);
+        clone.data("index",i);  //old
+        clone.find("*").data("index",i); //old
+        clone.attr("eltID",i);
+        clone.find("*").attr("eltID",i);
         clone.insertAfter(after);
         after = clone;
     }
@@ -775,17 +780,27 @@ MisGUI.prototype.init =function(){
     // clone single-motors
     var parent = $("#divMotors");
     model = parent.find(".single-motor");
-    model.data("index",0);
-    model.find("*").data("index",0);
+    model.data("index",0); //old
+    model.find("*").data("index",0); //old
+    model.attr("eltID",0);
+    model.find("*").attr("eltID",0);
     for(var i=1;i<6;i++) {
         var clone = model.clone();
-        clone.data("index",i);
-        clone.find("*").data("index",i);
+        clone.data("index",i);  //old
+        clone.find("*").data("index",i); //old
+        clone.attr("eltID",""+i);
+        clone.find("*").attr("eltID",i);        
         clone.appendTo(parent);
         clone.find(".midi-blinker").bind("mouseover", frontBlinkInfo);
         clone.find(".midi-blinker").css("display", "none");
     }
-
+/*
+    var test = parent.find(".single-motor");
+    console.log("test:nbMotors:",test.length);
+    for(var i=0;i<6;i++){
+        console.log("motor:eltID:",test.filter("[eltID="+i+"]").data("index"));
+    }
+*/
     $(".single-motor").contextmenu(function() {
         var index = $(this).data("index");
         if(index != undefined){
@@ -827,8 +842,7 @@ MisGUI.prototype.init =function(){
 
         var rots = new DUI.Rotary(svgSpeeds[i],slidopt);
         rots.setDomain(-160,160).setRange(-100,100).setMinMax(-100,100);
-        //rots.userData = {i:i,f:"speed"};
-        rots.userData = {i:i,f:"velocity"};
+        rots.userData = {i:i,f:"velocity"}; //speed
         rots.callback = this.onRotary.bind(this);
         this.rotSpeeds.push(rots);
     }
@@ -888,11 +902,11 @@ MisGUI.prototype.init =function(){
         var v = this.checked ? 1 : 0;
         var index = $(this).data("index");
         var cmd = this.name;
-        console.log("cmdTog:",index," ",cmd," ",v);
+        console.log("*********** cmdTog:",index," ",cmd," ",v);
         if(self[this.name])
             self[cmd](index,v);
         else
-            dxlManager.cmd(cmd,index,v);
+            dxlManager.cmdOld(cmd,index,v);
     });
 
     $("#motor-freeze").on('click',function(){
@@ -2128,12 +2142,9 @@ $("#changeDxlID").keypress(function(e){
     }
 });
 
-
-
 $("#closeDxl").on('click',function(){
     $("#dynamixel-ctrl").css("display","none");
 })
-
 
 var openDxlControl = function(index){
     $("#dynamixel-ctrl").css("display", "block");
@@ -2143,3 +2154,5 @@ var openDxlControl = function(index){
     misGUI.clearDxlRegs(dxlID); //refresh
     dxlManager.startReadDxl(dxlID); //async >> showDxlReg            
 }
+
+//before cleaning : 2162

@@ -69,8 +69,6 @@ function DxlManager(){
     this.refreshID = -1;
     this.refreshAddr = -1;
 
-
-    this.onoffMotorIndex = 0;      //TOTHINK: in DxlMotor ??? 
     this.onoffTimer = undefined;
 
     this.chgID = {prev:-1,new:-1,count:-1}; //prevID newID
@@ -84,9 +82,79 @@ function DxlManager(){
        this.motors.push( new Dxl(i) );
     }
 
-    this.updateTimer = setInterval(this.update.bind(this),45); //45
+    //this.updateTimer = setInterval(this.update.bind(this),45); //45
 
 };
+
+DxlManager.prototype.init =function(){
+    misGUI.initManagerFunctions(this,"dxlManager");
+    this.updateTimer = setInterval(this.update.bind(this),45); //start
+}
+
+DxlManager.prototype.cmdOld = function(cmd,index,arg){
+    console.log("dxl cmdOLD: ",index," cmd:",cmd," arg:",arg);
+    if(this[cmd]){
+        this[cmd](index,arg);
+    }
+    else {
+        if (index < this.motors.length)
+            this.motors[index][cmd](arg);
+    }
+};
+
+//GUI cmd 
+//dxlID clockwise angleMin angleMax speedMin speedMax
+//joint wheel recCheck enable angle velocity
+DxlManager.prototype.cmd = function(func,eltID,val,param){
+    console.log("dxlManager:cmd:",func,eltID,val,param);
+    if(this[func]){
+        this[func](+eltID,val,param); //eltID=index
+    }
+    else{
+        if( this.motors[+eltID] ){
+            if( this.motors[+eltID][func] ){
+                this.motors[+eltID][func](val,param);
+                //clockwise
+            }
+            else console.log("DxlManager.cmd:BAD FUNC:",func,eltID);
+        }
+        else console.log("DxlManager.cmd:BAD ID:",func,eltID);
+    }
+}
+
+DxlManager.prototype.dxlParam = function(eltID,val,param){
+    //clockwise angleMin angleMax speedMin speedMax
+    console.log("dxlManager:dxlParam:",eltID,val,param);    
+    if(this.motors[eltID]){
+        this.motors[eltID].m[param]=val;
+        misGUI.motorSettings(eltID,this.motors[eltID].m);
+    }
+}
+DxlManager.prototype.dxlEnable = function(eltID,val){
+    if(this.motors[eltID])
+        this.motors[+eltID].enable(val);
+}
+DxlManager.prototype.checkRec = function(eltID,val){
+    if(index<this.motors.length) {
+        this.motors[index].rec = val;
+    }
+}
+DxlManager.prototype.dxlMode = function(eltID,val){ //true=wheel false=joint
+    if(this.motors[eltID]){
+        switch(val){
+            case false: case 0: case "joint": case "J":
+                this.motors[eltID].joint(eltID);
+                break;
+            case true: case 1: case "wheel": case "W":
+                this.motors[eltID].wheel(eltID);
+                break;
+            //TODO multitour ... GUI   
+        }
+
+    }
+    misGUI.mode(eltID,val);
+}
+
 
 
 DxlManager.prototype.saveSettings = function () {
@@ -339,18 +407,6 @@ DxlManager.prototype.buildCm9Msg = function(){
 */
 
 
-DxlManager.prototype.cmd = function(cmd,index,arg){
-    //console.log("dxl command: ",index," cmd:",cmd," arg:",arg);
-    if(this[cmd]){
-        this[cmd](index,arg);
-    }
-    else {
-        if (index < this.motors.length)
-            this.motors[index][cmd](arg);
-    }
-
-};
-
 //TODELETE ?
 DxlManager.prototype.senDxlIds = function() {
     var msg="dxlIds";
@@ -600,9 +656,10 @@ DxlManager.prototype.rcvCM9 = function(datas){ //from parser
 };
 */
 
-//TODO: change the name of the function to make it more global
+//TODO: change the name of the function to make it more global >>> onNormControl
 DxlManager.prototype.onMidi = function(index,cmd,arg){
     //console.log("dxl-midi:",index," arg:",arg);
+    /* TODELETE
     if(index<this.motors.length){
         //console.log("index " + index + " " + this.motors.length);
         var dxl = this.motors[index];
@@ -613,7 +670,8 @@ DxlManager.prototype.onMidi = function(index,cmd,arg){
             misGUI.speed(index,   dxl.nSpeed(arg/127));
         }
     }
-   
+    */
+   this.onNormControl(index,arg/127);  
 };
 
 DxlManager.prototype.onNormControl = function(index,val){
@@ -631,19 +689,18 @@ DxlManager.prototype.onNormControl = function(index,val){
     }
 };
 
-/*
-Attention à cmd !!!
-DxlManager.prototype.angle = function(args){
-    var index=args[0];
+// val= angle ou speed en fonsction du mode
+DxlManager.prototype.onControl = function(index,val){
+    //console.log("onControl:",index,val);
     if(index<this.motors.length){
-        misGUI.angle(index,this.motors[index].angle(args[1]));        
+        this.motors[index].onValue(val);
     }
-}
-*/
+};
+
 
 
 DxlManager.prototype.setAngle = function(index,val){ //degrés
-    console.log("setangle:",index,val);
+    console.log("DxlManager:setangle:",index,val);
     if(index<this.motors.length){
         var a = this.motors[index].angle(val);
         misGUI.angle(index,a);
@@ -688,13 +745,13 @@ DxlManager.prototype.onPlay = function(index,val){
 
 
 
-
+/*
 DxlManager.prototype.recCheck=function(index,val){
     if(index<this.motors.length) {
         this.motors[index].rec = (val!=0);
     }
 }
-
+*/
 /*
 DxlManager.prototype.dxlEnabled=function(index,val){
     misGUI.dxlEnabled(index,val);
@@ -1097,4 +1154,4 @@ DxlManager.prototype.isEnabled = function(index){
 }
 
 
-
+//before cleaning 1148
