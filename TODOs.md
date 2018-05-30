@@ -15,7 +15,7 @@
 - argument = objet ?  cmd({ eltID:xxx , func:xxxx , param:xxxx })
 - Motors : button "position zero" + reglage de cette position (bouton ou number ?) 
 - temperature : à verifier ( j'ai viré les alerts, qui s'affichaient constament )
-- Sensors: bouton d'autocalibration
+- Sensors: toggle d'autocalibration
 - Sensors: filtres :  click droit + settings ?
 - Animation: pouvoir parametrer un "generateur" ? ( sinus,random, .... )
 - tooltips
