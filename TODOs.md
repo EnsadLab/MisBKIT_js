@@ -13,6 +13,7 @@
 - cleaning ! (j'ai commencé à cleaner les motors dans MisGUI)
 - name of "manager" functions, a revoir ?
 - argument = objet ?  cmd({ eltID:xxx , func:xxxx , param:xxxx })
+- toggle : -> values ["on","off"] ["wheel","joint"] ["CC",note] ...
 - Motors : button "position zero" + reglage de cette position (bouton ou number ?) 
 - temperature : à verifier ( j'ai viré les alerts, qui s'affichaient constament )
 - Sensors: toggle d'autocalibration
