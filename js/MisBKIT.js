@@ -32,9 +32,9 @@ module.exports = class MisBKIT{
         oscMobilizing = new OscMobilizing();        
 
         sensorManager.init();
-        settingsManager.loadSettings();
+        dxlManager.init(); //before loadSettings
         robusManager.init();
-        dxlManager.init(); //start
+        settingsManager.loadSettings();
 
     }
 

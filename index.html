@@ -233,7 +233,6 @@
 						<meter id="scanProgress" class="medium" value="0" max="254"></meter>
 						<!--/div-->
 					</div>
-
 				</div>
 
 				<div id="divMotors" class="allMotors dxlManager">
@@ -242,8 +241,8 @@
 					<div class="single-motor">
 						<div class="midi-blinker" title="midi chanel - note/cc">•</div>
 						<div class="left-col">
-							<div class="motor-index"><span param="index">1</span></div>
-							<div class="identity"><span param="dxlID">42</span></div>
+							<div func="dxlIndex" param="index" class="motor-index">0</div>
+							<div func="dxlParam" param="dxlID" class="identity">42</div>
 							<input func="dxlEnable" param="enabled" type="checkbox" class="power" 
 								   title="enable/disable">
 							<input func="checkRec" param="rec" type="checkbox" class="rec"
@@ -259,7 +258,7 @@
 							<img src="assets/thermometer.png" class="ico-thermo" alt="">
 							<div class="thermo">_</div>
 							<label class="switch">
-							  <input func="dxlMode" type="checkbox">  <!--class="cmdTog"-->
+							  <input func="dxlMode" param="mode" type="checkbox">
 							  <div class="slider round"></div>
 							</label>
 						</div>

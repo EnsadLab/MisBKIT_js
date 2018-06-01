@@ -72,23 +72,23 @@ function DxlManager(){
     this.onoffTimer = undefined;
 
     this.chgID = {prev:-1,new:-1,count:-1}; //prevID newID
-
-    //-------------------------
-    //var json = fs.readFileSync(__dirname + "/data/ax12.json", 'utf8');
-    //this.ax12regs = JSON.parse(json);
-    //$.each(this.ax12regs,function(k,v){console.log(k+":"+v);}); //object[key]);
-
-    for(var i=0;i<MAX_SERVOS;i++){
-       this.motors.push( new Dxl(i) );
-    }
-
-    //this.updateTimer = setInterval(this.update.bind(this),45); //45
-
 };
 
 DxlManager.prototype.init =function(){
+    console.log("------DxlManager.init-------");
     misGUI.initManagerFunctions(this,"dxlManager");
+    //var dummy = new Dxl(5);
+    //this.motors.push(dummy);
+    for(var i=0;i<MAX_SERVOS;i++){
+        var momo = new Dxl(i);
+        this.motors.push( momo );
+        misGUI.addMotor(i,momo.m);
+    }
+ 
     this.updateTimer = setInterval(this.update.bind(this),45); //start
+
+    misGUI.motorSettings(0,this.motors[0].m);
+    //DEBUG
 }
 
 DxlManager.prototype.cmdOld = function(cmd,index,arg){
@@ -135,8 +135,8 @@ DxlManager.prototype.dxlEnable = function(eltID,val){
         this.motors[+eltID].enable(val);
 }
 DxlManager.prototype.checkRec = function(eltID,val){
-    if(index<this.motors.length) {
-        this.motors[index].rec = val;
+    if(eltID<this.motors.length) {
+        this.motors[eltID].rec = val;
     }
 }
 DxlManager.prototype.dxlMode = function(eltID,val){ //true=wheel false=joint
@@ -230,14 +230,16 @@ DxlManager.prototype.loadSettings = function () {
 
         this.webSocket = s.webSocket;
 
-        
         // scan has already been called by misgui when we enter here.
         for(var i=0; i<s.midiPorts.length; i++){
             console.log("opening midi port ", s.midiPorts[i]);
             midiPortManager.open(s.midiPorts[i]);
         }
 
-        for (var i = 0; i < s.motors.length; i++) {
+        var nbm = s.motors.length;
+        if(nbm>MAX_SERVOS){console.log("TO MUCH MOTORS!",nbm);nbm=6;}
+
+        for (var i = 0; i < nbm; i++ ){ //s.motors.length; i++) {
             this.motors[i].copySettings(s.motors[i]);
             misGUI.motorSettings(i, this.motors[i].m);
         }
@@ -411,7 +413,7 @@ DxlManager.prototype.buildCm9Msg = function(){
 DxlManager.prototype.senDxlIds = function() {
     var msg="dxlIds";
     for (var i = 0; i < this.motors.length; i++) {
-        msg+=","+this.motors[i].m.id;
+        msg+=","+this.motors[i].m.dxlID;
     }
     cm9Com.pushMessage(msg+"\n");
 }
@@ -941,7 +943,7 @@ DxlManager.prototype.dxlID = function(index,id){
     var previous = null;
     if( nid>0 ){
         for(var i=0;i<this.motors.length;i++){
-            if(this.motors[i].m.id == nid){
+            if(this.motors[i].m.dxlID == nid){
                 previous = this.motors[i];
                 console.log("DxlManager.setIndexID:DUPLICATE",i," ",id);
                 this.motors[index].copySettings(previous);
@@ -1057,7 +1059,7 @@ DxlManager.prototype.servoByID = function(id){
     var len=this.motors.length;
     console.log("servolen",len);
     for(var i=0;i<len;i++){
-        if(this.motors[i].m.id==id)
+        if(this.motors[i].m.dxlID==id)
             return this.motors[i];
     }
     return null;
@@ -1116,7 +1118,7 @@ DxlManager.prototype.writeDxlId = function(index,val){
     console.log("!!!!! DXLM-writeDxlId:",index," ",val);
     var nm=this.motors.length;
     for(var i=0;i<nm;i++){
-        if((i!=index)&&(this.motors[i].m.id==val))
+        if((i!=index)&&(this.motors[i].m.dxlID==val))
             return false;
     }
     this.dxlID(index,val);
@@ -1126,7 +1128,7 @@ DxlManager.prototype.writeDxlId = function(index,val){
 
 DxlManager.prototype.getMotorByID = function(dxlID){
     for(var i=0;i<this.motors.length;i++){
-        if(this.motors[i].m.id==dxlID)
+        if(this.motors[i].m.dxlID==dxlID)
             return this.motors[i];
     }
     return undefined;    
@@ -1134,7 +1136,7 @@ DxlManager.prototype.getMotorByID = function(dxlID){
 
 DxlManager.prototype.getIDByIndex = function(index){
     if(index<this.motors.length){
-        return this.motors[index].m.id;
+        return this.motors[index].m.dxlID;
     }
     return 0;    
 }

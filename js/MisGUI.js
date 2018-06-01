@@ -2,47 +2,13 @@
 
 function MisGUI(){
     var self = this;
-    this.rotAngles =[];
-    this.rotSpeeds =[];
-    this.inputVals; //DB storage of <input> rotary values
+    this.rotAngles = {};
+    this.rotSpeeds = {};
     this.recording = false;
-    this.serialPort = null;
 
     this.dxlEditId = 0;
 
-    this.settings = [
-        {
-            index:0,
-            Id:0,
-            mode:0,
-            inverse: 0,
-            angleRng:[-150,150],
-            speedRng:[-100,1000]
-        }
-    ];
-
     $( "#dialog" ).dialog( "close" );
-
-    //prevent scrolling with mousewheel
-    $(".rotAngle").on("mousewheel",function(e){e.preventDefault();}); //<<<index.js
-    $(".rotSpeed").on("mousewheel",function(e){e.preventDefault();}); //<<<index.js
-
-    /*Didier
-    $('#selectSerial').change(function(){
-        console.log("serialPort:",this.value);
-        var bt = $("#btSerial");
-        bt.prop('disabled', true); //error may take a long time
-
-        if(this.value == "scan"){
-            console.log("SCAN");
-            self.scanSerial();
-            bt.prop("class","disconnected").text("OFF");
-            bt.prop('disabled', false);
-            return;
-        }
-        self.openSerial();
-    });
-    */
 
     // not used right now.. leave it in case we want to re-add the scan button
     $('#btMidi').on('click',function(){
@@ -111,7 +77,7 @@ function MisGUI(){
   ex: cloneElement(".single-gizmo","giz42");
   ex: cloneElement(".single-gizmo");
  */
-MisGUI.prototype.cloneElement = function(selector,eltID){ //eltID may be a string
+MisGUI.prototype.cloneElement = function(selector,eltID,afterID){ //eltID may be a string
     var model = $(selector).first();      //model MUST be first ---> insertAfter
     if(model.length>0){
         //console.log("model manager:",model.prop("manager"));
@@ -123,8 +89,18 @@ MisGUI.prototype.cloneElement = function(selector,eltID){ //eltID may be a strin
             clone.attr("eltID",eltID);
             clone.find("*").attr("eltID",eltID);
         }
-        clone.insertAfter(model);
+        if(afterID != undefined){
+            var after = $(selector).filter("[eltID="+afterID+"]");
+            console.log("clone after:",after);
+            if(after.length>0)
+                clone.insertAfter(after);
+            else
+                clone.insertAfter(model);            
+        }
+        else
+            clone.insertAfter(model);
         clone.show();
+        return clone;
     }
 }
 
@@ -172,9 +148,6 @@ ex: html : <div class="myManager">
     className is for use with   setManagerValue() below
 
 */
-
-
-
 MisGUI.prototype.initManagerFunctions = function(manager,className){
     var parents = $("."+className);
     parents.find("*").each(function(i) {
@@ -233,75 +206,112 @@ MisGUI.prototype.setEltID=function(classname,id){
     $("."+classname).find("*").attr("eltID",id);
 }
 
-
 MisGUI.prototype.changeSettings = function(className,func,params,eltID){
     for( var p in params ){
         this.setManagerValue(className,func,params[p],eltID,p);//class func val id param
     }
 }
 
-/*
+//opt: {class:classname,id:eltID,func:func,param:param,val:value}
+MisGUI.prototype.showValue=function(opt){
+    var sel = "."+opt.class+" ";
+    if(opt.id!=undefined)sel+="[eltID="+opt.id+"]";
+    if(opt.func!=undefined)sel+="[func="+opt.func+"]";
+    if(opt.param!=undefined)sel+="[param="+opt.param+"]";
+    var elts = $(sel);
+    if(elts.length > 0){
+        this.setElementValue(elts,opt.val);
+    }
+    //else console.log("*****GUIVALUE NOT FOUND:",sel);
+}
 
-*/
-MisGUI.prototype.setManagerValue = function( className , func , value , eltID, param){
-    //console.log("GUIvalue:",className , func, value , eltID, param);
-    var elt = $('.'+className+" [func="+func+"]");
-    if(eltID != undefined){
-        elt = elt.filter("[eltID="+eltID+"]")
+//opt: {class:classname,id:eltID,func:func,val:settings}
+MisGUI.prototype.showParams=function(opt){
+    var sel = "."+opt.class+" ";
+    if(opt.id!=undefined)sel+="[eltID="+opt.id+"]";
+    if(opt.func!=undefined)sel+="[func="+opt.func+"]";
+    var elts = $(sel);
+    if(elts.length > 0){
+        for( p in opt.val ){
+            var e = elts.filter("[param="+p+"]");
+            if(e.length>0){
+                this.setElementValue(e,opt.val[p]);
+            }
+            //else console.log("showParam:notfound",p);
+        }
     }
-    if(param != undefined){
-        elt = elt.filter("[param="+param+"]");
+    //else console.log("*****GUIPARAMS NOT FOUND:",sel);
+}
+
+
+//old implementation , for compatibility
+MisGUI.prototype.setManagerValue = function( className , func , value , eltID, param){   
+    var sel = "."+className+" ";
+    if(eltID)sel+="[eltID="+eltID+"]";
+    if(func)sel+="[func="+func+"]";
+    if(param)sel+="[param="+param+"]";
+    var elt = $(sel);
+    if(elt.length > 0){
+        this.setElementValue(elt);
     }
-    //console.log("GUIvalue:",className,func,elt.prop("tagName"),elt.prop("type")); //,value);   
-    switch(elt.prop("tagName")){
-        case "INPUT":
-            switch( elt.prop("type") ){
-                case "text":
-                case "number":
-                    elt.val(value);
+    //else console.log("***** GUIVALUE NOT FOUND:",sel);
+}
+
+MisGUI.prototype.setElementValue = function(elt,value){
+    elt.each(function(i){ //mutiples elements may handle same value
+        var e =$(this);
+        switch(e.prop("tagName")){
+            case "INPUT":
+                switch( e.prop("type") ){
+                    case "text":
+                    case "number":
+                        e.val(value);
                     break;
                 case "checkbox":
-                    if(elt.is(".onoff")) this.onoffState(elt,value); //ON , OFF , ERROR
-                    else elt.prop("checked",value);    
+                    if(e.is(".onoff")) this.onoffState(e,value); //ON , OFF , ERROR
+                    else e.prop("checked",value);    
                     break;
                 default:
-                    console.log("GUIvalue: not handled: INPUT:",func,elt.prop("type"));
-            }
-            break;
-        case "SELECT":
-            if(Array.isArray(value)){ //fill options with value(s)
+                    console.log("GUIvalue: not handled: INPUT:",func,e.prop("type"));
+                }
+                break;
+            case "SELECT":
+                if(Array.isArray(value)){ //fill options with value(s)
                 //console.log("select:values[]:"); //,value);
-                elt.each(function(i) {  //value != for each ones
-                    var prev = $(this).val();
-                    //console.log("select:prev:",prev);
-                    $(this).empty();
-                    for(var i=0;i<value.length;i++){
-                        if(value[i].length>0)
-                            $(this).append($("<option value=" + "'" + value[i] + "'>" + value[i] + "</option>"));
-                    }
-                    if( (prev==null)||(prev=="default") ){
-                        $(this).val(value[0]);
-                        $(this).trigger("change");
-                    }
-                    else{
-                        $(this).val(prev);
-                    }
-                });
-            }
-            else{
-                //var exist = $(this).find("option[value='"+value+"']").length;
-                //console.log("?????exist?????:",func,value,exist);
-                elt.val(value);
-            }
-            break;            
-        case "P":
-        case "SPAN":
-        case "TEXTAREA":
-            elt.text(value); // elt.html(value); //TO DISCUSS
-            break;
-        default:
-            console.log("GUIvalue: type?:",func,elt.prop("tagName"),elt.prop("type"));
-    }
+                    e.each(function(i) {  //value != for each ones
+                        var prev = $(this).val();
+                        //console.log("select:prev:",prev);
+                        $(this).empty();
+                        for(var i=0;i<value.length;i++){
+                            if(value[i].length>0)
+                                $(this).append($("<option value=" + "'" + value[i] + "'>" + value[i] + "</option>"));
+                        }
+                        if( (prev==null)||(prev=="default") ){
+                            $(this).val(value[0]);
+                            $(this).trigger("change");
+                        }
+                        else{
+                            $(this).val(prev);
+                        }
+                    });
+                }
+                else{
+                    //var exist = $(this).find("option[value='"+value+"']").length;
+                    //console.log("?????exist?????:",func,value,exist);
+                    e.val(value);
+                }
+                break;            
+            case "P":
+            case "SPAN":
+            case "TEXTAREA":
+            case "DIV":
+                e.text(value); // elt.html(value); //TO DISCUSS
+                break;
+            default:
+                console.log("GUIvalue: type?:",func,param,elt.prop("tagName"),e.prop("type"),elt);
+        }//switch prop
+    });//each elt
+    
     /*
     //console.log("MngValue:",elt.prop("tagName"),elt.prop("type"));
     if(elt.is("p")||elt.is("span")||elt.is("textarea")){
@@ -403,8 +413,7 @@ MisGUI.prototype.cm9State=function(state){
         case false:
             bt.prop("checked",false);
             this.cm9Info("");
-            break;
-            
+            break;            
     }
 
     /*
@@ -445,55 +454,59 @@ MisGUI.prototype.midiPortManager = function(name) {
     var bt = $("#btMidi");
 };
 
-
 MisGUI.prototype.dxlID =function(index,val) {
     console.log("**************MisGUI.dxlID:", val);
-    this.getMotorUI(index).find(".identity").text(+val);
+    //this.getMotorUI(index).find(".identity").text(+val);
     this.getMotorStg(index).find("[param=dxlID]").val(+val); //name ou func ? param ?
 }
 
-MisGUI.prototype.clockwise =function(index,val){
-    console.log("********************MisGUI.prototype.clockwise",val);
-    dxlManager.cmdOld("clockwise",index,+val);
-}
+//DELETED MisGUI.prototype.clockwise =function(index,val)
 
 MisGUI.prototype.angleMin =function(index,val){
     //dxlManager.cmdOld("angleMin",index,+val);
+    if(this.rotAngles[index]){
     this.rotAngles[index]
         .setDomain(+val)
         .setRange(+val)
         .setMinMax(+val);
+    }
 }
 MisGUI.prototype.angleMax =function(index,val){
     //dxlManager.cmdOld("angleMax",index,val);
-    this.rotAngles[index]
+    if(this.rotAngles[index]){
+        this.rotAngles[index]
         .setDomain(undefined,+val)
         .setRange(undefined,+val)
         .setMinMax(undefined,+val);
+    }
 }
 MisGUI.prototype.speedMin =function(index,val){
-    //console.log("GUI.speedMin",val);
     val=+val;
-    dxlManager.cmdOld("speedMin",index,val);
-    this.rotSpeeds[index]
+    dxlManager.cmd("speedMin",index,val);
+    if(this.rotSpeeds[index]){
+        this.rotSpeeds[index]
         .setDomain(-175,175)
         .setRange(val,undefined)
         .setMinMax(val);
+    }
     //console.log("gui-SPEEDMIN:",val);
 }
 MisGUI.prototype.speedMax =function(index,val){
+    //console.log("GUI.speedMax",val);
     val=+val;
-    dxlManager.cmdOld("speedMax",index,val);
-    this.rotSpeeds[index]
+    dxlManager.cmd("speedMax",index,val);
+    if(this.rotSpeeds[index]){
+        this.rotSpeeds[index]
         .setDomain(-175,175)
         .setRange(undefined,val)
         .setMinMax(undefined,val);
+    }
     //console.log("gui-SPEEDMAX:",val);
 }
 
 
 MisGUI.prototype.midiMode =function(index,value){
-    //console.log("SETMIDIMODE:",index," ",value);
+    console.log("SETMIDIMODE:",index," val",value);
     switch(+value){
         case 0:motorMappingManager.setMidiMotorMappingCmd(index,"CC");break;
         case 1:motorMappingManager.setMidiMotorMappingCmd(index,"note");break;
@@ -501,7 +514,7 @@ MisGUI.prototype.midiMode =function(index,value){
 }
 
 MisGUI.prototype.mode =function(index,value){
-    //console.log("MisGUI.mode:",index,value);
+    console.log("************ MisGUI.mode:",index,value);
     switch(value){
         case false:
         case "J":
@@ -518,22 +531,28 @@ MisGUI.prototype.mode =function(index,value){
 
 MisGUI.prototype.joint = function(index){
     dxlManager.cmdOld("joint",index);
-    this.rotSpeeds[index].show(false);
-    this.rotAngles[index].show(true);
+    if(this.rotSpeeds[index])
+        this.rotSpeeds[index].show(false);
+    if(this.rotAngles[index])
+        this.rotAngles[index].show(true);
 };
 MisGUI.prototype.wheel =function(index){
     dxlManager.cmdOld("wheel",index);
-    this.rotAngles[+index].show(false);
-    this.rotSpeeds[+index].show(true);
-    this.rotSpeeds[+index].setValue(0);
-    this.speed(+index,0);
+    this.rotAngles[index].show(false);
+    this.rotSpeeds[index].show(true);
+    this.rotSpeeds[index].setValue(0);
+    this.speed(index,0);
 };
 
 MisGUI.prototype.onRotary = function(val,rot){
-    var i=rot.userData.i; 
-    //console.log("on rotary");
+    console.log("ONROTARY:")
+    var i=rot.userData.i;    
     dxlManager.cmdOld(rot.userData.f,i,val); //"angle" "velocity"
-    this.inputVals.eq(i).val(val.toFixed(1));
+    //this.inputVals.eq(i).val(val.toFixed(1));
+    
+    //var numrot = 
+    $("#divMotors .num_rotary").filter("[eltID="+i+"]").val(val.toFixed(1));
+    //console.log("onrotary:numrot",numrot);
 };
 
 MisGUI.prototype.setCM9Num = function(n){
@@ -554,9 +573,14 @@ MisGUI.prototype.setValue = function(index,name,val){
 }
 
 MisGUI.prototype.angle = function(index,val){
-    if(index<this.rotAngles.length){
+    console.log("MisGUI.prototype.angle",index,val);
+
+    //if(index<this.rotAngles.length){
+    if(this.rotAngles[index]){
         var v = this.rotAngles[index].setValue(+val).value;
-        this.inputVals.eq(index).val(v.toFixed(1));
+        //this.inputVals.eq(index).val(v.toFixed(1));
+        $("#divMotors .num_rotary").filter("[eltID="+index+"]").val(v.toFixed(1));
+
         //console.log("misguiAngle:",val,v);
 
         
@@ -573,45 +597,32 @@ MisGUI.prototype.angle = function(index,val){
 
 MisGUI.prototype.speed = function(index,val){ //[-100,100]
     //console.log("MisGUI.speed:",index,val)
-    if(index<this.rotSpeeds.length){
+    //if(index<this.rotSpeeds.length){
+    if(this.rotSpeeds[index]){
         var v = this.rotSpeeds[index].setValue(+val).value;
-        this.inputVals.eq(index).val(v.toFixed(1));
+        //this.inputVals.eq(index).val(v.toFixed(1));
+        $("#divMotors .num_rotary").filter("[eltID="+index+"]").val(v.toFixed(1));
+
        // console.log("misguiSpeed:",val,v);
     }
 }
 
 
 MisGUI.prototype.needle = function(index,val){
-    if(index<this.rotAngles.length) {
+    //if(index<this.rotAngles.length) {
+    if(this.rotAngles[index]){
         this.rotAngles[index].setNeedle(+val);
         this.rotSpeeds[index].setNeedle(+val);
     }
 }
 
-/*DB
-MisGUI.prototype.normValue=function(index,val)
-{
-    if(index<this.rotAngles.length)
-        this.rotAngles[index].setNormValue(+val,false);
-}
-*/
-
-MisGUI.prototype.recCheck=function(index,val)
-{
-    console.log("recCheck:[",index,"]",val);
-    dxlManager.cmdOld("recCheck",index,val);
-}
-
-
-MisGUI.prototype.test = function(){
-
-}
-
 MisGUI.prototype.getMotorUI = function(index){
-    return $("#divMotors .single-motor").eq(index);
+    //return $("#divMotors .single-motor").eq(index);
+    return $("#divMotors .single-motor").filter("[eltID="+index+"]");
 }
 MisGUI.prototype.getMotorStg = function(index){
-    return $("#divMotorSettings .single-motor").eq(index);
+    //return $("#divMotorSettings .single-motor").eq(index);
+    return $("#divMotorSettings .single-motor").filter("[eltID="+index+"]");
 }
 
 //DELETED MisGUI.prototype.changeDxlID=function(index,val){
@@ -643,29 +654,34 @@ MisGUI.prototype.toggleAdvanced = function(onoff){
         dxlManager.stopAll();
 }
 
+
+
+
 MisGUI.prototype.motorSettings = function(index,s){
     //console.log("GUI:motorSettings:",index,s);
     if((s==undefined)||(s==null)){//TODO default
         return;
     }
+    //this.setManagerValue("dxlManager",undefined,index,index,"dxlIndex");//className , func , value , eltID, param
+    //this.setManagerValue("dxlManager","dxlEnable",s.enabled,index,"enabled");//className , func , value , eltID, param
+    this.showParams({class:"dxlManager",id:index,val:s}); //,v:s});
+    
+    //var parent = this.getMotorUI(index);
+    //parent.find("[param=dxlID]").text(s.id);
+    //parent.find("[name=enable]").prop("checked",s.enabled);
+    //parent.find("[name=mode]").prop( "checked",((s.mode==1)||(s.mode=="W")) );
 
-    var parent = this.getMotorUI(index);
-    //parent.find(".identity").text(s.id);
-    parent.find("[param=dxlID]").text(s.id);
-    parent.find("[name=enable]").prop("checked",s.enabled);
-    parent.find("[name=mode]").prop( "checked",((s.mode==1)||(s.mode=="W")) );
-    parent.find(".motor-index").text(index);
-
+    /*
     var parent = this.getMotorStg(index);
-
     parent.find("[param=dxlID]").val(s.id);
     parent.find("[param=clockwise]").prop("checked",s.clockwise);
     parent.find("[param=angleMin]").val(s.angleMin);
     parent.find("[param=angleMax]").val(s.angleMax);
     parent.find("[param=speedMin]").val(s.speedMin); //*(100/1023));
     parent.find("[param=speedMax]").val(s.speedMax); //*(100/1023));
+    */
 
-    $(".thermo").eq(index).html("-°");
+    $(".thermo [eltID="+index+"]").eq(index).text("-°"); //wait info
 
     this.angleMin(index,s.angleMin);
     this.angleMax(index,s.angleMax);
@@ -675,7 +691,8 @@ MisGUI.prototype.motorSettings = function(index,s){
     //this.rotSpeeds[index].show((s.mode==1));
     //console.log("MisGUI.motorSettings:",s.mode);
     this.mode(index,s.mode);
-    this.rotSpeeds[index].setValue(0);
+    if(this.rotSpeeds[index])
+        this.rotSpeeds[index].setValue(0);
 
 
 }
@@ -751,26 +768,69 @@ MisGUI.prototype.selectMidiMappingPort = function(motorID, name){
     sel.val(name);
 }
 
+MisGUI.prototype.addMotor = function(index,settings){
+    //TODO check if index exists
+
+    //console.log("MisGUI.addMotor",index);
+    var cl1 = this.cloneElement("#divMotors .single-motor",index,index-1);
+    var cl2 = this.cloneElement("#divMotorSettings .single-motor",index,index-1);  
+
+    var svgAngles = cl1.find(".rotAngle").first();
+    var svgSpeeds = cl1.find(".rotSpeed").first();
+
+
+
+    //prevent scrolling with mousewheel
+    svgAngles.on("mousewheel",function(e){e.preventDefault();}); //<<<index.js
+    svgSpeeds.on("mousewheel",function(e){e.preventDefault();}); //<<<index.js
+
+    svgAngles.show(); svgSpeeds.hide();//>>>boundrect ok
+    var slidopt  = {x:0,y:0};
+    var rota = new DUI.Rotary(svgAngles[0],slidopt);
+    rota.setDomain(-150,150).setRange(-150,150).setMinMax(-150,150);
+    rota.userData = {i:index,f:"angle"};
+    rota.callback = this.onRotary.bind(this);
+    this.rotAngles[index]=rota;
+
+    svgAngles.hide(); svgSpeeds.show(); //>>>boundrect ok?
+    var rots = new DUI.Rotary(svgSpeeds[0],slidopt);
+    rots.setDomain(-160,160).setRange(-100,100).setMinMax(-100,100);
+    rots.userData = {i:index,f:"velocity"}; //speed
+    rots.callback = this.onRotary.bind(this);
+    this.rotSpeeds[index]=rots;
+
+    svgSpeeds.hide(); svgAngles.show(); //joint par defaut
+
+    if(settings)
+        this.motorSettings(index,settings);
+}
+
+
+
 MisGUI.prototype.init =function(){
     console.log("----- INIT GUI -----");
+    var self = this;
+
+    this.initMotorDiv();
+
 
     var parent = $("#divAnims").find("[name=listAnims]");
     var tanim = parent.find(".single-anim:first");
     tanim.hide();
 
-    var self = this;
 
     //clone MotorsConfig(advanced)
     //var parent = $("#dxlConfig");
+    /*
     var model = $("#divMotorSettings .single-motor");
     var after = model;
     model.data("index",0); model.find("*").data("index",0); //old
     model.attr("eltID",0);
     model.find("*").attr("eltID",0);
-for(var i=1;i<6;i++) {
+    for(var i=1;i<6;i++) {
         var clone = model.clone();
-        clone.data("index",i);  //old
-        clone.find("*").data("index",i); //old
+        //clone.data("index",i);  //old
+        //clone.find("*").data("index",i); //old
         clone.attr("eltID",i);
         clone.find("*").attr("eltID",i);
         clone.insertAfter(after);
@@ -780,140 +840,118 @@ for(var i=1;i<6;i++) {
     // clone single-motors
     var parent = $("#divMotors");
     model = parent.find(".single-motor");
-    model.data("index",0); //old
-    model.find("*").data("index",0); //old
+    //model.data("index",0); //old
+    //model.find("*").data("index",0); //old
     model.attr("eltID",0);
     model.find("*").attr("eltID",0);
     for(var i=1;i<6;i++) {
         var clone = model.clone();
-        clone.data("index",i);  //old
-        clone.find("*").data("index",i); //old
-        clone.attr("eltID",""+i);
+        //clone.data("index",i);  //old
+        //clone.find("*").data("index",i); //old
+        clone.attr("eltID",i);
         clone.find("*").attr("eltID",i);        
         clone.appendTo(parent);
         clone.find(".midi-blinker").bind("mouseover", frontBlinkInfo);
         clone.find(".midi-blinker").css("display", "none");
     }
-/*
-    var test = parent.find(".single-motor");
-    console.log("test:nbMotors:",test.length);
-    for(var i=0;i<6;i++){
-        console.log("motor:eltID:",test.filter("[eltID="+i+"]").data("index"));
-    }
-*/
-    $(".single-motor").contextmenu(function() {
-        var index = $(this).data("index");
-        if(index != undefined){
-            openDxlControl(index);
-        }
-    });
+    */
 
-    //this.motorMappings = $("#divMotors .number-for-motor"); //cec
-    //this.motorMappings = $("#divMotorSettings .set-value");
-    //TODO: TALK WITH DIDIER... there are multiple set-value that are generated: 35 of them
-    //CHECK angle min and max..
-    //for now use the name "mapping" for selecting
-    this.motorMappings = $("#divMotorSettings").find("[name=mapping]");
-    for(var i=0;i<this.motorMappings.length;i++) {                      
-        $(this.motorMappings[i]).data("index",i);     
-    }
 
-    this.motorMappings.on("change",function(){  
-        var index = $(this).data("index");        
-        var val = $(this).val();       
-        //console.log("misgui:: setmidimotormapping will be called", index, val);          
-        motorMappingManager.setMidiMotorMappingIndex(index,parseInt(val)); // Gui only treats CC midi mappings for now
-    });
 
     //create rotaries
+    /*
     var svgAngles = $(".rotAngle");
     var svgSpeeds = $(".rotSpeed");
+
+    svgAngles.show(); //to have a good bounding rect
     svgSpeeds.show();
 
     var slidopt  = {x:0,y:0};
 
     //var color = "#C0C0C0";
-    for(var i=0;i<svgAngles.length;i++) {
+    for(var i=1;i<svgAngles.length;i++) {
         var rota = new DUI.Rotary(svgAngles[i],slidopt);
         rota.setDomain(-150,150).setRange(-150,150).setMinMax(-150,150);
         rota.userData = {i:i,f:"angle"};
         rota.callback = this.onRotary.bind(this);
-        this.rotAngles.push(rota);
+        //this.rotAngles.push(rota); //not an array any more
+        this.rotAngles[i]=rota;
 
         var rots = new DUI.Rotary(svgSpeeds[i],slidopt);
         rots.setDomain(-160,160).setRange(-100,100).setMinMax(-100,100);
         rots.userData = {i:i,f:"velocity"}; //speed
         rots.callback = this.onRotary.bind(this);
-        this.rotSpeeds.push(rots);
+        //this.rotSpeeds.push(rots);
+        this.rotSpeeds[i]=rots;
     }
     svgSpeeds.hide();
+    */
 
-    //DB
-    this.inputVals = $("#divMotors .num_rotary");
+    //DB DELETED inputVals
+    //this.inputVals = $("#divMotors .num_rotary");
+    /*
     for(var i=0;i<this.inputVals.length;i++) {
         //console.log("num_rotary:",i);
         this.inputVals.eq(i).val(0);
         $(this.inputVals[i]).data("index",i);
     }
+    */
 
+    /*
     this.inputVals.on("change",function(){
-        var index = $(this).data("index");
+        //var index = $(this).data("index");
+        var index = $(this).attr("eltID");
         var mode = dxlManager.getMode(index);
         var val = $(this).val();
-        //console.log("num_rotary change:",index,mode,val);
+        console.log("num_rotary change:",+index,mode,val);
         if(mode==0){
-            dxlManager.setAngle(index,val);
+            dxlManager.setAngle(+index,val);
             //self.angle(index,val); //rem called by dxlManager
         }
         else{
-            dxlManager.setSpeed(index,val);
+            dxlManager.setSpeed(+index,val);
             //self.speed(index,val); //rem called by dxlManager
         }
     });
+    */
+    /*
+    this.inputVals = $("#divMotors .num_rotary");
+    var parent = $(".single-motor").filter("[eltID="+index+"]"); //OK
+    console.log("inputval:parent",parent);
+    */
+    /*
     this.inputVals.on("keydown",function(ev){
-        //console.log("inputVals.on(keydown):",ev);
         if(ev.keyCode==13){
-            var index = $(this).data("index");
-            var mode = dxlManager.getMode(index);
-            var val = $(this).val();
-            if(mode==0){
-                dxlManager.setAngle(index,val);
-            }
-            else{
-                dxlManager.setSpeed(index,val);
-            }    
+            var index = $(this).attr("eltID");
+           console.log("inputVals.on(keydown):",index,$(this).val());
+           dxlManager.onControl(+index,+$(this).val());
         }
     });
+    */
 
-
-
-
-
+ 
+    //TODELETE ?
     $("#divMotorSettings .cmd").on('change',function(){
-        var index = $(this).data("index");
+        //var index = $(this).data("index");
+        var index = +$(this).attr("eltID");        
         var cmd = this.name;
+        console.log("********GUI .cmd:",index," ",cmd," ",v);
         //var val = parseFloat(this.value);
         //console.log("DBG cmd:",index," ",cmd," ",v);
         self[cmd](index,this.value);
     });
 
-
+    //TODELETE ?
     $(".motors .cmdTog").on('click',function(){
         var v = this.checked ? 1 : 0;
-        var index = $(this).data("index");
+        //var index = $(this).data("index");
+        var index = +$(this).attr("eltID");        
         var cmd = this.name;
         console.log("*********** cmdTog:",index," ",cmd," ",v);
         if(self[this.name])
             self[cmd](index,v);
         else
             dxlManager.cmdOld(cmd,index,v);
-    });
-
-    $("#motor-freeze").on('click',function(){
-        if($('#motor-freeze').is(":checked"))
-            dxlManager.freezeAllMotors();
-        else
-            dxlManager.unfreezeAllMotors();
     });
 
     $("button.start-rec").on("click",function() {
@@ -929,14 +967,6 @@ for(var i=1;i<6;i++) {
             dxlManager.startRec();
         }
     });
-
-    /*
-        $(".playAnim").on("click",function(){
-            UIplayAnim();
-        var onoff = this.value; //$(this).data("onoff");
-        console.log("Play:",onoff); //$(this).data("onoff"));
-    });
-    */
 
     $("#loadAnim").on("click",function(){
         //dialog.showOpenDialog({properties:['multiSelections']},function(filenames) {
@@ -971,7 +1001,7 @@ for(var i=1;i<6;i++) {
 
     $("#anim-freeze").on('click',function(){
         if($('#anim-freeze').is(":checked")){
-            console.log("*** anim stop all");
+            console.log("---- anim stop all");
             dxlManager.stopAllAnims();
             dxlManager.stopAllMotors();
         }
@@ -993,11 +1023,11 @@ for(var i=1;i<6;i++) {
 
     $("#sensor-freeze").on('click',function(){
         if($('#sensor-freeze').is(":checked")){
-            console.log("*** sensor freeze all");
+            console.log("----- sensor freeze all");
             sensorManager.freezeAllSensors();
             dxlManager.stopAllMotors();
         }else{
-            console.log("*** sensor unfreeze all");
+            console.log("----- sensor unfreeze all");
             sensorManager.unfreezeAllSensors();
         }
     });
@@ -1107,34 +1137,61 @@ for(var i=1;i<6;i++) {
     $("#addEmptySensor").on("click",function(){
         sensorManager.addEmptySensor();
     })
-
-
-    /*
-    //MOBILIZING : test de data-func
-    $("#mbzOnOff").on("change",function(){
-        console.log("mbzOnOff:",$(this).data("dest"),this.checked);
-        //eval($(this).data("func"))(this.checked); this messed
-        //eval($(this).data("func")).onOff(this.checked); this ok
-        eval($(this).data("func")+"("+this.checked+");"); //ok
-        
-        
-    });
-    */
     
-
     $(".midiPlug").bind("mouseenter", midiPanelOver);//mouseover
     function midiPanelOver(){
         console.log("midi over");
         misGUI.scanMidiPorts();
     }
     
-
     //this.scanSerial();    /*Didier*/
     this.scanMidiPorts();
     this.scanIPv4(); //Didier
 
  
 }//init
+
+MisGUI.prototype.initMotorDiv = function(){
+    //before addMotor
+    
+    //hide model , will be cloned
+    $("#divMotors .single-motor").hide();
+    $("#divMotorSettings .single-motor").hide();
+
+    //prevent scrolling with mousewheel
+    $(".rotAngle").on("mousewheel",function(e){e.preventDefault();}); //<<<index.js
+    $(".rotSpeed").on("mousewheel",function(e){e.preventDefault();}); //<<<index.js
+       
+    //open Dxl registers tool
+    $(".single-motor").contextmenu(function() { 
+        var index = $(this).attr("eltID");
+        console.log("motor.contextmenu:",index);
+        if(index != undefined){
+            openDxlControl(+index);
+        }
+    });
+
+    $("#motor-freeze").on('click',function(){
+        if($('#motor-freeze').is(":checked"))
+            dxlManager.freezeAllMotors();
+        else
+            dxlManager.unfreezeAllMotors();
+    });
+
+    //motorMappings : TODO à verifier
+    var motorMappings = $("#divMotorSettings").find("[name=mapping]");
+    motorMappings.on("change",function(){  
+
+        //var index = $(this).data("index");
+        var index = +$(this).attr("eltID");      
+        var val = $(this).val();       
+        console.log("misgui:: setmidimotormapping will be called", index, val);          
+        motorMappingManager.setMidiMotorMappingIndex(index,parseInt(val)); // Gui only treats CC midi mappings for now
+    });
+
+
+}
+
 
 
 MisGUI.prototype.enableOSC = function(onoff){
@@ -1686,32 +1743,6 @@ MisGUI.prototype.removeSensor = function(sensorID){
     div.remove();
 };   
 
-
-
-/*Didier
-MisGUI.prototype.scanSerial = function(){
-    var self = this;
-    var selector = $("#selectSerial");
-    selector.empty();
-    selector.append($("<option value='' ></option>"));
-    cm9Com.list(function(ports){
-        for (var i = 0; i < ports.length; i++) {
-            var p = ports[i];
-            var n = p;
-            if (p.indexOf("/dev/") == 0)
-                n = p.substring(5);
-            selector.append($("<option value=" + "'"+p+"'>" + n + "</option>"));
-            if (n.indexOf("usb") >= 0) {
-                selector.val(n); //par default
-            }
-        }
-        selector.append($("<option value='scan' >scan</option>"));
-        if(self.serialPort != null)
-            $("#selectSerial").val(self.serialPort);
-    });
-};
-*/
-
 MisGUI.prototype.scanMidiPorts = function(){
     var self = this;
     var sel = $("#midi-available");
@@ -1969,13 +2000,14 @@ function echoActiveSetting(){
 
 
 // PULL OFF
+/*
 function indexMotor(){
     for (var i = 0; i < $(".motor-index").length; i++) {
         $(".motor-index").eq(i).html(i+1);
         console.log(i);
     };
 }
-
+*/
 
 
 // STOP ALL
@@ -2155,4 +2187,3 @@ var openDxlControl = function(index){
     dxlManager.startReadDxl(dxlID); //async >> showDxlReg            
 }
 
-//before cleaning : 2162
