@@ -1,6 +1,6 @@
 
 ## Structure
- - classes
+ - classes en general , input output (ex input in sensor , input(s) in motors , input in anim ... )
  - export/require ( aulieu de <script> dans html )
  - generaliser  input(s)-process-output(s)
 
