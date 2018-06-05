@@ -1024,16 +1024,15 @@ DxlManager.prototype.animChannel=function(id,num,onoff){
     }
 }
 
-DxlManager.prototype.playKey=function(cmd,index,val) {
-    if(val==NaN){
-        console.log("***************dlx.playkey NAN",cmd,index,val);
-        return
-    }
-    //console.log("dxlm.playkey:",cmd," ",index," ",val);
+DxlManager.prototype.playKey=function(cmd,index,val) { //cmd = "angle" or "speed"
+    //console.log("***************dxlm.playkey:",cmd," ",index," ",val);
+    /*
     if(index<this.motors.length) {
         this.motors[index][cmd](val);
         misGUI[cmd](index,val);
     }
+    */
+   this.motors[index].onValue(val);
 }
 
 DxlManager.prototype.stopAllAnims = function() {

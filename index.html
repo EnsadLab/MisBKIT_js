@@ -362,8 +362,10 @@
 				<ul id="sortable-anim" >
 					<!-- SIngle Animation -->
 					<li class="single-anim ui-state-default">
+
 						<button class="close"><img src="assets/close.png" alt=""></button>
 						<input type="text" class="name" placeholder="Nom de l'animation" name="animName" size="40">
+						<button class="gear tiny float-right"><img data-id="animPopup" src="assets/settings.png"></button>
 						<div class="anim-motors">
 							<input type="text" class="shorcut" placeholder="?" name="animKey">
 							
@@ -575,7 +577,7 @@
 								<h4>Sinus</h4>
 							</div>
 							<div class="medium float-left text-left">
-								<button class="gear tiny" func="setPopupValues" data-id="sinusPopup"><img src="assets/settings.png"></button>
+								<button class="gear tiny float-left" func="setPopupValues" data-id="sinusPopup"><img src="assets/settings.png"></button>
 							</div>
 							Period(seconds):<input func="inputParam" param="period" type="number" class="medium tiny float-right" placeholder="1" param="">
 
@@ -821,6 +823,17 @@
 			<br>
 			<hr>
 		</div>
+
+		<div class="modale draggable animManager animPopup" id="animPopup" style="display: none; width:550px">
+				<button class="close-modale"><img src="assets/close.png" alt=""></button>
+				Sinus(just for testing): ><span func="sinusName"></span>
+				<hr>
+				<font color='lightgreen'>
+				<label class="label100">Period : </label><input func="inputParam" param="period" type="text" size="4">
+				</font>
+				<br>
+				<hr>
+			</div>
 		
 		<div class="modale draggable" id="dynamixel-ctrl" style="display: none;">
 			<button id="closeDxl" class="close-modale"><img src="assets/close.png" alt=""></button>

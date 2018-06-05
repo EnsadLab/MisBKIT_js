@@ -1,5 +1,5 @@
 {
-  "savecount": 94,
+  "savecount": 116,
   "cm9Num": 0,
   "oscPorts": {
     "oscRemoteIP": "localhost",
@@ -9,8 +9,17 @@
   "webSocket": "none",
   "midiEnabled": true,
   "midiPorts": [],
-  "anims": [],
-  "sensors": [],
+  "anims": [
+    {
+      "name": "2017-00-25-14h13mn11",
+      "key": ""
+    }
+  ],
+  "sensors": [
+    {
+      "name": "Sensor_name"
+    }
+  ],
   "motors": [
     {
       "dxlID": 4,

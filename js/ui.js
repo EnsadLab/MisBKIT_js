@@ -86,7 +86,7 @@ function modaleGear(){
 	
 	var target = $(this).data("id");
 	var mod = $("#"+target);	
-	console.log("open modale " + target);
+	console.log("ui.js:open modale " + target);
 
 	mod.css("display", "block");
 

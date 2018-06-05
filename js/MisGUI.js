@@ -843,15 +843,12 @@ MisGUI.prototype.init =function(){
 
     this.initMotorDiv();
 
-
     var parent = $("#divAnims").find("[name=listAnims]");
-    var tanim = parent.find(".single-anim:first");
-    tanim.hide();
-
-
+    parent.find(".single-anim:first").hide();
+    
+    /* >>> this.initMotorDiv(); + this.addMotor
     //clone MotorsConfig(advanced)
     //var parent = $("#dxlConfig");
-    /*
     var model = $("#divMotorSettings .single-motor");
     var after = model;
     model.data("index",0); model.find("*").data("index",0); //old
@@ -1063,9 +1060,11 @@ MisGUI.prototype.init =function(){
     });
 
     // hide default animation, also when no animations are loaded
+    /*
     var parent = $("#sortable-anim");
     var model = parent.find(".single-anim:first");
     model.hide();
+    */
 
     // hide default sensor, also when no sensors are loaded
     var parentS = $(".sensors").find("[name=listSensors]");
@@ -1297,7 +1296,7 @@ MisGUI.prototype.dxlEnabled = function(index,val){
 
 
 MisGUI.prototype.divAnim = function(animId){
-    return $('.single-anim[data-id='+animId+']');
+    return $('.single-anim[eltID='+animId+']');
 }
 
 MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
@@ -1309,11 +1308,11 @@ MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
     var model = parent.find(".single-anim:first");
     model.hide();
     var clone = model.clone();
-    clone.attr('data-id', animId); //select only find attr
-    clone.children().data("id", animId); //only first level !!! !!! !!!
+    clone.attr('eltID', animId); //select only find attr
+    clone.find("*").attr('eltID', animId);
 
-    clone.find("input").attr('data-id', animId);
-    clone.find("button").attr('data-id', animId);
+    //clone.find("input").attr('data-id', animId);
+    //clone.find("button").attr('data-id', animId);
 
     var tracks = clone.find("[name=track]");
     var nt = tracks.length;
@@ -1325,30 +1324,31 @@ MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
     tracks.on("click", function () {
         var v = this.checked ? 1 : 0;
         //console.log("DBG_track:", $(this).data("id"), " i:", $(this).data("index"), " ", v);
-        self.track($(this).data("id"));
+        //self.track($(this).data("id"));
+        self.track($(this).attr("eltID"));
     });
 
     clone.find(".close").on("click", function () {
         //killAnim
-        var animId = $(this).data("id");
+        var animId = $(this).attr("eltID");
         var a = self.divAnim(animId);
         if (a.length > 0) {
             a.remove();
             dxlManager.removeAnim(animId);
         }
-        console.log("GUI.killanim:");
+        console.log("GUI.killanim:",animID);
         //self.setSensorAnims();  //?????      
         MisGUI_sensors.setSensorAnims();
     });
 
     clone.find(".play").on("click", function () {
         UIplayAnim(this);
-        dxlManager.startAnim($(this).data("id"));
+        dxlManager.startAnim($(this).attr("eltID"));
     });
 
     clone.find(".stop").on("click", function () {
-        console.log("stop:", $(this).data("id"));
-        dxlManager.stopAnim($(this).data("id"));
+        console.log("stop:", $(this).attr("eltID"));
+        dxlManager.stopAnim($(this).attr("eltID"));
         UIstopAnim(this);
     });
 
@@ -1357,14 +1357,14 @@ MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
 
     clone.find(".loop").on("click", function () {
         var onoff = UIloopAnim(this);
-        dxlManager.loopAnim($(this).data("id"), onoff);
+        dxlManager.loopAnim($(this).attr("eltID"), onoff);
     });
 
     clone.find("[name=animName]")
         .val(aName)
         .on("change", function () {
             var zis = $(this);
-            dxlManager.renameAnim(zis.data("id"), zis.val());
+            dxlManager.renameAnim(zis.attr("eltID"), zis.val());
             //self.setSensorAnims();
             MisGUI_sensors.setSensorAnims();
         });
@@ -1373,7 +1373,7 @@ MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
         .val(keyCode)
         .on("change",function(){
             var zis = $(this);
-            dxlManager.setKeyCode(zis.data("id"),zis.val());
+            dxlManager.setKeyCode(zis.attr("eltID"),zis.val());
     });
 
 
@@ -1414,7 +1414,7 @@ MisGUI.prototype.animLoopOnOff=function(animId,onoff){
 
 MisGUI.prototype.animProgress=function(animId,v) {
     //$('.divAnim[data-id=' + animId + ']:first').find('[name="progress"]:first').val(v);
-    var parent = $('.single-anim[data-id='+animId+']');
+    var parent = $('.single-anim[eltID='+animId+']');
     parent.find('[name="progress"]:first').val(v);
 }
 
@@ -1425,7 +1425,7 @@ MisGUI.prototype.animProgress=function(animId,v) {
  * @param tracks {play:true,i:imot,f:"angle"}
  */
 MisGUI.prototype.animTracks=function(animId,tracks){
-    var parent = $('.single-anim[data-id='+animId+']')
+    var parent = $('.single-anim[eltID='+animId+']')
     //console.log("DBG_animTracks:",parent.length);
     var bts = parent.find('[name="track"]');
     var nbt = bts.length;
@@ -1445,7 +1445,7 @@ MisGUI.prototype.animTracks=function(animId,tracks){
 
 
 MisGUI.prototype.track=function(animId,v) {
-    var parent = $('.single-anim[data-id='+animId+']')
+    var parent = $('.single-anim[eltID='+animId+']')
     var bts = parent.find('[name="track"]');
     for(var i=0;i<bts.length;i++) {
         var onoff = $(bts[i]).prop("checked");
