@@ -1307,7 +1307,11 @@ MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
     var parent = $("#sortable-anim");
     var model = parent.find(".single-anim:first");
     model.hide();
-    var clone = model.clone();
+
+    console.log("POPUP?",model.find(".gear").data("id"));
+    model.find(".gear").data("id","animPopup");
+
+    var clone = model.clone(true);
     clone.attr('eltID', animId); //select only find attr
     clone.find("*").attr('eltID', animId);
 
