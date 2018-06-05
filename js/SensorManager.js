@@ -201,11 +201,9 @@ class SensorManager{
                 sensor.copySettings(s.sensors[i]);
                 this.sensors.push(sensor);
             }
-
             this.init();    
         }
     }
-
 
     cmd(func,eltID,arg1,arg2){
         console.log("SensorCmd:",func,eltID,arg1,arg2);

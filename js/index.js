@@ -175,7 +175,7 @@ window.onload = function() {
 
     var MisBKit = require("./js/MisBKIT.js");
     var MBK = new MisBKit();
-    MBK.init();
+    MBK.init(); //needs misGUI initialized
 
     
     //try{ midiPortManager = new MidiPortManager(); }catch(e){console.log(e);} >>>>>> MISBKIT.js

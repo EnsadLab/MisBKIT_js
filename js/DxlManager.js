@@ -122,6 +122,24 @@ DxlManager.prototype.cmd = function(func,eltID,val,param){
     }
 }
 
+DxlManager.prototype.midiMapping =function(eltID,val,param){
+    console.log("DxlManager:midiMapping:",eltID,param,val);
+    switch(param){
+        case "port":
+            motorMappingManager.setMidiMotorMappingPort(+eltID,val);
+            break;
+        case "mode"://falsse:CC true:note 
+            switch(val){
+                case false:motorMappingManager.setMidiMotorMappingCmd(+eltID,"CC");break;
+                case true:motorMappingManager.setMidiMotorMappingCmd(+eltID,"note");break;
+            }    
+            break;
+        case "num":
+            motorMappingManager.setMidiMotorMappingIndex(+eltID,+val); // Gui only treats CC midi mappings for now
+            break;
+    }
+}
+
 DxlManager.prototype.dxlParam = function(eltID,val,param){
     //clockwise angleMin angleMax speedMin speedMax
     console.log("dxlManager:dxlParam:",eltID,val,param);    
@@ -152,7 +170,7 @@ DxlManager.prototype.dxlMode = function(eltID,val){ //true=wheel false=joint
         }
 
     }
-    misGUI.mode(eltID,val);
+    misGUI.motorMode(eltID,val);
 }
 
 
@@ -424,7 +442,7 @@ DxlManager.prototype.stopAll = function() {
     for (var i = 0; i < this.motors.length; i++) {
         this.motors[i].enable(false);
         misGUI.dxlEnabled(i,false);
-        misGUI.speed(i,0);
+        misGUI.motorSpeed(i,0);
 
     }
     this.stopAllAnims();
@@ -435,7 +453,7 @@ DxlManager.prototype.stopAllMotors = function(){
     console.log("DxlManager.stopAllMotors!");
     for (var i = 0; i < this.motors.length; i++) {
         this.motors[i].stopMotor();
-        misGUI.speed(i,0);
+        misGUI.motorSpeed(i,0);
     }
 }
 
@@ -443,7 +461,7 @@ DxlManager.prototype.stopMotor = function(index){
     console.log("DxlManager.stopMotors!",index);
     if(index >= 0 && index < this.motors.length){
         this.motors[index].stopMotor();
-        misGUI.speed(index,0);
+        misGUI.motorSpeed(index,0);
     }
 }
 
@@ -472,7 +490,7 @@ DxlManager.prototype.startReadDxl = function(dxlId) {
 //DELETED DxlManager.prototype.onCm9Strings=function(args){
 
 DxlManager.prototype.dxlPos=function(array) {  //array[0]="dxlpos"
-    var n = array.length-1; 
+var n = array.length-1; 
     if(n>this.motors.length)
         n=this.motors.length;
     for(var i=0;i<n;i++){
@@ -683,10 +701,10 @@ DxlManager.prototype.onNormControl = function(index,val){
         if(val<0)val=0;
         if(val>1)val=1;
         if(dxl.m.mode==0) {
-            misGUI.angle(index, dxl.nAngle(val) );
+            misGUI.motorAngle(index, dxl.nAngle(val) );
         }
         else {
-            misGUI.speed(index, dxl.nSpeed(val) );
+            misGUI.motorSpeed(index, dxl.nSpeed(val) );
         }
     }
 };
@@ -705,7 +723,7 @@ DxlManager.prototype.setAngle = function(index,val){ //degrés
     console.log("DxlManager:setangle:",index,val);
     if(index<this.motors.length){
         var a = this.motors[index].angle(val);
-        misGUI.angle(index,a);
+        misGUI.motorAngle(index,a);
         return a;
     }
     return 0;
@@ -714,14 +732,14 @@ DxlManager.prototype.setAngle = function(index,val){ //degrés
 DxlManager.prototype.setAngleN = function(index,val){
     if(index<this.motors.length){
         var a=this.motors[index].nAngle(val);
-        misGUI.angle(index,a);        
+        misGUI.motorAngle(index,a);        
     }
 };
 
 DxlManager.prototype.setSpeed = function(index,val){
     if(index<this.motors.length){
         var v=this.motors[index].speed(val);
-        misGUI.speed(index,v);        
+        misGUI.motorSpeed(index,v);        
     }
 };
 
@@ -729,7 +747,7 @@ DxlManager.prototype.setSpeedN = function(index,val){
     if(index<this.motors.length){
         var v=this.motors[index].nSpeed(val);
         console.log("speedN:",val,v);
-        misGUI.speed(index,v);
+        misGUI.motorSpeed (index,v);
     }
 };
 
@@ -739,9 +757,9 @@ DxlManager.prototype.onPlay = function(index,val){
     if(index<this.motors.length){
         var dxl = this.motors[index];
         if(dxl._mode==0)
-            misGUI.angle( dxl.angle(val) );
+            misGUI.motorAngle( dxl.angle(val) );
         else
-            misGUI.speed( dxl.speed(val) );
+            misGUI.motorSpeed( dxl.speed(val) );
     }
 };
 

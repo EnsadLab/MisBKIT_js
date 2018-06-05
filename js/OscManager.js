@@ -248,7 +248,7 @@ OscManager.prototype.handleMotorMessage = function(rcv){
         motorIndex = this.getArgInAdress(adr,cmp);
         console.log("whheel:",motorIndex,arg);
         //this.setMode(motorIndex,0);
-        misGUI.speed(+motorIndex,arg);
+        misGUI.motorSpeed(+motorIndex,arg);
     }else if(adr.startsWith(cmp = "/mbk/motors/speed/")){
         motorIndex = this.getArgInAdress(adr,cmp);
         console.log("speed:",motorIndex,arg);
@@ -256,22 +256,22 @@ OscManager.prototype.handleMotorMessage = function(rcv){
         console.log("motorIndex:",motorIndex,arg);
         //this.setMode(motorIndex,0);
         dxlManager.setSpeed(+motorIndex,arg)
-        misGUI.speed(+motorIndex,arg);
+        misGUI.motorSpeed(+motorIndex,arg);
     }else if(adr.startsWith(cmp = "/mbk/motors/joint/")){
         motorIndex = this.getArgInAdress(adr,cmp);
         //this.setMode(motorIndex,1);
         var a = dxlManager.setAngle(+motorIndex,arg);
-        misGUI.angle(motorIndex,a);
+        misGUI.motorAngle(motorIndex,a);
     }else if(adr.startsWith(cmp = "/mbk/motors/goal/")){
         motorIndex = this.getArgInAdress(adr,cmp);
         var a = dxlManager.setAngle(+motorIndex,arg);
-        misGUI.angle(motorIndex,a);
+        misGUI.motorAngle(motorIndex,a);
     }else if(adr.startsWith(cmp = "/mbk/motors/wheeljoint/")){
         motorIndex = this.getArgInAdress(adr,cmp);
         var divMotor = misGUI.getMotorUI(motorIndex);
         //misGUI.setValue(motorIndex,"joint",arg);
-        if(divMotor.find("[name=mode]").prop('checked')) misGUI.speed(motorIndex,arg);
-        else misGUI.angle(motorIndex,arg);
+        if(divMotor.find("[name=mode]").prop('checked')) misGUI.motorSpeed(motorIndex,arg);
+        else misGUI.motorAngle(motorIndex,arg);
     }else if(adr.startsWith(cmp = "/mbk/motors/stopAll")){ // stops motors and anims
         //dxlManager.stopAll(); //TODO: gui....?
         dxlManager.stopAllMotors();

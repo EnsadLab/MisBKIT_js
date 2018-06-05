@@ -74,24 +74,28 @@ function MisGUI(){
 
 /*
   ex: cloneElement(".single-gizmo",42);
-  ex: cloneElement(".single-gizmo","giz42");
+  ex: cloneElement(".single-gizmo","giz42","giz41");
   ex: cloneElement(".single-gizmo");
  */
 MisGUI.prototype.cloneElement = function(selector,eltID,afterID){ //eltID may be a string
     var model = $(selector).first();      //model MUST be first ---> insertAfter
     if(model.length>0){
-        //console.log("model manager:",model.prop("manager"));
+        //console.log("CLONE:manager:",model.data("manager"));
         var clone = model.clone(true);
-        if(model.prop("manager")!=undefined){
-            clone.find("*").prop("manager",model.prop("manager")); //was undefined ?
+        /*inutile?
+        if(clone.data("manager")==undefined){
+            console.log("CLONE:copy manager:");
+            clone.data("manager",model.data("manager"));
+            clone.find("*").data("manager",model.data("manager")); //was undefined ?
         }
+        */
         if(eltID != undefined){           //set eltID to all clone elts
             clone.attr("eltID",eltID);
             clone.find("*").attr("eltID",eltID);
         }
         if(afterID != undefined){
             var after = $(selector).filter("[eltID="+afterID+"]");
-            console.log("clone after:",after);
+            //console.log("clone after:",after);
             if(after.length>0)
                 clone.insertAfter(after);
             else
@@ -152,7 +156,7 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
     var parents = $("."+className);
     parents.find("*").each(function(i) {
         var func = $(this).attr("func");
-        $(this).prop("manager",manager); //inutile ? keep manager ?
+        $(this).data("manager",manager); //inutile ? keep manager ?
         if(func){
             //console.log("INIT:",$(this).prop("tagName"),$(this).prop("type"));
 
@@ -163,18 +167,24 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
             switch($(this).prop("type")){
                 case "text":
                 case "number":
-                    $(this).on("keydown",function(e){
-                        if(e.keyCode==13) //trigger change when enter even if not modified
-                            $(this).trigger("change");                            
+                    $(this).on("keypress",function(e){
+                        if(e.keyCode==13){ //trigger change when enter even if not modified
+                            //console.log("ENTER:",$(this).data("prevval"),$(this).val());
+                            $(this).trigger("change");
+                            return false; //but will trhrow change when focus
+                        }                            
                     });
                 case "select-one": //select
                     //console.log("***",$(this)); 
                     $(this).on("change",function(){
-                        console.log("FUNCCHANGE:",$(this).attr("eltID"),$(this).attr("param"));
+                        console.log("INPUTCHANGE:",$(this).data("prevval"),$(this).val());
+                        //console.log("FUNCCHANGE:",$(this).attr("eltID"),$(this).attr("param"));
                         //$(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());                            
                         // CEC: !!!!! Prob avec prop("manager").. pas bien stocké dans la balise
                         //$(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());                           
-                        manager.cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val(),$(this).attr("param")); 
+                        manager.cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val(),$(this).attr("param"));
+                        //$(this).data("prevval",$(this).val());
+
                     });
                     //console.log($("function",this.val));
                     break;
@@ -214,6 +224,7 @@ MisGUI.prototype.changeSettings = function(className,func,params,eltID){
 
 //opt: {class:classname,id:eltID,func:func,param:param,val:value}
 MisGUI.prototype.showValue=function(opt){
+    console.log("showValue:",opt);
     var sel = "."+opt.class+" ";
     if(opt.id!=undefined)sel+="[eltID="+opt.id+"]";
     if(opt.func!=undefined)sel+="[func="+opt.func+"]";
@@ -222,7 +233,7 @@ MisGUI.prototype.showValue=function(opt){
     if(elts.length > 0){
         this.setElementValue(elts,opt.val);
     }
-    //else console.log("*****GUIVALUE NOT FOUND:",sel);
+    else console.log("*****GUIVALUE NOT FOUND:",sel);
 }
 
 //opt: {class:classname,id:eltID,func:func,val:settings}
@@ -296,9 +307,8 @@ MisGUI.prototype.setElementValue = function(elt,value){
                     });
                 }
                 else{
-                    //var exist = $(this).find("option[value='"+value+"']").length;
-                    //console.log("?????exist?????:",func,value,exist);
-                    e.val(value);
+                    if($(this).find("option[value='"+value+"']").length>0)e.val(value);
+                    else e.prop("selectedIndex", 0); //select first option par defaut
                 }
                 break;            
             case "P":
@@ -504,48 +514,56 @@ MisGUI.prototype.speedMax =function(index,val){
     //console.log("gui-SPEEDMAX:",val);
 }
 
-
+// >>>> dxlManager.midiMapping(EltID,value,"mode")
 MisGUI.prototype.midiMode =function(index,value){
     console.log("SETMIDIMODE:",index," val",value);
+    /*
     switch(+value){
         case 0:motorMappingManager.setMidiMotorMappingCmd(index,"CC");break;
         case 1:motorMappingManager.setMidiMotorMappingCmd(index,"note");break;
     }
+    */
 }
 
-MisGUI.prototype.mode =function(index,value){
+MisGUI.prototype.motorMode =function(index,value){
     console.log("************ MisGUI.mode:",index,value);
-    switch(value){
-        case false:
-        case "J":
-        case 0:
-            this.joint(index);
-            break;
-        case true:
-        case "W":
-        case 1:
-            this.wheel(index);
-            break;
+    if(this.rotSpeeds[index]){
+        switch(value){
+            case false: case 0: case "J": case "joint":
+                //this.joint(index);
+                this.rotSpeeds[index].show(false);
+                this.rotAngles[index].show(true);
+                break;
+            case true: case 1: case "W": case "wheel": case -1://off mode
+                //this.wheel(index);
+                this.rotAngles[index].show(false);
+                this.rotSpeeds[index].show(true);
+                this.rotSpeeds[index].setValue(0);
+                this.motorSpeed(index,0);            
+                break;
+        }
     }
 }
 
+/*
 MisGUI.prototype.joint = function(index){
-    dxlManager.cmdOld("joint",index);
+    //dxlManager.cmdOld("joint",index);
     if(this.rotSpeeds[index])
         this.rotSpeeds[index].show(false);
     if(this.rotAngles[index])
         this.rotAngles[index].show(true);
 };
 MisGUI.prototype.wheel =function(index){
-    dxlManager.cmdOld("wheel",index);
+    //dxlManager.cmdOld("wheel",index);
     this.rotAngles[index].show(false);
     this.rotSpeeds[index].show(true);
     this.rotSpeeds[index].setValue(0);
     this.speed(index,0);
 };
+*/
 
 MisGUI.prototype.onRotary = function(val,rot){
-    console.log("ONROTARY:")
+    //console.log("ONROTARY:")
     var i=rot.userData.i;    
     dxlManager.cmdOld(rot.userData.f,i,val); //"angle" "velocity"
     //this.inputVals.eq(i).val(val.toFixed(1));
@@ -572,8 +590,8 @@ MisGUI.prototype.setValue = function(index,name,val){
     div.find("input[name="+name+"]").val(val);
 }
 
-MisGUI.prototype.angle = function(index,val){
-    console.log("MisGUI.prototype.angle",index,val);
+MisGUI.prototype.motorAngle = function(index,val){
+    //console.log("MisGUI.prototype.angle",index,val);
 
     //if(index<this.rotAngles.length){
     if(this.rotAngles[index]){
@@ -595,21 +613,15 @@ MisGUI.prototype.angle = function(index,val){
     }
 }
 
-MisGUI.prototype.speed = function(index,val){ //[-100,100]
-    //console.log("MisGUI.speed:",index,val)
+MisGUI.prototype.motorSpeed = function(index,val){ //[-100,100]
     //if(index<this.rotSpeeds.length){
-    if(this.rotSpeeds[index]){
-        var v = this.rotSpeeds[index].setValue(+val).value;
-        //this.inputVals.eq(index).val(v.toFixed(1));
+    if(this.rotSpeeds[+index]){
+        var v = this.rotSpeeds[+index].setValue(+val).value;
         $("#divMotors .num_rotary").filter("[eltID="+index+"]").val(v.toFixed(1));
-
-       // console.log("misguiSpeed:",val,v);
     }
 }
 
-
 MisGUI.prototype.needle = function(index,val){
-    //if(index<this.rotAngles.length) {
     if(this.rotAngles[index]){
         this.rotAngles[index].setNeedle(+val);
         this.rotSpeeds[index].setNeedle(+val);
@@ -637,25 +649,10 @@ MisGUI.prototype.alert = function(msg){
 }
 
 
-MisGUI.prototype.toggleAdvanced = function(onoff){
-    //console.log("MisGUI.prototype.toggleAdvanced",onoff);
-    if(onoff) { //current state
-        for(var i=0;i<6;i++){
-            var parent = this.getMotorUI(i);
-            var chk = parent.find("[name=enable]").prop("checked");
-            console.log("DBG-check:",i," ",chk);
-            parseBlinker();
-            if(chk)
-                dxlManager.cmdOld("enable",i,true);
-
-        }
-    }
-    else
-        dxlManager.stopAll();
+MisGUI.prototype.toggleAdvanced = function(onoff){ //true='normal' false='advanced'
+    console.log("MisGUI.prototype.toggleAdvanced",onoff);
+    //DB: should stop or freeze motors anims sensors ???
 }
-
-
-
 
 MisGUI.prototype.motorSettings = function(index,s){
     //console.log("GUI:motorSettings:",index,s);
@@ -690,7 +687,7 @@ MisGUI.prototype.motorSettings = function(index,s){
     //this.rotAngles[index].show((s.mode==0));
     //this.rotSpeeds[index].show((s.mode==1));
     //console.log("MisGUI.motorSettings:",s.mode);
-    this.mode(index,s.mode);
+    this.motorMode(index,s.mode);
     if(this.rotSpeeds[index])
         this.rotSpeeds[index].setValue(0);
 
@@ -699,11 +696,11 @@ MisGUI.prototype.motorSettings = function(index,s){
 
 
 MisGUI.prototype.midiMotorSettings = function(midiMappingSettings,midiPorts){
-
+/*Didier: use this.showParams()
     var motorIndex = midiMappingSettings.motorIndex;
     var midiCmd_int;
-    if(midiMappingSettings.cmd == "note") midiCmd_int = 1;
-    else midiCmd_int = 0;
+    if(midiMappingSettings.cmd == "note") midiCmd_int = true;
+    else midiCmd_int = false;
     var midiPort = midiMappingSettings.port;
     var midiIndexMapping = midiMappingSettings.nbID;
 
@@ -716,18 +713,43 @@ MisGUI.prototype.midiMotorSettings = function(midiMappingSettings,midiPorts){
 
     //selections:
     this.updateMidiMotorSelection(motorIndex,midiPort,midiPorts);
+*/
+    var idx = midiMappingSettings.motorIndex;
+    var mod = (midiMappingSettings.cmd == "note"); //CC:false note:true
+    var num = midiMappingSettings.nbID;
+    //var port = midiMappingSettings.port;
+    this.showParams({
+        class:"dxlManager"
+        ,func:"midiMapping"
+        ,id:idx
+        ,val:{ mode:mod , num:num } //, port:["none","test 1","test 2"]}
+        });
 
+    this.updateMidiMotorSelection(idx,midiMappingSettings.port,midiPorts);
 }
 
 MisGUI.prototype.updateMidiMotorSelection = function(motorIndex,midiPortSelected,midiPorts){
 
-    //var sel = $("#divMotorSettings .midi-setting").eq(motorIndex);
-    var sel = $("#divMotorSettings .midi-chanel").eq(motorIndex);
-    sel.data("id",motorIndex);
+    //this array should be built in MidiManager ...
+    var ports = ["none"]; 
+    for(var i=0;i<midiPorts.length;i++){
+        var portName = midiPorts[i].portName;
+        if(portName.length>0 ){ //&& midiPorts[i].enabledOnGUI){
+            ports.push(portName);
+        }
+    }
 
+    this.showValue({class:"dxlManager",id:motorIndex,param:"port",val:ports});
+    //selectMidiMappingPort //default = first option  ("none")
+    this.showValue({class:"dxlManager",id:motorIndex,param:"port",val:midiPortSelected});
+
+/*
+    //var sel = $("#divMotorSettings .midi-setting").eq(motorIndex);
+    //var sel = $("#divMotorSettings .midi-chanel").eq(motorIndex);
+    var sel = $("#divMotorSettings .midi-chanel [eltID="+motorIndex+"]");
+    //sel.data("id",motorIndex);
 
     sel.empty();
-    
     sel.append($("<option value=" + "'" + "none" + "'>" + "none" + "</option>"));
     for(var i=0;i<midiPorts.length;i++){
         var portName = midiPorts[i].portName;
@@ -736,49 +758,57 @@ MisGUI.prototype.updateMidiMotorSelection = function(motorIndex,midiPortSelected
             sel.append($("<option value=" + "'" + portName + "'" + "name=" + portName + "'>" + portName + "</option>"));
         }
     }
-    
     sel.change(function(){ 
         var id = $(this).data("id"); 
         console.log(id,this.name,this.value);
         motorMappingManager.setMidiMotorMappingPort(id,this.value);
     });
 
-
-    this.selectMidiMappingPort(motorIndex,midiPortSelected);
+    //this.selectMidiMappingPort(motorIndex,midiPortSelected);
+    */
 }
 
+//only used in this
+/*
 MisGUI.prototype.setMappingNumberForMotor = function(motorIndex, nbID) {
-    if(nbID == null){ 
-        //$("#divMotors .number-for-motor").eq(motorIndex).val(null); // done explicitly for now.. //cec
-        $("#divMotorSettings").find("[name=mapping]").eq(motorIndex).val(null);
-    }else{
-        //$("#divMotors .number-for-motor").eq(motorIndex).val(nbID); //cec
-        $("#divMotorSettings").find("[name=mapping]").eq(motorIndex).val(nbID);
-    }
+//    if(nbID == null){ 
+//        //$("#divMotors .number-for-motor").eq(motorIndex).val(null); // done explicitly for now.. //cec
+//        $("#divMotorSettings").find("[name=mapping]").eq(motorIndex).val(null);
+//    }else{
+//        //$("#divMotors .number-for-motor").eq(motorIndex).val(nbID); //cec
+//        $("#divMotorSettings").find("[name=mapping]").eq(motorIndex).val(nbID);
+//    }
+   this.showValue({class:"dxlManager",id:motorIndex,func:"midiMapping",param:"num",val:nbID});
 }
+*/
 
-
-MisGUI.prototype.selectMidiMappingPort = function(motorID, name){        
-    var div = this.getMotorStg(motorID);
-    //var sel = div.find(".listAnims [name="+wich+"]");
-    if( (name==undefined)||(name.length<1) )
-        name = "none";
-    //var sel = div.find(".midi-setting");
-    var sel = div.find(".midi-chanel");
-    sel.val(name);
+//only used in this
+/*
+MisGUI.prototype.selectMidiMappingPort = function(motorID, name){   
+//    console.log("*******************selectMidiMappingPort:",name);
+//    var div = this.getMotorStg(motorID);
+//    if( (name==undefined)||(name.length<1) )
+//        name = "none";
+//    //var sel = div.find(".midi-setting");
+//    var sel = div.find(".midi-chanel");
+//    sel.val(name);
+   if( (name==undefined)||(name.length<1) )
+       name = "none";
+    this.showValue({class:"dxlManager",id:motorID,param:"port",val:name});
 }
+*/
 
 MisGUI.prototype.addMotor = function(index,settings){
-    //TODO check if index exists
+    //TODO check if index already exists
 
     //console.log("MisGUI.addMotor",index);
     var cl1 = this.cloneElement("#divMotors .single-motor",index,index-1);
-    var cl2 = this.cloneElement("#divMotorSettings .single-motor",index,index-1);  
+    var cl2 = this.cloneElement("#divMotorSettings .single-motor",index,index-1);
+
+    this.showValue({class:"dxlManager",id:index,param:"index",val:index});
 
     var svgAngles = cl1.find(".rotAngle").first();
     var svgSpeeds = cl1.find(".rotSpeed").first();
-
-
 
     //prevent scrolling with mousewheel
     svgAngles.on("mousewheel",function(e){e.preventDefault();}); //<<<index.js
@@ -935,7 +965,7 @@ MisGUI.prototype.init =function(){
         //var index = $(this).data("index");
         var index = +$(this).attr("eltID");        
         var cmd = this.name;
-        console.log("********GUI .cmd:",index," ",cmd," ",v);
+        console.log("************************GUI .cmd:",index," ",cmd," ",v);
         //var val = parseFloat(this.value);
         //console.log("DBG cmd:",index," ",cmd," ",v);
         self[cmd](index,this.value);
@@ -947,7 +977,7 @@ MisGUI.prototype.init =function(){
         //var index = $(this).data("index");
         var index = +$(this).attr("eltID");        
         var cmd = this.name;
-        console.log("*********** cmdTog:",index," ",cmd," ",v);
+        console.log("************************ cmdTog:",index," ",cmd," ",v);
         if(self[this.name])
             self[cmd](index,v);
         else
@@ -1178,6 +1208,7 @@ MisGUI.prototype.initMotorDiv = function(){
             dxlManager.unfreezeAllMotors();
     });
 
+    /*DB: >>>> dxlManager.midiMapping(...,"num")
     //motorMappings : TODO à verifier
     var motorMappings = $("#divMotorSettings").find("[name=mapping]");
     motorMappings.on("change",function(){  
@@ -1188,7 +1219,7 @@ MisGUI.prototype.initMotorDiv = function(){
         console.log("misgui:: setmidimotormapping will be called", index, val);          
         motorMappingManager.setMidiMotorMappingIndex(index,parseInt(val)); // Gui only treats CC midi mappings for now
     });
-
+    */
 
 }
 
@@ -1756,7 +1787,7 @@ MisGUI.prototype.scanMidiPorts = function(){
         for(var i=0;i<100;i++){
             var n = midiPortManager.getPortName(i);
             if(n){
-                //console.log("Found midi port: " + n);
+                console.log("Found midi port: " + n);
                 midiPortManager.addMidiPort(n,i);
                 sel.append($("<input class=" + "'" + "styled-checkbox small" + "'" + "type=" + "'" + "checkbox"
                 + "'" + "id=" + "'" + n + "'>&nbsp;" + n + "<br>"));

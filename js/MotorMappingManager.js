@@ -28,9 +28,10 @@ MotorMappingManager.prototype.loadMappingSettings = function () {
         }
     }
     if (json) {
+        console.log("loadMappingSettings********************json");
          
         var s = JSON.parse(json);
-        //console.log(s);
+        console.log(s);
         // copy old versions to see if some motor mappings had been erased
        // var oldMotorMappings = JSON.parse(JSON.stringify(this.motorMappings))
 
@@ -171,7 +172,9 @@ MotorMappingManager.prototype.setMidiMotorMappingIndex = function(motorIndex,nbI
 
 MotorMappingManager.prototype.setMidiMotorMappingCmd = function(motorIndex,cmd){
     var found = false;
+    console.log("setMidiMotorMappingCmd:",this.motorMappings.length);
     for(var i=0; i<this.motorMappings.length; i++){
+        console.log("setMidiMotorMappingCmd:",this.motorMappings[i].m.motorIndex);
         if(this.motorMappings[i].m.motorIndex == motorIndex)
         {
             this.motorMappings[i].m.cmd = cmd;

@@ -1,6 +1,6 @@
 {
-  "savecount": 12,
-  "cm9Num": 1,
+  "savecount": 94,
+  "cm9Num": 0,
   "oscPorts": {
     "oscRemoteIP": "localhost",
     "oscLocalPort": 4444,
@@ -13,8 +13,35 @@
   "sensors": [],
   "motors": [
     {
-      "index": 0,
-      "dxlID": 10,
+      "dxlID": 4,
+      "enabled": false,
+      "model": -1,
+      "clockwise": true,
+      "mode": 0,
+      "jointSpeed": 0,
+      "angleMin": "-150",
+      "angleMax": "150",
+      "speedMin": -100,
+      "speedMax": 100,
+      "torqueMax": 1023,
+      "id": 4
+    },
+    {
+      "dxlID": 32,
+      "enabled": false,
+      "model": 12,
+      "clockwise": true,
+      "mode": 0,
+      "jointSpeed": 0,
+      "angleMin": -150,
+      "angleMax": 150,
+      "speedMin": -100,
+      "speedMax": 100,
+      "torqueMax": 1023,
+      "id": 32
+    },
+    {
+      "dxlID": 0,
       "enabled": false,
       "model": -1,
       "clockwise": true,
@@ -25,41 +52,10 @@
       "speedMin": -100,
       "speedMax": 100,
       "torqueMax": 1023,
-      "id": 10
+      "id": 0
     },
     {
-      "index": 1,
-      "dxlID": 11,
-      "enabled": false,
-      "model": -1,
-      "clockwise": true,
-      "mode": 1,
-      "jointSpeed": 0,
-      "angleMin": -150,
-      "angleMax": 150,
-      "speedMin": -100,
-      "speedMax": 100,
-      "torqueMax": 1023,
-      "id": 11
-    },
-    {
-      "index": 2,
-      "dxlID": 12,
-      "enabled": false,
-      "model": -1,
-      "clockwise": true,
-      "mode": 0,
-      "jointSpeed": 0,
-      "angleMin": -150,
-      "angleMax": 150,
-      "speedMin": -100,
-      "speedMax": 100,
-      "torqueMax": 1023,
-      "id": 12
-    },
-    {
-      "index": 3,
-      "dxlID": 13,
+      "dxlID": 0,
       "enabled": false,
       "model": -1,
       "clockwise": true,
@@ -70,26 +66,10 @@
       "speedMin": -100,
       "speedMax": 100,
       "torqueMax": 1023,
-      "id": 13
+      "id": 0
     },
     {
-      "index": 4,
-      "dxlID": 14,
-      "enabled": false,
-      "model": -1,
-      "clockwise": true,
-      "mode": 0,
-      "jointSpeed": 0,
-      "angleMin": -150,
-      "angleMax": 150,
-      "speedMin": -100,
-      "speedMax": 100,
-      "torqueMax": 1023,
-      "id": 14
-    },
-    {
-      "index": 5,
-      "dxlID": 15,
+      "dxlID": 0,
       "enabled": false,
       "model": -1,
       "clockwise": true,
@@ -100,7 +80,21 @@
       "speedMin": -100,
       "speedMax": 100,
       "torqueMax": 1023,
-      "id": 15
+      "id": 0
+    },
+    {
+      "dxlID": 0,
+      "enabled": false,
+      "model": -1,
+      "clockwise": true,
+      "mode": -1,
+      "jointSpeed": 0,
+      "angleMin": -150,
+      "angleMax": 150,
+      "speedMin": -100,
+      "speedMax": 100,
+      "torqueMax": 1023,
+      "id": 0
     }
   ]
 }

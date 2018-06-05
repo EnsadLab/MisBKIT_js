@@ -302,7 +302,7 @@
 
 							<div class="medium float-left">
 								<label class="">midi : </label>
-								<select class= "small tiny midi-chanel"  id="" name="midiPorts">
+								<select func="midiMapping" param="port" class= "small tiny midi-chanel"  id="" name="midiPorts">
 										<option>none</option>
 										<option value="midi 1">midi 1</option>
 										<option value="midi 2">midi 2</option>
@@ -311,14 +311,14 @@
 								</select>
 
 								<label class="toggle-small">
-							  		<input type="checkbox" class="cmdTog" name="midiMode">
+							  		<input func="midiMapping" param="mode" type="checkbox" class="cmdTog" name="midiMode">
 							  		<div class="slider midi round"></div>
 								</label>
 							</div>
 
 							<div class="medium text-right float-right">
 								<label class="">mapping : </label>
-								<input type="number" class="small midiMapping" placeholder="index" name="mapping">
+								<input func="midiMapping" param="num" type="number" class="small midiMapping" placeholder="index" name="mapping">
 
 							</div>
 						</div>

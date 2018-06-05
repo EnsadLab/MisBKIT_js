@@ -23,7 +23,7 @@ const DXL_WHEEL = 1;
 class Dxl{
     constructor(index){
         this.m = { //settings
-            index: index,
+            //index: index,
             //id:0,     //TODO: remove
             dxlID:0,  //same id param in html/misGUI 
             enabled: false,
@@ -38,7 +38,7 @@ class Dxl{
             torqueMax: 1023
         };
 
-        //this.index   = index;
+        this.index   = index;
         this.enabled = false;
         this.rec = false;
         this.timeOfRequest = 0;
@@ -71,12 +71,12 @@ Dxl.prototype.sendGoalSpeed = function(){
             s = this.dxlSpeed;
         }
         cm9Com.pushMessage(
-           "dxlMotor"+this.m.index+" "+this.m.dxlID
+           "dxlMotor"+this.index+" "+this.m.dxlID
           +","+mod+","+s+","+this.dxlGoal+"\n"
         );
     }
     else{
-        cm9Com.pushMessage("dxlMotor"+this.m.index+" 0\n");
+        cm9Com.pushMessage("dxlMotor"+this.index+" 0\n");
     }
 }
 
@@ -138,11 +138,8 @@ Dxl.prototype.copySettings = function(dxl){
         }        
     }
 
-
     if(this.m.id==0)this.m.id=this.m.dxlID; //m.id deprecated
     else if(this.m.dxlID==0)this.m.dxlID=this.m.id;
-
-    console.log("++++++++++++++copySettings:",this.m.dxlID);
 }
 
 Dxl.prototype.getSettings=function(){
@@ -196,7 +193,7 @@ Dxl.prototype.dxlID = function(id){
 
 
 Dxl.prototype.model=function(val){
-    console.log("------ model:[",this.m.index,"]-------",val);
+    console.log("------ model:[",this.index,"]-------",val);
     switch(val){
         case -1:
             //no answer ... disable , ask again ?
@@ -232,14 +229,14 @@ Dxl.prototype.enable = function(onoff){
     console.log("-------- Dxl.Enable(): -------",this.m.dxlID,onoff);
     if(this.m.dxlID<1){
         this.enabled = false;
-        misGUI.dxlEnabled(this.m.index,false);
+        misGUI.dxlEnabled(this.index,false);
         return false;
     }
 
     //AREVOIR MODE
     if(onoff){
         if(this.temperature>67){
-            console.log("***** TO HOT ****",this.m.index);
+            console.log("***** TO HOT ****",this.index);
             this.enabled = false;
         }
         else{
@@ -260,7 +257,7 @@ Dxl.prototype.enable = function(onoff){
         this.enabled = false;
         this.dxlSpeed = 0;
         this.wantedSpeed = 0;
-        misGUI.speed(this.m.index,0);
+        misGUI.motorSpeed(this.index,0);
         //TORQUE ?
     }
     return onoff;
@@ -313,8 +310,8 @@ Dxl.prototype.angleRange = function(min,max){
 Dxl.prototype.joint = function(){
     this.m.mode = DXL_JOINT;
     this.speed(this.m.jointSpeed);
-    misGUI.angle(this.m.index,this.wantedAngle); //updated by currPos
-    console.log("----- Dxl.joint: ----",this.m.index,this.m.mode,this._curAngle);
+    misGUI.motorAngle(this.index,this.wantedAngle); //updated by currPos
+    console.log("----- Dxl.joint: ----",this.index,this.m.mode,this._curAngle);
     if(this.m.dxlID>0){
         if(this.m.model==-1){ //ask for model
             console.log("-----------askForModel");
@@ -333,7 +330,7 @@ Dxl.prototype.wheel = function(){
     this.m.mode = DXL_WHEEL;
     this.dxlSpeed = 0;
     this.wantedSpeed = 0;
-    console.log("----- Dxl.wheel: ----",this.m.index,this.m.mode);
+    console.log("----- Dxl.wheel: ----",this.index,this.m.mode);
     return this;
 };
 
@@ -355,7 +352,7 @@ Dxl.prototype.currPos = function(p){
         else if(!this.enabled){
             this.wantedAngle = a; 
             this.dxlGoal = p;
-            misGUI.angle(this.m.index,a);
+            misGUI.motorAngle(this.index,a);
         }
         return a;
     }
@@ -366,11 +363,11 @@ Dxl.prototype.currPos = function(p){
 Dxl.prototype.onValue =function(val){ //angle en°  ou  speed[0-100]
     if(this.m.mode==0) {
         this.angle(val);
-        misGUI.angle(this.m.index,val );
+        misGUI.motorAngle(this.index,val );
     }
     else {
         this.speed(val);
-        misGUI.speed(this.m.index,val);
+        misGUI.motorSpeed(this.index,val);
     }
 }
 
@@ -379,10 +376,10 @@ Dxl.prototype.onNormValue =function(val){ //angle  ou  speed normalisé
     if(val<0)val=0;
     if(val>1)val=1;
     if(this.m.mode==0) {
-        misGUI.angle(this.m.index, this.nAngle(val) );
+        misGUI.motorAngle(this.index, this.nAngle(val) );
     }
     else {
-        misGUI.speed(this.m.index, this.nSpeed(val) );
+        misGUI.motorSpeed(this.index, this.nSpeed(val) );
     }
 }
 

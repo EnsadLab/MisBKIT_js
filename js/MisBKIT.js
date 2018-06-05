@@ -19,11 +19,12 @@ module.exports = class MisBKIT{
 
         robusManager = new RobusManager();
 
+        dxlManager = new DxlManager();
+
         motorMappingManager = new MotorMappingManager();
 
         oscManager = new OscManager();
 
-        dxlManager = new DxlManager();
 
         sensorManager = new SensorManager();
     
