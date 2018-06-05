@@ -565,7 +565,7 @@ MisGUI.prototype.wheel =function(index){
 MisGUI.prototype.onRotary = function(val,rot){
     //console.log("ONROTARY:")
     var i=rot.userData.i;    
-    dxlManager.cmdOld(rot.userData.f,i,val); //"angle" "velocity"
+    dxlManager.cmd(rot.userData.f,i,val); //"angle" "speed"
     //this.inputVals.eq(i).val(val.toFixed(1));
     
     //var numrot = 
@@ -825,7 +825,7 @@ MisGUI.prototype.addMotor = function(index,settings){
     svgAngles.hide(); svgSpeeds.show(); //>>>boundrect ok?
     var rots = new DUI.Rotary(svgSpeeds[0],slidopt);
     rots.setDomain(-160,160).setRange(-100,100).setMinMax(-100,100);
-    rots.userData = {i:index,f:"velocity"}; //speed
+    rots.userData = {i:index,f:"speed"}; //was velocity
     rots.callback = this.onRotary.bind(this);
     this.rotSpeeds[index]=rots;
 

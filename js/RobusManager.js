@@ -114,7 +114,7 @@ class LuosBot{
                         m.gate = this.gateAlias; //for sensor
                         sensorManager.onRobusValue(m);
                     }
-                } 
+                }
             }
             this.modules = msg.modules;
         }catch(err){

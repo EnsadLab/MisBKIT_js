@@ -403,12 +403,6 @@ Dxl.prototype.nAngle = function(an) {
     return this.angle( this.m.angleMin + an * (this.m.angleMax - this.m.angleMin) );
 };
 
-Dxl.prototype.velocity = function(v){
-    //console.log("VELOCITY:",v);
-    if(v!=undefined)
-        return this.speed(v); // (v*1023)/100);
-}
-
 Dxl.prototype.speed = function(s){
     if(s!=undefined) {
         if (s > this.m.speedMax)s = this.m.speedMax;
