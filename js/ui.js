@@ -72,33 +72,37 @@ function showAnimations(){
 }
 
 
+
+
+$( ".draggable" ).draggable();
+
 $(".modale").css("display", "none");
+
 
 
 
 $(".gear").bind("click", modaleGear);
 
-$( ".draggable" ).draggable();
-
-
 function modaleGear(){
-
-	
 	var target = $(this).data("id");
 	var mod = $("#"+target);	
 	console.log("ui.js:open modale " + target);
-
 	mod.css("display", "block");
 
 	// mod.append('<button class="close-modale"><img src="assets/close.png" alt=""></button>');
-
+	// Didier: close-modale n'est actif que si on l'a ouvert avec le 'gear' ???
+	/*
 	mod.find('.close-modale').bind('click', function(event) {
 		mod.css("display", "none");
 		console.log("close "+ target);
 	});
+	*/
+	
+};
 
-}
-
+$('.close-modale').on("click",function(){
+	$(this).parents(".modale").css("display", "none");
+})
 
 
 function loadSensor(){

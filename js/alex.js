@@ -58,7 +58,7 @@
 
     $("button.play").bind("click", UIplayAnim);
     $("button.stop").bind("click", UIstopAnim);
-    $("button.loop").bind("click", UIloopAnim);
+    //$("button.loop").bind("click", UIloopAnim); //DB: GRRR see UIloopAnim:ERROR
 
 
     $("button.advanced").bind("click", function(){
@@ -165,23 +165,23 @@
 	  }
 
 	  function UIloopAnim(witch,onoff){
-		if(witch==undefined)witch=this;
-		if(onoff==undefined)onoff=($(witch).css("opacity")!=1);
+		console.log("UIloopAnim1:",onoff);
+		if(witch==undefined){witch=this;console.log("UIloopAnim1b:undef");}
+		try{if(onoff==undefined)onoff=($(witch).css("opacity")!=1); //DB: GRRR Cannot read property 'defaultView' of undefined 
+		}catch(e){console.log("*** LOOP ERROR ***");onoff=true;} //DB: resolved by removing
 	  	if(onoff){
 	  		$(witch).css("opacity", 1);
-
-	  		$(witch).html('<img src="assets/loop-green.png" alt="" name="loop">');
-
+			$(witch).html('<img src="assets/loop-green.png" alt="" name="loop">');
 	  	}else{
 			$(witch).css("opacity", 0.6);
-
 			$(witch).html('<img src="assets/loop.png" alt="" name="loop">');
-	  	}
+		}
+		console.log("UIloopAnim2:",onoff); //witch.css("opacity"));
 	  	return onoff;
 	  }
 
 	  function UIstopAnim(witch){
-		  if(witch==undefined)witch=this;
+		if(witch==undefined)witch=this;
 	  	$(witch).prev(".play").css("opacity", 0.6);
 	  	$(witch).prev(".play").html('<img src="assets/play.png" alt="" name="loop">');
 

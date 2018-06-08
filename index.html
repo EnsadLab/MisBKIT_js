@@ -258,7 +258,7 @@
 							<img src="assets/thermometer.png" class="ico-thermo" alt="">
 							<div class="thermo">_</div>
 							<label class="switch">
-							  <input func="dxlMode" param="mode" type="checkbox">
+							  <input func="dxlMode" param="mode" value="joint,wheel" type="checkbox">
 							  <div class="slider round"></div>
 							</label>
 						</div>
@@ -293,7 +293,7 @@
 						</div>
 						<div class="properties">
 							<label class="toggle-small">
-							  <input func="dxlParam" param="clockwise" type="checkbox"> <!--class="cmdTog" name="clockwise"-->
+							  <input func="dxlParam" param="clockwise" data-tog="joint,wheel" type="checkbox"> <!--class="cmdTog" name="clockwise"-->
 							  <div class="slider clock round"></div>
 							</label>
 						</div>
@@ -311,14 +311,14 @@
 								</select>
 
 								<label class="toggle-small">
-							  		<input func="midiMapping" param="mode" type="checkbox" class="cmdTog" name="midiMode">
+							  		<input func="midiMapping" param="mode" type="checkbox"> <!--class="cmdTog" name="midiMode"-->
 							  		<div class="slider midi round"></div>
 								</label>
 							</div>
 
 							<div class="medium text-right float-right">
 								<label class="">mapping : </label>
-								<input func="midiMapping" param="num" type="number" class="small midiMapping" placeholder="index" name="mapping">
+								<input func="midiMapping" param="num" type="number" class="small midiMapping" placeholder="num"> <!--name="mapping"-->
 
 							</div>
 						</div>
@@ -793,6 +793,8 @@
 			</div>
 		</div>
 
+		<!-- --------- BOITES DE DIALOGUES -------- -->
+
 		<div class="modale draggable sensorManager sinusPopup" id="sinusPopup" style="display: none; width:550px">
 			<button class="close-modale"><img src="assets/close.png" alt=""></button>
 			Sinus(just for testing): ><span func="sinusName"></span>
@@ -825,17 +827,17 @@
 		</div>
 
 		<div class="modale draggable animManager animPopup" id="animPopup" style="display: none; width:550px">
-				<button class="close-modale"><img src="assets/close.png" alt=""></button>
-				Sinus(just for testing): ><span func="sinusName"></span>
-				<hr>
-				<font color='lightgreen'>
-				<label class="label100">Period : </label><input func="inputParam" param="period" type="text" size="4">
-				</font>
-				<br>
-				<hr>
-			</div>
+			<button class="close-modale"><img src="assets/close.png" alt=""></button>
+				(just for testing): ><span func="sinusName"></span>
+			<hr>
+			<font color='lightgreen'>
+			<label class="label100">Param : </label><input func="inputParam" param="test" type="text" size="4">
+			</font>
+			<br>
+			<hr>
+		</div>
 		
-		<div class="modale draggable" id="dynamixel-ctrl" style="display: none;">
+		<div class="modale draggable dxlManager dxlPopup" id="dynamixel-ctrl" style="display: none;">
 			<button id="closeDxl" class="close-modale"><img src="assets/close.png" alt=""></button>
 			<input type="text" size="5" id="btAdvID"><label for="">[ID]</label>
 			&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
@@ -846,29 +848,29 @@
 			<div id="divDxlReg" >
 				
 				<div class="medium float-left">
-					<br><input type="text" size="5" name="000"><label for=""> MODEL</label>
-					<br><input type="text" size="5" name="002"><label for=""> FIRMWARE</label>
-					<br><input type="text" size="5" name="004"><label for=""> BAUDS</label>
-					<br><input type="text" size="5" name="005"><label for=""> DELAY</label>
-					<br><input type="text" size="5" name="006"><label for=""> CW LIMIT</label>
-					<br><input type="text" size="5" name="008"><label for=""> CCW LIMIT</label>
-					<br><input type="text" size="5" name="014"><label for=""> MAX TORQUE</label>
-					<br><input type="text" size="5" name="016"><label for=""> RETURN LEVEL</label>
-					<br><input type="text" size="5" name="017"><label for=""> ALARM LED</label>
-					<br><input type="text" size="5" name="018"><label for=""> ALARM SHUTDOWN</label>
-					<br><input type="text" size="5" name="024"><label for=""> TORQUE ENABLE</label>
+					<br><input func="dxlWrite" type="text" size="5" param="000"><label for=""> MODEL</label>
+					<br><input func="dxlWrite" type="text" size="5" param="002"><label for=""> FIRMWARE</label>
+					<br><input func="dxlWrite" type="text" size="5" param="004"><label for=""> BAUDS</label>
+					<br><input func="dxlWrite" type="text" size="5" param="005"><label for=""> DELAY</label>
+					<br><input func="dxlWrite" type="text" size="5" param="006"><label for=""> CW LIMIT</label>
+					<br><input func="dxlWrite" type="text" size="5" param="008"><label for=""> CCW LIMIT</label>
+					<br><input func="dxlWrite" type="text" size="5" param="014"><label for=""> MAX TORQUE</label>
+					<br><input func="dxlWrite" type="text" size="5" param="016"><label for=""> RETURN LEVEL</label>
+					<br><input func="dxlWrite" type="text" size="5" param="017"><label for=""> ALARM LED</label>
+					<br><input func="dxlWrite" type="text" size="5" param="018"><label for=""> ALARM SHUTDOWN</label>
+					<br><input func="dxlWrite" type="text" size="5" param="024"><label for=""> TORQUE ENABLE</label>
 				</div>
 				<div class="medium float-left">
-					<br><input type="text" size="5" name="025"><label for=""> LED</label>
-					<br><input type="text" size="5" name="026"><label for=""> PID 1</label>
-					<br><input type="text" size="5" name="027"><label for=""> PID 2</label>
-					<br><input type="text" size="5" name="028"><label for=""> PID 3</label>
-					<br><input type="text" size="5" name="029"><label for=""> PID 4</label>
-					<br><input type="text" size="5" name="030"><label for=""> GOAL</label>
-					<br><input type="text" size="5" name="032"><label for=""> SPEED</label>
-					<br><input type="text" size="5" name="034"><label for=""> TORQUE</label>
-					<br><input type="text" size="5" name="036"><label for=""> POSITION</label>
-					<br><input type="text" size="5" name="043"><label for=""> TEMPERATURE</label>
+					<br><input func="dxlWrite" type="text" size="5" param="025"><label for=""> LED</label>
+					<br><input func="dxlWrite" type="text" size="5" param="026"><label for=""> PID 1</label>
+					<br><input func="dxlWrite" type="text" size="5" param="027"><label for=""> PID 2</label>
+					<br><input func="dxlWrite" type="text" size="5" param="028"><label for=""> PID 3</label>
+					<br><input func="dxlWrite" type="text" size="5" param="029"><label for=""> PID 4</label>
+					<br><input func="dxlWrite" type="text" size="5" param="030"><label for=""> GOAL</label>
+					<br><input func="dxlWrite" type="text" size="5" param="032"><label for=""> SPEED</label>
+					<br><input func="dxlWrite" type="text" size="5" param="034"><label for=""> TORQUE</label>
+					<br><input func="dxlWrite" type="text" size="5" param="036"><label for=""> POSITION</label>
+					<br><input func="dxlWrite" type="text" size="5" param="043"><label for=""> TEMPERATURE</label>
 				</div>
 			</div>
 			<div class="large text-center">

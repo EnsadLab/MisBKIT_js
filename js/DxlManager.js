@@ -587,20 +587,11 @@ DxlManager.prototype.readRegs=function(index) { //
     cm9Com.pushMessage("DR "+dxlid+","+addr+",\n");
 }
 */
-//TODELETE
-/*DxlManager.prototype.dxlWrite=function(dxlid,addr,val) { //
-        console.log("dxlWrite:",+dxlid,+addr,+val);
-        cm9Com.pushMessage("dxlW "+dxlid+","+addr+","+val+"\n");
+
+DxlManager.prototype.dxlWrite = function(dxlid,val,addr) { //id val param
+    console.log("dxlWrite:",+dxlid,+addr,+val);
+    cm9Com.pushMessage("dxlWrite "+dxlid+","+addr+","+val+"\n");
 }
-*/
-//TODELETE
-/*DxlManager.prototype.writeReg=function(index,addr,val) { //
-    if((index>=0)&&(index<this.motors.length)){
-        console.log("WriteReg:",+index,+addr,+val);
-        cm9Com.pushMessage("dxlW "+this.motors.m.id+","+addr+","+val+",\n");
-    }
-}
-*/
 
 DxlManager.prototype.temperature = function(args){
     //console.log("temperature:",args[1],args[2]);
@@ -618,6 +609,14 @@ DxlManager.prototype.temperature = function(args){
 
 
 
+//TODELETE
+/*DxlManager.prototype.writeReg=function(index,addr,val) { //
+    if((index>=0)&&(index<this.motors.length)){
+        console.log("WriteReg:",+index,+addr,+val);
+        cm9Com.pushMessage("dxlW "+this.motors.m.id+","+addr+","+val+",\n");
+    }
+}
+*/
 
 //DELETED DxlManager.prototype.version = function(arr){
 /*        var v1 = +arr[1];
@@ -1168,11 +1167,10 @@ DxlManager.prototype.getMode = function(index){
     return 1; //????
 };
 
+
 DxlManager.prototype.isEnabled = function(index){
     var motor = this.servoByIndex(index);
     if(motor )return motor.enabled;
     else return false;
 }
 
-
-//before cleaning 1148
