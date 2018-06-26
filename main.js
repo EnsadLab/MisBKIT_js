@@ -8,6 +8,7 @@
 // npm install midi
 //
 // npm install midi --runtime=electron --target=1.6.11 --disturl=https://atom.io/download/atom-shell --abi=53
+
 //electron-packager . --platform=darwin --arch=x64 --overwrite --icon=misbkit.icns
 
 //cecile path: /Users/Cecile ?

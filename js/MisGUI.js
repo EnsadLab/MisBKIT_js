@@ -126,7 +126,7 @@ MisGUI.prototype.hideElement = function(selector,eltID){
     if(eltID != undefined){
         elt = elt.filter("[eltID="+eltID+"]"); //.first(); ALL?
     }
-    console.log("MisGUI.removing:",elt);
+    console.log("MisGUI.hiding:",elt);
     elt.hide();  
 }
 
@@ -191,7 +191,7 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                     break;
                 case "checkbox":
                     $(this).on("change",function(){
-                        //console.log("========manager:chk:", $(this).attr("func"),$(this).prop("checked"),$(this).attr("tog"));
+                        console.log("========manager:chk:", $(this).attr("false"),$(this).attr("true"));
                         //DB: TODO attr ou data  ["joint","wheel"] or something like ...
                         manager.cmd($(this).attr("func"),$(this).attr("eltID"),$(this).prop("checked"),$(this).attr("param"));
                     });
@@ -1468,227 +1468,15 @@ MisGUI.prototype.divSensor = function(sensorId){
     return $('.single-sensor[data-id='+sensorId+']');
 }
 
-MisGUI.prototype.addSensor = function(settings, id){
-    //console.log("CLONE",id);
-    var self = this;
-    var parent = $(".sensors").find("[name=listSensors]");
-    var model = parent.find(".single-sensor:first");
-    model.hide();
-    var clone = model.clone();
-    clone.attr('data-id', id); //select only find attr
-    //clone.children().data("id", id); //only first level !!! !!! !!!
-    clone.find('*').data("id", id); //only first level !!! !!! !!!
-
-    //clone.find("input").attr('data-id', id);
-    //clone.find("button").attr('data-id', id);
-    //clone.find("button").attr('data-id', id);
-    // and also select/option in this case no???
-
-    //clone.find(".cmdTog") //GRRRRRRRRRRRR 
-    clone.find("[name=sensorOnOff]")
-        .attr('data-id', id)
-        .attr('checked',settings.enabled)
-        .on("click",function(){
-            //console.log("sensorOnOff:",id,v);    
-            var v = this.checked ? true : false;
-            var id = $(this).data("id");
-            sensorManager.sensorEnable(id,v);
-        });
-    
-    //var nm = clone.find("[name=sensorName]");
-    //console.log("------sensorName:",nm.length);
-
-    clone.find("[name=sensorName]")//(".name")
-        .val(settings.name)
-        .on("change", function () {
-            sensorManager.onName($(this).data("id"), $(this).val());
-    });
-
-
-    // clone.find("[name=tolerance]") //(".tolerance")
-    //     .val(settings.tolerance)
-    //     .on("input",function(){
-    //         sensorManager.onTolerance($(this).data("id"), $(this).val());
-    //         //toleranceUI(clone.find(".tolerance-ui"), settings.tolerance, settings.threshold, settings.valMin, settings.valMax);
-    //         clone.find(".slider-range").slider("option","toler",settings.tolerance);
-    //         sensorAnimWidth(clone.find(".sensor-range"), settings.valMin, settings.valMax, settings.threshold, settings.tolerance);
-    //         //clone inside callback ????
-    //     });
-
-
-    // clone.find(".close").on("click", function () {
-    //     //self.removeSensor($(this).data("id"));
-    //     console.log("guiremove:",$(this).data("id"));
-    //     sensorManager.removeSensor($(this).data("id"));
-    // });
-
-
-    this.setSensorAnims();
-    
-    //clone.find(".listAnims").change(function(){ 
-    clone.find("[class*='listAnims']").change(function(){
-        var id = $(this).data("id"); //!!!parent.parent!!!
-        console.log("animselect:",id,this.name,this.value);
-        sensorManager.onChangeAnim(id,this.name,this.value);
-    });
-    clone.find("[name=anim1]").val(settings.amim1);
-    clone.find("[name=anim2]").val(settings.amim2);
-   
-
-
-    var thres = settings.threshold;
-    var smin = settings.valMin;
-    var smax = settings.valMax;
-
-    var rng = clone.find(".sensor-range");
-    rng.find(".minV").html(smin);
-    rng.find(".currentV").html(thres);
-    rng.find(".maxV").html(smax);
-    
-    // clone.find(".slider-range").slider({
-    // $(".sensor-setting-more").find(".slider-range").slider({
-    //     min: smin,
-    //     max: smax,
-    //     value: thres,
-    //     toler: 789,
-    //     slide: function( ev, ui ) {
-    //         //console.log("slidetol:",$(this).slider("option","toler"));
-    //         var id = $(this).data("id");
-    //         var v  = $(this).slider("value");
-    //         $(this).parent().find(".currentV").html(v);        
-    //         // sensorManager.onThreshold(id,v);
-    //         // sensorAnimWidth(ev, min, max, v);
-    //         //console.log("slide:",id,min,max);
-    //         //sensorAnimWidth(clone.find(".sensor-range"), min, max, v, settings.tolerance); 
-    //         //GRRRRRRRRRRRRRRRRRRRRRR min max settings !!!!!
-    //         sensorAnimWidth($(this).find(".sensor-range")
-    //                 , $(this).slider("option","min")
-    //                 , $(this).slider("option","max")
-    //                 , v
-    //                 , $(this).slider("option","toler")
-    //         );
-    //     },
-    //     stop: function(ev,ui) {
-    //         var v  = $(this).slider("value");
-    //         // sensorManager.onThreshold(id,v);
-    //         sensorManager.saveSensorSettings();            
-    //     }
-    // });
-
-    clone.find(".cmdOnOff").on("click",function(){
-        console.log("cmdOnOff:",$(this).data("id"),this.name,this.checked ? true : false);
-        sensorManager.changeSetting($(this).data("id"),this.name,this.checked ? true : false);
-    })
-
-    clone.find(".cmdInt").change(function(){
-        console.log("cmdInt:",$(this).data("id"),this.name,parseInt($(this).val()));
-        sensorManager.changeSetting($(this).data("id"),this.name,parseInt($(this).val()));
-    })
-
-    clone.find(".cmdString").change(function(){
-        console.log("cmdString:",$(this).data("id"),this.name,$(this).val());
-        sensorManager.changeSetting($(this).data("id"),this.name,$(this).val());
-    })
-
-
-    parent.append(clone); 
-    //this.setSensorRange(id,settings.valMin,settings.valMax,settings.threshold);//after append
-    clone.show();
-    //indexMotor();
-
-
-    // clone.find(".moreSensorSetting").bind('click', sensorSettings);
-    // clone.find(".options .cmdOnOff").bind('click', echoActiveSetting);
-
-    //Didier ...
-    /*
-    clone.find("[name=cm9Enabled]")
-        .attr('data-id', id)
-        .attr('checked',settings.cm9Enabled)
-        .on("click",function(){
-        //var v = this.checked ? true : false;
-        sensorManager.changeSetting(id,"cm9Enabled",this.checked ? true : false);
-    });
-    clone.find("[name=cm9Pin]").change(function(){
-        sensorManager.changeSetting(id,"cm9Pin",parseInt($(this).val()));
-    });
-    */
-
-    this.changeSensor(settings,id);
-    
-}
 
 MisGUI.prototype.logMinMax = function(id){
     var ssor = this.divSensor(id);
     console.log("------------3 changeSensor:",ssor.find(".slider-range").slider("option","max"));
 }    
 
-MisGUI.prototype.changeSensor = function(settings, id){
-    var self = this;
-    var ssor = this.divSensor(id);
-
-    //these may be useful later ?
-    //ssor.find(".name").val(settings.name);
-    //ssor.find(".tolerance").val(settings.tolerance);
-    //ssor.find("[name=anim1]").val(settings.amim1);
-    //ssor.find("[name=anim2]").val(settings.amim2);
-    
-    var rng = ssor.find(".sensor-range");
-    rng.find(".minV").html(settings.valMin);
-    //rng.find(".currentV").html(settings.threshold);
-    rng.find(".maxV").html(settings.valMax);
-
-    //console.log("------------7 changeSensor:",ssor.find(".slider-range").slider("option","max"));
-    var sld = ssor.find(".slider-range");
-    sld.slider( "option","min",+settings.valMin );
-    sld.slider( "option","max",+settings.valMax );
-    sld.slider( "option","toler",+settings.tolerance );
-        
-    //console.log("RNG:",rng.slider( "option","min"));
-
-    //Didier ...
-    ssor.find("[name=valMin]").val(settings.valMin);
-    ssor.find("[name=valMax]").val(settings.valMax);
-    //toleranceUI(ssor.find(".tolerance-ui"), settings.tolerance, settings.threshold, settings.valMin, settings.valMax);    
-    sensorAnimWidth(ssor.find(".sensor-range"),settings.valMin,settings.valMax,settings.threshold, settings.tolerance);
-    
-    ssor.find("[name=oscEnabled]").attr('checked',settings.oscEnabled);
-
-    var midiSelection = ssor.find("[name=midiPort]");
-    midiSelection.empty();
-    for(var i=0; i<midiPortManager.midiPorts.length; i++){
-        if(midiPortManager.midiPorts[i].enabledOnGUI){ // TODO: ou tester juste enable.. a voir le 2-3
-            var p = midiPortManager.midiPorts[i].portName;
-            midiSelection.append($("<option value=" + "'" + p + "'>" + p + "</option>"));
-        }
-    }
-
-    ssor.find("[name=midiEnabled]").attr('checked',settings.midiEnabled);
-    ssor.find("[name=midiPort]").val(settings.midiPort);
-    ssor.find("[name=midiMapping]").val(settings.midiMapping);
-    ssor.find("[name=midiCmd]").attr('checked',settings.midiCmd);
-    
-    ssor.find("[name=cm9Enabled]").attr('checked',settings.cm9Enabled);
-    ssor.find("[name=cm9Pin]").val(settings.cm9Pin);
-    ssor.find("[name=mobilizingEnabled]").attr('checked',settings.mobilizingEnabled);
-    ssor.find("[name=fromMotorEnabled]").attr('checked',settings.fromMotorEnabled);
-    ssor.find("[name=fromMotorIndex]").val(settings.fromMotorIndex);
-    ssor.find("[name=toMotorEnabled]").attr('checked',settings.toMotorEnabled);
-    ssor.find("[name=toMotorIndex]").val(settings.toMotorIndex);
-    
-}
 
 
 
-// wich = "anim1" or "anim2" cf html 
-MisGUI.prototype.selectSensorAnim = function(sensorID, wich, name){        
-    var div = this.divSensor(sensorID);
-
-    var sel = div.find(".listAnims [name="+wich+"]");
-    if( (name==undefined)||(name.length<1) )
-        name = "none";
-    sel.val(name);
-}
 
 MisGUI.prototype.setSensorValue = function(sensorID, sensorValue, percent){
     var div = this.divSensor(sensorID);
@@ -2201,7 +1989,7 @@ function midiPanelOver(){
     console.log("midi over");
 }
 
-
+//before cleaning 1992
     
 
 
