@@ -306,41 +306,6 @@ OscManager.prototype.getStringInAdress = function(adrSrc,adrCmp){
     return adrSrc.substring(adrCmp.length);
 }
 
-// CEC: plus utile.. Didier, enlève si t'es ok
-OscManager.prototype.initCm9Receiver = function(){
-    
-    var inport = 5555;
-    this.oscCm9Receiver = udp.createSocket("udp4", function(msg, rinfo) {
-    var error, error1;
-    try {
-        var rcv = osc.fromBuffer(msg);
-        var adr = rcv.address;
-        if(adr.startsWith("/mbk/sensors")){
-            console.log("osc msg:",rcv.address,rcv.args[0].value,rcv.args[1].value);
-            //////////
-            //now we have different inputs that can change sensor value, so better to
-            //send the osc sensor values directly from the onValue method..
-            //new:
-            var sensorPin = rcv.args[0].value;
-            var sensorVal = rcv.args[1].value;
-            var sensor = sensorManager.getSensorWithPin(sensorPin);
-            sensor.onValue(sensorVal);
-            //old:
-            //oscManager.handleSensorMessage(rcv); //le self. ne marchait pas!!!
-            //////////
-        }else{
-            console.log("invalid OSC message: " + rcv);
-        }
-        return rcv;
-        } catch (error1) {
-            error = error1;
-            return console.log("invalid OSC packet " + error);
-        }
-    });
-    
-    this.oscCm9Receiver.bind(inport);
-
-}
 
 OscManager.prototype.sendSensorMessage = function(sensorID,sensorVal){
 

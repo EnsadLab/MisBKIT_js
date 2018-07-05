@@ -43,7 +43,7 @@ class Dxl{
         this.rec = false;
         this.timeOfRequest = 0;
         this._currPos = NaN;
-        this._curAngle = 0;
+        this._curAngle = 0; 
         this.dxlGoal = 512;
         this.wantedAngle  = 0;
         this.dxlSpeed = 0;

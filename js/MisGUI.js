@@ -137,7 +137,7 @@ ex: html : <div class="myManager">
            </div>
     
     initGUIfunction( myManager, "myManager");
-    
+
     -> manager.cmd(func,eltID,value);
 
     ex:
@@ -261,14 +261,16 @@ MisGUI.prototype.setManagerValue = function( className , func , value , eltID, p
     if(eltID)sel+="[eltID="+eltID+"]";
     if(func)sel+="[func="+func+"]";
     if(param)sel+="[param="+param+"]";
+    console.log("setManagerValue:",sel);
     var elt = $(sel);
     if(elt.length > 0){
-        this.setElementValue(elt);
+        this.setElementValue(elt,value);
     }
     //else console.log("***** GUIVALUE NOT FOUND:",sel);
 }
 
 MisGUI.prototype.setElementValue = function(elt,value){
+    var self = this;
     elt.each(function(i){ //mutiples elements may handle same value
         var e =$(this);
         switch(e.prop("tagName")){
@@ -279,7 +281,7 @@ MisGUI.prototype.setElementValue = function(elt,value){
                         e.val(value);
                     break;
                 case "checkbox":
-                    if(e.is(".onoff")) this.onoffState(e,value); //ON , OFF , ERROR
+                    if(e.is(".onoff")) self.onoffState(e,value); //ON , OFF , ERROR
                     else e.prop("checked",value);    
                     break;
                 default:
@@ -1347,7 +1349,6 @@ MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
             dxlManager.removeAnim(animId);
         }
         console.log("GUI.killanim:",animID);
-        //self.setSensorAnims();  //?????      
         MisGUI_sensors.setSensorAnims();
     });
 
@@ -1376,7 +1377,6 @@ MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
         .on("change", function () {
             var zis = $(this);
             dxlManager.renameAnim(zis.attr("eltID"), zis.val());
-            //self.setSensorAnims();
             MisGUI_sensors.setSensorAnims();
         });
 
@@ -1387,22 +1387,10 @@ MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
             dxlManager.setKeyCode(zis.attr("eltID"),zis.val());
     });
 
-
-    /*
-        //bt.data("id",this.animId);
-        bt.on("click",function(){
-            var id = $(this).data("id");
-            console.log("ClickAnim id:",id," ",this.name);
-        }).data("id",animId);
-    */
-
-
     clone.insertAfter(model);
     clone.show();
 
-    //this.setSensorAnims();
-    MisGUI_sensors.setSensorAnims();
-    
+    MisGUI_sensors.setSensorAnims();    
 }
 
 MisGUI.prototype.playAnim=function(id,v){
@@ -1463,114 +1451,6 @@ MisGUI.prototype.track=function(animId,v) {
         dxlManager.animChannel(animId,i,onoff);
     }
 }
-
-MisGUI.prototype.divSensor = function(sensorId){
-    return $('.single-sensor[data-id='+sensorId+']');
-}
-
-
-MisGUI.prototype.logMinMax = function(id){
-    var ssor = this.divSensor(id);
-    console.log("------------3 changeSensor:",ssor.find(".slider-range").slider("option","max"));
-}    
-
-
-
-
-
-MisGUI.prototype.setSensorValue = function(sensorID, sensorValue, percent){
-    var div = this.divSensor(sensorID);
-    div.find(".live-value").html(sensorValue.toString().substr(0,6));
-    if(percent < 0 ) percent = 0;
-    if(percent > 100) percent = 100;
-    div.find(".live-value-ui").css("left", percent+"%");
-}
-
-MisGUI.prototype.getSensorTolerance = function(sensorID){
-    var div = this.divSensor(sensorID);
-    return div.find("[name=tolerance]")/*(".tolerance")*/.value();
-}
-MisGUI.prototype.setSensorTolerance = function(sensorID,val){
-    var div = this.divSensor(sensorID);
-    console.log("setSensorTolerance:")
-    //....
-}
-
-MisGUI.prototype.setSensorAnims = function(names){
-    
-    if(names==undefined){ //get names from html
-        var qnames = $("[name=animName]");
-        names = [];    
-        qnames.each(function() {
-            names.push($(this).val());
-        });
-    }
-    
-    var sel = $("#sortable-sens").find("[class*='listAnims']"); //listAnims-1 & listAnims-2
-    
-    //console.log("setSensorAnims:",names);
-    //console.log("selectanims:",sel.length);
-
-    sel.empty();
-    sel.append($("<option value=" + "'" + "none" + "'>" + "none" + "</option>"));
-    for(var i=0;i<names.length;i++){
-        if(names[i].length>0)
-            sel.append($("<option value=" + "'" + names[i] + "'>" + names[i] + "</option>"));
-    }
-
-    //restore current selection
-    sel.each(function(){
-        var id = $(this).data("id");
-        if(id!=undefined){
-            var nm = $(this).attr("name");
-            var n = sensorManager.getSensorSetting(id,nm);
-            $(this).val(n);
-        }
-
-    });
-}
-
-/*
-MisGUI.prototype.setSensorRange = function(sensorID,min,max,val){
-
-    var div = this.divSensor(sensorID).find(".sensor-range");
-    //div.find(".slider-range").val(val);
-    var slid = div.find(".slider-range:first");
-
-    div.find(".minV").html(min);
-    div.find(".maxV").html(max);
-
-    hmin = div.find(".minV");
-    console.log("rangediv:",hmin);
-    
-    console.log("slider-range:",sensorID,min,max,val);
-    slid.data("min",min);
-    slid.data("max",max);
-    if(val != undefined){
-        slid.data("value",val); //???
-    }
-    //console.log("slider-range:",slid);
-    //GRRRR
-    //slid.slider( "value", val );
-    //slid.slider( "option", "value", val );
-    //$(slid).data( "value", val );
-    //$(".slider-range").slider( "value", val );
-    //var v = slid.slider("value");
-    //console.log("slider-range:",slid);  
-};
-*/
-
-/*
-MisGUI.prototype.getSensorThres = function(sensorID){
-    //GRRRRRRRR
-}
-*/
-//MisGUI.prototype.removeSensor = function(sensorID){
-MisGUI.prototype.removeSensor = function(sensorID){
-    var div = this.divSensor(sensorID);
-    console.log("remove:",div);
-    div.remove();
-};   
 
 MisGUI.prototype.scanMidiPorts = function(){
     var self = this;
@@ -1765,17 +1645,6 @@ MisGUI.prototype.showDxlReg = function(id,addr,val){ //showValue ?
     var nm = ("000"+addr).slice(-3);
     $('#divDxlReg').find("[param="+nm+"]").val(val);
 }
-
-
-//
-MisGUI.prototype.setSensorRange = function(id,min,max,tolerance,threshold){
-    console.log("setSensorRange:");
-    var div = this.divSensor(id);
-    //toleranceUI(div.find(".tolerance-ui"),tolerance,threshold,min,max);
-    // sensorAnimWidth(div.find(".sensor-range"),min,max,threshold,tolerance);
-}
-
-
 
 
 // updateSlider(

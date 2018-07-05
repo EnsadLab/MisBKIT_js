@@ -104,6 +104,7 @@ class LuosBot{
             var msg = JSON.parse(json);
             //console.log("Luos:",this.id,msg);
             if(!this.gotBase){
+                console.log("Luos:",this.id,msg);
                 this.initModules(msg.modules);
             }
             else{
@@ -474,17 +475,19 @@ class RobusManager{
     }
     
     scanSerials(callback){ //filter only pollen
+        console.log("----- robus scan serials:");
         var names = [];
         SerialLib.list(function(err, ports) {
             if (err)
                 console.log("robus.scanSerials ERROR:", err);
             else {
                 for (var i = 0; i < ports.length; i++) {
-                    //console.log("serials:",ports[i].comName,ports[i].manufacturer);
+                    console.log("serials:",ports[i].comName,ports[i].manufacturer);
                     if( (ports[i].manufacturer == "Pollen Robotics")||
                         (ports[i].manufacturer == "Pollen-Robotics")) //!!!
                         names.push(ports[i].comName);
                 }
+                console.log("robus serials:",names);
                 misGUI.setManagerValue("robusManager","selectPort",names);
             }
             if(callback)

@@ -209,6 +209,22 @@ input:checked + .slider:after{
 	background-position: center center;
 }
 
+/*By Didier ... anim loop -> checkbox */
+.toggle-loop .slider.clock:after{
+	content:"";
+	background:url('../assets/clockwise.png');
+	background-repeat: no-repeat;
+	background-size:auto 70%;
+	background-position: center center;
+	top: 7px;
+}
+.toggle-loop input:checked + .slider.clock:after{
+	content:"";
+	background:url('../assets/clockwise-reverse.png');
+	background-repeat: no-repeat;
+	background-size:auto 70%;
+	background-position: center center;
+}
 
 
 

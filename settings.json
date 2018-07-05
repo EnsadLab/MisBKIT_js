@@ -1,5 +1,5 @@
 {
-  "savecount": 209,
+  "savecount": 246,
   "cm9Num": 1,
   "oscPorts": {
     "oscRemoteIP": "localhost",
@@ -22,6 +22,12 @@
   "sensors": [
     {
       "name": "Sensor_name"
+    },
+    {
+      "name": "Sensor_name"
+    },
+    {
+      "name": "Sensor_name"
     }
   ],
   "motors": [
@@ -30,12 +36,12 @@
       "enabled": false,
       "model": -1,
       "clockwise": false,
-      "mode": 1,
+      "mode": 0,
       "jointSpeed": 0,
       "angleMin": "-90",
       "angleMax": "90",
-      "speedMin": -100,
-      "speedMax": 100,
+      "speedMin": -10,
+      "speedMax": 10,
       "torqueMax": 1023,
       "id": 4
     },
