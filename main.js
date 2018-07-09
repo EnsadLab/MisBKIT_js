@@ -13,6 +13,7 @@
 //cecile path: /Users/Cecile ?
 //didier path: /Users/Didier/Documents/
 
+// adding NOTHING **** just to test
 const electron = require('electron');
 var fs = require('fs');
 
