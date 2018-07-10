@@ -1,71 +1,29 @@
 {
-  "savecount": 209,
-  "cm9Num": 1,
+  "savecount": 1,
+  "cm9Num": 0,
   "oscPorts": {
     "oscRemoteIP": "localhost",
     "oscLocalPort": 4444,
     "oscRemotePort": 6666
   },
   "webSocket": "none",
-  "midiEnabled": true,
+  "midiEnabled": false,
   "midiPorts": [],
-  "anims": [
-    {
-      "name": "2017-00-25-14h13mn11",
-      "key": ""
-    },
-    {
-      "name": "2017-08-09-15h46-14",
-      "key": "x"
-    }
-  ],
-  "sensors": [
-    {
-      "name": "Sensor_name"
-    }
-  ],
+  "anims": [],
+  "sensors": [],
   "motors": [
     {
-      "dxlID": 4,
-      "enabled": false,
-      "model": -1,
-      "clockwise": false,
-      "mode": 1,
-      "jointSpeed": 0,
-      "angleMin": "-90",
-      "angleMax": "90",
-      "speedMin": -100,
-      "speedMax": 100,
-      "torqueMax": 1023,
-      "id": 4
-    },
-    {
-      "dxlID": 32,
-      "enabled": false,
-      "model": 12,
-      "clockwise": true,
-      "mode": 0,
-      "jointSpeed": 0,
-      "angleMin": -150,
-      "angleMax": 150,
-      "speedMin": -100,
-      "speedMax": 100,
-      "torqueMax": 1023,
-      "id": 32
-    },
-    {
       "dxlID": 0,
       "enabled": false,
       "model": -1,
       "clockwise": true,
-      "mode": 0,
+      "mode": -1,
       "jointSpeed": 0,
       "angleMin": -150,
       "angleMax": 150,
       "speedMin": -100,
       "speedMax": 100,
-      "torqueMax": 1023,
-      "id": 0
+      "torqueMax": 1023
     },
     {
       "dxlID": 0,
@@ -78,22 +36,7 @@
       "angleMax": 150,
       "speedMin": -100,
       "speedMax": 100,
-      "torqueMax": 1023,
-      "id": 0
-    },
-    {
-      "dxlID": 0,
-      "enabled": false,
-      "model": -1,
-      "clockwise": true,
-      "mode": 1,
-      "jointSpeed": 0,
-      "angleMin": -150,
-      "angleMax": 150,
-      "speedMin": -100,
-      "speedMax": 100,
-      "torqueMax": 1023,
-      "id": 0
+      "torqueMax": 1023
     },
     {
       "dxlID": 0,
@@ -106,8 +49,46 @@
       "angleMax": 150,
       "speedMin": -100,
       "speedMax": 100,
-      "torqueMax": 1023,
-      "id": 0
+      "torqueMax": 1023
+    },
+    {
+      "dxlID": 0,
+      "enabled": false,
+      "model": -1,
+      "clockwise": true,
+      "mode": -1,
+      "jointSpeed": 0,
+      "angleMin": -150,
+      "angleMax": 150,
+      "speedMin": -100,
+      "speedMax": 100,
+      "torqueMax": 1023
+    },
+    {
+      "dxlID": 0,
+      "enabled": false,
+      "model": -1,
+      "clockwise": true,
+      "mode": -1,
+      "jointSpeed": 0,
+      "angleMin": -150,
+      "angleMax": 150,
+      "speedMin": -100,
+      "speedMax": 100,
+      "torqueMax": 1023
+    },
+    {
+      "dxlID": 0,
+      "enabled": false,
+      "model": -1,
+      "clockwise": true,
+      "mode": -1,
+      "jointSpeed": 0,
+      "angleMin": -150,
+      "angleMax": 150,
+      "speedMin": -100,
+      "speedMax": 100,
+      "torqueMax": 1023
     }
   ]
 }
