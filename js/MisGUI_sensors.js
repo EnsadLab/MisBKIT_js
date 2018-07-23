@@ -289,40 +289,80 @@ MisGUI_sensors.initRobusSelect = function(gate,modules){
 
 //RIGHT CLICK FOR OUTPUT
 $("#sortable-sens-output section").contextmenu(function(e) {
-    contextmenuBox(e.pageX, e.pageY);
+    contextmenuBox(e.pageX, e.pageY, "sensor-output");
     $(this).addClass('selected');
 });
     
 
-function contextmenuBox(x, y){
+function contextmenuBox(x, y, elemt){
 
     if($(".context-box")){
         $(".context-box").remove();
         $("#sortable-sens-output section").removeClass('selected');
+        $("#sortable-sens .selected").removeClass('selected');
     }
 
-    var div = document.createElement("DIV");
-    div.className = "context-box";
-    div.style.left = x+"px";
-    div.style.top = y+"px";
+    // SENSOR-OUTPUT CASE
+    if(elemt === "sensor-output"){
+        var div = document.createElement("DIV");
+        div.className = "context-box";
+        div.style.left = x+"px";
+        div.style.top = y+"px";
 
-    var span1 = document.createElement("SPAN");
-    span1.innerHTML = "Edit";
-    span1.className = "edit-context";
-
-
-    var span2 = document.createElement("SPAN");
-    span2.innerHTML = "Remove";
-    span2.className = "remove-output";
+        var span1 = document.createElement("SPAN");
+        span1.innerHTML = "Edit";
+        span1.className = "edit-context";
 
 
-    div.appendChild(span1);
-    div.appendChild(span2);
+        var span2 = document.createElement("SPAN");
+        span2.innerHTML = "Remove";
+        span2.className = "remove-output";
 
 
-    document.body.appendChild(div);
+        div.appendChild(span1);
+        div.appendChild(span2);
 
-    $(".remove-output").bind("click", removeOutput);
+
+        document.body.appendChild(div);
+
+        $(".remove-output").bind("click", removeOutput);
+    
+    }
+
+    // SINGLE-SENSOR CASE
+    else if(elemt === "single-sensor"){
+
+        var div = document.createElement("DIV");
+        div.className = "context-box";
+        div.style.left = x+"px";
+        div.style.top = y+"px";
+
+        var span1 = document.createElement("SPAN");
+        span1.innerHTML = "Edit";
+        span1.className = "edit-context";
+
+
+        var span2 = document.createElement("SPAN");
+        span2.innerHTML = "Remove";
+        span2.className = "remove-sensor";
+
+
+        div.appendChild(span1);
+        div.appendChild(span2);
+
+
+        document.body.appendChild(div);
+
+        $(".remove-sensor").bind("click", function(){
+            var eltID = $("#sortable-sens .selected").attr('eltID');
+            sensorManager.removeSensor(eltID);
+        });
+
+
+    }
+
+
+    
 
     $("body").bind("click", removeContext);
 
@@ -332,6 +372,7 @@ function removeContext(){
     if($(".context-box")){
         $(".context-box").remove();
         $("#sortable-sens-output section").removeClass('selected');      
+        $("#sortable-sens .selected").removeClass('selected');      
     }
 }
 
@@ -349,6 +390,9 @@ function removeOutput(){
     sensorManager.removeOutput(eltID,name);
 
 }
+
+
+
 
 /*
 $(".currentV").on('input', changeCur);

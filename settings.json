@@ -1,6 +1,6 @@
 {
-  "savecount": 1,
-  "cm9Num": 0,
+  "savecount": 6,
+  "cm9Num": 1,
   "oscPorts": {
     "oscRemoteIP": "localhost",
     "oscLocalPort": 4444,
@@ -9,11 +9,37 @@
   "webSocket": "none",
   "midiEnabled": false,
   "midiPorts": [],
-  "anims": [],
-  "sensors": [],
+  "anims": [
+    {
+      "name": "2017-11-07-11h22-49",
+      "key": "a"
+    },
+    {
+      "name": "2017-11-07-15h32-45",
+      "key": ""
+    },
+    {
+      "name": "2017-12-12-11h59-14",
+      "key": ""
+    },
+    {
+      "name": "2017-12-12-12h46-10",
+      "key": ""
+    }
+  ],
+  "sensors": [
+    {
+      "name": "Sensor_name"
+    },
+    {
+      "name": "Sensor_name"
+    },
+    {
+      "name": "Sensor_name"
+    }
+  ],
   "motors": [
     {
-      "dxlID": 0,
       "enabled": false,
       "model": -1,
       "clockwise": true,
@@ -26,7 +52,6 @@
       "torqueMax": 1023
     },
     {
-      "dxlID": 0,
       "enabled": false,
       "model": -1,
       "clockwise": true,
@@ -39,7 +64,6 @@
       "torqueMax": 1023
     },
     {
-      "dxlID": 0,
       "enabled": false,
       "model": -1,
       "clockwise": true,
@@ -52,7 +76,6 @@
       "torqueMax": 1023
     },
     {
-      "dxlID": 0,
       "enabled": false,
       "model": -1,
       "clockwise": true,
@@ -65,7 +88,6 @@
       "torqueMax": 1023
     },
     {
-      "dxlID": 0,
       "enabled": false,
       "model": -1,
       "clockwise": true,
@@ -78,7 +100,6 @@
       "torqueMax": 1023
     },
     {
-      "dxlID": 0,
       "enabled": false,
       "model": -1,
       "clockwise": true,

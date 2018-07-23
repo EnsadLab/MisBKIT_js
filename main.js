@@ -1,7 +1,5 @@
 'use strict';
 
-// coucou !
-
 // install node : https://nodejs.org/en/
 // sudo npm install -g
 // npm install electron-prebuilt -g

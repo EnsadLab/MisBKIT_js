@@ -39,19 +39,19 @@
 		}
 	  });
 	$( "#sortable-sens" ).disableSelection();
-	//$( "#sortable-sens-output" ).sortable();
-	/*
-	  take it now for now, because it is not working
+	// $( "#sortable-sens-output" ).sortable();
+	
+	// take it now for now, because it is not working
 	  
-	$( "#sortable-sens-output" ).sortable({
-		start: function(event, ui){
-			console.log("sortable-sens-output::start!!!");
-		},
-		stop: function( event, ui ) {
-			console.log("sortable-sens-output:stop!!!");
-		},
-	  });
-	  */
+	// $( "#sortable-sens-output" ).sortable({
+	// 	start: function(event, ui){
+	// 		console.log("sortable-sens-output::start!!!");
+	// 	},
+	// 	stop: function( event, ui ) {
+	// 		console.log("sortable-sens-output:stop!!!");
+	// 	},
+	//   });
+	  
 
 
     //cf MisGUI  $("button.start-rec").bind("click", UIstartRec);
@@ -61,15 +61,7 @@
     //$("button.loop").bind("click", UIloopAnim); //DB: GRRR see UIloopAnim:ERROR
 
 
-    $("button.advanced").bind("click", function(){
-		misGUI.toggleAdvanced(toggleAdvanced);
-
-    	if(toggleAdvanced){
-    		UIhideAdvanced();
-    	}else{
-    		UIshowAdvanced();
-    	}
-    })
+   
 
 
 	function UIstartRec(){
@@ -126,34 +118,7 @@
 	}
 
 
-	  
-	  function UIshowAdvanced(){
-	  	
-	  	$(".allMotors").hide("slide", 1, function(){
-	  		console.log("finish");
-	  		$(".motors-settings").show("slide");
-	  		$("button.advanced").html("ok");
-	  		$("button.advanced").addClass("valid");
-	  		$(".motors-btn-group").find(".hide").show();
-	  		$(".motors-btn-group").find(".show").hide();
-	  	});
-	  	toggleAdvanced = true;
-	  }
-
-
-	  function UIhideAdvanced(){
-	  	$(".motors-settings").hide("slide", 1, function(){
-	  		console.log("finish");
-	  		$(".allMotors").show("slide");
-	  		$("button.advanced").removeClass("valid");
-	  		$("button.advanced").html("<img src='assets/settings.png'>");
-	  		$(".motors-btn-group").find(".hide").hide();
-	  		$(".motors-btn-group").find(".show").show();
-
-	  	});
-	  	toggleAdvanced = false;
-	  	
-	  }
+	
 
 
 	  function UIplayAnim(witch){

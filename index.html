@@ -10,6 +10,28 @@
         <link rel="stylesheet" href="css/toggle.css">
         <link rel="author" href="humans.txt">
 
+
+		<!-- For Script panel -->
+		<link rel="stylesheet" href="js/codemiror/lib/codemirror.css">
+		<link rel="stylesheet" href="js/codemiror/addon/fold/foldgutter.css">
+		<link rel="stylesheet" href="js/codemiror/addon/dialog/dialog.css">
+		<link rel="stylesheet" href="js/codemiror/theme/monokai.css">
+		<script src="js/codemiror/lib/codemirror.js"></script>
+		<script src="js/codemiror/addon/search/searchcursor.js"></script>
+		<script src="js/codemiror/addon/search/search.js"></script>
+		<script src="js/codemiror/addon/dialog/dialog.js"></script>
+		<script src="js/codemiror/addon/edit/matchbrackets.js"></script>
+		<script src="js/codemiror/addon/edit/closebrackets.js"></script>
+		<script src="js/codemiror/addon/comment/comment.js"></script>
+		<script src="js/codemiror/addon/wrap/hardwrap.js"></script>
+		<script src="js/codemiror/addon/fold/foldcode.js"></script>
+		<script src="js/codemiror/addon/fold/brace-fold.js"></script>
+		<script src="js/codemiror/mode/javascript/javascript.js"></script>
+		<script src="js/codemiror/keymap/sublime.js"></script>
+
+		<!-- End For Script panel -->
+
+
     </head>
     <body>
 		<button class="btn-connexions">Connexions</button>
@@ -86,7 +108,7 @@
 						<input type="number" class="small set-value cmdInt" name="oscRemotePort" align="right" placeholder="7777">
 						<!--ul></ul-->
 						<hr>
-						+
+						<button id="addConnexionOSC">Add OSC CONNEXION</button>
 						<br>
 					</div>
 				</div>
@@ -200,7 +222,12 @@
 						--> 
 					</div>
 				</div>
-				
+				<div id="arduino" class="plug arduinoManager">
+					<p>
+						ARDUINO  <span func="spanText" class="status"></span>
+						<input func="freeze" id="arduinoOnOff" type="checkbox" class="small onoff" title="enable/disable">
+					</p>
+				</div>
 
 				<!--div class="plug" >
 					<p>
@@ -212,30 +239,66 @@
 
 
 			</div>
+			<!-- END CONNEXIONS -->
+
+			
+			<!-- MENU TOP -->
+			<div class="menu-top">
+				<div class="menu-top-btn-group">
+					<div class="tab" id="motor">
+						<h2>Motors</h2>
+						<input type="checkbox" class="small btnGlobalMotor" id ="motor-freeze" title="enable/disable"> 
+					</div>
+					
+					<div class="tab" id="motor-adv">
+						<h2>Advanced</h2>
+					</div>
+
+				
+				</div>
+
+				<div class="menu-top-btn-group">
+					<div class="tab" id="anims">
+						<h2>Animations</h2><input type="checkbox" class="small btnGlobalAnim" id="anim-freeze" name ="enable"title="enable/disable"> 
+					</div>
+
+					<!-- //////////// -->
+					<!-- !!!!!!!!!!!!!!!!!!! REMOVED SENSOR TAB -->
+					<div class="tab" id="sens">
+						<h2 id="sens">Sensors </h2> <input type="checkbox" class="small btnGlobalSensors" id="sensor-freeze" name ="enable"title="enable/disable">
+					</div>
+ 
+					<div class="tab" id="script">
+						<h2 id="script">Script </h2> <input type="checkbox" class="small btnGlobalSensors" id="sensor-freeze" name ="enable"title="enable/disable">
+					</div>
+				
+			
+				</div>
+				
+			</div>
+			<!-- END MENU TOP -->
+
+
 
 
 			<!-- MOTORS -->
 			<div class="motors" >
-				<div class="motors-btn-group">
-					<h2>Motors</h2>
-					<input type="checkbox" class="small btnGlobalMotor" id ="motor-freeze" title="enable/disable"> 
-					<button class="advanced gear float-right small"><img src="assets/settings.png" alt=""></button>
+					<div class="ctrl-row">
+						<button class="float-left"> New</button>
 
-					<div class="tools float-right small show">
-						<button class="start-rec">Start RECording</button>
+						<div class="float-right medium">
+							<div class="gear tiny" id="opener" data-id="dynamixel-ctrl"><img src="assets/settings.png"></div>
+							<button class="tiny small" id="btScan" name="startScan">Scan</button>
+							<meter id="scanProgress" class="medium" value="0" max="254"></meter>
+						</div>
+
+
 					</div>
 
-					<div class="tools float-right medium hide">
-						<button class="gear tiny" id="opener" data-id="dynamixel-ctrl"><img src="assets/settings.png"></button>
 
-						<button class="tiny small" id="btScan" name="startScan">Scan</button>
-						<!--div id="scanProgress"></div-->
-						<meter id="scanProgress" class="medium" value="0" max="254"></meter>
-						<!--/div-->
-					</div>
-				</div>
-
+				
 				<div id="divMotors" class="allMotors dxlManager">
+
 
 					<!-- SINGLE MOTOR -->
 					<div class="single-motor">
@@ -272,7 +335,6 @@
 				<!-- Advanced Motors -->
 				<div id="divMotorSettings" class="motors-settings dxlManager">
 					<!-- AREVOIR : bouton tools ...  -->
-					<!--div-->
 					
 					<!-- SINGLE MOTOR Advanced-->
 					<div class="single-motor">
@@ -330,89 +392,58 @@
 			</div>
 
 			<div class="left-side">
-				<div class="head">
-					<div class="tab">
-						<h2 id="anims">Animations</h2><input type="checkbox" class="small btnGlobalAnim" id="anim-freeze" name ="enable"title="enable/disable"> 
-					</div>
-
-					<!-- //////////// -->
-				<!-- !!!!!!!!!!!!!!!!!!! REMOVED SENSOR TAB -->
-					<div class="tab">
-						<h2 id="sens">Sensors </h2> <input type="checkbox" class="small btnGlobalSensors" id="sensor-freeze" name ="enable"title="enable/disable">
-					</div>
-				
-
-
-
-					<!-- <h2 id="anims">Animations</h2><input type="checkbox" class="small cmdTog btnGlobalAnim" id="anim-freeze" name ="enable"title="enable/disable">  -->
-					<!-- <button class="load"><img src="assets/open.png" alt="" id="loadAnim"></button> -->
-					<button id="loadAnim" class="animBTN float-right"><img src="assets/open.png" alt="" id=""> Load animation</button>
-
-					<!-- <h2 id="sens">Sensors </h2> <input type="checkbox" class="small cmdTog btnGlobalSensors" id="sensor-freeze" name ="enable"title="enable/disable">  -->
-					
-					<button id="addEmptySensor" class="sensorsBTN float-right"><img src="assets/add.png" alt="" id="loadAnim"> Add Sensor</button>
-
-					<button id="loadSensor" class="sensorsBTN float-right"><img src="assets/open.png" alt="" id=""> Load Sensor</button>
-			
-				</div>
 				
 				<div class="animations" id="divAnims">
-					
+					<div class="ctrl-row">
+						<button id="loadAnim" class="animBTN float-right"> Load animation</button>
 
-				<ul id="sortable-anim" >
-					<!-- SIngle Animation -->
-					<li class="single-anim ui-state-default">
+						<button class="start-rec float-left">Start RECording</button>
 
-						<button class="close"><img src="assets/close.png" alt=""></button>
-						<input type="text" class="name" placeholder="Nom de l'animation" name="animName" size="40">
-						<button class="gear tiny float-right"><img data-id="animPopup" src="assets/settings.png"></button>
-						<div class="anim-motors">
-							<input type="text" class="shorcut" placeholder="?" name="animKey">
-							
-							<input type="checkbox" class="motor-none" name="track">
-							<input type="checkbox" class="motor-none" name="track">
-							<input type="checkbox" class="motor-none" name="track">
-							<input type="checkbox" class="motor-none" name="track">
-							<input type="checkbox" class="motor-none" name="track">
-							<input type="checkbox" class="motor-none" name="track">
+						<button class="animBTN float-left"> New</button>
+					</div>
 
-							<div class="controls">
-								<button class="play"><img src="assets/play.png" alt="" name="play"></button>
-								<button class="stop"><img src="assets/stop.png" alt="" name="stop"></button>
-								<button class="loop"><img src="assets/loop.png" alt="" name="loop"></button>
+					<ul id="sortable-anim" >
+						<!-- SIngle Animation -->
+						<li class="single-anim ui-state-default">
+
+							<button class="close"><img src="assets/close.png" alt=""></button>
+							<input type="text" class="name" placeholder="Nom de l'animation" name="animName" size="40">
+							<button class="gear tiny float-right"><img data-id="animPopup" src="assets/settings.png"></button>
+							<div class="anim-motors">
+								<input type="text" class="shorcut" placeholder="?" name="animKey">
+								
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+
+								<div class="controls">
+									<button class="play"><img src="assets/play.png" alt="" name="play"></button>
+									<button class="stop"><img src="assets/stop.png" alt="" name="stop"></button>
+									<button class="loop"><img src="assets/loop.png" alt="" name="loop"></button>
+								</div>
+
+								<meter name="progress" class="progress" value="70" max="100"></meter>
+
 							</div>
+						</li>
 
-							<meter name="progress" class="progress" value="70" max="100"></meter>
-
-						</div>
-					</li>
-
-				</ul>
-			</div>
+					</ul>
+				</div>
 			<div class="sensors sensorManager">
+				<div class="ctrl-row">
+					<button id="addEmptySensor" class="sensorsBTN float-left">New</button>
+
+					<button id="loadSensor" class="sensorsBTN float-right">Save</button>
+					<button id="loadSensor" class="sensorsBTN float-right">Load</button>
+				</div>
+
 				<ul id="sortable-sens" name="listSensors" >
 
 				<!-- SIngle Sensors -->
-					<!-- <li class="single-sensor ui-state-default">
-						<button class="close"><img src="assets/close.png" alt=""></button>
-						<input type="checkbox" class="power float-left cmdTog" name ="sensorOnOff" title="enable/disable">
-
-						<input type="text" class="float-left medium" placeholder="Sensor name" name="sensorName" size="58">
-
-						<p class="info medium-75 float-left">CM9 to OSC</p>
-						<div class="sensor-setting">
-							<div class="live-value-ui">•</div>
-						</div>
-					</li> -->
-				<!-- END SIngle Sensors -->
-
-
-
-
-
-				<!-- SIngle Sensors -->
 					<li class="single-sensor ui-state-default activ" func="selectSensor" type="submit">
-						<button class="close" func="removeSensor"><img src="assets/close.png" alt=""></button>
 						<input type="checkbox" func="enable" class="power float-left cmdTog" name ="sensorOnOff" title="enable/disable">
 
 						<input type="text" func="onNameText" class="float-left medium" placeholder="Sensor name" name="sensorName" size="58">
@@ -790,6 +821,18 @@
 				</div>
 				
 
+			</div>
+
+			<div class="script-panel">
+				<div class="ctrl-row">
+					<button id="load-code" class="float-left">Load</button>
+					<button id="stop-code" class="float-right stop">Stop</button>
+					<button id="run-code" class="float-right valid">Run</button>
+					
+				</div>
+				<div class="input-code">
+					
+				</div>
 			</div>
 		</div>
 
