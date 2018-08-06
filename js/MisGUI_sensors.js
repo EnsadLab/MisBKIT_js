@@ -294,87 +294,8 @@ $("#sortable-sens-output section").contextmenu(function(e) {
 });
     
 
-function contextmenuBox(x, y, elemt){
+/////////
 
-    if($(".context-box")){
-        $(".context-box").remove();
-        $("#sortable-sens-output section").removeClass('selected');
-        $("#sortable-sens .selected").removeClass('selected');
-    }
-
-    // SENSOR-OUTPUT CASE
-    if(elemt === "sensor-output"){
-        var div = document.createElement("DIV");
-        div.className = "context-box";
-        div.style.left = x+"px";
-        div.style.top = y+"px";
-
-        var span1 = document.createElement("SPAN");
-        span1.innerHTML = "Edit";
-        span1.className = "edit-context";
-
-
-        var span2 = document.createElement("SPAN");
-        span2.innerHTML = "Remove";
-        span2.className = "remove-output";
-
-
-        div.appendChild(span1);
-        div.appendChild(span2);
-
-
-        document.body.appendChild(div);
-
-        $(".remove-output").bind("click", removeOutput);
-    
-    }
-
-    // SINGLE-SENSOR CASE
-    else if(elemt === "single-sensor"){
-
-        var div = document.createElement("DIV");
-        div.className = "context-box";
-        div.style.left = x+"px";
-        div.style.top = y+"px";
-
-        var span1 = document.createElement("SPAN");
-        span1.innerHTML = "Edit";
-        span1.className = "edit-context";
-
-
-        var span2 = document.createElement("SPAN");
-        span2.innerHTML = "Remove";
-        span2.className = "remove-sensor";
-
-
-        div.appendChild(span1);
-        div.appendChild(span2);
-
-
-        document.body.appendChild(div);
-
-        $(".remove-sensor").bind("click", function(){
-            var eltID = $("#sortable-sens .selected").attr('eltID');
-            sensorManager.removeSensor(eltID);
-        });
-
-
-    }
-
-
-    
-
-    $("body").bind("click", removeContext);
-
-}
-
-function removeContext(){
-    if($(".context-box")){
-        $(".context-box").remove();
-        $("#sortable-sens-output section").removeClass('selected');      
-        $("#sortable-sens .selected").removeClass('selected');      
-    }
-}
 
 function removeOutput(){
     var eltID = $("#sortable-sens-output .selected").attr('eltID');
@@ -390,6 +311,28 @@ function removeOutput(){
     sensorManager.removeOutput(eltID,name);
 
 }
+
+
+
+
+// MIN & MAX value for sensors
+
+
+$("#sensor-detector-min").bind('click', function(event) {
+    /* Act on the event */
+    console.log('detect min value');
+    $(this).parent().find('input').val(0);
+
+});
+
+$("#sensor-detector-max").bind('click', function(event) {
+    /* Act on the event */
+    console.log('detect max value');
+    $(this).parent().find('input').val(100);
+});
+
+
+
 
 
 

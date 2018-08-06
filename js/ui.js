@@ -307,10 +307,131 @@ $(".single-sensor").contextmenu(function(e) {
     
 
 
+// CONTEXT MENU
+function contextmenuBox(x, y, elemt){
+
+    if($(".context-box")){
+        $(".context-box").remove();
+        $("#sortable-sens-output section").removeClass('selected');
+        $("#sortable-sens .selected").removeClass('selected');
+    }
+
+    // SENSOR-OUTPUT CASE
+    if(elemt === "sensor-output"){
+        var div = document.createElement("DIV");
+        div.className = "context-box";
+        div.style.left = x+"px";
+        div.style.top = y+"px";
+
+        var span1 = document.createElement("SPAN");
+        span1.innerHTML = "Edit";
+        span1.className = "edit-context";
+
+
+        var span2 = document.createElement("SPAN");
+        span2.innerHTML = "Remove";
+        span2.className = "remove-output";
+
+
+        div.appendChild(span1);
+        div.appendChild(span2);
+
+
+        document.body.appendChild(div);
+
+        $(".remove-output").bind("click", removeOutput);
+    
+    }
+
+    // SINGLE-SENSOR CASE
+    else if(elemt === "single-sensor"){
+
+        var div = document.createElement("DIV");
+        div.className = "context-box";
+        div.style.left = x+"px";
+        div.style.top = y+"px";
+
+        var span1 = document.createElement("SPAN");
+        span1.innerHTML = "Edit";
+        span1.className = "edit-context";
+
+
+        var span2 = document.createElement("SPAN");
+        span2.innerHTML = "Remove";
+        span2.className = "remove-sensor";
+
+
+        div.appendChild(span1);
+        div.appendChild(span2);
+
+
+        document.body.appendChild(div);
+
+        $(".remove-sensor").bind("click", function(){
+            var eltID = $("#sortable-sens .selected").attr('eltID');
+            sensorManager.removeSensor(eltID);
+        });
+
+
+    }
+
+    // ANIMATION
+    else if(elemt === "animation"){
+    	var div = document.createElement("DIV");
+        div.className = "context-box";
+        div.style.left = x+"px";
+        div.style.top = y+"px";
+
+        var span1 = document.createElement("SPAN");
+        span1.innerHTML = "Edit";
+        span1.className = "edit-context";
+
+
+        var span2 = document.createElement("SPAN");
+        span2.innerHTML = "Remove";
+        span2.className = "remove-animation";
+
+
+        div.appendChild(span1);
+        div.appendChild(span2);
+
+
+        document.body.appendChild(div);
+
+         $(".remove-animation").bind("click", function(){
+            var eltID = $("#sortable-anim .selected").attr('eltID');
+
+            //---> remove anime slot
+
+        });
+    }
+
+
+    
+
+    $("body").bind("click", removeContext);
+
+}
+
+function removeContext(){
+    if($(".context-box")){
+        $(".context-box").remove();
+        $("#sortable-sens-output section").removeClass('selected');      
+        $("#sortable-sens .selected").removeClass('selected');
+    	$(".single-anim").removeClass('selected');
+
+    }
+}
 
 
 
 
+// Animation context
+$(".single-anim").contextmenu(function(e) {
+    $(".single-anim").removeClass('selected');
+    contextmenuBox(e.pageX, e.pageY, "animation");
+    $(this).addClass('selected');
+});
 
 
 

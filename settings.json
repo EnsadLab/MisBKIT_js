@@ -1,5 +1,5 @@
 {
-  "savecount": 6,
+  "savecount": 12,
   "cm9Num": 1,
   "oscPorts": {
     "oscRemoteIP": "localhost",
@@ -7,26 +7,9 @@
     "oscRemotePort": 6666
   },
   "webSocket": "none",
-  "midiEnabled": false,
+  "midiEnabled": true,
   "midiPorts": [],
-  "anims": [
-    {
-      "name": "2017-11-07-11h22-49",
-      "key": "a"
-    },
-    {
-      "name": "2017-11-07-15h32-45",
-      "key": ""
-    },
-    {
-      "name": "2017-12-12-11h59-14",
-      "key": ""
-    },
-    {
-      "name": "2017-12-12-12h46-10",
-      "key": ""
-    }
-  ],
+  "anims": [],
   "sensors": [
     {
       "name": "Sensor_name"
@@ -43,7 +26,7 @@
       "enabled": false,
       "model": -1,
       "clockwise": true,
-      "mode": -1,
+      "mode": 1,
       "jointSpeed": 0,
       "angleMin": -150,
       "angleMax": 150,
@@ -55,7 +38,7 @@
       "enabled": false,
       "model": -1,
       "clockwise": true,
-      "mode": -1,
+      "mode": 1,
       "jointSpeed": 0,
       "angleMin": -150,
       "angleMax": 150,

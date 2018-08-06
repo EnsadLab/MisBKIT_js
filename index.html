@@ -43,7 +43,8 @@
 				<div class="plug cm9Plug">
 					<!--button class="gear"><img src="assets/settings.png"></button-->
 					<p>
-						CM9 <!--span class="status" id="cm9Text"></span-->
+						CM9 
+						<!--span class="status" id="cm9Text"></span-->
 						<!-- TODO cf MisGUI $('#btcm9').on('click'... ON OFF ERROR -->
 
 						<input id="btcm9" type="checkbox" class="small onoff" name ="enable" title="enable/disable"> 
@@ -184,42 +185,8 @@
 									Base: <input func="robAlias" type=text style="width:80px;">
 									Id: <input func="robId" type="text" style="width:30px;">
 									Type: <input func="robType" type="text" style="width:100px;">
-								</font>
-								<!--font color='lightblue' size="2">
-								Alias: <input func="robAlias" type=text style="width:80px;">
-								Id: <input func="robId" type="text" style="width:30px;">
-								Type: <input func="robType" type="text" style="width:100px;"><br>
-								p1:<input func="robP1" type="text" style="width:50px;">
-								p5:<input func="robP5" type="text" style="width:50px;">
-								p6:<input func="robP6" type="text" style="width:50px;">
-								p7:<input func="robP7" type="text" style="width:50px;">
-								p8:<input func="robP8" type="text" style="width:50px;">
-								p9:<input func="robP9" type="text" style="width:50px;">
-
-								module:<select func="selectModule" class="small tiny" style="width:150px;"></select>
-								pin:<select func="selectParam" class="small tiny" style="width:100px;"></select>
-								val:<input func="robVal" type="text" style="width:50px;">
-								<input type="text" func="botText">
-								<input type="number" func="botNum">
-							</font-->
-	
+								</font>	
 						</div>
-
-						
-  
-						<!--input type="text" name="rien"-->
-						<!--
-						<textarea id="robusRobots" rows=6 cols=15>octo_wifi</textarea>
-						<div class="large">
-							<button id="robusOnOff2" class="disconnected" >OFF</button>
-							<button id="robusReset" class="disconnected" >RESET</button>
-							<button id="robusInfo"  class="disconnected" >info</button>
-						</div>
-						-->
-						<!--
-						<br>
-						<textarea id="robusTxt" rows=18 cols=15>message</textarea>
-						--> 
 					</div>
 				</div>
 				<div id="arduino" class="plug arduinoManager">
@@ -397,20 +364,20 @@
 					<div class="ctrl-row">
 						<button id="loadAnim" class="animBTN float-right"> Load animation</button>
 
-						<button class="start-rec float-left">Start RECording</button>
+						
 
-						<button class="animBTN float-left"> New</button>
+						<button id="newAnim" class="animBTN float-left"> New</button>
 					</div>
 
 					<ul id="sortable-anim" >
 						<!-- SIngle Animation -->
-						<li class="single-anim ui-state-default">
+						<li class="single-anim record-anim ui-state-default">
 
 							<button class="close"><img src="assets/close.png" alt=""></button>
 							<input type="text" class="name" placeholder="Nom de l'animation" name="animName" size="40">
 							<button class="gear tiny float-right"><img data-id="animPopup" src="assets/settings.png"></button>
 							<div class="anim-motors">
-								<input type="text" class="shorcut" placeholder="?" name="animKey">
+								<input type="text" class="shorcut" placeholder="..." name="animKey">
 								
 								<input type="checkbox" class="motor-none" name="track">
 								<input type="checkbox" class="motor-none" name="track">
@@ -422,13 +389,187 @@
 								<div class="controls">
 									<button class="play"><img src="assets/play.png" alt="" name="play"></button>
 									<button class="stop"><img src="assets/stop.png" alt="" name="stop"></button>
-									<button class="loop"><img src="assets/loop.png" alt="" name="loop"></button>
+									<!-- loop checkbox -->
+									<input type="checkbox" class="loop" name="loop">
+
+
 								</div>
 
 								<meter name="progress" class="progress" value="70" max="100"></meter>
 
 							</div>
 						</li>
+						
+						<!-- Record anim -->
+						<li class="single-anim record-anim ui-state-default">
+							<h3>RECORD</h3>
+							<input type="text" class="name" placeholder="animation's name" name="animName" size="40">
+							<div class="recordSettings">
+								<input type="text" class="shorcut" placeholder="..." name="animKey">
+								
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+
+								<button class="start-rec float-right">Start RECording</button>
+							</div>
+							<div class="anim-motors">
+								<input type="text" class="shorcut" placeholder="_" name="animKey">
+								
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+
+								<div class="controls">
+									<button class="play"><img src="assets/play.png" alt="" name="play"></button>
+									<button class="stop"><img src="assets/stop.png" alt="" name="stop"></button>
+									<!-- loop checkbox -->
+									<input type="checkbox" class="loop" name="loop">
+								</div>
+
+								<meter name="progress" class="progress" value="70" max="100"></meter>
+
+							</div>
+						</li>
+
+						<!-- end record anim -->
+						
+						<!-- Sinus Anim -->
+						<li class="single-anim sinus-anim ui-state-default">
+							<h3>SINUS</h3>
+							<input type="text" class="name" placeholder="animation's name" name="animName" size="40">
+							<div class="anim-motors">
+								<input type="text" class="shorcut" placeholder="..." name="animKey">
+								
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+
+								<div class="controls">
+									<button class="play"><img src="assets/play.png" alt="" name="play"></button>
+									<button class="stop"><img src="assets/stop.png" alt="" name="stop"></button>
+									<!-- loop checkbox -->
+									<input type="checkbox" class="loop" name="loop">
+								</div>
+
+								<meter name="progress" class="progress" value="70" max="100"></meter>
+
+							</div>
+							<div class="ctrl-row text-right">
+								<div class="info">
+									<p class="text-left">Offset :</p>
+									<input type="number" class="small tiny" value="34">
+								</div>
+								<div class="info">
+									<p class="text-left">Frequence :</p>
+									<input type="number" class="small tiny" value="34">
+								</div>
+								<div class="info">
+									<p class="text-left">Amplitude :</p>
+									<input type="number" class="small tiny" value="34">
+								</div>
+							</div>
+						</li>
+						<!-- End Sinus Anim -->
+
+						<!-- Random Anim -->
+						<li class="single-anim random-anim ui-state-default">
+							<h3>RANDOM</h3>
+							<input type="text" class="name" placeholder="animation's name" name="animName" size="40">
+							<div class="anim-motors">
+								<input type="text" class="shorcut" placeholder="..." name="animKey">
+								
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+
+								<div class="controls">
+									<button class="play"><img src="assets/play.png" alt="" name="play"></button>
+									<button class="stop"><img src="assets/stop.png" alt="" name="stop"></button>
+									<!-- loop checkbox -->
+									<input type="checkbox" class="loop" name="loop">
+								</div>
+
+								<meter name="progress" class="progress" value="70" max="100"></meter>
+
+							</div>
+							<div class="ctrl-row text-right">
+								<div class="info">
+									<p class="text-left">interval :</p>
+									<input type="number" class="small tiny" value="34">
+								</div>
+								<div class="info">
+									<p class="text-left">tolerance :</p>
+									<input type="number" class="small tiny" value="34">
+								</div>
+								<div class="info">
+									<p class="text-left">max :</p>
+									<input type="number" class="small tiny" value="34">
+								</div>
+								<div class="info">
+									<p class="text-left">min :</p>
+									<input type="number" class="small tiny" value="34">
+								</div>
+							</div>
+						</li>
+						<!-- End Random Anim -->
+
+						<!-- Trigger Anim -->
+						<li class="single-anim trigger-anim ui-state-default">
+							<h3>TRIGGER</h3>
+							<input type="text" class="name" placeholder="animation's name" name="animName" size="40">
+							<div class="anim-motors">
+								<input type="text" class="shorcut" placeholder="..." name="animKey">
+								
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+
+								<div class="controls">
+									<button class="play"><img src="assets/play.png" alt="" name="play"></button>
+									<button class="stop"><img src="assets/stop.png" alt="" name="stop"></button>
+									<!-- loop checkbox -->
+									<input type="checkbox" class="loop" name="loop">
+								</div>
+
+								<meter name="progress" class="progress" value="70" max="100"></meter>
+
+							</div>
+							<div class="ctrl-row text-right">
+								<div class="info">
+									<p class="text-left">interval :</p>
+									<input type="number" class="small tiny" value="34">
+								</div>
+								<div class="info">
+									<p class="text-left">dutaion :</p>
+									<input type="number" class="small tiny" value="34">
+								</div>
+								<div class="info">
+									<p class="text-left">max :</p>
+									<input type="number" class="small tiny" value="34">
+								</div>
+								<div class="info">
+									<p class="text-left">min :</p>
+									<input type="number" class="small tiny" value="34">
+								</div>
+							</div>
+						</li>
+						<!-- End Trigger Anim -->
 
 					</ul>
 				</div>
@@ -584,21 +725,6 @@
 										</select>
 									</div>
 							</div>
-	
-							
-							
-							<!--div class="large float-left">
-								<select class= "tiny cmdString float-right" func="onRobusInput" name="robusInput" style="width:150px;">
-									<option value="default">module</option>
-								</select>
-							</div-->
-								
-								<!--div class="large">
-									<select class= "tiny large cmdString" id="" name="robusInput"></select>
-									<select class= "tiny large cmdString" id="" name="robusInput"></select>
-									
-								</div>
-							</div-->
 
 						</section>
 
@@ -620,25 +746,49 @@
 								<h4>Random</h4>
 							</div>
 							<div class="medium float-right text-right">
-								<!--button class="gear tiny" id="opener" data-id="randomPopup"><img src="assets/settings.png"></button-->
 								<button class="gear tiny" func="setPopupValues" data-id="randomPopup"><img src="assets/settings.png"></button>
 							</div>
 						</section>
 
 					</div>
 
+
+					<!-- FILTERS -->
+
+					<div class="filters">
+						<select name="inputFilter" func="" id="" class="medium ">
+							<option value="default">Select Filter</option>
+							<option value="...">...</option>
+							<option value="...">...</option>
+						</select>
+						<div class="info medium text-right float-right">
+							<p class="text-left">value :</p>
+							<input type="number" func="" name="filter-value" class="medium tiny" value="100">
+						</div>
+
+					</div>
+
+					<!-- End FILTERS -->
+
+
+
+
+
 					<div class="live-view">
 						<div class="info small float-left text-left">
 							min <br><br>
 							<input type="number" func="onMinValue" name="min-value-sensors" class="medium tiny" value="0">
+							<img id="sensor-detector-min" src="assets/sensor-min-icon.png" alt="">
 						</div>
 						<div class="small float-left text-center">
 							<span class="live-value">20</span>
 						</div>
 						<div class="info small float-right text-right">
 							max <br><br>
+							<img id="sensor-detector-max" src="assets/sensor-max-icon.png" alt="">
 							<input type="number" func="onMaxValue" name="max-value-sensors" class="medium tiny" value="100">
 						</div>
+						<div class="live-value-ui grey">•</div>
 						<div class="live-value-ui">•</div>
 						<div class="green-bar"></div>
 					</div>
@@ -701,16 +851,8 @@
 										
 										<div class="tolerance-ui"></div>
 										
-										<div class="sensor-range">
-											<!-- <div class="minV">...</div>
-											 <div class="maxV">...</div>-->
-
-											 
-											 <div class="currentV">...</div>
-
-											<!-- <input type="number" class=" currentV small  tiny cmdInt" placeholder="..." name="threshold">-->
-											 <!--<input type="number" class=" currentV small tiny" placeholder="...">-->
-
+										<div class="sensor-range"> 
+											<div class="currentV">...</div>
 											<div class="slider-range" data-min="0" data-max="100" data-default= "50" ></div>
 											 
 										</div>
@@ -719,17 +861,6 @@
 												<h4 class="text-left">Tolerance :</h4>
 												<input type="number" func="onTolerance" name="tolerance-sensors" class="tolerance small" placeholder="tolerance" value="20" >
 											</div>
-											<!--
-											<div class="medium float-left">
-												<h4 class="text-left">Min value :</h4>
-												<input type="number" class=" minval small  tiny cmdInt" placeholder="min value" name="valMin">
-												
-											</div>
-											<div class="medium float-right">
-												<h4 class="text-right">Max value :</h4>
-												<input type="number" class=" maxval small text-right tiny cmdInt" placeholder="max value" name="valMax">
-											</div>
-											-->
 										</div>
 								
 									</div>
@@ -926,6 +1057,20 @@
 		<div class="modale draggable" id="alertThermo" height="200">
 			<button class="close-modale"><img src="assets/close.png" alt=""></button>
 			
+		</div>
+
+
+		<div class="modalNewAnim draggable">
+			<h2>New Animation</h2>
+			<hr>
+			<div class="listAnimType">
+				<span name="record">Record</span>
+				<span name="sinus">Sinus</span>
+				<span name="random">Random</span>
+				<span name="trigger">Trigger</span>
+			</div>
+			<button id="newAnimLoad" class="large">Load</button>
+			<button id="newAnimCancel" class="large">Cancel</button>
 		</div>
 
 

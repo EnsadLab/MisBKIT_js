@@ -954,19 +954,27 @@ MisGUI.prototype.init =function(){
     });
     */
 
-    $("button.start-rec").on("click",function() {
-        if(self.recording){
-            self.recording = false;
-            dxlManager.stopRec();
-            UIstoprecording();
-            self.recording = false;
-        }
-        else{
-            UIstartRec(); //!!! avant dxlManager.startRec()
-            self.recording = true;
-            dxlManager.startRec();
-        }
-    });
+    ////////////
+    ////////////
+    // CHECK NEW FUNCTION AT THE END
+    ////////////
+    ////////////
+    // $("button.start-rec").on("click",function() {
+    //     if(self.recording){
+    //         self.recording = false;
+    //         dxlManager.stopRec();
+    //         UIstoprecording();
+    //         self.recording = false;
+    //     }
+    //     else{
+    //         UIstartRec(); //!!! avant dxlManager.startRec()
+    //         self.recording = true;
+    //         dxlManager.startRec();
+    //     }
+    // });
+
+
+
 
     $("#loadAnim").on("click",function(){
         //TODO generic  loadUI , with folder
@@ -2202,6 +2210,69 @@ function midiPanelOver(){
 }
 
 
+// NEW animation mmodale
+
+$("#newAnim").bind('click', function(){
+    $(".modalNewAnim").css("display", "block");
+    $(".modalNewAnim button:first-of-type").prop("disabled",true);
+
+});
+
+
+//cancel
+$(".modalNewAnim").find("#newAnimCancel").bind('click', function(){
+    $(".modalNewAnim").css("display", "none");    
+})
+
+//select
+$(".modalNewAnim").find("span").bind('click', function(){
+
+    if($(this).hasClass('selected')){
+        $(this).removeClass('selected');
+        $(".modalNewAnim span").removeClass('selected');
+        $(".modalNewAnim button:first-of-type").css("opacity", 0.3);
+        $(".modalNewAnim button:first-of-type").prop("disabled",true);
+
+    }else{
+        $(".modalNewAnim span").removeClass('selected');
+        $(this).addClass('selected');
+        $(".modalNewAnim button:first-of-type").css("opacity", 1);
+        $(".modalNewAnim button:first-of-type").prop("disabled",false);
+    }
+
+})
+
+// load
+$(".modalNewAnim").find("#newAnimLoad").bind('click', function(){
+    var selectedType = $(".listAnimType .selected").attr("name");
+    console.log("load anim "+ selectedType);
+    $(".modalNewAnim span").removeClass('selected');
+    $(".modalNewAnim").css("display", "none"); 
+})
+
+
+// RECORD ANIMATIONS
+
+//On record
+$(".start-rec").bind('click', onrecording);
+toggleRecord = false;
+
+function onrecording(){
+    var self = $(this).parent().parent();
+
+    console.log(self);
+
+    if(toggleRecord == false){
+        self.find(".recordSettings input").prop("disabled",true);
+        self.find(".recordSettings input").css("opacity", 0.3);
+        UIstartRec();
+        toggleRecord = true;
+    }else{
+        UIstoprecording();
+        toggleRecord = false;
+
+        self.find(".recordSettings").css("display", "none");
+        self.find(".anim-motors").css("display", "block");
+    }
     
-
-
+}
