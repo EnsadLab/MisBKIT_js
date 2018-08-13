@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "savecount": 3,
+=======
+  "savecount": 12,
+>>>>>>> develop-alex
   "cm9Num": 1,
   "oscPorts": {
     "oscRemoteIP": "localhost",
@@ -10,13 +14,31 @@
   "midiEnabled": true,
   "midiPorts": [],
   "anims": [],
+<<<<<<< HEAD
   "sensors": [],
+=======
+  "sensors": [
+    {
+      "name": "Sensor_name"
+    },
+    {
+      "name": "Sensor_name"
+    },
+    {
+      "name": "Sensor_name"
+    }
+  ],
+>>>>>>> develop-alex
   "motors": [
     {
       "enabled": false,
       "model": -1,
       "clockwise": true,
+<<<<<<< HEAD
       "mode": -1,
+=======
+      "mode": 1,
+>>>>>>> develop-alex
       "jointSpeed": 0,
       "angleMin": -150,
       "angleMax": 150,
@@ -28,7 +50,11 @@
       "enabled": false,
       "model": -1,
       "clockwise": true,
+<<<<<<< HEAD
       "mode": -1,
+=======
+      "mode": 1,
+>>>>>>> develop-alex
       "jointSpeed": 0,
       "angleMin": -150,
       "angleMax": 150,

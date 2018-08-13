@@ -289,51 +289,13 @@ MisGUI_sensors.initRobusSelect = function(gate,modules){
 
 //RIGHT CLICK FOR OUTPUT
 $("#sortable-sens-output section").contextmenu(function(e) {
-    contextmenuBox(e.pageX, e.pageY);
+    contextmenuBox(e.pageX, e.pageY, "sensor-output");
     $(this).addClass('selected');
 });
     
 
-function contextmenuBox(x, y){
+/////////
 
-    if($(".context-box")){
-        $(".context-box").remove();
-        $("#sortable-sens-output section").removeClass('selected');
-    }
-
-    var div = document.createElement("DIV");
-    div.className = "context-box";
-    div.style.left = x+"px";
-    div.style.top = y+"px";
-
-    var span1 = document.createElement("SPAN");
-    span1.innerHTML = "Edit";
-    span1.className = "edit-context";
-
-
-    var span2 = document.createElement("SPAN");
-    span2.innerHTML = "Remove";
-    span2.className = "remove-output";
-
-
-    div.appendChild(span1);
-    div.appendChild(span2);
-
-
-    document.body.appendChild(div);
-
-    $(".remove-output").bind("click", removeOutput);
-
-    $("body").bind("click", removeContext);
-
-}
-
-function removeContext(){
-    if($(".context-box")){
-        $(".context-box").remove();
-        $("#sortable-sens-output section").removeClass('selected');      
-    }
-}
 
 function removeOutput(){
     var eltID = $("#sortable-sens-output .selected").attr('eltID');
@@ -349,6 +311,31 @@ function removeOutput(){
     sensorManager.removeOutput(eltID,name);
 
 }
+
+
+
+
+// MIN & MAX value for sensors
+
+
+$("#sensor-detector-min").bind('click', function(event) {
+    /* Act on the event */
+    console.log('detect min value');
+    $(this).parent().find('input').val(0);
+
+});
+
+$("#sensor-detector-max").bind('click', function(event) {
+    /* Act on the event */
+    console.log('detect max value');
+    $(this).parent().find('input').val(100);
+});
+
+
+
+
+
+
 
 /*
 $(".currentV").on('input', changeCur);
