@@ -251,7 +251,7 @@
 			<!-- MOTORS -->
 			<div class="motors" >
 					<div class="ctrl-row">
-						<button class="float-left"> New</button>
+						<button class="float-left" id="newMotor"> New</button>
 
 						<div class="float-right medium">
 							<div class="gear tiny" id="opener" data-id="dynamixel-ctrl"><img src="assets/settings.png"></div>
@@ -265,18 +265,25 @@
 
 				
 				<div id="divMotors" class="allMotors dxlManager">
-
+					
+					<!-- 	/////////////
+							ATTENTION 
+							PULL OFF <div class="single-motor" style="display: block!important;">
+							AND writte <div class="single-motor">
+							/////////////
+							/////////////
+						 -->
 
 					<!-- SINGLE MOTOR -->
-					<div class="single-motor">
+					<div class="single-motor" style="display: block!important;">
 						<div class="midi-blinker" title="midi chanel - note/cc">•</div>
 						<div class="left-col">
 							<div func="dxlIndex" param="index" class="motor-index">0</div>
 							<div func="dxlParam" param="dxlID" class="identity">42</div>
 							<input func="dxlEnable" param="enabled" type="checkbox" class="power" 
 								   title="enable/disable">
-							<input func="checkRec" param="rec" type="checkbox" class="rec"
-								   title="check for next record">
+							<button func="" param="reset" type="checkbox" class="reset"
+								   title="reset to 0">init</button>
 							
 						</div>
 						<div class="circle">
@@ -295,6 +302,62 @@
 						<!--Didier: ajout d'un input number-->
 						<input func="onControl" type="number" class="num_rotary" placeholder="angle/speed">
 					</div>
+
+
+					<!-- 2/ SINGLE MOTOR WHEEL -->
+					<div class="single-motor wheel-motor" style="display: block!important;">
+						<div class="midi-blinker" title="midi chanel - note/cc">•</div>
+						<div class="left-col">
+							<div func="dxlIndex" param="index" class="motor-index">0</div>
+							<div func="dxlParam" param="dxlID" class="identity">42</div>
+							<input func="dxlEnable" param="enabled" type="checkbox" class="power" 
+								   title="enable/disable">
+							<button func="" param="reset" type="checkbox" class="reset"
+								   title="reset to 0">init</button>
+							
+						</div>
+						<div class="circle">
+							<svg class="rotAngle" ></svg>
+							<svg class="rotSpeed" ></svg>
+						</div>
+
+						<div class="properties">
+							<img src="assets/thermometer.png" class="ico-thermo" alt="">
+							<div class="thermo">_</div>
+							<h3>Wheel</h3>
+						</div>
+						<!--Didier: ajout d'un input number-->
+						<input func="onControl" type="number" class="num_rotary" placeholder="speed">
+					</div>
+
+
+					<!-- 2/ SINGLE MOTOR JOINT -->
+					<div class="single-motor joint-motor" style="display: block!important;">
+						<div class="midi-blinker" title="midi chanel - note/cc">•</div>
+						<div class="left-col">
+							<div func="dxlIndex" param="index" class="motor-index">0</div>
+							<div func="dxlParam" param="dxlID" class="identity">42</div>
+							<input func="dxlEnable" param="enabled" type="checkbox" class="power" 
+								   title="enable/disable">
+							<button func="" param="reset" type="checkbox" class="reset"
+								   title="reset to 0">init</button>
+							
+						</div>
+						<div class="circle">
+							<svg class="rotAngle" ></svg>
+							<svg class="rotSpeed" ></svg>
+						</div>
+
+						<div class="properties">
+							<img src="assets/thermometer.png" class="ico-thermo" alt="">
+							<div class="thermo">_</div>
+							<h3>JOINT</h3>
+						</div>
+						<!--Didier: ajout d'un input number-->
+						<input func="onControl" type="number" class="num_rotary" placeholder="angle">
+					</div>
+
+					<!-- END SINGLE MOTOR 3 -->
 
 				</div>
 
@@ -352,6 +415,106 @@
 							</div>
 						</div>
 					</div>
+					<!-- END ADVENCED SINGLE -->
+
+					<!-- 2/ SINGLE MOTOR Advanced-->
+					<div class="single-motor wheel-motor">
+						<div class="left-col">
+							<div class="identity">
+								<label for="">id :</label>
+								<input func="dxlID" param="dxlID" type="number" class="small" placeholder="0" min="0" max="253">
+							</div>
+						</div>
+						<div class="advanced">
+							<ul>
+
+								<li><input func="dxlParam" param="speedMin" type="number" class="small"  placeholder="Speed Min"><label for="">Speed Min </label></li>
+								<li><input func="dxlParam" param="speedMax" type="number" class="small"  placeholder="Speed Max"><label for="">Speed Max </label></li>
+							</ul>
+							
+						</div>
+						<div class="properties">
+							<label class="toggle-small">
+							  <input func="dxlParam" param="clockwise" data-tog="joint,wheel" type="checkbox"> <!--class="cmdTog" name="clockwise"-->
+							  <div class="slider clock round"></div>
+							</label>
+						</div>
+						
+						<div class="large">
+
+							<div class="medium float-left">
+								<label class="">midi : </label>
+								<select func="midiMapping" param="port" class= "small tiny midi-chanel"  id="" name="midiPorts">
+										<option>none</option>
+										<option value="midi 1">midi 1</option>
+										<option value="midi 2">midi 2</option>
+										<option value="midi 3">midi 3</option>
+										<option value="midi 4">midi 4</option>
+								</select>
+
+								<label class="toggle-small">
+							  		<input func="midiMapping" param="mode" type="checkbox"> <!--class="cmdTog" name="midiMode"-->
+							  		<div class="slider midi round"></div>
+								</label>
+							</div>
+
+							<div class="medium text-right float-right">
+								<label class="">mapping : </label>
+								<input func="midiMapping" param="num" type="number" class="small midiMapping" placeholder="num"> <!--name="mapping"-->
+
+							</div>
+						</div>
+					</div>
+					<!-- END ADVENCED SINGLE 2 -->
+					<!-- 3/ SINGLE MOTOR Advanced-->
+					<div class="single-motor joint-motor">
+						<div class="left-col">
+							<div class="identity">
+								<label for="">id :</label>
+								<input func="dxlID" param="dxlID" type="number" class="small" placeholder="0" min="0" max="253">
+							</div>
+						</div>
+						<div class="advanced">
+							<ul>
+
+								<li><input func="dxlParam" param="angleMin" type="number" class="small"  placeholder="Angle Min"><label for="">Angle Min </label></li>
+								<li><input func="dxlParam" param="angleMax" type="number" class="small"  placeholder="Angle Max"><label for="">Angle Max </label></li>
+							</ul>
+							
+						</div>
+						<div class="properties">
+							<label class="toggle-small">
+							  <input func="dxlParam" param="clockwise" data-tog="joint,wheel" type="checkbox"> <!--class="cmdTog" name="clockwise"-->
+							  <div class="slider clock round"></div>
+							</label>
+						</div>
+						
+						<div class="large">
+
+							<div class="medium float-left">
+								<label class="">midi : </label>
+								<select func="midiMapping" param="port" class= "small tiny midi-chanel"  id="" name="midiPorts">
+										<option>none</option>
+										<option value="midi 1">midi 1</option>
+										<option value="midi 2">midi 2</option>
+										<option value="midi 3">midi 3</option>
+										<option value="midi 4">midi 4</option>
+								</select>
+
+								<label class="toggle-small">
+							  		<input func="midiMapping" param="mode" type="checkbox"> <!--class="cmdTog" name="midiMode"-->
+							  		<div class="slider midi round"></div>
+								</label>
+							</div>
+
+							<div class="medium text-right float-right">
+								<label class="">mapping : </label>
+								<input func="midiMapping" param="num" type="number" class="small midiMapping" placeholder="num"> <!--name="mapping"-->
+
+							</div>
+						</div>
+					</div>
+					<!-- END ADVENCED SINGLE 3 -->
 
 				</div>
 
@@ -1071,6 +1234,19 @@
 			</div>
 			<button id="newAnimLoad" class="large">Load</button>
 			<button id="newAnimCancel" class="large">Cancel</button>
+		</div>
+
+
+		<div class="modalNewMotor draggable">
+			<h2>New Motor</h2>
+			<hr>
+			<div class="listMotorType">
+				<span name="wheel-joint">Wheel/Joint</span>
+				<span name="joint">Joint</span>
+				<span name="wheel">Wheel</span>
+			</div>
+			<button id="newMotorLoad" class="large">Load</button>
+			<button id="newMotorCancel" class="large">Cancel</button>
 		</div>
 
 

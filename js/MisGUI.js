@@ -123,6 +123,7 @@ MisGUI.prototype.removeElement = function(selector,eltID){
 
 MisGUI.prototype.hideElement = function(selector,eltID){
     var elt = $(selector);
+
     if(eltID != undefined){
         elt = elt.filter("[eltID="+eltID+"]"); //.first(); ALL?
     }
@@ -658,13 +659,12 @@ MisGUI.prototype.addMotor = function(index,settings){
     //TODO check if index already exists
 
     //console.log("MisGUI.addMotor",index);
-    var cl1 = this.cloneElement("#divMotors .single-motor",index,index-1);
-    var cl2 = this.cloneElement("#divMotorSettings .single-motor",index,index-1);
-
+    // var cl1 = this.cloneElement("#divMotors .single-motor",index,index-1);
+    // var cl2 = this.cloneElement("#divMotorSettings .single-motor",index,index-1);
 
 
     var svgAngles = cl1.find(".rotAngle").first();
-    var svgSpeeds = cl1.find(".rotSpeed").first();    
+    var svgSpeeds = cl1.find(".rotSpeed").first();
     //prevent scrolling with mousewheel
     svgAngles.on("mousewheel",function(e){e.preventDefault();});
     svgSpeeds.on("mousewheel",function(e){e.preventDefault();});
@@ -689,6 +689,8 @@ MisGUI.prototype.addMotor = function(index,settings){
     this.showValue({class:"dxlManager",id:index,param:"index",val:index});
     if(settings)
         this.motorSettings(index,settings);
+
+
 }
 
 
@@ -1150,8 +1152,8 @@ MisGUI.prototype.initMotorDiv = function(){
     //before addMotor
     
     //hide model , will be cloned
-    $("#divMotors .single-motor").hide();
-    $("#divMotorSettings .single-motor").hide();
+    // $("#divMotors .single-motor").hide();
+    // $("#divMotorSettings .single-motor").hide();
 
     //prevent scrolling with mousewheel
     $(".rotAngle").on("mousewheel",function(e){e.preventDefault();}); //<<<index.js
@@ -1210,19 +1212,6 @@ MisGUI.prototype.initMotorDiv = function(){
             }
         }
     });
-    
-    /*DB: >>>> dxlManager.midiMapping(...,"num")
-    //motorMappings : TODO à verifier
-    var motorMappings = $("#divMotorSettings").find("[name=mapping]");
-    motorMappings.on("change",function(){  
-
-        //var index = $(this).data("index");
-        var index = +$(this).attr("eltID");      
-        var val = $(this).val();       
-        console.log("misgui:: setmidimotormapping will be called", index, val);          
-        motorMappingManager.setMidiMotorMappingIndex(index,parseInt(val)); // Gui only treats CC midi mappings for now
-    });
-    */
 
 }
 
@@ -2210,7 +2199,7 @@ function midiPanelOver(){
 }
 
 
-// NEW animation mmodale
+// NEW animation modale
 
 $("#newAnim").bind('click', function(){
     $(".modalNewAnim").css("display", "block");
@@ -2276,3 +2265,46 @@ function onrecording(){
     }
     
 }
+
+
+// NEW MOTOR MODAL
+
+
+$("#newMotor").bind('click', function(){
+    $(".modalNewMotor").css("display", "block");
+    $(".modalNewMotor button:first-of-type").prop("disabled",true);
+
+});
+
+
+//cancel
+$(".modalNewMotor").find("#newMotorCancel").bind('click', function(){
+    $(".modalNewMotor").css("display", "none");    
+})
+
+//select
+$(".modalNewMotor").find("span").bind('click', function(){
+
+    if($(this).hasClass('selected')){
+        $(this).removeClass('selected');
+        $(".modalNewMotor span").removeClass('selected');
+        $(".modalNewMotor button:first-of-type").css("opacity", 0.3);
+        $(".modalNewMotor button:first-of-type").prop("disabled",true);
+
+    }else{
+        $(".modalNewMotor span").removeClass('selected');
+        $(this).addClass('selected');
+        $(".modalNewMotor button:first-of-type").css("opacity", 1);
+        $(".modalNewMotor button:first-of-type").prop("disabled",false);
+    }
+
+})
+
+// load
+$(".modalNewMotor").find("#newMotorLoad").bind('click', function(){
+    var selectedType = $(".listMotorType .selected").attr("name");
+    console.log("load anim "+ selectedType);
+    $(".modalNewMotor span").removeClass('selected');
+    $(".modalNewMotor").css("display", "none"); 
+})
+

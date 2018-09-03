@@ -1,5 +1,5 @@
 {
-  "savecount": 12,
+  "savecount": 1,
   "cm9Num": 1,
   "oscPorts": {
     "oscRemoteIP": "localhost",
@@ -7,82 +7,13 @@
     "oscRemotePort": 6666
   },
   "webSocket": "none",
-  "midiEnabled": true,
+  "midiEnabled": false,
   "midiPorts": [],
   "anims": [],
-  "sensors": [
-    {
-      "name": "Sensor_name"
-    },
-    {
-      "name": "Sensor_name"
-    },
-    {
-      "name": "Sensor_name"
-    }
-  ],
+  "sensors": [],
   "motors": [
     {
-      "enabled": false,
-      "model": -1,
-      "clockwise": true,
-      "mode": 1,
-      "jointSpeed": 0,
-      "angleMin": -150,
-      "angleMax": 150,
-      "speedMin": -100,
-      "speedMax": 100,
-      "torqueMax": 1023
-    },
-    {
-      "enabled": false,
-      "model": -1,
-      "clockwise": true,
-      "mode": 1,
-      "jointSpeed": 0,
-      "angleMin": -150,
-      "angleMax": 150,
-      "speedMin": -100,
-      "speedMax": 100,
-      "torqueMax": 1023
-    },
-    {
-      "enabled": false,
-      "model": -1,
-      "clockwise": true,
-      "mode": -1,
-      "jointSpeed": 0,
-      "angleMin": -150,
-      "angleMax": 150,
-      "speedMin": -100,
-      "speedMax": 100,
-      "torqueMax": 1023
-    },
-    {
-      "enabled": false,
-      "model": -1,
-      "clockwise": true,
-      "mode": -1,
-      "jointSpeed": 0,
-      "angleMin": -150,
-      "angleMax": 150,
-      "speedMin": -100,
-      "speedMax": 100,
-      "torqueMax": 1023
-    },
-    {
-      "enabled": false,
-      "model": -1,
-      "clockwise": true,
-      "mode": -1,
-      "jointSpeed": 0,
-      "angleMin": -150,
-      "angleMax": 150,
-      "speedMin": -100,
-      "speedMax": 100,
-      "torqueMax": 1023
-    },
-    {
+      "dxlID": 0,
       "enabled": false,
       "model": -1,
       "clockwise": true,
