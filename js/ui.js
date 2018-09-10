@@ -2,7 +2,7 @@
 
 
 
-
+// Connexion
 $(".btn-connexions").bind('click', showConnexion);
 
 function showConnexion(){
@@ -23,53 +23,172 @@ function hideConnexion(){
 	$(".btn-connexions").unbind('click', hideConnexion);
 
 	$(".btn-connexions").html("Connexions");
+}
+
+
+
+// Motors panels
+
+$("button.advanced").bind("click", function(){
+	misGUI.toggleAdvanced(toggleAdvanced);
+
+	if(toggleAdvanced){
+		UIhideAdvanced();
+	}else{
+		UIshowAdvanced();
+	}
+})
+
+
+$("#motor").bind('click', UIhideAdvanced);
+$("#motor-adv").bind('click', UIshowAdvanced);
+
+// default at start
+UIhideAdvanced();
+
+function UIshowAdvanced(){
+	
+	$("#motor").css("opacity", 0.3);
+	$("#motor-adv").css("opacity", 1);
+
+	$(".allMotors").css("z-index", -1);
+	$(".allMotors ").css("display", "none");
+
+	$(".motors-settings").css("z-index", 1);
+	$(".motors-settings ").css("display", "block");
+
+	console.log("coucou");
 
 
 }
 
 
-// switch animation/sensors 
+function UIhideAdvanced(){
+	console.log("hide");
+
+
+	$("#motor").css("opacity", 1);
+	$("#motor-adv").css("opacity", 0.3);
+
+	$(".allMotors").css("z-index", 1);
+	$(".allMotors ").css("display", "block");
+
+	$(".motors-settings").css("z-index", -1);
+	$(".motors-settings ").css("display", "none");
+	
+}
+
+
+// switch animation/sensors/script
 
 $("#sens").bind('click', showSensors);
 $("#anims").bind('click', showAnimations);
+$("#script").bind('click', showScript);
 
+// default at start
 showAnimations();
 
 function showSensors(){
-	$(".sensorsBTN").css("display", "block");
+
+	// $(".sensorsBTN").css("display", "block");
 
 	$(".sensors ").css("z-index", 1);
 	$(".sensors ").css("display", "block");
 
 	$(".animations ").css("z-index", -1);
 	$(".animations ").css("display", "none");
-	$(".animBTN").css("display", "none");
-	$(".addSensors").css("display", "block");
+	$(".script-panel").css("z-index", -1);
+	$(".script-panel").css("display", "none");
 
-	$(this).parent('.tab').css("opacity", 1);
-	$("#anims").parent('.tab').css("opacity", 0.6);
+	$(this).css("opacity", 1);
+	$("#anims").css("opacity", 0.3);
+	$("#script").css("opacity", 0.3);
 
 }
 
 
 function showAnimations(){
-	$(".sensorsBTN").css("display", "none");
 
 	$(".animations ").css("z-index", 1);
 	$(".animations ").css("display", "block");
 
 	$(".sensors ").css("z-index", -1);
 	$(".sensors ").css("display", "none");
-
-	$(".animBTN").css("display", "block");
-	$(".addSensors").css("display", "none");
-
+	$(".script-panel").css("z-index", -1);
+	$(".script-panel").css("display", "none");
 
 
-	$(this).parent('.tab').css("opacity", 1);
-	$("#sens").parent('.tab').css("opacity", 0.6);
+
+
+	$("#anims").css("opacity", 1);
+	$("#sens").css("opacity", 0.3);
+	$("#script").css("opacity", 0.3);
 
 }
+
+function showScript(){
+
+	$(".script-panel ").css("z-index", 1);
+	$(".script-panel ").css("display", "block");
+
+	$(".sensors ").css("z-index", -1);
+	$(".sensors ").css("display", "none");
+	$(".animations").css("z-index", -1);
+	$(".animations").css("display", "none");
+
+	$(this).css("opacity", 1);
+	$("#sens").css("opacity", 0.3);
+	$("#anims").css("opacity", 0.3);
+
+	editor.refresh();
+}
+
+
+// SCript function
+$("#run-code").bind('click', function(){
+
+	$(this).html('Running...');
+	$(this).addClass('active');
+	$(this).css('opacity', 0.5);	
+	$("#stop-code").css('opacity', 1);	
+
+	$("#stop-code").bind('click', stopCode);
+	
+})
+
+function stopCode(){
+	$("#run-code").html('Run');
+	$("#run-code").removeClass('active');
+	$("#run-code").css('opacity', 1);
+	$(this).css('opacity', 0.5);
+	$("#stop-code").unbind('click', stopCode);
+}
+
+
+
+
+
+// FOR CODEMIROR (code editor in script mode)
+var value = "// Enter your code here";
+  
+var editor = CodeMirror(document.body.getElementsByClassName("input-code")[0], {
+	value: value,
+	lineNumbers: true,
+	mode: "javascript",
+	keyMap: "sublime",
+	autoCloseBrackets: true,
+	matchBrackets: true,
+	showCursorWhenSelecting: false,
+	theme: "monokai",
+	tabSize: 2
+});
+
+
+
+
+
+
+
 
 
 
@@ -174,6 +293,148 @@ function loadSensor(){
 
 // Function to call for indexing sensors
 loadSensor();
+
+
+
+
+
+//RIGHT CLICK FOR SENSORS
+$(".single-sensor").contextmenu(function(e) {
+    contextmenuBox(e.pageX, e.pageY, "single-sensor");
+    $(this).addClass('selected');
+
+});
+    
+
+
+// CONTEXT MENU
+function contextmenuBox(x, y, elemt){
+
+    if($(".context-box")){
+        $(".context-box").remove();
+        $("#sortable-sens-output section").removeClass('selected');
+        $("#sortable-sens .selected").removeClass('selected');
+    }
+
+    // SENSOR-OUTPUT CASE
+    if(elemt === "sensor-output"){
+        var div = document.createElement("DIV");
+        div.className = "context-box";
+        div.style.left = x+"px";
+        div.style.top = y+"px";
+
+        var span1 = document.createElement("SPAN");
+        span1.innerHTML = "Edit";
+        span1.className = "edit-context";
+
+
+        var span2 = document.createElement("SPAN");
+        span2.innerHTML = "Remove";
+        span2.className = "remove-output";
+
+
+        div.appendChild(span1);
+        div.appendChild(span2);
+
+
+        document.body.appendChild(div);
+
+        $(".remove-output").bind("click", removeOutput);
+    
+    }
+
+    // SINGLE-SENSOR CASE
+    else if(elemt === "single-sensor"){
+
+        var div = document.createElement("DIV");
+        div.className = "context-box";
+        div.style.left = x+"px";
+        div.style.top = y+"px";
+
+        var span1 = document.createElement("SPAN");
+        span1.innerHTML = "Edit";
+        span1.className = "edit-context";
+
+
+        var span2 = document.createElement("SPAN");
+        span2.innerHTML = "Remove";
+        span2.className = "remove-sensor";
+
+
+        div.appendChild(span1);
+        div.appendChild(span2);
+
+
+        document.body.appendChild(div);
+
+        $(".remove-sensor").bind("click", function(){
+            var eltID = $("#sortable-sens .selected").attr('eltID');
+            sensorManager.removeSensor(eltID);
+        });
+
+
+    }
+
+    // ANIMATION
+    else if(elemt === "animation"){
+    	var div = document.createElement("DIV");
+        div.className = "context-box";
+        div.style.left = x+"px";
+        div.style.top = y+"px";
+
+        var span1 = document.createElement("SPAN");
+        span1.innerHTML = "Edit";
+        span1.className = "edit-context";
+
+
+        var span2 = document.createElement("SPAN");
+        span2.innerHTML = "Remove";
+        span2.className = "remove-animation";
+
+
+        div.appendChild(span1);
+        div.appendChild(span2);
+
+
+        document.body.appendChild(div);
+
+         $(".remove-animation").bind("click", function(){
+            var eltID = $("#sortable-anim .selected").attr('eltID');
+
+            //---> remove anime slot
+
+        });
+    }
+
+
+    
+
+    $("body").bind("click", removeContext);
+
+}
+
+function removeContext(){
+    if($(".context-box")){
+        $(".context-box").remove();
+        $("#sortable-sens-output section").removeClass('selected');      
+        $("#sortable-sens .selected").removeClass('selected');
+    	$(".single-anim").removeClass('selected');
+
+    }
+}
+
+
+
+
+// Animation context
+$(".single-anim").contextmenu(function(e) {
+    $(".single-anim").removeClass('selected');
+    contextmenuBox(e.pageX, e.pageY, "animation");
+    $(this).addClass('selected');
+});
+
+
+
 
 
 /*
