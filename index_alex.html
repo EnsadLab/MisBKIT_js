@@ -1,0 +1,1307 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>misB KIT WIFI 5.1 TCP</title>
+        <link rel="stylesheet" href="css/jquery-ui.css">
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/toggle.css">
+        <link rel="author" href="humans.txt">
+
+
+		<!-- For Script panel -->
+		<link rel="stylesheet" href="js/codemiror/lib/codemirror.css">
+		<link rel="stylesheet" href="js/codemiror/addon/fold/foldgutter.css">
+		<link rel="stylesheet" href="js/codemiror/addon/dialog/dialog.css">
+		<link rel="stylesheet" href="js/codemiror/theme/monokai.css">
+		<script src="js/codemiror/lib/codemirror.js"></script>
+		<script src="js/codemiror/addon/search/searchcursor.js"></script>
+		<script src="js/codemiror/addon/search/search.js"></script>
+		<script src="js/codemiror/addon/dialog/dialog.js"></script>
+		<script src="js/codemiror/addon/edit/matchbrackets.js"></script>
+		<script src="js/codemiror/addon/edit/closebrackets.js"></script>
+		<script src="js/codemiror/addon/comment/comment.js"></script>
+		<script src="js/codemiror/addon/wrap/hardwrap.js"></script>
+		<script src="js/codemiror/addon/fold/foldcode.js"></script>
+		<script src="js/codemiror/addon/fold/brace-fold.js"></script>
+		<script src="js/codemiror/mode/javascript/javascript.js"></script>
+		<script src="js/codemiror/keymap/sublime.js"></script>
+
+		<!-- End For Script panel -->
+
+
+    </head>
+    <body>
+		<button class="btn-connexions">Connexions</button>
+		<div class="wapper">
+			
+			<div class="connexions">
+				<h2>Connexions</h2>
+
+				<div class="plug cm9Plug">
+					<!--button class="gear"><img src="assets/settings.png"></button-->
+					<p>
+						CM9 
+						<!--span class="status" id="cm9Text"></span-->
+						<!-- TODO cf MisGUI $('#btcm9').on('click'... ON OFF ERROR -->
+
+						<input id="btcm9" type="checkbox" class="small onoff" name ="enable" title="enable/disable"> 
+					</p>
+
+					<div id="cm9Content" class="content">
+						<!--button class="gear" data-id="pasglop"><img src="assets/settings.png"></button-->
+						<br>CM9 :
+						<input id="numCm9" type="number" class="small cmd" name="" placeholder="CM9 number">
+						<span class="status" id="cm9Text">...</span>
+						<!-- input type="checkbox"  name ="glou">SINGLE<br>
+						<br>
+						<input class="styled-checkbox" type="checkbox"  >CM9_1<br>
+						<input class="styled-checkbox" type="checkbox"  >CM9_2<br>
+						<input class="styled-checkbox" type="checkbox"  >CM9_3<br>
+						<input class="styled-checkbox" type="checkbox"  >CM9_4<br>
+						<input class="styled-checkbox" type="checkbox"  >CM9_5<br>
+						<input class="styled-checkbox" type="checkbox"  >CM9_6<br -->
+					</div>
+
+				</div>
+
+				<div class="plug midiPlug">
+					<p>
+						MIDI  <span class="status" id="midiText"></span>
+						<input id="btmidi" type="checkbox" class="small cmdTog" name ="enable"title="enable/disable">
+					</p>
+					
+					<div class="content">
+						<br>Midi :<br>
+						<hr>
+						<!-- <button class="disconnected" id="btMidi">scan</button>
+						<br> -->
+						<div class="midi-available" id="midi-available">
+							<input class="styled-checkbox" type="checkbox"  id="midi1">midi<br>
+							<input class="styled-checkbox" type="checkbox" id="midi2" >midi<br>
+							<input class="styled-checkbox" type="checkbox" id="midi3" >midi<br>
+							<input class="styled-checkbox" type="checkbox" id="midi4" >midi<br>
+							<input class="styled-checkbox" type="checkbox" id="midi5" >midi<br>
+							<input class="styled-checkbox" type="checkbox" id="midi6" >midi<br>
+						</div>
+					</div>
+				</div>
+
+				<div id="divOSC" class="plug">
+					<p>
+						OSC  <span class="status"></span>
+						<input id="btOSC" type="checkbox" class="small warning cmdOnOff" name ="enable" title="enable/disable">
+					</p>
+					<div class="content advanced">
+						<br>OSC :<br>
+						<hr>
+						<font color='gray'>
+							<div class="infoIP">Local IP: localhost</div>
+						</font>
+						input Port:
+						<input type="number" class="small set-value cmdInt" name="oscLocalPort" align="right" placeholder="6666">
+						<hr>
+						IP:<input type="text" class="name cmdString" name="oscRemoteIP" placeholder="255.255.255.255" size="18" title="address IP">
+						<!--input type="number" class="OSC-setting" placeholder="port" name=""-->
+						output Port:
+						<input type="number" class="small set-value cmdInt" name="oscRemotePort" align="right" placeholder="7777">
+						<!--ul></ul-->
+						<hr>
+						<button id="addConnexionOSC">Add OSC CONNEXION</button>
+						<br>
+					</div>
+				</div>
+
+				<div id="divMobilizing" class="plug">
+					<p>
+					M.js
+					<input id="mbzOnOff" data-func="oscMobilizing.onOff" type="checkbox" class="small stopAll" name ="enable" title="enable/disable">
+					</p>
+
+					<div class="content">
+						<br>MOBILIZING :
+						<br>
+						<hr>
+						<font color='gray'>
+							Server:
+							<div class="mbzIP">
+								ws://localhost:8080<br>ws://localhost:8080</div>
+						</font>
+					</div>
+
+				</div>
+				
+				<div id="robusPlug" class="plug robusManager">
+					<p>
+						LUOS  <span func="spanText" class="status"></span>
+						<input func="freeze" id="robusOnOff" type="checkbox" class="small onoff" title="enable/disable">
+					</p>
+					<div class="content">
+						<br>Robots :
+						<button func="addLuosBot" class="float-right"> Add Luos Bot</button>
+						<br>
+						<!--hr>
+						<label class="toggle-small">
+							<input type="checkbox" func="serialWifi" checked="false">
+							<div class="slider serial round" css=""></div>
+						</label-->
+						<!--select func="selectPort"  class= "small tiny" style="width:250px;"></select-->
+						<!--input  func="setWifiName" type="text" style="width:250px;" placeholder="websoket">
+						<button class="close"><img src="assets/close.png" alt=""></button>
+						<br-->
+
+						<!--button func="onClick" name="#1">Button1</button-->
+						<!--hr>
+						 <span func="plugInfo">info-info-info</span>
+						 <br>
+						 <textarea func="textArea" rows=6 cols=15>octo_wifi</textarea>
+
+						<hr-->
+
+						 <!--input type="text" func="onText"><br>
+						<input type="number" func="onNum1"><br>
+						<input type="number" func="onNum2"><br-->
+						<!--select func="onSelect" class= "small tiny">
+								<option>none</option>
+								<option value="opt 1">opt 1</option>
+								<option value="opt 2">opt 2</option>
+								<option value="opt 3">opt 3</option>
+								<option value="opt 4">opt 4</option>
+						</select-->
+						<div class="robusbot" style="display:none;">
+								<hr>
+								<input func="enable" id="robusOnOff" type="checkbox" class="power" title="enable/disable">
+								<label class="toggle-small">
+									<input type="checkbox" func="serialWifi" checked="false">
+									<div class="slider serial round" css=""></div>
+								</label>
+								<select func="selectPort"  class= "small tiny" style="width:250px; display:none;"></select>
+								<input  func="setWifiName" type="text" style="width:250px;" placeholder="websoket">
+								<button func="killme" class="close"><img src="assets/close.png" alt=""></button>
+								<br>
+								<font color='lightblue' size="2">
+									Base: <input func="robAlias" type=text style="width:80px;">
+									Id: <input func="robId" type="text" style="width:30px;">
+									Type: <input func="robType" type="text" style="width:100px;">
+								</font>	
+						</div>
+					</div>
+				</div>
+				<div id="arduino" class="plug arduinoManager">
+					<p>
+						ARDUINO  <span func="spanText" class="status"></span>
+						<input func="freeze" id="arduinoOnOff" type="checkbox" class="small onoff" title="enable/disable">
+					</p>
+				</div>
+
+				<!--div class="plug" >
+					<p>
+						ADVANCED :
+						<button class="gear"><img src="assets/settings.png"></button>
+					</p>
+						<input type="text" size="3">
+				</div-->
+
+
+			</div>
+			<!-- END CONNEXIONS -->
+
+			
+			<!-- MENU TOP -->
+			<div class="menu-top">
+				<div class="menu-top-btn-group">
+					<div class="tab" id="motor">
+						<h2>Motors</h2>
+						<input type="checkbox" class="small btnGlobalMotor" id ="motor-freeze" title="enable/disable"> 
+					</div>
+					
+					<div class="tab" id="motor-adv">
+						<h2>Advanced</h2>
+					</div>
+
+				
+				</div>
+
+				<div class="menu-top-btn-group">
+					<div class="tab" id="anims">
+						<h2>Animations</h2><input type="checkbox" class="small btnGlobalAnim" id="anim-freeze" name ="enable"title="enable/disable"> 
+					</div>
+
+					<!-- //////////// -->
+					<!-- !!!!!!!!!!!!!!!!!!! REMOVED SENSOR TAB -->
+					<div class="tab" id="sens">
+						<h2 id="sens">Sensors </h2> <input type="checkbox" class="small btnGlobalSensors" id="sensor-freeze" name ="enable"title="enable/disable">
+					</div>
+ 
+					<div class="tab" id="script">
+						<h2 id="script">Script </h2> <input type="checkbox" class="small btnGlobalSensors" id="sensor-freeze" name ="enable"title="enable/disable">
+					</div>
+				
+			
+				</div>
+				
+			</div>
+			<!-- END MENU TOP -->
+
+
+
+
+			<!-- MOTORS -->
+			<div class="motors" >
+					<div class="ctrl-row">
+						<button class="float-left" id="newMotor"> New</button>
+
+						<div class="float-right medium">
+							<div class="gear tiny" id="opener" data-id="dynamixel-ctrl"><img src="assets/settings.png"></div>
+							<button class="tiny small" id="btScan" name="startScan">Scan</button>
+							<meter id="scanProgress" class="medium" value="0" max="254"></meter>
+						</div>
+
+
+					</div>
+
+
+				
+				<div id="divMotors" class="allMotors dxlManager">
+					
+					<!-- 	/////////////
+							ATTENTION 
+							PULL OFF <div class="single-motor" style="display: block!important;">
+							AND writte <div class="single-motor">
+							/////////////
+							???explain???(didier)
+							/////////////
+						 -->
+
+					<!-- SINGLE MOTOR -->
+						<div class="single-motor" style="display: none;"> <!--block!important;"-->
+						<div class="midi-blinker" title="midi chanel - note/cc">•</div>
+						<div class="left-col">
+							<div func="dxlIndex" param="index" class="motor-index">0</div>
+							<div func="dxlParam" param="dxlID" class="identity">42</div>
+							<input func="dxlEnable" param="enabled" type="checkbox" class="power" 
+								   title="enable/disable">
+							<button func="" param="reset" type="checkbox" class="reset"
+								   title="reset to 0">init</button>
+							
+						</div>
+						<div class="circle">
+							<svg class="rotAngle" ></svg>
+							<svg class="rotSpeed" ></svg>
+						</div>
+
+						<div class="properties">
+							<img src="assets/thermometer.png" class="ico-thermo" alt="">
+							<div class="thermo">_</div>
+							<label class="switch">
+							  <input func="dxlMode" param="mode" value="joint,wheel" type="checkbox">
+							  <div class="slider round"></div>
+							</label>
+						</div>
+						<!--Didier: ajout d'un input number-->
+						<input func="onControl" type="number" class="num_rotary" placeholder="angle/speed">
+					</div>
+
+					<!-- Didier: removed: ... toggle class ... ???
+					<!- 2/ SINGLE MOTOR WHEEL ->
+					<div class="single-motor wheel-motor" style="display: block!important;">
+						<div class="midi-blinker" title="midi chanel - note/cc">•</div>
+						<div class="left-col">
+							<div func="dxlIndex" param="index" class="motor-index">0</div>
+							<div func="dxlParam" param="dxlID" class="identity">42</div>
+							<input func="dxlEnable" param="enabled" type="checkbox" class="power" 
+								   title="enable/disable">
+							<button func="" param="reset" type="checkbox" class="reset"
+								   title="reset to 0">init</button>
+							
+						</div>
+						<div class="circle">
+							<svg class="rotAngle" ></svg>
+							<svg class="rotSpeed" ></svg>
+						</div>
+
+						<div class="properties">
+							<img src="assets/thermometer.png" class="ico-thermo" alt="">
+							<div class="thermo">_</div>
+							<h3>Wheel</h3>
+						</div>
+						<input func="onControl" type="number" class="num_rotary" placeholder="speed">
+					</div>
+
+					<!- 2/ SINGLE MOTOR JOINT ->
+					<div class="single-motor joint-motor" style="display: block!important;">
+						<div class="midi-blinker" title="midi chanel - note/cc">•</div>
+						<div class="left-col">
+							<div func="dxlIndex" param="index" class="motor-index">0</div>
+							<div func="dxlParam" param="dxlID" class="identity">42</div>
+							<input func="dxlEnable" param="enabled" type="checkbox" class="power" 
+								   title="enable/disable">
+							<button func="" param="reset" type="checkbox" class="reset"
+								   title="reset to 0">init</button>
+							
+						</div>
+						<div class="circle">
+							<svg class="rotAngle" ></svg>
+							<svg class="rotSpeed" ></svg>
+						</div>
+
+						<div class="properties">
+							<img src="assets/thermometer.png" class="ico-thermo" alt="">
+							<div class="thermo">_</div>
+							<h3>JOINT</h3>
+						</div>
+						<input func="onControl" type="number" class="num_rotary" placeholder="angle">
+					</div>
+					<!- END SINGLE MOTOR 3 ->
+					END REMOVAL -->
+
+				</div>
+
+
+				<!-- Advanced Motors -->
+				<div id="divMotorSettings" class="motors-settings dxlManager">
+					<!-- AREVOIR : bouton tools ...  -->
+					
+					<!-- SINGLE MOTOR Advanced-->
+					<div class="single-motor" style="display: none;">
+						<div class="left-col">
+							<div class="identity">
+								<label for="">id :</label>
+								<input func="dxlID" param="dxlID" type="number" class="small" placeholder="0" min="0" max="253">
+							</div>
+						</div>
+						<div class="advanced">
+							<ul>
+								<li><input func="dxlParam" param="angleMin" type="number" class="small"  placeholder="Angle Min"><label for="">Angle Min </label></li>
+								<li><input func="dxlParam" param="angleMax" type="number" class="small"  placeholder="Angle Max"><label for="">Angle Max </label></li>
+								<li><input func="dxlParam" param="speedMin" type="number" class="small"  placeholder="Speed Min"><label for="">Speed Min </label></li>
+								<li><input func="dxlParam" param="speedMax" type="number" class="small"  placeholder="Speed Max"><label for="">Speed Max </label></li>
+							</ul>
+							
+						</div>
+						<div class="properties">
+							<label class="toggle-small">
+							  <input func="dxlParam" param="clockwise" data-tog="joint,wheel" type="checkbox"> <!--class="cmdTog" name="clockwise"-->
+							  <div class="slider clock round"></div>
+							</label>
+						</div>
+						
+						<div class="large">
+
+							<div class="medium float-left">
+								<label class="">midi : </label>
+								<select func="midiMapping" param="port" class= "small tiny midi-chanel"  id="" name="midiPorts">
+										<option>none</option>
+										<option value="midi 1">midi 1</option>
+										<option value="midi 2">midi 2</option>
+										<option value="midi 3">midi 3</option>
+										<option value="midi 4">midi 4</option>
+								</select>
+
+								<label class="toggle-small">
+							  		<input func="midiMapping" param="mode" type="checkbox"> <!--class="cmdTog" name="midiMode"-->
+							  		<div class="slider midi round"></div>
+								</label>
+							</div>
+
+							<div class="medium text-right float-right">
+								<label class="">mapping : </label>
+								<input func="midiMapping" param="num" type="number" class="small midiMapping" placeholder="num"> <!--name="mapping"-->
+
+							</div>
+						</div>
+					</div>
+					<!-- END ADVENCED SINGLE -->
+
+					<!-- Didier:removed 
+					<!- 2/ SINGLE MOTOR Advanced ->
+					<div class="single-motor wheel-motor">
+						<div class="left-col">
+							<div class="identity">
+								<label for="">id :</label>
+								<input func="dxlID" param="dxlID" type="number" class="small" placeholder="0" min="0" max="253">
+							</div>
+						</div>
+						<div class="advanced">
+							<ul>
+								<li><input func="dxlParam" param="speedMin" type="number" class="small"  placeholder="Speed Min"><label for="">Speed Min </label></li>
+								<li><input func="dxlParam" param="speedMax" type="number" class="small"  placeholder="Speed Max"><label for="">Speed Max </label></li>
+							</ul>
+							
+						</div>
+						<div class="properties">
+							<label class="toggle-small">
+							  <input func="dxlParam" param="clockwise" data-tog="joint,wheel" type="checkbox">
+							  <div class="slider clock round"></div>
+							</label>
+						</div>
+						
+						<div class="large">
+
+							<div class="medium float-left">
+								<label class="">midi : </label>
+								<select func="midiMapping" param="port" class= "small tiny midi-chanel"  id="" name="midiPorts">
+										<option>none</option>
+										<option value="midi 1">midi 1</option>
+										<option value="midi 2">midi 2</option>
+										<option value="midi 3">midi 3</option>
+										<option value="midi 4">midi 4</option>
+								</select>
+
+								<label class="toggle-small">
+							  		<input func="midiMapping" param="mode" type="checkbox">
+							  		<div class="slider midi round"></div>
+								</label>
+							</div>
+
+							<div class="medium text-right float-right">
+								<label class="">mapping : </label>
+								<input func="midiMapping" param="num" type="number" class="small midiMapping" placeholder="num">
+
+							</div>
+						</div>
+					</div>
+					<!- END ADVENCED SINGLE 2 ->
+					<!- 3/ SINGLE MOTOR Advanced ->
+					<div class="single-motor joint-motor">
+						<div class="left-col">
+							<div class="identity">
+								<label for="">id :</label>
+								<input func="dxlID" param="dxlID" type="number" class="small" placeholder="0" min="0" max="253">
+							</div>
+						</div>
+						<div class="advanced">
+							<ul>
+
+								<li><input func="dxlParam" param="angleMin" type="number" class="small"  placeholder="Angle Min"><label for="">Angle Min </label></li>
+								<li><input func="dxlParam" param="angleMax" type="number" class="small"  placeholder="Angle Max"><label for="">Angle Max </label></li>
+							</ul>
+							
+						</div>
+						<div class="properties">
+							<label class="toggle-small">
+							  <input func="dxlParam" param="clockwise" data-tog="joint,wheel" type="checkbox">
+							  <div class="slider clock round"></div>
+							</label>
+						</div>
+						
+						<div class="large">
+
+							<div class="medium float-left">
+								<label class="">midi : </label>
+								<select func="midiMapping" param="port" class= "small tiny midi-chanel"  id="" name="midiPorts">
+										<option>none</option>
+										<option value="midi 1">midi 1</option>
+										<option value="midi 2">midi 2</option>
+										<option value="midi 3">midi 3</option>
+										<option value="midi 4">midi 4</option>
+								</select>
+
+								<label class="toggle-small">
+							  		<input func="midiMapping" param="mode" type="checkbox">
+							  		<div class="slider midi round"></div>
+								</label>
+							</div>
+
+							<div class="medium text-right float-right">
+								<label class="">mapping : </label>
+								<input func="midiMapping" param="num" type="number" class="small midiMapping" placeholder="num">
+							</div>
+						</div>
+					</div>
+					<!- END ADVENCED SINGLE 3 ->
+					END Didier -->
+
+				</div>
+
+
+			</div>
+
+			<div class="left-side">
+				
+				<div class="animations" id="divAnims">
+					<div class="ctrl-row">
+						<button id="loadAnim" class="animBTN float-right"> Load animation</button>
+
+						
+
+						<button id="newAnim" class="animBTN float-left"> New</button>
+					</div>
+
+					<ul id="sortable-anim" >
+						<!-- SIngle Animation -->
+						<li class="single-anim record-anim ui-state-default">
+
+							<button class="close"><img src="assets/close.png" alt=""></button>
+							<input type="text" class="name" placeholder="Nom de l'animation" name="animName" size="40">
+							<button class="gear tiny float-right"><img data-id="animPopup" src="assets/settings.png"></button>
+							<div class="anim-motors">
+								<input type="text" class="shorcut" placeholder="..." name="animKey">
+								
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+
+								<div class="controls">
+									<button class="play"><img src="assets/play.png" alt="" name="play"></button>
+									<button class="stop"><img src="assets/stop.png" alt="" name="stop"></button>
+									<!-- loop checkbox -->
+									<input type="checkbox" class="loop" name="loop">
+
+
+								</div>
+
+								<meter name="progress" class="progress" value="70" max="100"></meter>
+
+							</div>
+						</li>
+						
+						<!-- Record anim -->
+						<li class="single-anim record-anim ui-state-default">
+							<h3>RECORD</h3>
+							<input type="text" class="name" placeholder="animation's name" name="animName" size="40">
+							<div class="recordSettings">
+								<input type="text" class="shorcut" placeholder="..." name="animKey">
+								
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+
+								<button class="start-rec float-right">Start RECording</button>
+							</div>
+							<div class="anim-motors">
+								<input type="text" class="shorcut" placeholder="_" name="animKey">
+								
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+
+								<div class="controls">
+									<button class="play"><img src="assets/play.png" alt="" name="play"></button>
+									<button class="stop"><img src="assets/stop.png" alt="" name="stop"></button>
+									<!-- loop checkbox -->
+									<input type="checkbox" class="loop" name="loop">
+								</div>
+
+								<meter name="progress" class="progress" value="70" max="100"></meter>
+
+							</div>
+						</li>
+
+						<!-- end record anim -->
+						
+						<!-- Sinus Anim -->
+						<li class="single-anim sinus-anim ui-state-default">
+							<h3>SINUS</h3>
+							<input type="text" class="name" placeholder="animation's name" name="animName" size="40">
+							<div class="anim-motors">
+								<input type="text" class="shorcut" placeholder="..." name="animKey">
+								
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+
+								<div class="controls">
+									<button class="play"><img src="assets/play.png" alt="" name="play"></button>
+									<button class="stop"><img src="assets/stop.png" alt="" name="stop"></button>
+									<!-- loop checkbox -->
+									<input type="checkbox" class="loop" name="loop">
+								</div>
+
+								<meter name="progress" class="progress" value="70" max="100"></meter>
+
+							</div>
+							<div class="ctrl-row text-right">
+								<div class="info">
+									<p class="text-left">Offset :</p>
+									<input type="number" class="small tiny" value="34">
+								</div>
+								<div class="info">
+									<p class="text-left">Frequence :</p>
+									<input type="number" class="small tiny" value="34">
+								</div>
+								<div class="info">
+									<p class="text-left">Amplitude :</p>
+									<input type="number" class="small tiny" value="34">
+								</div>
+							</div>
+						</li>
+						<!-- End Sinus Anim -->
+
+						<!-- Random Anim -->
+						<li class="single-anim random-anim ui-state-default">
+							<h3>RANDOM</h3>
+							<input type="text" class="name" placeholder="animation's name" name="animName" size="40">
+							<div class="anim-motors">
+								<input type="text" class="shorcut" placeholder="..." name="animKey">
+								
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+
+								<div class="controls">
+									<button class="play"><img src="assets/play.png" alt="" name="play"></button>
+									<button class="stop"><img src="assets/stop.png" alt="" name="stop"></button>
+									<!-- loop checkbox -->
+									<input type="checkbox" class="loop" name="loop">
+								</div>
+
+								<meter name="progress" class="progress" value="70" max="100"></meter>
+
+							</div>
+							<div class="ctrl-row text-right">
+								<div class="info">
+									<p class="text-left">interval :</p>
+									<input type="number" class="small tiny" value="34">
+								</div>
+								<div class="info">
+									<p class="text-left">tolerance :</p>
+									<input type="number" class="small tiny" value="34">
+								</div>
+								<div class="info">
+									<p class="text-left">max :</p>
+									<input type="number" class="small tiny" value="34">
+								</div>
+								<div class="info">
+									<p class="text-left">min :</p>
+									<input type="number" class="small tiny" value="34">
+								</div>
+							</div>
+						</li>
+						<!-- End Random Anim -->
+
+						<!-- Trigger Anim -->
+						<li class="single-anim trigger-anim ui-state-default">
+							<h3>TRIGGER</h3>
+							<input type="text" class="name" placeholder="animation's name" name="animName" size="40">
+							<div class="anim-motors">
+								<input type="text" class="shorcut" placeholder="..." name="animKey">
+								
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track">
+
+								<div class="controls">
+									<button class="play"><img src="assets/play.png" alt="" name="play"></button>
+									<button class="stop"><img src="assets/stop.png" alt="" name="stop"></button>
+									<!-- loop checkbox -->
+									<input type="checkbox" class="loop" name="loop">
+								</div>
+
+								<meter name="progress" class="progress" value="70" max="100"></meter>
+
+							</div>
+							<div class="ctrl-row text-right">
+								<div class="info">
+									<p class="text-left">interval :</p>
+									<input type="number" class="small tiny" value="34">
+								</div>
+								<div class="info">
+									<p class="text-left">dutaion :</p>
+									<input type="number" class="small tiny" value="34">
+								</div>
+								<div class="info">
+									<p class="text-left">max :</p>
+									<input type="number" class="small tiny" value="34">
+								</div>
+								<div class="info">
+									<p class="text-left">min :</p>
+									<input type="number" class="small tiny" value="34">
+								</div>
+							</div>
+						</li>
+						<!-- End Trigger Anim -->
+
+					</ul>
+				</div>
+			<div class="sensors sensorManager">
+				<div class="ctrl-row">
+					<button id="addEmptySensor" class="sensorsBTN float-left">New</button>
+
+					<button id="loadSensor" class="sensorsBTN float-right">Save</button>
+					<button id="loadSensor" class="sensorsBTN float-right">Load</button>
+				</div>
+
+				<ul id="sortable-sens" name="listSensors" >
+
+				<!-- SIngle Sensors -->
+					<li class="single-sensor ui-state-default activ" func="selectSensor" type="submit">
+						<input type="checkbox" func="enable" class="power float-left cmdTog" name ="sensorOnOff" title="enable/disable">
+
+						<input type="text" func="onNameText" class="float-left medium" placeholder="Sensor name" name="sensorName" size="58">
+
+						<p class="info medium-75 float-left" func="textDescription" type="text">CM9 to OSC aaaaaaaaaabbbbbbbbbb</p>
+						<div class="sensor-setting">
+							<div class="live-value-ui">•</div>
+							<div class="green-bar"></div>
+						</div>
+					</li>
+				<!-- END SIngle Sensors -->
+			
+		
+
+				</ul>
+
+				<div class="sensor-setting-more" eltID="default">
+					<select name="input" func="onSelectInput" id="" class="large">
+						<option value="default">Select Input</option>
+						<option value="cm9">CM9</option>
+						<option value="osc">OSC</option>
+						<option value="midi">Midi</option>
+						<option value="motor">Mapping from motor</option>
+						<option value="mobilizing">Mobilizing</option>
+						<option value="robus">Robus</option>
+						<option value="sinus">Sinus</option>
+						<option value="random">Random</option>
+					</select>
+					<div class="input-wrapper">
+
+						<!-- INPUT -->
+						
+						<section name="cm9">
+							<div class="medium float-left ">
+								<input type="checkbox" func="changeSettingsVariable" class=" small cmdOnOff" param="cm9EnabledInput" title="enable/disable">	
+								<h4>CM9</h4>	
+							</div>
+							<div class="medium float-left text-right">
+								<input type="number" func="changeSettingsVariable" class="medium tiny float-right" placeholder="pin number" param="cm9Pin"> <!--class="large tiny"-->
+							</div>
+						</section>
+
+
+						<section name="osc">
+							<div class="medium float-left ">
+								<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="oscEnabledInput" title="enable/disable">
+								<h4>OSC</h4>
+							</div>
+							<!--
+							<div class="medium float-left text-right">
+								<input type="text" class="large tiny" placeholder="adress" name="">
+							</div>
+						-->	
+						</section>
+
+						<section name="mobilizing">
+							<div class="medium float-left ">
+								<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="mobilizingEnabledInput" title="enable/disable">
+								<h4>Mobilizing</h4>
+							</div>
+								
+						</section>
+
+						
+
+						<section class="hight" name="midi">
+							<div class="large float-left">
+								<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="midiEnabledInput" title="enable/disable">
+								<h4>Midi</h4>
+							</div>
+							
+							<div class="large float-left">
+								<div class="medium float-left">
+									<label class="toggle-small">
+							  			<input type="checkbox" func="changeSettingsVariable"  class="cmdTog" param="midiCmdInput">
+							  			<div class="slider midi round"></div>
+									</label>
+								</div>
+								<div class="medium float-right text-right">
+									<input type="number" func="changeSettingsVariable" class="medium-75 tiny" placeholder="index" param="midiMappingInput">
+									
+								</div>
+								<div class="large">
+									<select class= " tiny large cmdString" func="onMidiInput" id="" name="midiPortInput">
+										<option value="">midi 1</option>
+										<option value="midi 2">midi 2</option>
+										<option value="">midi 3</option>
+										<option value="">midi 4</option>
+									</select>
+								</div>
+							</div>
+
+						</section>
+
+						<section name="motor">
+							<div class="medium float-left">
+								<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="motorEnabledInput" title="enable/disable">	
+								<h4>Motor Mapping</h4>
+							</div>
+
+							<div class="medium float-right text-right">
+								<input type="number" func="changeSettingsVariable" class="medium tiny float-right" placeholder="index" param="fromMotorIndex">
+							</div>						
+						</section>	
+
+						<section class="hight robusInput" name="robus">
+							<div class="medium float-left">
+								<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="robusEnabledInput" title="enable/disable">
+								<h4>Robus</h4>
+							</div>
+							<div class="medium float-right text-right">
+								<select class= "float-right" func="onRobusParam" param="gate" style="width:145px;">
+									<option value="default">gate</option>
+									<option value="gate">gate</option>
+								</select>
+							</div>
+							<div class="tiny float-left"> </div>
+
+							<div class="large float-left">
+									<div class="float-left">
+										<select class= "float-right" func="onRobusParam" param="module" style="width:145px;" >
+											<option value="default">none</option>
+											<option value="L0_1">L0_1</option>
+											<!--option value="L0_2">L0_2</option>
+											<option value="L0_3">L0_3</option>
+											<option value="L0_4">L0_4</option-->
+										</select>
+									</div>
+									<div class="float-right text-right">
+										<select class= "float-right" func="onRobusParam" param="pin" style="width:145px;">
+											<option value="default">pin</option>
+											<option value="p1">p1</option>
+											<!--option value="p5">p5</option>
+											<option value="p6">p6</option>
+											<option value="p7">p7</option>
+											<option value="p8">p8</option>
+											<option value="p9">p9</option-->
+										</select>
+									</div>
+							</div>
+
+						</section>
+
+						<section class="hight sinusInput" name="sinus">
+							<div class="medium float-left">
+								<input func="inputOnOff" type="checkbox" class="small cmdOnOff" title="enable/disable">
+								<h4>Sinus</h4>
+							</div>
+							<div class="medium float-left text-left">
+								<button class="gear tiny float-left" func="setPopupValues" data-id="sinusPopup"><img src="assets/settings.png"></button>
+							</div>
+							Period(seconds):<input func="inputParam" param="period" type="number" class="medium tiny float-right" placeholder="1" param="">
+
+						</section>
+
+						<section class="randomInput" name="random"> <!-- pour test-->
+							<div class="medium float-left">
+								<input func="inputOnOff" type="checkbox" class="small cmdOnOff" title="enable/disable">
+								<h4>Random</h4>
+							</div>
+							<div class="medium float-right text-right">
+								<button class="gear tiny" func="setPopupValues" data-id="randomPopup"><img src="assets/settings.png"></button>
+							</div>
+						</section>
+
+					</div>
+
+
+					<!-- FILTERS -->
+
+					<div class="filters">
+						<select name="inputFilter" func="" id="" class="medium ">
+							<option value="default">Select Filter</option>
+							<option value="...">...</option>
+							<option value="...">...</option>
+						</select>
+						<div class="info medium text-right float-right">
+							<p class="text-left">value :</p>
+							<input type="number" func="" name="filter-value" class="medium tiny" value="100">
+						</div>
+
+					</div>
+
+					<!-- End FILTERS -->
+
+
+
+
+
+					<div class="live-view">
+						<div class="info small float-left text-left">
+							min <br><br>
+							<input type="number" func="onMinValue" name="min-value-sensors" class="medium tiny" value="0">
+							<img id="sensor-detector-min" src="assets/sensor-min-icon.png" alt="">
+						</div>
+						<div class="small float-left text-center">
+							<span class="live-value">20</span>
+						</div>
+						<div class="info small float-right text-right">
+							max <br><br>
+							<img id="sensor-detector-max" src="assets/sensor-max-icon.png" alt="">
+							<input type="number" func="onMaxValue" name="max-value-sensors" class="medium tiny" value="100">
+						</div>
+						<div class="live-value-ui grey">•</div>
+						<div class="live-value-ui">•</div>
+						<div class="green-bar"></div>
+					</div>
+					<select name="output" func="onSelectOutput" id="output" class="large">
+						<option value="default">Add output</option>
+						<option value="animations">Trigger animation</option>
+						<option value="osc">send OSC messages</option>
+						<option value="midi">send Midi</option>
+						<option value="motor">Map values to motor</option>
+						<option value="mobilizing">send to Mobilizing</option>
+					</select>
+					<div>
+
+						<ul id="sortable-sens-output" name="listOutput">
+						<!-- OUTPUT -->
+
+							<!-- À refaire -->
+							<li class="ui-state-default" name="animations">
+
+								<section class="animation" id="animation-switcher" name="animations">
+									<div class="large float-left ">
+										<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="animationsEnabledOutput" title="enable/disable">
+										<h4>Animations switcher</h4>
+									</div>
+
+									<div class="large float-left">
+										<br>
+										<!--
+										<div class="select-anim-1">
+
+											<select class="listAnims-1 active" func="onChangeAnim" param="anim1" name="anim1" id="">
+												<option value="">Animation 1</option>
+												<option value="">Animation 2</option>
+												<option value="">Animation 3</option>
+												<option value="">Animation 4</option>
+											</select>
+										</div>
+									-->
+									<div class="select-anim-1">
+
+										<!--<select class="listAnims-1 active" func="onChangeAnim" param="anim1" id="">-->
+										<select class="listAnims-1 active" func="onChangeAnim" param="anim1" id="">
+											<option value="">test 1</option>
+											<option value="">test 2</option>
+											<option value="">Animation 3</option>
+											<option value="">Animation 4</option>
+										</select>
+									</div>
+
+										<div class="select-anim-2">
+
+											<select class= "listAnims-2" func="onChangeAnim" param="anim2" id="">
+												<option value="">test 1</option>
+												<option value="">test 2</option>
+												<option value="">test 3</option>
+												<option value="">test 4</option>
+											</select>
+										</div>
+
+										
+										<div class="tolerance-ui"></div>
+										
+										<div class="sensor-range"> 
+											<div class="currentV">...</div>
+											<div class="slider-range" data-min="0" data-max="100" data-default= "50" ></div>
+											 
+										</div>
+										<div class="large">
+											<div class="large float-left">
+												<h4 class="text-left">Tolerance :</h4>
+												<input type="number" func="onTolerance" name="tolerance-sensors" class="tolerance small" placeholder="tolerance" value="20" >
+											</div>
+										</div>
+								
+									</div>
+										
+								</section>
+							</li>
+
+
+							<li class="ui-state-default" name="osc">
+								<section name="osc">
+									<div class="medium float-left ">
+										<input type="checkbox"  func="changeSettingsVariable" class="small cmdOnOff" param ="oscEnabledOutput" title="enable/disable">
+										<h4>OSC</h4>
+									</div>
+
+									<!--
+									<div class="medium float-left text-right">
+										<input type="text" class="large tiny" placeholder="adress" name="">
+									</div>
+									-->
+										
+								</section>
+							</li>
+							
+
+							<li class="ui-state-default" name="motor">
+								<section name="motor">
+									<div class="medium float-left">
+										<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="motorEnabledOutput" title="enable/disable">	
+										<h4>Motor Mapping</h4>
+									</div>
+
+									<div class="medium float-right text-right">
+
+										<input type="number" func="changeSettingsVariable" class="medium tiny float-right" placeholder="index" param="toMotorIndex">
+									</div>
+
+								</section>
+							</li>
+							
+							<li class="ui-state-default" name="midi">
+								<section class="hight" name="midi">
+									<div class="large float-left">
+										<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="midiEnabledOutput" title="enable/disable">
+										<h4>Midi</h4>
+									</div>
+									
+									<div class="large float-left">
+										<div class="medium float-left">
+											<label class="toggle-small">
+									  			<input type="checkbox"  class="cmdTog" func="changeSettingsVariable" param="midiCmdOutput">
+									  			<div class="slider midi round"></div>
+											</label>
+										</div>
+										<div class="medium float-right text-right">
+											<input type="number" func="changeSettingsVariable" class="medium-75 tiny" placeholder="index" param="midiMappingOutput">
+											
+										</div>
+										<div class="large">
+											<select class= " tiny large cmdString" func="onMidiOutput" id="" name="midiPortOutput">
+												<option value="">midi 1</option>
+												<option value="midi 2">midi 2</option>
+												<option value="">midi 3</option>
+												<option value="">midi 4</option>
+											</select>
+										</div>
+									</div>
+
+								</section>
+							</li>
+							
+							<li class="ui-state-default" name="mobilizing">
+								<section name="mobilizing">
+									<div class="medium float-left ">
+										<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="mobilizingEnabledOutput" title="enable/disable">
+										<h4>Mobilizing</h4>
+									</div>
+									<!--
+									<div class="medium float-left text-right">
+										<input type="text" class="large tiny" placeholder="adress" name="">
+									</div>
+									-->
+								</section>
+							</li>
+						</ul>
+
+					</div>
+
+				</div>
+				
+
+			</div>
+
+			<div class="script-panel">
+				<div class="ctrl-row">
+					<button id="load-code" class="float-left">Load</button>
+					<button id="stop-code" class="float-right stop">Stop</button>
+					<button id="run-code" class="float-right valid">Run</button>
+					
+				</div>
+				<div class="input-code">
+					
+				</div>
+			</div>
+		</div>
+
+		<!-- --------- BOITES DE DIALOGUES -------- -->
+
+		<div class="modale draggable sensorManager sinusPopup" id="sinusPopup" style="display: none; width:550px">
+			<button class="close-modale"><img src="assets/close.png" alt=""></button>
+			Sinus(just for testing): ><span func="sinusName"></span>
+			<hr>
+			<font color='lightgreen'>
+			<label class="label100">Period : </label><input func="inputParam" param="period" type="text" size="4">
+			</font>
+			<br>
+			<hr>
+		</div>
+
+		<div class="modale draggable sensorManager randomPopup" id="randomPopup" style="display: none; width:550px">
+			<button id="closeDxl" class="close-modale"><img src="assets/close.png" alt=""></button>
+			<!-- input type="text" size="10" func="rndName"><label for="">Name</label><br-->
+			Random: > <span func="randomName"></span>
+			<button class="sensorsBTN float-right"><img src="assets/add.png" id="loadAnim">Add Disturb</button>
+
+			<hr>
+			<font color='lightgreen'>
+			<label class="label100">Period Min : </label><input func="inputParam" param="periodMin" type="text" size="4">
+			<label class="label100">Val 1 Min : </label><input func="inputParam" param="v1min" type="text" size="5">
+			<label class="label100">Val 2 Min : </label><input func="inputParam" param="v2min" type="text" size="5">
+			<br>				
+			<label class="label100">Period Max : </label><input func="inputParam" param="periodMax" type="text" size="4">
+			<label class="label100">Val 1 Max : </label><input func="inputParam" param="v1max" type="text" size="5">
+			<label class="label100">Val 2 Max : </label><input func="inputParam" param="v2max" type="text" size="5">
+			</font>
+			<br>
+			<hr>
+		</div>
+
+		<div class="modale draggable animManager animPopup" id="animPopup" style="display: none; width:550px">
+			<button class="close-modale"><img src="assets/close.png" alt=""></button>
+				(just for testing): ><span func="sinusName"></span>
+			<hr>
+			<font color='lightgreen'>
+			<label class="label100">Param : </label><input func="inputParam" param="test" type="text" size="4">
+			</font>
+			<br>
+			<hr>
+		</div>
+		
+		<div class="modale draggable dxlManager dxlPopup" id="dynamixel-ctrl" style="display: none;">
+			<button id="closeDxl" class="close-modale"><img src="assets/close.png" alt=""></button>
+			<input type="text" size="5" id="btAdvID"><label for="">[ID]</label>
+			&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+			&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+			------> change ID : &ensp;
+			<input id="changeDxlID" type="text" size="5"> <!--class="float-right"-->
+			<br>
+			<div id="divDxlReg" >
+				
+				<div class="medium float-left">
+					<br><input func="dxlWrite" type="text" size="5" param="000"><label for=""> MODEL</label>
+					<br><input func="dxlWrite" type="text" size="5" param="002"><label for=""> FIRMWARE</label>
+					<br><input func="dxlWrite" type="text" size="5" param="004"><label for=""> BAUDS</label>
+					<br><input func="dxlWrite" type="text" size="5" param="005"><label for=""> DELAY</label>
+					<br><input func="dxlWrite" type="text" size="5" param="006"><label for=""> CW LIMIT</label>
+					<br><input func="dxlWrite" type="text" size="5" param="008"><label for=""> CCW LIMIT</label>
+					<br><input func="dxlWrite" type="text" size="5" param="014"><label for=""> MAX TORQUE</label>
+					<br><input func="dxlWrite" type="text" size="5" param="016"><label for=""> RETURN LEVEL</label>
+					<br><input func="dxlWrite" type="text" size="5" param="017"><label for=""> ALARM LED</label>
+					<br><input func="dxlWrite" type="text" size="5" param="018"><label for=""> ALARM SHUTDOWN</label>
+					<br><input func="dxlWrite" type="text" size="5" param="024"><label for=""> TORQUE ENABLE</label>
+				</div>
+				<div class="medium float-left">
+					<br><input func="dxlWrite" type="text" size="5" param="025"><label for=""> LED</label>
+					<br><input func="dxlWrite" type="text" size="5" param="026"><label for=""> PID 1</label>
+					<br><input func="dxlWrite" type="text" size="5" param="027"><label for=""> PID 2</label>
+					<br><input func="dxlWrite" type="text" size="5" param="028"><label for=""> PID 3</label>
+					<br><input func="dxlWrite" type="text" size="5" param="029"><label for=""> PID 4</label>
+					<br><input func="dxlWrite" type="text" size="5" param="030"><label for=""> GOAL</label>
+					<br><input func="dxlWrite" type="text" size="5" param="032"><label for=""> SPEED</label>
+					<br><input func="dxlWrite" type="text" size="5" param="034"><label for=""> TORQUE</label>
+					<br><input func="dxlWrite" type="text" size="5" param="036"><label for=""> POSITION</label>
+					<br><input func="dxlWrite" type="text" size="5" param="043"><label for=""> TEMPERATURE</label>
+				</div>
+			</div>
+			<div class="large text-center">
+				<button id="btDxlRefresh" class="medium">refresh</button>
+			</div>
+			
+			
+		</div>
+
+		<div class="modale draggable" id="alertThermo" height="200">
+			<button class="close-modale"><img src="assets/close.png" alt=""></button>
+			
+		</div>
+
+
+		<div class="modalNewAnim draggable">
+			<h2>New Animation</h2>
+			<hr>
+			<div class="listAnimType">
+				<span name="record">Record</span>
+				<span name="sinus">Sinus</span>
+				<span name="random">Random</span>
+				<span name="trigger">Trigger</span>
+			</div>
+			<button id="newAnimLoad" class="large">Load</button>
+			<button id="newAnimCancel" class="large">Cancel</button>
+		</div>
+
+
+		<div class="modalNewMotor draggable">
+			<h2>New Motor</h2>
+			<hr>
+			<div class="listMotorType">
+				<span name="wheel-joint">Wheel/Joint</span>
+				<span name="joint">Joint</span>
+				<span name="wheel">Wheel</span>
+			</div>
+			<button id="newMotorLoad" class="large">Load</button>
+			<button id="newMotorCancel" class="large">Cancel</button>
+		</div>
+
+
+
+		<!-- MODELE MODALE  -->
+		<!-- 
+		sur n'importe quel élément du DOM : div, img, li ... n'importe quelle balise
+		on met la classe "gear" 
+		et l'attribut data-id="option-sensors" (on met ce qu'on veut comme id)
+		puis on crée la modale comme ci-dessous, où on répéte l'id 
+		Ensuite on peut mettre ce qu'on veut entre les balise de la div "modale draggable"
+		-->
+
+		<!-- <div class="modale draggable" id="option-sensors">
+			Modale des sensors
+			
+		</div> -->
+
+		<!-- Sans Electron-->
+			<!--
+		<script src="libs/jquery-2.2.3.min.js"></script>
+		<script src="libs/d3.v3.min.js"></script>
+		<script src="js/jquery-ui-1.11.4/jquery-ui.js"></script>
+		-->
+			<script src="js/_defines_.js"></script>
+		<!-- Electron -->
+			<script>window.$ = window.jQuery = require('./libs/jquery-2.2.3.min.js');</script>
+			<script src="js/jquery-ui-1.11.4/jquery-ui.js"></script>
+			<script src="libs/jquery.blockUI.js"></script>
+
+			<!--script src="js/MisBKIT.js"></script-->
+			
+			<script src="js/SerialClass.js"></script>
+			<script src="js/SettingsManager.js"></script>
+			<script src="js/MidiPort.js"></script>
+			<script src="js/MidiPortManager.js"></script>
+			<script src="js/UdpSocket.js"></script>
+			<script src="js/Cm9Manager.js"></script>
+			
+			<script src="js/Messages.js"></script>
+			<script src="libs/d3.v3.min.js"></script>
+			<script src="js/alex.js"></script>
+			<script src="js/ui.js"></script>
+			<script src="js/Animations.js"></script>
+			<script src="js/WidgetD3.js"></script>
+			<script src="js/DxlMotor.js"></script>
+			<script src="js/DxlManager.js"></script>
+			<script src="js/MisGUI.js"></script>
+			<script src="js/MisGUI_sensors.js"></script>
+			<script src="js/index.js"></script>
+			<script src="js/Robus.js"></script>
+			<script src="js/RobusManager.js"></script>
+			<script src="js/MotorMapping.js"></script>
+			<script src="js/MotorMappingManager.js"></script>
+			<script src="js/Sensor.js"></script>
+			<script src="js/SensorManager.js"></script>
+			<script src="js/OscManager.js"></script>
+			<script src="js/OscMobilizing.js"></script>
+		</body>
+</html>

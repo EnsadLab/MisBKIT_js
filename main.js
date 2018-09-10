@@ -36,7 +36,8 @@ app.on('ready', function() {
   //console.log("version chrome:",process.versions['chrome']); //v5.10.0
   mainWindow = new BrowserWindow({width: 1280, height: 760});
 
-  mainWindow.loadURL('file://' + __dirname + '/index.html');
+  //mainWindow.loadURL('file://' + __dirname + '/index.html');
+  mainWindow.loadURL('file://' + __dirname + '/index_alex.html');
 
   //mainWindow.show();
   ////////// TO PUT IN COMMENT WHEN EXPORTING

@@ -1,6 +1,6 @@
 {
-  "savecount": 250,
-  "cm9Num": 0,
+  "savecount": 252,
+  "cm9Num": 1,
   "oscPorts": {
     "oscRemoteIP": "localhost",
     "oscLocalPort": 4444,
@@ -8,9 +8,7 @@
   },
   "webSocket": "none",
   "midiEnabled": true,
-  "midiPorts": [
-    "nanoKONTROL2 SLIDER/KNOB"
-  ],
+  "midiPorts": [],
   "anims": [],
   "sensors": [],
   "motors": [
