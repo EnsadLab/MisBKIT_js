@@ -1,6 +1,6 @@
 {
-  "savecount": 248,
-  "cm9Num": 1,
+  "savecount": 250,
+  "cm9Num": 0,
   "oscPorts": {
     "oscRemoteIP": "localhost",
     "oscLocalPort": 4444,
@@ -8,26 +8,42 @@
   },
   "webSocket": "none",
   "midiEnabled": true,
-  "midiPorts": [],
+  "midiPorts": [
+    "nanoKONTROL2 SLIDER/KNOB"
+  ],
   "anims": [],
   "sensors": [],
   "motors": [
     {
-      "dxlID": 1,
+      "dxlID": 5,
       "enabled": false,
-      "model": -1,
+      "model": 12,
       "clockwise": false,
       "mode": 0,
       "jointSpeed": 0,
-      "angleMin": "-90",
-      "angleMax": "90",
+      "angleMin": "-150",
+      "angleMax": "150",
       "speedMin": -10,
       "speedMax": 10,
       "torqueMax": 1023,
-      "id": 1
+      "id": 5
     },
     {
-      "dxlID": 42,
+      "dxlID": 40,
+      "enabled": false,
+      "model": 12,
+      "clockwise": true,
+      "mode": 0,
+      "jointSpeed": 0,
+      "angleMin": -150,
+      "angleMax": 150,
+      "speedMin": -100,
+      "speedMax": 100,
+      "torqueMax": 1023,
+      "id": 40
+    },
+    {
+      "dxlID": 0,
       "enabled": false,
       "model": -1,
       "clockwise": true,
@@ -38,21 +54,7 @@
       "speedMin": -100,
       "speedMax": 100,
       "torqueMax": 1023,
-      "id": 42
-    },
-    {
-      "dxlID": 3,
-      "enabled": false,
-      "model": -1,
-      "clockwise": true,
-      "mode": 0,
-      "jointSpeed": 0,
-      "angleMin": -150,
-      "angleMax": 150,
-      "speedMin": -100,
-      "speedMax": 100,
-      "torqueMax": 1023,
-      "id": 3
+      "id": 0
     },
     {
       "dxlID": 0,
