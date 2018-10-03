@@ -151,9 +151,15 @@ DxlManager.prototype.dxlParam = function(eltID,val,param){
     }
 }
 DxlManager.prototype.dxlEnable = function(eltID,val){
-    if(this.motors[eltID])
+    if(this.motors[+eltID])
         this.motors[+eltID].enable(val);
 }
+
+DxlManager.prototype.dxlZero = function(eltID,val){
+    if(this.motors[+eltID])
+    this.motors[+eltID].onValue(0); 
+}
+
 DxlManager.prototype.checkRec = function(eltID,val){
     if(eltID<this.motors.length) {
         this.motors[eltID].rec = val;

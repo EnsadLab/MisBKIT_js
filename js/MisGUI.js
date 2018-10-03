@@ -956,6 +956,7 @@ MisGUI.prototype.init =function(){
     });
     */
 
+    /* removed by alex
     $("button.start-rec").on("click",function() {
         if(self.recording){
             self.recording = false;
@@ -969,6 +970,11 @@ MisGUI.prototype.init =function(){
             dxlManager.startRec();
         }
     });
+    */
+
+
+
+    
 
     $("#loadAnim").on("click",function(){
         //TODO generic  loadUI , with folder
