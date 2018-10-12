@@ -203,7 +203,7 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                     });
                     break;
                 default:
-                    console.log("initManagerFunctions: UNHANDLED:",$(this).prop("tagName"),$(this).prop("type"));    
+                    console.log("initManagerFunctions: UNHANDLED:",$(this).prop("tagName"),$(this).prop("type"),func);    
                 break   
             }
         }
@@ -255,13 +255,13 @@ MisGUI.prototype.showParams=function(opt){
 }
 
 
-//old implementation , for compatibility
+//old implementation , for compatibility.  ---> showValue
 MisGUI.prototype.setManagerValue = function( className , func , value , eltID, param){   
     var sel = "."+className+" ";
     if(eltID)sel+="[eltID="+eltID+"]";
     if(func)sel+="[func="+func+"]";
     if(param)sel+="[param="+param+"]";
-    console.log("setManagerValue:",sel);
+    console.log("DEPRECATED setManagerValue:",sel);
     var elt = $(sel);
     if(elt.length > 0){
         this.setElementValue(elt,value);
@@ -281,6 +281,7 @@ MisGUI.prototype.setElementValue = function(elt,value){
                         e.val(value);
                     break;
                 case "checkbox":
+                    console.log("CHECKBOX",value);
                     if(e.is(".onoff")) self.onoffState(e,value); //ON , OFF , ERROR
                     else e.prop("checked",value);    
                     break;
@@ -387,6 +388,7 @@ MisGUI.prototype.onoffState = function( dolzis , state){
             dolzis.prop("checked",true);
             break;
         case "ERROR":
+            console.log("MisGUI.prototype.onoffState ERROR");
         case 3:
             dolzis.addClass("error");
             dolzis.prop("checked",false);
@@ -528,7 +530,7 @@ MisGUI.prototype.midiMode =function(index,value){
 }
 
 MisGUI.prototype.motorMode =function(index,value){
-    console.log("************ MisGUI.mode:",index,value);
+    //console.log("************ MisGUI.mode:",index,value);
     if(this.rotSpeeds[index]){
         switch(value){
             case false: case 0: case "J": case "joint":
@@ -546,23 +548,6 @@ MisGUI.prototype.motorMode =function(index,value){
         }
     }
 }
-
-/*
-MisGUI.prototype.joint = function(index){
-    //dxlManager.cmdOld("joint",index);
-    if(this.rotSpeeds[index])
-        this.rotSpeeds[index].show(false);
-    if(this.rotAngles[index])
-        this.rotAngles[index].show(true);
-};
-MisGUI.prototype.wheel =function(index){
-    //dxlManager.cmdOld("wheel",index);
-    this.rotAngles[index].show(false);
-    this.rotSpeeds[index].show(true);
-    this.rotSpeeds[index].setValue(0);
-    this.speed(index,0);
-};
-*/
 
 MisGUI.prototype.onRotary = function(val,rot){
     //console.log("ONROTARY:")
@@ -711,6 +696,7 @@ MisGUI.prototype.motorSettings = function(index,s){
 
 
 MisGUI.prototype.midiMotorSettings = function(midiMappingSettings,midiPorts){
+    console.log("MisGUI.prototype.midiMotorSettings",midiPorts);
 /*Didier: use this.showParams()
     var motorIndex = midiMappingSettings.motorIndex;
     var midiCmd_int;

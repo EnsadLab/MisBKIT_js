@@ -72,6 +72,11 @@ class SensorManager{
 
     }
 
+    //MisGUI.prototype.setManagerValue = function( className , func , value , eltID, param){   
+    //opt: {class:classname,id:eltID,func:func,param:param,val:value}
+    //MisGUI.prototype.showValue=function(opt){
+
+
     initSensor(eltID){
 
         var sensor = this.getSensorWithID(eltID);
@@ -83,6 +88,9 @@ class SensorManager{
         });
         // for those where func != changeSettingsVariable
         misGUI.setManagerValue("sensorManager","enable",sensor.s.enabled,sensor.ID);
+        //MisGUI.showValue({class:"sensorManager",func:"ena"})
+
+
         misGUI.setManagerValue("sensorManager","onNameText",sensor.s.name,sensor.ID);
         misGUI.setManagerValue("sensorManager","onMinValue",sensor.s.valMin,sensor.ID);
         misGUI.setManagerValue("sensorManager","onMaxValue",sensor.s.valMax,sensor.ID);
