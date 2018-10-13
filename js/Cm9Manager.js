@@ -1,4 +1,4 @@
-const detectSSid = require('./libs/detect-ssid.js');
+const detectSSid = require('../libs/detect-ssid.js');
 var net = require('net');
 
 var getIPv4 = function(){
@@ -291,3 +291,6 @@ function getIpv4s(){
     //console.log("adresses IP:",ips);
     return ips;
 }
+
+var cmmng = new Cm9TCPclient();
+module.exports = cmmng;

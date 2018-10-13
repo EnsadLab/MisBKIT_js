@@ -2,7 +2,9 @@
  * Created by Didier on 27/04/16.
  */
 
-
+var Dxl = require("./DxlMotor.js");
+var Animation = require("./Animations.js");
+var animManager = require("./AnimManager.js"); //TODO :move anim functions to AnimManager
 
 const MAX_SERVOS = 6;
 
@@ -50,9 +52,8 @@ const ADDR_TEMPERATURE = 43;
 
 
 function DxlManager(){
-    //this.pause = 0;   //>0 dont sync speeds & goals
 
-    this.savecount = 0;
+    this.savecount = 0; //debugg
 
     this.motors = [];
     this.recIndices = [];
@@ -73,9 +74,13 @@ function DxlManager(){
 
     this.chgID = {prev:-1,new:-1,count:-1}; //prevID newID
 };
+var dxlmng = new DxlManager();
+module.exports = dxlmng;
+
 
 DxlManager.prototype.init =function(){
     console.log("------DxlManager.init-------");
+
     misGUI.initManagerFunctions(this,"dxlManager");
     //var dummy = new Dxl(5);
     //this.motors.push(dummy);

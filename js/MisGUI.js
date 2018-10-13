@@ -72,6 +72,22 @@ function MisGUI(){
 
 }; //MisGUI
 
+//generalisation de MisGUI_sensors
+MisGUI.prototype.radioActivate = function(selector,eltid){
+    console.log("MisGUI.radioActivate ",selector,eltid);
+    $(selector).removeClass("activ");
+    if(eltid != undefined)
+        $(selector).filter("[eltID="+ eltid + "]").addClass("activ");
+}
+
+MisGUI.prototype.radioHide = function(selector,eltid){
+    console.log("MisGUI.radioHide ",selector,eltid);
+    $(selector).hide();
+    $(selector).filter("[eltID="+ eltid + "]").show();
+}
+
+
+
 
 /*
   ex: cloneElement(".single-gizmo",42);

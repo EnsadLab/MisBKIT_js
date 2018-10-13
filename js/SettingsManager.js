@@ -8,6 +8,8 @@ function SettingsManager(){
     this.configurationFolder = "";
     this.sensorFolder = "";
 };
+var stgmng = new SettingsManager();
+module.exports = stgmng;
 
     
 SettingsManager.prototype.loadSettings = function(){

@@ -3,9 +3,7 @@
 // BEGIN MisGUI_sensors NAMESPACE
 var MisGUI_sensors = {}; // namespace javascript simulation
 
-
 MisGUI_sensors.anim_names = [];
-
 
 MisGUI_sensors.selectSensor = function(eltID){
     if(eltID != undefined){

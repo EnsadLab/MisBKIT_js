@@ -1,5 +1,8 @@
 /**
 * Created by Cecile on 27/07/17.
+* Deep Modification by Didier:
+*  connections moved from Sensor.js
+*
 */
 
 /*
@@ -12,6 +15,21 @@
 * ou bien inputDatas = {enabled:true , ... ... ...}
 *
 */
+
+var Sensor = require("./Sensor.js");
+
+var connections = [
+    "default",
+    "cm9",
+    "osc",
+    "midi",
+    "motor",
+    "mobilizing", 
+    "animations",
+    "robus",
+    "sinus",
+    "random"
+]
 
 
 class SensorManager{
@@ -844,5 +862,7 @@ class SensorManager{
 
 
 }
+var snsmng = new SensorManager();
+module.exports = snsmng;
 
 

@@ -514,6 +514,8 @@ class RobusManager{
         }
         */
     }
+
+    
     
     scanSerials(callback){ //filter only pollen
         console.log("----- robus scan serials:");
@@ -538,3 +540,5 @@ class RobusManager{
         });            
     }
 };
+var rbmng = new RobusManager();
+module.exports = rbmng;

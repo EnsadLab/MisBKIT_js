@@ -1,19 +1,9 @@
 /**
 * Created by Cecile on 27/07/17.
+* Mofified by Didier:
+*
 */
 
-var connections = [
-    "default",
-    "cm9",
-    "osc",
-    "midi",
-    "motor",
-    "mobilizing", 
-    "animations",
-    "robus",
-    "sinus",
-    "random"
-]
 
 Sensor = function () {
 
@@ -59,6 +49,7 @@ Sensor = function () {
         input_entry: "",
         output_entries:[]
     };
+
     //Suggestion:
     //   cm9:{ enabled:false , val:7 },
 
@@ -78,6 +69,7 @@ Sensor = function () {
     this.inputTimer = undefined;
     this.inputTime  = 0;
 };
+module.exports = Sensor;
 
 Sensor.prototype.copySettings = function(s){
     for(var e in s){
@@ -270,3 +262,4 @@ Sensor.prototype.updateRandom = function(){ //randomEnabledInput enabled when sw
         p.step ^= 1;
     }
 }
+

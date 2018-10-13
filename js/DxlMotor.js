@@ -59,6 +59,8 @@ class Dxl{
         this.freeze = false;
     }
 }
+module.exports = Dxl;
+
 
 Dxl.prototype.sendGoalSpeed = function(){
     if(this.m.dxlID>0){

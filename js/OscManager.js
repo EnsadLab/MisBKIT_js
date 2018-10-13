@@ -28,6 +28,9 @@ OscManager = function () {
     this.outportCm9 = 7777; //TODO: à parler avec Didier....
 
 };
+var oscmng = new OscManager();
+module.exports = oscmng;
+
 
 OscManager.prototype.setSettings = function(set){
     console.log("osc.setSettings",set);

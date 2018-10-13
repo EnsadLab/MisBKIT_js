@@ -1,6 +1,6 @@
 {
-  "savecount": 339,
-  "cm9Num": 1,
+  "savecount": 2,
+  "cm9Num": 0,
   "oscPorts": {
     "oscRemoteIP": "localhost",
     "oscLocalPort": 4444,
@@ -10,56 +10,9 @@
   "midiEnabled": true,
   "midiPorts": [],
   "anims": [],
-  "sensors": [
-    {
-      "name": "Sensor_name"
-    }
-  ],
+  "sensors": [],
   "motors": [
     {
-      "dxlID": 10,
-      "enabled": false,
-      "model": 12,
-      "clockwise": false,
-      "mode": 0,
-      "jointSpeed": 0,
-      "angleMin": "-150",
-      "angleMax": "150",
-      "speedMin": -100,
-      "speedMax": 100,
-      "torqueMax": 1023,
-      "id": 10
-    },
-    {
-      "dxlID": 0,
-      "enabled": false,
-      "model": -1,
-      "clockwise": true,
-      "mode": 0,
-      "jointSpeed": 0,
-      "angleMin": -150,
-      "angleMax": 150,
-      "speedMin": -100,
-      "speedMax": 100,
-      "torqueMax": 1023,
-      "id": 0
-    },
-    {
-      "dxlID": 0,
-      "enabled": false,
-      "model": -1,
-      "clockwise": true,
-      "mode": 0,
-      "jointSpeed": 0,
-      "angleMin": -150,
-      "angleMax": 150,
-      "speedMin": -100,
-      "speedMax": 100,
-      "torqueMax": 1023,
-      "id": 0
-    },
-    {
-      "dxlID": 0,
       "enabled": false,
       "model": -1,
       "clockwise": true,
@@ -69,25 +22,9 @@
       "angleMax": 150,
       "speedMin": -100,
       "speedMax": 100,
-      "torqueMax": 1023,
-      "id": 0
+      "torqueMax": 1023
     },
     {
-      "dxlID": 0,
-      "enabled": false,
-      "model": -1,
-      "clockwise": true,
-      "mode": 1,
-      "jointSpeed": 0,
-      "angleMin": -150,
-      "angleMax": 150,
-      "speedMin": -100,
-      "speedMax": 100,
-      "torqueMax": 1023,
-      "id": 0
-    },
-    {
-      "dxlID": 0,
       "enabled": false,
       "model": -1,
       "clockwise": true,
@@ -97,8 +34,55 @@
       "angleMax": 150,
       "speedMin": -100,
       "speedMax": 100,
-      "torqueMax": 1023,
-      "id": 0
+      "torqueMax": 1023
+    },
+    {
+      "enabled": false,
+      "model": -1,
+      "clockwise": true,
+      "mode": -1,
+      "jointSpeed": 0,
+      "angleMin": -150,
+      "angleMax": 150,
+      "speedMin": -100,
+      "speedMax": 100,
+      "torqueMax": 1023
+    },
+    {
+      "enabled": false,
+      "model": -1,
+      "clockwise": true,
+      "mode": -1,
+      "jointSpeed": 0,
+      "angleMin": -150,
+      "angleMax": 150,
+      "speedMin": -100,
+      "speedMax": 100,
+      "torqueMax": 1023
+    },
+    {
+      "enabled": false,
+      "model": -1,
+      "clockwise": true,
+      "mode": -1,
+      "jointSpeed": 0,
+      "angleMin": -150,
+      "angleMax": 150,
+      "speedMin": -100,
+      "speedMax": 100,
+      "torqueMax": 1023
+    },
+    {
+      "enabled": false,
+      "model": -1,
+      "clockwise": true,
+      "mode": -1,
+      "jointSpeed": 0,
+      "angleMin": -150,
+      "angleMax": 150,
+      "speedMin": -100,
+      "speedMax": 100,
+      "torqueMax": 1023
     }
   ]
 }

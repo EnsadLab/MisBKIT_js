@@ -171,6 +171,7 @@ window.onload = function() {
     //dxlManager = new DxlManager(); >>>>>> MISBKIT.js
     //sensorManager = new SensorManager(); >>>>>> MISBKIT.js
 
+    //var toto = require("./js/AnimManager.js");
 
 
     var MisBKit = require("./js/MisBKIT.js");
