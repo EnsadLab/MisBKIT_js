@@ -5,6 +5,7 @@ var MisGUI_sensors = {}; // namespace javascript simulation
 
 MisGUI_sensors.anim_names = [];
 
+
 MisGUI_sensors.selectSensor = function(eltID){
     if(eltID != undefined){
         $(".single-sensor").removeClass("activ");
@@ -308,15 +309,12 @@ function contextmenuBox(x, y){
     span1.innerHTML = "Edit";
     span1.className = "edit-context";
 
-
     var span2 = document.createElement("SPAN");
     span2.innerHTML = "Remove";
     span2.className = "remove-output";
 
-
     div.appendChild(span1);
     div.appendChild(span2);
-
 
     document.body.appendChild(div);
 
@@ -339,14 +337,13 @@ function removeOutput(){
 
     console.log("REMOVE OUTPUT ENTRY",eltID,name);
 
-
     $(".sensor-setting-more #sortable-sens-output .selected").filter("[eltID="+ eltID + "]").hide();
     $("#sortable-sens-output section").filter("[eltID="+ eltID + "]").removeClass('selected');  
     
     /// Update removed output.
     sensorManager.removeOutput(eltID,name);
-
 }
+
 
 /*
 $(".currentV").on('input', changeCur);

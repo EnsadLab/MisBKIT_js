@@ -35,7 +35,8 @@ class Dxl{
             angleMax: 150,
             speedMin: -100,
             speedMax: 100,
-            torqueMax: 1023
+            torqueMax: 1023,
+            midi:{port:"",msg:"CC:0"}
         };
 
         this.index   = index;

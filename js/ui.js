@@ -146,31 +146,36 @@ function showScript(){
 
 // SCript function
 $("#run-code").bind('click', function(){
-
+	console.log("#runcode:1",this);
 	$(this).html('Running...');
 	$(this).addClass('active');
 	$(this).css('opacity', 0.5);	
-	$("#stop-code").css('opacity', 1);	
-
-	$("#stop-code").bind('click', stopCode);
-	
+	$("#stop-code").css('opacity', 1);
+	console.log("#runcode:2",this);
 })
 
+$("#stop-code").bind('click', stopCode);
 function stopCode(){
+	console.log("#stopcode");
 	$("#run-code").html('Run');
 	$("#run-code").removeClass('active');
 	$("#run-code").css('opacity', 1);
-	$(this).css('opacity', 0.5);
-	$("#stop-code").unbind('click', stopCode);
+	//$(this).css('opacity', 0.5);  //called from elsewhere (eg stopped before load)
+	$("#stop-code").css('opacity', 0.5);
+	//$("#stop-code").unbind('click', stopCode); //??? why ???
 }
 
-
-
-
-
 // FOR CODEMIROR (code editor in script mode)
-var value = "// Enter your code here";
-  
+var value = "// minimal example\n\n"
+		  + "var a = 0\n\n"
+		  + "this.setup = function(){\n"
+		  + "   console.log('setup!');\n"
+		  + "}\n"
+		  + "this.loop = function(){\n"
+		  + "  dxlManager.setAngle(0, Math.sin(a)*150 );\n"
+		  + "  a+=0.2;\n"
+		  + "}\n";
+			  
 var editor = CodeMirror(document.body.getElementsByClassName("input-code")[0], {
 	value: value,
 	lineNumbers: true,

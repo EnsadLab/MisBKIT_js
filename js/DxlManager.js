@@ -97,7 +97,7 @@ DxlManager.prototype.init =function(){
 }
 
 DxlManager.prototype.cmdOld = function(cmd,index,arg){
-    console.log("dxl cmdOLD: ",index," cmd:",cmd," arg:",arg);
+    console.log("DEPRECATED dxl cmdOLD: ",index," cmd:",cmd," arg:",arg);
     if(this[cmd]){
         this[cmd](index,arg);
     }
@@ -229,15 +229,17 @@ DxlManager.prototype.saveSettings = function () {
     }
 
     var json = JSON.stringify(s, null, 2);
-    fs.writeFileSync(__dirname + "/settings.json", json);
+    //fs.writeFileSync(__dirname + "/settings.json", json);
+    fs.writeFileSync(__appPath + "/settings.json", json);
     console.log(json);
 
     return this.savecount;
 }
 
 DxlManager.prototype.loadSettings = function () {
-    console.log("loading dxl manager settings");
-    var json = fs.readFileSync(__dirname + "/settings.json", 'utf8');
+    console.log("loading dxl manager settings:");
+    //var json = fs.readFileSync(__dirname + "/settings.json", 'utf8');
+    var json = fs.readFileSync(__appPath + "/settings.json", 'utf8');
     if (json) {
         var s = JSON.parse(json);
         //this.serialPort = s.serialPort;

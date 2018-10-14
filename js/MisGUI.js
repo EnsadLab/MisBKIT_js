@@ -213,8 +213,8 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                     });
                     break;
                 case "submit":  //button
-                    //console.log("button",$(this).attr("func"));
                     $(this).on("click",function(){
+                        console.log("button",$(this).attr("func"),manager);
                         manager.cmd($(this).attr("func"),$(this).attr("eltID"),true,$(this).attr("param")); //value? param? ... à discuter                           
                     });
                     break;
@@ -1140,7 +1140,7 @@ MisGUI.prototype.init =function(){
         console.log("midi over");
         misGUI.scanMidiPorts();
     }
-    
+
     //this.scanSerial();    /*Didier*/
     this.scanMidiPorts();
     this.scanIPv4(); //Didier
@@ -1242,8 +1242,40 @@ MisGUI.prototype.showOSC = function(settings){
     div.find("[name=oscRemotePort]").val(settings.oscRemotePort);    
 }
 
+MisGUI.prototype.openLoadDialog = function( title , path , callback ){
+    dialog.showOpenDialog({
+            title:title, //no effect ???
 
+            defaultPath:path,
+            properties:['openFile','multiSelections']
+        },
+        function(filenames){
+            if(callback){
+                if(filenames){
+                    for(var i=0;i<filenames.length;i++) {
+                        console.log("load:",filenames[i]);
+                        callback(filenames[i]);
+                    }
+                }
+            }
+        }
+    );
+};
 
+MisGUI.prototype.openSaveDialog = function( title , path , callback ){
+    console.log("guisave:",path)
+    dialog.showSaveDialog({   
+            title:title, //no effect ???
+            message:title, //osX
+            defaultPath:path
+        },
+        function( filepath ){
+            console.log("gui to save:",filepath);
+            if( (path!=undefined)&&(callback!=undefined) )
+                callback(filepath);
+        }
+    );
+};
 
 //TODELETE
 MisGUI.prototype.setDxlRegDEL=function(i,name,val){
@@ -1652,6 +1684,20 @@ MisGUI.prototype.clearDxlRegs = function(dxlid) {
 MisGUI.prototype.showDxlReg = function(id,addr,val){ //showValue ?
     var nm = ("000"+addr).slice(-3);
     $('#divDxlReg').find("[param="+nm+"]").val(val);
+}
+
+//------------------ editor ------------------------------
+
+MisGUI.prototype.getScript = function(){
+    return editor.getValue(); // cf ui.js
+}
+
+MisGUI.prototype.setScript = function(code){
+    editor.setValue(code); // cf ui.js
+}
+
+MisGUI.prototype.stopScript = function(){
+    stopCode(); // cf ui.js
 }
 
 

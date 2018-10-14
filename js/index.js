@@ -4,10 +4,15 @@
 //const electron = window.require('electron');
 
 //var app = require('electron').remote.require('app')
+
 //var remote  = require('remote');
 //require('electron').hideInternalModules()
 //VersionHTML
 //https://github.com/EnsadLab/MisBKIT_processing.git
+
+//import path from 'path';
+//import {remote} from 'electron';
+//console.log("PAAAATH:",remote.app.getAppPath());
 
 
 //var detectSSid = require('detect-ssid');
@@ -19,6 +24,9 @@ detectSSid(function(error, ssidname) {
 
 const ipc = require('electron').ipcRenderer;
 var remote = require('electron').remote;
+var __appPath = remote.app.getAppPath();
+console.log("APP PATH:",__appPath )
+
 var dialog = remote.dialog;
 const OS = require('os');
 var fs = require('fs');
@@ -43,9 +51,11 @@ var oscMobilizing = null;
 
 //=============== security :
 //https://electronjs.org/docs/tutorial/security#7-override-and-disable-eval
+/*
 window.eval = global.eval = function () { //??? remove security warning ??? 
     throw new Error(`Sorry, this app does not support window.eval().`)
 }
+*/
 
 //ipc.on('close) is called before onbeforeunload
 window.onbeforeunload=function(){

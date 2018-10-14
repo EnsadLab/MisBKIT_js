@@ -3,17 +3,19 @@
  */
 /******** WORK IN PROGRESS **********/
 
-settingsManager = require("./DxlManager.js");
+settingsManager = require("./SettingsManager.js");
 cm9Com = require("./Cm9Manager.js");
 dxlManager    = require("./DxlManager.js");
 sensorManager = require("./SensorManager.js");
 robusManager  = require("./RobusManager.js");
 oscManager    = require("./OscManager.js");
 oscMobilizing = require("./OscMobilizing.js");
+scriptManager = require("./ScriptManager.js");
 
 module.exports = class MisBKIT{
     constructor(){
        this.name = "MisBKIT";
+       this.updateTimer;
     }
 
     init(){
@@ -41,10 +43,21 @@ module.exports = class MisBKIT{
         sensorManager.init();
         dxlManager.init(); //before loadSettings
         robusManager.init();
+        scriptManager.init();
+
         settingsManager.loadSettings();
 
+        this.updateTimer = setInterval(this.update.bind(this),45); //~50ms
 
+    }
 
+    stop(){
+        clearInterval(this.updateTimer);
+        scriptManager.stop();
+    }
+
+    update(){ //"Mainloop"
+        scriptManager.update();
     }
 
 }

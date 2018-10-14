@@ -7,14 +7,20 @@ function SettingsManager(){
     this.animationFolder = "";
     this.configurationFolder = "";
     this.sensorFolder = "";
+    this.scriptFolder = "";
 };
 var stgmng = new SettingsManager();
 module.exports = stgmng;
 
-    
+SettingsManager.prototype.glop = function(filename,data){
+    console.log("saveToSensors",filename,data);
+    //fs.writeFileSync(this.sensorFolder + filename, data ); 
+}
+
+
 SettingsManager.prototype.loadSettings = function(){
-    console.log("DIR NAME " + __dirname + "" + "/pathSettings.json");
-    var json = fs.readFileSync(__dirname + "/pathSettings.json", 'utf8');
+    console.log("DIR NAME " + __appPath + "" + "/pathSettings.json");
+    var json = fs.readFileSync(__appPath + "/pathSettings.json", 'utf8');
     if (json) {
         var s = JSON.parse(json);
 
@@ -22,10 +28,12 @@ SettingsManager.prototype.loadSettings = function(){
         this.animationFolder = s.misBKITFolder + "Animations/";
         this.configurationFolder = s.misBKITFolder + "Configurations/"; //s.configurationFolder;
         this.sensorFolder = s.misBKITFolder + "Sensors/"; //s.configurationFolder;
+        this.scriptFolder = s.misBKITFolder + "Scripts/"
 
         this.chooseMisBKITFolder();
         
     }
+    this.getScriptFolder();
 };
 SettingsManager.prototype.saveSettings = function () {
     console.log("entering settings manager save");
@@ -40,7 +48,7 @@ SettingsManager.prototype.saveSettings = function () {
     //console.log(this.configurationFolder);
 
     var json = JSON.stringify(s, null, 2);
-    fs.writeFileSync(__dirname + "/pathSettings.json", json);
+    fs.writeFileSync(__appPath + "/pathSettings.json", json);
     console.log(json);
 
 };
@@ -104,6 +112,9 @@ SettingsManager.prototype.chooseMisBKITFolder = function() {
 
                     }
                 });
+
+                self.getScriptFolder();
+
             }
         });
     } else { // if directories have already been created!
@@ -113,6 +124,24 @@ SettingsManager.prototype.chooseMisBKITFolder = function() {
         sensorManager.folderIsReady(this.sensorFolder);
     }
 };
+
+// Didier: TODO generic getUserFolder( name , callback )
+//    eg /Scripts is not created if misBKITFolder allready exists 
+SettingsManager.prototype.getScriptFolder = function(){   //name , cb ){
+    this.scriptFolder = this.misBKITFolder + "Scripts/";
+    if(!fs.existsSync(this.scriptFolder)){
+        console.log("FOLDER! script " + this.scriptFolder);
+        fs.mkdir(this.scriptFolder, function (err) {
+            if (err != null && err.code != 'EEXIST') {
+                console.log('failed to create Scripts directory', err);
+            } else {
+                console.log('created Scripts directory');
+            }
+        });
+    }
+    scriptManager.folderIsReady(this.scriptFolder);
+}
+
 
 // check whether the files already exist in the user directory. If yes, use these ones as the user
 // could have changed them while not running misBKIT.
@@ -144,19 +173,18 @@ SettingsManager.prototype.copyFiles = function(){
 SettingsManager.prototype.copyPasteToUserFolder = function(filename){
     //console.log("copying from " + __dirname + "/" + filename);
     //console.log("to " + this.configurationFolder + filename);
-   fs.writeFileSync(this.configurationFolder + filename, fs.readFileSync(__dirname + "/" + filename));
+   fs.writeFileSync(this.configurationFolder + filename, fs.readFileSync(__appPath + "/" + filename));
 }
 
 
 SettingsManager.prototype.copyPasteFromUserFolder = function(filename){
 
     console.log("should copy to programm folder from ",this.configurationFolder + filename );
-    fs.writeFileSync(this.configurationFolder + filename, fs.readFileSync(__dirname + "/" + filename));
+    fs.writeFileSync(this.configurationFolder + filename, fs.readFileSync(__appPath + "/" + filename));
     //fs.createReadStream(this.configurationFolder + filename)
       //      .pipe(fs.createWriteStream(__dirname + "/" + filename));
 }
 
-//Didier (used by SensorManager.saveSensorSettings)
 SettingsManager.prototype.saveToConfigurationFolder = function(filename,data){
     fs.writeFileSync(this.configurationFolder + filename, data );    
 }
