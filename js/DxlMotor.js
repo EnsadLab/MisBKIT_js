@@ -308,6 +308,7 @@ Dxl.prototype.angleRange = function(min,max){
 
 Dxl.prototype.joint = function(){
     this.m.mode = DXL_JOINT;
+    this.m.jointSpeed = this.m.speedMax; //OK: good solution
     this.speed(this.m.jointSpeed);
     misGUI.motorAngle(this.index,this.wantedAngle); //updated by currPos
     console.log("----- Dxl.joint: ----",this.index,this.m.mode,this._curAngle);
@@ -452,6 +453,9 @@ Dxl.prototype.speedMin = function(val){
 Dxl.prototype.speedMax = function(val){
     //console.log("DXL-speedMax:",val);
     this.m.speedMax = val;
+    this.m.jointSpeed = val;
+    if(this.m.mode == DXL_JOINT)
+        this.speed(val);
     return this;
 };
 
