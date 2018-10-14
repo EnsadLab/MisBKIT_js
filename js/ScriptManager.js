@@ -1,8 +1,9 @@
 /**
  * Created by Didier on 20/08/18.
  */
-
  //TODO : UI : [save as]  or [name]
+
+ motor = require("./DxlManager.js"); //motor.foo() = dxlManager.foo()
 
 
 class scriptManager {
@@ -13,6 +14,7 @@ class scriptManager {
         this.currentName = "example.js";
         this.running = false;
         this.script;
+        //should I store source here ?
     }
     
     init(){
@@ -32,6 +34,13 @@ class scriptManager {
         }
     }
 
+    setName(name){
+        if( name.indexOf('.')<0 ) //no extension
+            this.currentName = name+".js";
+        else
+            this.currentName = name;
+    }
+
     load(){
         console.log("scriptManager load");
         this.stop();
@@ -39,10 +48,17 @@ class scriptManager {
     }
 
     loadCurrent( filePath ){
-        this.stop();
+        this.stop();        
         console.log("scriptManager loading:",filePath);
+        var i = filePath.lastIndexOf('/')+1;
+        if(i>1){
+            this.currentName = filePath.slice(i);
+            this.folder = filePath.slice(0,i);
+            misGUI.showValue({class:this.className,func:"setName",val:this.currentName})
+        }
+        //else ... what !?
+
         var code = fs.readFileSync( filePath , 'utf8');
-        console.log("scriptManager loaded:",code);
         if(code != undefined){
             misGUI.setScript(code);
         }

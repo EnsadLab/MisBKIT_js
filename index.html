@@ -723,7 +723,7 @@
 						<input type="checkbox" func="enable" class="power float-left cmdTog" name ="sensorOnOff" title="enable/disable">
 
 						<input type="text" func="onNameText" class="float-left medium" placeholder="Sensor name" name="sensorName" size="58">
-
+						<button class="small20 float-right">x</button>
 						<p class="info medium-75 float-left" func="textDescription" type="text">CM9 to OSC aaaaaaaaaabbbbbbbbbb</p>
 						<div class="sensor-setting">
 							<div class="live-value-ui">•</div>
@@ -1092,6 +1092,7 @@
 			<div class="script-panel scriptManager">
 				<div class="ctrl-row">
 					<button func="load" id="load-code" class="float-left">Load</button>
+					<input type="text" func="setName" class="float-left medium" placeholder="Script_name" size="58">
 					<button func="stop" id="stop-code" class="float-right stop">Stop</button>
 					<button func="run"  id="run-code" class="float-right valid">Run</button>
 					

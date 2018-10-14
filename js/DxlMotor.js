@@ -16,10 +16,7 @@ const DXL_JOINT = 0;
 const DXL_WHEEL = 1;
 //TODO multitour ...
 
-
-
-//function Dxl(index){
-//module.exports =  //later
+//module.exports = !!! --> donot use Dxl.prototype.xxxx
 class Dxl{
     constructor(index){
         this.m = { //settings
@@ -61,7 +58,6 @@ class Dxl{
     }
 }
 module.exports = Dxl;
-
 
 Dxl.prototype.sendGoalSpeed = function(){
     if(this.m.dxlID>0){
