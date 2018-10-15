@@ -1,6 +1,6 @@
 {
-  "savecount": 94,
-  "cm9Num": 1,
+  "savecount": 108,
+  "cm9Num": 0,
   "oscPorts": {
     "oscRemoteIP": "localhost",
     "oscLocalPort": 4444,
@@ -12,54 +12,33 @@
   "anims": [],
   "sensors": [
     {
-      "name": "Sensor_name"
+      "name": "Random00"
     },
     {
-      "name": "Sensor_name"
-    },
-    {
-      "name": "Sensor_test"
+      "name": "SinusTest"
     }
   ],
   "motors": [
     {
-      "dxlID": 1,
+      "dxlID": 23,
       "enabled": false,
-      "model": -1,
+      "model": 12,
       "clockwise": true,
-      "mode": 0,
-      "jointSpeed": 100,
+      "mode": 1,
+      "jointSpeed": 5,
       "angleMin": -150,
       "angleMax": 150,
       "speedMin": -100,
-      "speedMax": 100,
+      "speedMax": 5,
       "torqueMax": 1023,
       "midi": {
         "port": "",
         "msg": "CC:0"
       },
-      "id": 1
+      "id": 23
     },
     {
-      "dxlID": 2,
-      "enabled": false,
-      "model": -1,
-      "clockwise": true,
-      "mode": -1,
-      "jointSpeed": 100,
-      "angleMin": -150,
-      "angleMax": 150,
-      "speedMin": -100,
-      "speedMax": 100,
-      "torqueMax": 1023,
-      "midi": {
-        "port": "",
-        "msg": "CC:0"
-      },
-      "id": 2
-    },
-    {
-      "dxlID": 3,
+      "dxlID": 0,
       "enabled": false,
       "model": -1,
       "clockwise": true,
@@ -74,10 +53,10 @@
         "port": "",
         "msg": "CC:0"
       },
-      "id": 3
+      "id": 0
     },
     {
-      "dxlID": 4,
+      "dxlID": 0,
       "enabled": false,
       "model": -1,
       "clockwise": true,
@@ -92,9 +71,10 @@
         "port": "",
         "msg": "CC:0"
       },
-      "id": 4
+      "id": 0
     },
     {
+      "dxlID": 0,
       "enabled": false,
       "model": -1,
       "clockwise": true,
@@ -108,9 +88,11 @@
       "midi": {
         "port": "",
         "msg": "CC:0"
-      }
+      },
+      "id": 0
     },
     {
+      "dxlID": 0,
       "enabled": false,
       "model": -1,
       "clockwise": true,
@@ -124,7 +106,26 @@
       "midi": {
         "port": "",
         "msg": "CC:0"
-      }
+      },
+      "id": 0
+    },
+    {
+      "dxlID": 0,
+      "enabled": false,
+      "model": -1,
+      "clockwise": true,
+      "mode": -1,
+      "jointSpeed": 100,
+      "angleMin": -150,
+      "angleMax": 150,
+      "speedMin": -100,
+      "speedMax": 100,
+      "torqueMax": 1023,
+      "midi": {
+        "port": "",
+        "msg": "CC:0"
+      },
+      "id": 0
     }
   ]
 }

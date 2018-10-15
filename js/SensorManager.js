@@ -42,6 +42,7 @@ class SensorManager{
         this.sensorID = 0;
         this.sensor_files = [];
         this.sensorSelected = undefined;
+        this.loading = false;
     }
 
     cmpReverse(a,b) {
@@ -160,6 +161,13 @@ class SensorManager{
         this.sensor_files = sensor_files;
     }
 
+    uiLoad(){ //Becoz folder
+        if(!this.loading){ //prevent multiclicks 
+            this.loading = true
+            misGUI.openLoadDialog("Load sensor:",this.sensorFolder,this.loadSensorFromGUI.bind(this))
+        }
+    }
+
     loadSensorFromGUI(filename){
         var sensorID = this.loadSensorFromJson(filename);
         if(sensorID != undefined){
@@ -168,6 +176,7 @@ class SensorManager{
             this.initSensor(sensorID);
             MisGUI_sensors.selectSensor(sensorID);
         }
+        this.loading = false
     }
 
     loadSensors(){
@@ -231,11 +240,11 @@ class SensorManager{
         }
     }
 
-    cmd(func,eltID,arg1,arg2){
-        console.log("SensorCmd:",func,eltID,arg1,arg2);
+    cmd(func,eltID,val,param){
+        console.log("SensorCmd:",func,eltID,val,param);
         if(this[func]){
-            if(eltID!=undefined)this[func](eltID,arg1,arg2);
-            else this[func](arg1,arg2);
+            if(eltID!=undefined)this[func](eltID,val,param);
+            else this[func](val,param);
         }
     }
 
@@ -248,11 +257,6 @@ class SensorManager{
 
     removeSensor(eltID,arg){
         console.log("sensorManager.removeSensor", eltID);
-
-        /*
-        for(var index in this.sensors){
-            console.log("REMOVE TEST: sesnsor: ",this.sensors[index].ID);
-        }*/
 
         var sensor = this.getSensorWithID(eltID);
         if(sensor != undefined){

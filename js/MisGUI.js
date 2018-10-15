@@ -1015,19 +1015,17 @@ MisGUI.prototype.init =function(){
         }
     });
 
+    /* see sensorManager.uiLoad
     $("#loadSensor").on("click",function(){
-        //dialog.showOpenDialog({properties:['multiSelections']},function(filenames) {
-        // /* versionHTML
         dialog.showOpenDialog({properties:['openFile','multiSelections']},function(filenames) {
             if(filenames){
                 for(var i=0;i<filenames.length;i++) {
-                    //console.log("FILENAME",filenames[i]);
                     sensorManager.loadSensorFromGUI(filenames[i]);
                 }
             }
         });
-        // * /
     });
+    */
 
     $("#sensor-freeze").on('click',function(){
         if($('#sensor-freeze').is(":checked")){
@@ -1245,7 +1243,7 @@ MisGUI.prototype.showOSC = function(settings){
 MisGUI.prototype.openLoadDialog = function( title , path , callback ){
     dialog.showOpenDialog({
             title:title, //no effect ???
-
+            message:title, //osX
             defaultPath:path,
             properties:['openFile','multiSelections']
         },
@@ -1258,19 +1256,18 @@ MisGUI.prototype.openLoadDialog = function( title , path , callback ){
                     }
                 }
             }
+            console.log("showOpenDialog:DONE")
         }
     );
 };
 
 MisGUI.prototype.openSaveDialog = function( title , path , callback ){
-    console.log("guisave:",path)
     dialog.showSaveDialog({   
             title:title, //no effect ???
             message:title, //osX
             defaultPath:path
         },
         function( filepath ){
-            console.log("gui to save:",filepath);
             if( (path!=undefined)&&(callback!=undefined) )
                 callback(filepath);
         }

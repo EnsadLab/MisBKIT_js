@@ -23,7 +23,6 @@ class scriptManager {
     }
 
     folderIsReady(folder){
-        console.log("scriptManager:folder:",folder);
         this.folder = folder;
     }    
     
@@ -41,8 +40,7 @@ class scriptManager {
             this.currentName = name;
     }
 
-    load(){
-        console.log("scriptManager load");
+    load(){ //Becoz folder
         this.stop();
         misGUI.openLoadDialog("Load script :",this.folder+this.currentName,this.loadCurrent.bind(this))
     }

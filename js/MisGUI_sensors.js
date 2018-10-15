@@ -6,12 +6,19 @@ var MisGUI_sensors = {}; // namespace javascript simulation
 MisGUI_sensors.anim_names = [];
 
 
-MisGUI_sensors.selectSensor = function(eltID){
+MisGUI_sensors.selectSensor = function(eltID){    
     if(eltID != undefined){
+    /*
         $(".single-sensor").removeClass("activ");
         $(".single-sensor").filter("[eltID="+ eltID + "]").addClass("activ");
+    */
+        misGUI.radioActivate(".single-sensor",eltID);
+    /*    
         $(".sensor-setting-more").hide();
         $(".sensor-setting-more").filter("[eltID="+ eltID + "]").show();
+    */
+       misGUI.radioHide(".sensor-setting-more",eltID);
+
     }
 }
 

@@ -34,6 +34,7 @@ const ERR_INSTR     = 0x40;
 const MISB_INSTR    = 0x7F;
 const MISB_ADDR     = 0xFD;
 
+/* ---> dlxMotor.js
 const ADDR_MODEL       = 0;
 const ADDR_ID          = 3;
 const ADDR_CW_LIMIT    = 6;
@@ -49,7 +50,7 @@ const ADDR_SPEED       = 32;
 const ADDR_TORQUE      = 34;
 const ADDR_POSITION    = 36;
 const ADDR_TEMPERATURE = 43;
-
+*/
 
 function DxlManager(){
 

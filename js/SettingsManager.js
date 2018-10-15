@@ -12,11 +12,6 @@ function SettingsManager(){
 var stgmng = new SettingsManager();
 module.exports = stgmng;
 
-SettingsManager.prototype.glop = function(filename,data){
-    console.log("saveToSensors",filename,data);
-    //fs.writeFileSync(this.sensorFolder + filename, data ); 
-}
-
 
 SettingsManager.prototype.loadSettings = function(){
     console.log("DIR NAME " + __appPath + "" + "/pathSettings.json");

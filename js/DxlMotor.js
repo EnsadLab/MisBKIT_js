@@ -11,6 +11,24 @@
 //          MR (read motor) id reg
 //          réponse MV index reg value
 
+//TODO how 
+const ADDR_MODEL       = 0;
+const ADDR_ID          = 3;
+const ADDR_CW_LIMIT    = 6;
+const ADDR_CCW_LIMIT   = 8;
+const ADDR_TORQUE_ENABLE = 24;
+const ADDR_LED         = 25;
+const ADDR_MARGIN_CW   = 26;
+const ADDR_MARGIN_CCW  = 27;
+const ADDR_SLOPE_CW    = 28;
+const ADDR_SLOPE_CCW   = 29;
+const ADDR_GOAL        = 30; //0x1E
+const ADDR_SPEED       = 32;
+const ADDR_TORQUE      = 34;
+const ADDR_POSITION    = 36;
+const ADDR_TEMPERATURE = 43;
+
+
 const DXL_OFF = -1; //RELAX
 const DXL_JOINT = 0;
 const DXL_WHEEL = 1;
