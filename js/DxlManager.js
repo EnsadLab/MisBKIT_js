@@ -608,7 +608,7 @@ DxlManager.prototype.dxlWrite = function(dxlid,val,addr) { //id val param
 }
 
 DxlManager.prototype.temperature = function(args){
-    //console.log("temperature:",args[1],args[2]);
+    console.log("temperature:",args);
     misGUI.temperature(args[1],args[2]);
     oscMobilizing.sendOSC({
         address:"/mbk/temperature",
@@ -735,7 +735,7 @@ DxlManager.prototype.onControl = function(index,val){
 
 
 DxlManager.prototype.setAngle = function(index,val){ //degrés
-    console.log("DxlManager:setangle:",index,val);
+    //console.log("DxlManager:setangle:",index,val);
     if(index<this.motors.length){
         var a = this.motors[index].angle(val);
         misGUI.motorAngle(index,a);

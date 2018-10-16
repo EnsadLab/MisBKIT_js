@@ -277,7 +277,6 @@ MisGUI.prototype.setManagerValue = function( className , func , value , eltID, p
     if(eltID)sel+="[eltID="+eltID+"]";
     if(func)sel+="[func="+func+"]";
     if(param)sel+="[param="+param+"]";
-    console.log("DEPRECATED setManagerValue:",sel);
     var elt = $(sel);
     if(elt.length > 0){
         this.setElementValue(elt,value);
@@ -645,8 +644,8 @@ MisGUI.prototype.getMotorStg = function(index){
 MisGUI.prototype.alert = function(msg){
     var bt = dialog.showMessageBox({
         type:"error",
-        //title:"change ID to "+val+" ?", //OSX: no title ???
-        message:msg,
+        message:msg, //OSX
+        title:msg,   //others
         buttons:["Ok"]
     });
 }

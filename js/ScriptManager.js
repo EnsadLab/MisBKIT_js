@@ -5,6 +5,10 @@
 
  motor = require("./DxlManager.js"); //motor.foo() = dxlManager.foo()
 
+var delay = function(ms){
+    console.log("----- DELAY -----",ms);
+}
+
 
 class scriptManager {
     constructor(){
@@ -13,7 +17,7 @@ class scriptManager {
         this.folder = "";
         this.currentName = "example.js";
         this.running = false;
-        this.script;
+        this.script = function(){};
         //should I store source here ?
     }
     
@@ -80,35 +84,85 @@ class scriptManager {
                 this.script.loop();
             }catch(err){
                 this.stop();
-                console.log("*** SCRIPT ERROR ****:",err);
+                misGUI.alert("Script Error :\n"+err);
             }
         }
     }
 
     run(){
         this.stop();
-        this.saveCurrent(this.folder+this.currentName);
-
+        this.saveCurrent(this.folder+this.currentName); //modified ?
         var code = misGUI.getScript();
-        this.script = new Function(code); //"return 42  OK"
-        this.script.call(this.script); //construct, with good this
-        if(this.script["setup"]!=undefined){
-            try{ this.script.setup(); }
-            catch(err){console.log("***** script setup :",err)}
+        try{
+            this.script = new Function(code); //"return 42  OK"
+            this.script.call(this.script);    //construct, with good this
+            //console.log("function?:",typeof(this.script.setup));
+
+
+            this.script.delay = async function(ms){
+                console.log("---- DELAY -----",ms);
+                return new Promise(resolve  => {
+                    setTimeout(() => {
+                        console.log("resolve?");
+                    resolve(2);
+                    }, ms);
+                });
+            }
+
+
+            if(typeof(this.script.setup == "function"))
+                this.script.setup();
+            this.play();
+        }catch(err){
+            misGUI.alert("Script Error :\n"+err);
+            console.log("RUN ERROR")
+            this.logError(err);
         }
-        if(this.script["loop"]!=undefined)
+    }
+
+    play(){
+        console.log("---PLAY---");
+        if(typeof(this.script.loop) == 'function')
             this.running = true;
-        else
-            this.stop()
+    }
+
+    pause(){ //TODO GUI
+        this.running = false;
+        //-->dont loop. handle intervals or timers ???
     }
 
     stop(){
+        if(typeof(this.script.stop) == 'function'){
+            try{ this.script.stop(); }
+            catch(err){misGUI.alert("Script Error :\n"+err);}
+        }
         this.running = false;
         //misGUI.stopScript();  //update buttons ??? 
         //stopCode(); //??? --> les boutons ne se transforment plus ?????? 
         console.log("scriptManager stopped");
     }
 
+    delay(ms){ 
+        console.log("---- DELAY -----",ms);
+        return new Promise(resolve  => {
+            setTimeout(() => {
+            resolve(2);
+            }, ms);
+        });
+    }
+
+    /*
+    logError(err){
+        console.log("Dump ERROR:",err.lineNumber)
+        for (var prop in err){ //nothing!!!
+            console.log(prop + err[prop]);
+        } 
+        console.log(" line",err.lineNumber)
+        console.log(" name",err.name)
+        console.log(" dscr",err.description)
+        console.log(" stack",err.stack)
+    }
+    */
 
 }
 scriptManager  = new scriptManager();
