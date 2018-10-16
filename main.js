@@ -13,6 +13,8 @@
 //cecile path: /Users/Cecile ?
 //didier path: /Users/Didier/Documents/
 
+// COUCOU
+
 //*** on alex branch ***/
 const electron = require('electron');
 var fs = require('fs');
