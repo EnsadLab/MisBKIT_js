@@ -125,4 +125,6 @@ class OscMobilizing{
                 
     }
 }
+var oscmbz = new OscMobilizing();
+module.exports = oscmbz;
 

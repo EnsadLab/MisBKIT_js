@@ -4,10 +4,15 @@
 //const electron = window.require('electron');
 
 //var app = require('electron').remote.require('app')
+
 //var remote  = require('remote');
 //require('electron').hideInternalModules()
 //VersionHTML
 //https://github.com/EnsadLab/MisBKIT_processing.git
+
+//import path from 'path';
+//import {remote} from 'electron';
+//console.log("PAAAATH:",remote.app.getAppPath());
 
 
 //var detectSSid = require('detect-ssid');
@@ -19,6 +24,9 @@ detectSSid(function(error, ssidname) {
 
 const ipc = require('electron').ipcRenderer;
 var remote = require('electron').remote;
+var __appPath = remote.app.getAppPath();
+console.log("APP PATH:",__appPath )
+
 var dialog = remote.dialog;
 const OS = require('os');
 var fs = require('fs');
@@ -28,6 +36,8 @@ const osc  = require('osc-min');
 const serialPort = require('serialport');
 
 
+//GLOBALS >>> MisBKIT.js ????
+var MBK = null;
 var settingsManager = null; //cf SettingsManager.js
 var dxlManager = null;
 var misGUI     = null; //cf MisGui.js
@@ -39,6 +49,13 @@ var cm9Com     = null;
 var robusManager = null;
 var oscMobilizing = null;
 
+//=============== security :
+//https://electronjs.org/docs/tutorial/security#7-override-and-disable-eval
+/*
+window.eval = global.eval = function () { //??? remove security warning ??? 
+    throw new Error(`Sorry, this app does not support window.eval().`)
+}
+*/
 
 //ipc.on('close) is called before onbeforeunload
 window.onbeforeunload=function(){
@@ -148,44 +165,48 @@ function showConfig(show){
 //$(function() {
 window.onload = function() {
 
-    // TODO: ordering had to be changed -> @Didier: is it a problem how it is now? No
-    settingsManager = new SettingsManager();
-    //cm9Com = new CM9udp();
-    cm9Com = new Cm9TCPclient();
-
-    robusManager = new RobusManager();
-
-    motorMappingManager = new MotorMappingManager();
-
-    oscManager = new OscManager();
-    dxlManager = new DxlManager();
-    sensorManager = new SensorManager();
-    
-    try{ midiPortManager = new MidiPortManager(); }catch(e){console.log(e);}
     misGUI     = new MisGUI();
     misGUI.init();
-    sensorManager.init();
-    settingsManager.loadSettings();
+
+    // TODO: ordering had to be changed -> @Didier: is it a problem how it is now? No
+    //settingsManager = new SettingsManager(); >>>>>> MISBKIT.js
+
+    //cm9Com = new Cm9TCPclient(); >>>>>> MISBKIT.js
+
+    //robusManager = new RobusManager(); >>>>>> MISBKIT.js
+
+    //motorMappingManager = new MotorMappingManager(); >>>>>> MISBKIT.js
+
+    //oscManager = new OscManager(); >>>>>> MISBKIT.js
+    //dxlManager = new DxlManager(); >>>>>> MISBKIT.js
+    //sensorManager = new SensorManager(); >>>>>> MISBKIT.js
+
+    //var toto = require("./js/AnimManager.js");
+
+
+    var MisBKit = require("./js/MisBKIT.js");
+    var MBK = new MisBKit();
+    MBK.init(); //needs misGUI initialized
+
+    
+    //try{ midiPortManager = new MidiPortManager(); }catch(e){console.log(e);} >>>>>> MISBKIT.js
+    //sensorManager.init(); >>>>>> MISBKIT.js
+    //settingsManager.loadSettings(); >>>>>> MISBKIT.js
 
     //oscManager.open();
 
-    oscMobilizing = new OscMobilizing();
+    //oscMobilizing = new OscMobilizing(); >>>>>> MISBKIT.js
     
-    robusManager.init();
+    //robusManager.init(); >>>>>> MISBKIT.js
 
-    //dxlManager.loadSettings(); //-> now called from settingsManager when directories are ready
-    
-    //try{ cm9Com = new SerialClass(); }catch(e){}
-    //try{ oscCm9 = new OSCcm9(); cm9Com.open();}catch(e){}
-    //try{ cm9Com = new CM9_UDP(); cm9Com.open();}catch(e){}
-    
+    //dxlManager.loadSettings(); //-> now called from settingsManager when directories are ready    
     //motorMappingManager.loadMappingSettings(); //-> now called from settingsManager when directories are ready
     //sensorManager.loadSensorSettings(); //-> now called from settingsManager when directories are ready
 
-    $(".rotAngle").on("mousewheel",function(e){e.preventDefault();});
-    $(".rotSpeed").on("mousewheel",function(e){e.preventDefault();});
+    //$(".rotAngle").on("mousewheel",function(e){e.preventDefault();}); //>>>>>>>> MisGUI
+    //$(".rotSpeed").on("mousewheel",function(e){e.preventDefault();}); //>>>>>>>> MisGUI
 
-    dxlManager.update(); //start
+    //dxlManager.update(); //start //>>>>>> MISBKIT.js
 
 
     $('body').keydown(function(e) {

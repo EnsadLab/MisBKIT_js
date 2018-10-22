@@ -333,6 +333,7 @@ DUI.Rotary.prototype.setValue = function(v,propagate) {
     this.value = v;
     this.angle = a;
     var rad = a*Math.PI/180;
+
     this.cursor
         .attr("x2",this.cx+Math.sin(rad)*this.ray)
         .attr("y2",this.cy-Math.cos(rad)*this.ray);

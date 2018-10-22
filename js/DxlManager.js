@@ -1,16 +1,10 @@
 /**
  * Created by Didier on 27/04/16.
  */
-/*
- TODO static: ?
- num speed/joint -> dxlspeed  //DONE
- mapping sensor -> motor      //DONE
- OSC -> ... //????
- CM9 deconnectée : ajouter class warning bt CM9 ... 
- fausse valeur scan //CM9 //DONE
- temperature //TODO
-*/
 
+var Dxl = require("./DxlMotor.js");
+var Animation = require("./Animations.js");
+var animManager = require("./AnimManager.js"); //TODO :move anim functions to AnimManager
 
 const MAX_SERVOS = 6;
 
@@ -40,6 +34,7 @@ const ERR_INSTR     = 0x40;
 const MISB_INSTR    = 0x7F;
 const MISB_ADDR     = 0xFD;
 
+/* ---> dlxMotor.js
 const ADDR_MODEL       = 0;
 const ADDR_ID          = 3;
 const ADDR_CW_LIMIT    = 6;
@@ -55,12 +50,11 @@ const ADDR_SPEED       = 32;
 const ADDR_TORQUE      = 34;
 const ADDR_POSITION    = 36;
 const ADDR_TEMPERATURE = 43;
-
+*/
 
 function DxlManager(){
-    //this.pause = 0;   //>0 dont sync speeds & goals
 
-    this.savecount = 0;
+    this.savecount = 0; //debugg
 
     this.motors = [];
     this.recIndices = [];
@@ -77,24 +71,122 @@ function DxlManager(){
     this.refreshID = -1;
     this.refreshAddr = -1;
 
-
-    this.onoffMotorIndex = 0;      //TOTHINK: in DxlMotor ??? 
     this.onoffTimer = undefined;
 
     this.chgID = {prev:-1,new:-1,count:-1}; //prevID newID
-
-    //-------------------------
-    //var json = fs.readFileSync(__dirname + "/data/ax12.json", 'utf8');
-    //this.ax12regs = JSON.parse(json);
-    //$.each(this.ax12regs,function(k,v){console.log(k+":"+v);}); //object[key]);
-
-    for(var i=0;i<MAX_SERVOS;i++){
-       this.motors.push( new Dxl(i) );
-    }
-
-    this.updateTimer = setInterval(this.update.bind(this),45); //45
-
 };
+var dxlmng = new DxlManager();
+module.exports = dxlmng;
+
+
+DxlManager.prototype.init =function(){
+    console.log("------DxlManager.init-------");
+
+    misGUI.initManagerFunctions(this,"dxlManager");
+    //var dummy = new Dxl(5);
+    //this.motors.push(dummy);
+    for(var i=0;i<MAX_SERVOS;i++){
+        var momo = new Dxl(i);
+        this.motors.push( momo );
+        misGUI.addMotor(i,momo.m);
+    }
+ 
+    this.updateTimer = setInterval(this.update.bind(this),45); //start
+
+    misGUI.motorSettings(0,this.motors[0].m);
+    //DEBUG
+}
+
+DxlManager.prototype.cmdOld = function(cmd,index,arg){
+    console.log("DEPRECATED dxl cmdOLD: ",index," cmd:",cmd," arg:",arg);
+    if(this[cmd]){
+        this[cmd](index,arg);
+    }
+    else {
+        if (index < this.motors.length)
+            this.motors[index][cmd](arg);
+    }
+};
+
+//GUI cmd 
+//dxlID clockwise angleMin angleMax speedMin speedMax
+//joint wheel recCheck enable angle velocity
+DxlManager.prototype.cmd = function(func,eltID,val,param){
+    //console.log("dxlManager:cmd:",func,eltID,val,param);
+    if(this[func]){
+        this[func](+eltID,val,param); //eltID=index
+    }
+    else{
+        if( this.motors[+eltID] ){
+            if( this.motors[+eltID][func] ){
+                this.motors[+eltID][func](val,param);
+                //clockwise
+            }
+            else console.log("DxlManager.cmd:BAD FUNC:",func,eltID);
+        }
+        else console.log("DxlManager.cmd:BAD ID:",func,eltID);
+    }
+}
+
+
+
+DxlManager.prototype.midiMapping =function(eltID,val,param){
+    console.log("DxlManager:midiMapping:",eltID,param,val);
+    switch(param){
+        case "port":
+            motorMappingManager.setMidiMotorMappingPort(+eltID,val);
+            break;
+        case "mode"://falsse:CC true:note 
+            switch(val){
+                case false:motorMappingManager.setMidiMotorMappingCmd(+eltID,"CC");break;
+                case true:motorMappingManager.setMidiMotorMappingCmd(+eltID,"note");break;
+            }    
+            break;
+        case "num":
+            motorMappingManager.setMidiMotorMappingIndex(+eltID,+val); // Gui only treats CC midi mappings for now
+            break;
+    }
+}
+
+DxlManager.prototype.dxlParam = function(eltID,val,param){
+    //clockwise angleMin angleMax speedMin speedMax
+    console.log("dxlManager:dxlParam:",eltID,val,param);    
+    if(this.motors[eltID]){
+        this.motors[eltID].m[param]=val;
+        misGUI.motorSettings(eltID,this.motors[eltID].m);
+    }
+}
+DxlManager.prototype.dxlEnable = function(eltID,val){
+    if(this.motors[+eltID])
+        this.motors[+eltID].enable(val);
+}
+
+DxlManager.prototype.dxlZero = function(eltID,val){
+    if(this.motors[+eltID])
+    this.motors[+eltID].onValue(0); 
+}
+
+DxlManager.prototype.checkRec = function(eltID,val){
+    if(eltID<this.motors.length) {
+        this.motors[eltID].rec = val;
+    }
+}
+DxlManager.prototype.dxlMode = function(eltID,val){ //true=wheel false=joint
+    if(this.motors[eltID]){
+        switch(val){
+            case false: case 0: case "joint": case "J":
+                this.motors[eltID].joint(eltID);
+                break;
+            case true: case 1: case "wheel": case "W":
+                this.motors[eltID].wheel(eltID);
+                break;
+            //TODO multitour ... GUI   
+        }
+
+    }
+    misGUI.motorMode(eltID,val);
+}
+
 
 
 DxlManager.prototype.saveSettings = function () {
@@ -138,15 +230,17 @@ DxlManager.prototype.saveSettings = function () {
     }
 
     var json = JSON.stringify(s, null, 2);
-    fs.writeFileSync(__dirname + "/settings.json", json);
+    //fs.writeFileSync(__dirname + "/settings.json", json);
+    fs.writeFileSync(__appPath + "/settings.json", json);
     console.log(json);
 
     return this.savecount;
 }
 
 DxlManager.prototype.loadSettings = function () {
-    console.log("loading dxl manager settings");
-    var json = fs.readFileSync(__dirname + "/settings.json", 'utf8');
+    console.log("loading dxl manager settings:");
+    //var json = fs.readFileSync(__dirname + "/settings.json", 'utf8');
+    var json = fs.readFileSync(__appPath + "/settings.json", 'utf8');
     if (json) {
         var s = JSON.parse(json);
         //this.serialPort = s.serialPort;
@@ -170,14 +264,16 @@ DxlManager.prototype.loadSettings = function () {
 
         this.webSocket = s.webSocket;
 
-        
         // scan has already been called by misgui when we enter here.
         for(var i=0; i<s.midiPorts.length; i++){
             console.log("opening midi port ", s.midiPorts[i]);
             midiPortManager.open(s.midiPorts[i]);
         }
 
-        for (var i = 0; i < s.motors.length; i++) {
+        var nbm = s.motors.length;
+        if(nbm>MAX_SERVOS){console.log("TO MUCH MOTORS!",nbm);nbm=6;}
+
+        for (var i = 0; i < nbm; i++ ){ //s.motors.length; i++) {
             this.motors[i].copySettings(s.motors[i]);
             misGUI.motorSettings(i, this.motors[i].m);
         }
@@ -347,23 +443,11 @@ DxlManager.prototype.buildCm9Msg = function(){
 */
 
 
-DxlManager.prototype.cmd = function(cmd,index,arg){
-    //console.log("dxl command: ",index," cmd:",cmd," arg:",arg);
-    if(this[cmd]){
-        this[cmd](index,arg);
-    }
-    else {
-        if (index < this.motors.length)
-            this.motors[index][cmd](arg);
-    }
-
-};
-
 //TODELETE ?
 DxlManager.prototype.senDxlIds = function() {
     var msg="dxlIds";
     for (var i = 0; i < this.motors.length; i++) {
-        msg+=","+this.motors[i].m.id;
+        msg+=","+this.motors[i].m.dxlID;
     }
     cm9Com.pushMessage(msg+"\n");
 }
@@ -374,7 +458,7 @@ DxlManager.prototype.stopAll = function() {
     for (var i = 0; i < this.motors.length; i++) {
         this.motors[i].enable(false);
         misGUI.dxlEnabled(i,false);
-        misGUI.speed(i,0);
+        misGUI.motorSpeed(i,0);
 
     }
     this.stopAllAnims();
@@ -385,7 +469,7 @@ DxlManager.prototype.stopAllMotors = function(){
     console.log("DxlManager.stopAllMotors!");
     for (var i = 0; i < this.motors.length; i++) {
         this.motors[i].stopMotor();
-        misGUI.speed(i,0);
+        misGUI.motorSpeed(i,0);
     }
 }
 
@@ -393,7 +477,7 @@ DxlManager.prototype.stopMotor = function(index){
     console.log("DxlManager.stopMotors!",index);
     if(index >= 0 && index < this.motors.length){
         this.motors[index].stopMotor();
-        misGUI.speed(index,0);
+        misGUI.motorSpeed(index,0);
     }
 }
 
@@ -422,7 +506,7 @@ DxlManager.prototype.startReadDxl = function(dxlId) {
 //DELETED DxlManager.prototype.onCm9Strings=function(args){
 
 DxlManager.prototype.dxlPos=function(array) {  //array[0]="dxlpos"
-    var n = array.length-1; 
+var n = array.length-1; 
     if(n>this.motors.length)
         n=this.motors.length;
     for(var i=0;i<n;i++){
@@ -517,20 +601,11 @@ DxlManager.prototype.readRegs=function(index) { //
     cm9Com.pushMessage("DR "+dxlid+","+addr+",\n");
 }
 */
-//TODELETE
-/*DxlManager.prototype.dxlWrite=function(dxlid,addr,val) { //
-        console.log("dxlWrite:",+dxlid,+addr,+val);
-        cm9Com.pushMessage("dxlW "+dxlid+","+addr+","+val+"\n");
+
+DxlManager.prototype.dxlWrite = function(dxlid,val,addr) { //id val param
+    console.log("dxlWrite:",+dxlid,+addr,+val);
+    cm9Com.pushMessage("dxlWrite "+dxlid+","+addr+","+val+"\n");
 }
-*/
-//TODELETE
-/*DxlManager.prototype.writeReg=function(index,addr,val) { //
-    if((index>=0)&&(index<this.motors.length)){
-        console.log("WriteReg:",+index,+addr,+val);
-        cm9Com.pushMessage("dxlW "+this.motors.m.id+","+addr+","+val+",\n");
-    }
-}
-*/
 
 DxlManager.prototype.temperature = function(args){
     //console.log("temperature:",args[1],args[2]);
@@ -548,6 +623,14 @@ DxlManager.prototype.temperature = function(args){
 
 
 
+//TODELETE
+/*DxlManager.prototype.writeReg=function(index,addr,val) { //
+    if((index>=0)&&(index<this.motors.length)){
+        console.log("WriteReg:",+index,+addr,+val);
+        cm9Com.pushMessage("dxlW "+this.motors.m.id+","+addr+","+val+",\n");
+    }
+}
+*/
 
 //DELETED DxlManager.prototype.version = function(arr){
 /*        var v1 = +arr[1];
@@ -608,9 +691,10 @@ DxlManager.prototype.rcvCM9 = function(datas){ //from parser
 };
 */
 
-//TODO: change the name of the function to make it more global
+//TODO: change the name of the function to make it more global >>> onNormControl
 DxlManager.prototype.onMidi = function(index,cmd,arg){
     //console.log("dxl-midi:",index," arg:",arg);
+    /* TODELETE
     if(index<this.motors.length){
         //console.log("index " + index + " " + this.motors.length);
         var dxl = this.motors[index];
@@ -621,7 +705,8 @@ DxlManager.prototype.onMidi = function(index,cmd,arg){
             misGUI.speed(index,   dxl.nSpeed(arg/127));
         }
     }
-   
+    */
+   this.onNormControl(index,arg/127);  
 };
 
 DxlManager.prototype.onNormControl = function(index,val){
@@ -631,30 +716,29 @@ DxlManager.prototype.onNormControl = function(index,val){
         if(val<0)val=0;
         if(val>1)val=1;
         if(dxl.m.mode==0) {
-            misGUI.angle(index, dxl.nAngle(val) );
+            misGUI.motorAngle(index, dxl.nAngle(val) );
         }
         else {
-            misGUI.speed(index, dxl.nSpeed(val) );
+            misGUI.motorSpeed(index, dxl.nSpeed(val) );
         }
     }
 };
 
-/*
-Attention à cmd !!!
-DxlManager.prototype.angle = function(args){
-    var index=args[0];
+// val= angle ou speed en fonsction du mode
+DxlManager.prototype.onControl = function(index,val){
+    //console.log("onControl:",index,val);
     if(index<this.motors.length){
-        misGUI.angle(index,this.motors[index].angle(args[1]));        
+        this.motors[index].onValue(val);
     }
-}
-*/
+};
+
 
 
 DxlManager.prototype.setAngle = function(index,val){ //degrés
-    console.log("setangle:",index,val);
+    console.log("DxlManager:setangle:",index,val);
     if(index<this.motors.length){
         var a = this.motors[index].angle(val);
-        misGUI.angle(index,a);
+        misGUI.motorAngle(index,a);
         return a;
     }
     return 0;
@@ -663,14 +747,14 @@ DxlManager.prototype.setAngle = function(index,val){ //degrés
 DxlManager.prototype.setAngleN = function(index,val){
     if(index<this.motors.length){
         var a=this.motors[index].nAngle(val);
-        misGUI.angle(index,a);        
+        misGUI.motorAngle(index,a);        
     }
 };
 
 DxlManager.prototype.setSpeed = function(index,val){
     if(index<this.motors.length){
         var v=this.motors[index].speed(val);
-        misGUI.speed(index,v);        
+        misGUI.motorSpeed(index,v);        
     }
 };
 
@@ -678,7 +762,7 @@ DxlManager.prototype.setSpeedN = function(index,val){
     if(index<this.motors.length){
         var v=this.motors[index].nSpeed(val);
         console.log("speedN:",val,v);
-        misGUI.speed(index,v);
+        misGUI.motorSpeed (index,v);
     }
 };
 
@@ -688,21 +772,21 @@ DxlManager.prototype.onPlay = function(index,val){
     if(index<this.motors.length){
         var dxl = this.motors[index];
         if(dxl._mode==0)
-            misGUI.angle( dxl.angle(val) );
+            misGUI.motorAngle( dxl.angle(val) );
         else
-            misGUI.speed( dxl.speed(val) );
+            misGUI.motorSpeed( dxl.speed(val) );
     }
 };
 
 
 
-
+/*
 DxlManager.prototype.recCheck=function(index,val){
     if(index<this.motors.length) {
         this.motors[index].rec = (val!=0);
     }
 }
-
+*/
 /*
 DxlManager.prototype.dxlEnabled=function(index,val){
     misGUI.dxlEnabled(index,val);
@@ -892,7 +976,7 @@ DxlManager.prototype.dxlID = function(index,id){
     var previous = null;
     if( nid>0 ){
         for(var i=0;i<this.motors.length;i++){
-            if(this.motors[i].m.id == nid){
+            if(this.motors[i].m.dxlID == nid){
                 previous = this.motors[i];
                 console.log("DxlManager.setIndexID:DUPLICATE",i," ",id);
                 this.motors[index].copySettings(previous);
@@ -953,16 +1037,15 @@ DxlManager.prototype.animChannel=function(id,num,onoff){
     }
 }
 
-DxlManager.prototype.playKey=function(cmd,index,val) {
-    if(val==NaN){
-        console.log("***************dlx.playkey NAN",cmd,index,val);
-        return
-    }
-    //console.log("dxlm.playkey:",cmd," ",index," ",val);
+DxlManager.prototype.playKey=function(cmd,index,val) { //cmd = "angle" or "speed"
+    //console.log("***************dxlm.playkey:",cmd," ",index," ",val);
+    /*
     if(index<this.motors.length) {
         this.motors[index][cmd](val);
         misGUI[cmd](index,val);
     }
+    */
+   this.motors[index].onValue(val);
 }
 
 DxlManager.prototype.stopAllAnims = function() {
@@ -1008,7 +1091,7 @@ DxlManager.prototype.servoByID = function(id){
     var len=this.motors.length;
     console.log("servolen",len);
     for(var i=0;i<len;i++){
-        if(this.motors[i].m.id==id)
+        if(this.motors[i].m.dxlID==id)
             return this.motors[i];
     }
     return null;
@@ -1067,7 +1150,7 @@ DxlManager.prototype.writeDxlId = function(index,val){
     console.log("!!!!! DXLM-writeDxlId:",index," ",val);
     var nm=this.motors.length;
     for(var i=0;i<nm;i++){
-        if((i!=index)&&(this.motors[i].m.id==val))
+        if((i!=index)&&(this.motors[i].m.dxlID==val))
             return false;
     }
     this.dxlID(index,val);
@@ -1077,7 +1160,7 @@ DxlManager.prototype.writeDxlId = function(index,val){
 
 DxlManager.prototype.getMotorByID = function(dxlID){
     for(var i=0;i<this.motors.length;i++){
-        if(this.motors[i].m.id==dxlID)
+        if(this.motors[i].m.dxlID==dxlID)
             return this.motors[i];
     }
     return undefined;    
@@ -1085,7 +1168,7 @@ DxlManager.prototype.getMotorByID = function(dxlID){
 
 DxlManager.prototype.getIDByIndex = function(index){
     if(index<this.motors.length){
-        return this.motors[index].m.id;
+        return this.motors[index].m.dxlID;
     }
     return 0;    
 }
@@ -1098,11 +1181,10 @@ DxlManager.prototype.getMode = function(index){
     return 1; //????
 };
 
+
 DxlManager.prototype.isEnabled = function(index){
     var motor = this.servoByIndex(index);
     if(motor )return motor.enabled;
     else return false;
 }
-
-
 

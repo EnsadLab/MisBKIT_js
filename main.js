@@ -7,8 +7,12 @@
 // npm install serialport
 // npm install midi
 //
-// npm install midi --runtime=electron --target=1.6.11 --disturl=https://atom.io/download/atom-shell --abi=53
+// npm install midi --runtime=electron --target=2.0.1 --disturl=https://atom.io/download/atom-shell --abi=53
+
 //electron-packager . --platform=darwin --arch=x64 --overwrite --icon=misbkit.icns
+//electron-packager . --platform=darwin --arch=x64 --overwrite --icon=misbkit.icns --prune=true --out=/Users/Didier/Documents/Dev/_MisBKIT_releases
+
+
 
 //cecile path: /Users/Cecile ?
 //didier path: /Users/Didier/Documents/
@@ -34,7 +38,9 @@ app.on('ready', function() {
   //console.log("version electron:",process.versions['electron']); //v5.10.0
   //console.log("version chrome:",process.versions['chrome']); //v5.10.0
   mainWindow = new BrowserWindow({width: 1280, height: 760});
+
   mainWindow.loadURL('file://' + __dirname + '/index.html');
+  //mainWindow.loadURL('file://' + __dirname + '/index_alex.html');
 
   //mainWindow.show();
   ////////// TO PUT IN COMMENT WHEN EXPORTING

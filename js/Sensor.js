@@ -1,17 +1,9 @@
 /**
 * Created by Cecile on 27/07/17.
+* Mofified by Didier:
+*
 */
 
-var connections = [
-    "default",
-    "cm9",
-    "osc",
-    "midi",
-    "motor",
-    "mobilizing", 
-    "animations",
-    "robus",
-]
 
 Sensor = function () {
 
@@ -47,15 +39,23 @@ Sensor = function () {
         animationsEnabledOutput: false,
         robusEnabledInput: false,
         robusInputParams: {gate:"gate",module:"",pin:""},
+        sinusEnabledInput: false,
+        sinusParams: {period:5,offset:0,current:0},
+        randomEnabledInput: false,
+        randomParams: {type:"simple",step:0,periodMin:1,periodMax:5,v1min:0,v1max:100,v2min:0,v2max:100},
+        inputEnabled: false, //TODO?
+        //inputParams: TODO ?
         ID_gui: -1,
         input_entry: "",
         output_entries:[]
     };
+
     //Suggestion:
     //   cm9:{ enabled:false , val:7 },
 
 
     this.currValue = -1;
+    this.normValue = 0;
     this.ID = -1;
     this.area = -1; // -1:nowhere, 0:before the threshold, 1:after the threshold
     this.oldArea = -1;
@@ -64,7 +64,12 @@ Sensor = function () {
     this.freeze = true;
     this.enabled = false; //TODO TODO: check all this different enabled...??
     this.textDescription = "";
+
+    this.inputInterval = undefined;
+    this.inputTimer = undefined;
+    this.inputTime  = 0;
 };
+module.exports = Sensor;
 
 Sensor.prototype.copySettings = function(s){
     for(var e in s){
@@ -86,6 +91,7 @@ Sensor.prototype.onValue = function(val){
     //console.log("sensor:",this.s.name,val);
     var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin);
     this.currValue = val;
+    this.normValue = nv;
     if(this.s.enabled){
         if( this.s.motorEnabledOutput ){
             //var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin)
@@ -178,6 +184,82 @@ Sensor.prototype.unfreezeSensor = function(){
     if(this.freeze){
         this.s.enabled = true;
         this.freeze = false;
+    }
+}
+
+
+//DELETED sinusOnOff   //
+//DELETED randomOnOff  //switch n'est pas bien mieux !? à voir ... classes
+
+Sensor.prototype.inputOnOff = function(onoff){ //Didier
+    console.log("inputOnOff:",this.s.input_entry,onoff);
+
+    clearInterval(this.inputInterval);
+    clearTimeout(this.inputTimer);
+
+    switch(this.s.input_entry){
+        case "sinus":
+            if(onoff){
+                var p = this.s.sinusParams;
+                p.period = +p.period;
+                p.offset = p.current; //starts where it stopped
+                this.inputTime = Date.now();
+                this.inputInterval = setInterval(this.sinusUpdate.bind(this),50);
+            }
+            break;
+        case "random":
+            this.s.randomEnabledInput = onoff;
+            if(onoff){
+                var p = this.s.randomParams;
+                //string to num
+                p.periodMin = +p.periodMin; p.periodMax = +p.periodMax;
+                p.v1min = +p.v1min; p.v1max = +p.v1max;
+                p.v2min = +p.v2min; p.v2max = +p.v2max;
+                p.step = 0;
+                this.inputTime = Date.now();
+                this.inputTimer = setTimeout(this.updateRandom.bind(this),p.periodMin*1000);
+                console.log("RANDOM STARTED:",this.s.randomParams.periodMin*1000);
+            }
+            else
+            console.log("RANDOM STOPPED:",this.s.randomParams.periodMin*1000);
+            
+            break;
+    }
+}
+
+Sensor.prototype.sinusUpdate = function(){
+    //if(this.s.sinusEnabledInput){ //TOTHINK
+        var p = this.s.sinusParams;
+        var dt = (Date.now()-this.inputTime)*0.001;
+        var a = Math.PI*dt*2/p.period + p.offset;
+        p.current = a;
+        var v = Math.sin(a)*0.5+0.5;
+        this.onNormValue(v);
+    //}    
+}
+
+
+/*
+Sensor.prototype.interpole = function(){
+    var t=Date.now();
+    var dt = t-this.interpoleTime
+}
+*/
+
+Sensor.prototype.updateRandom = function(){ //randomEnabledInput enabled when switched to CM9 !
+    //console.log("RANDOM updateRandom:",this.s.input_entry,this.s.randomEnabledInput);
+    if((this.s.randomEnabledInput)&&(this.s.input_entry=="random")){
+        var p = this.s.randomParams;  
+        var t = Math.random()*(p.periodMax-p.periodMin)+p.periodMin;
+        var v;
+        if( p.step == 0 ){
+            this.onValue(Math.random()*(p.v1max-p.v1min)+p.v1min);
+        }
+        else{
+            this.onValue(Math.random()*(p.v2max-p.v2min)+p.v2min);
+        }
+        this.inputTimer = setTimeout(this.updateRandom.bind(this),t*1000);
+        p.step ^= 1;
     }
 }
 

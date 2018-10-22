@@ -25,6 +25,7 @@ var SerialClass = function(){
     this.serialName = "";
     this.skipCount = 0;
 };
+module.exports = SerialClass;
 
 SerialClass.prototype.isOpen = function(){
     if(this.serialPort == null)

@@ -1,17 +1,20 @@
 {
-  "name": "MisBKIT-WIFI_TCP",
-  "version": "5.0.0",
-  "author": "Didier Bouchon, Cecile Bucher",
+  "name": "MisBKIT-Sept2018",
+  "version": "6.0.0",
+  "author": "Didier Bouchon, Cecile Bucher, Alexandre",
   "description": "",
   "main": "main.js",
   "dependencies": {
     "midi": "^0.9.5",
-    "osc": "^2.2.0",
+    "npm": "^6.0.1",
+    "osc": "^2.2.1",
     "osc-min": "^1.1.1",
-    "socket.io": "^2.0.4",
-    "websocket": "^1.0.24"
+    "serialport": "^6.2.0",
+    "socket.io": "^2.1.0",
+    "websocket": "^1.0.26"
   },
   "devDependencies": {
-    "electron": "^1.6.11"
+    "electron": "^2.0.1",
+    "electron-packager": "^12.0.2"
   }
 }

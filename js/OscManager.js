@@ -28,6 +28,9 @@ OscManager = function () {
     this.outportCm9 = 7777; //TODO: à parler avec Didier....
 
 };
+var oscmng = new OscManager();
+module.exports = oscmng;
+
 
 OscManager.prototype.setSettings = function(set){
     console.log("osc.setSettings",set);
@@ -248,7 +251,7 @@ OscManager.prototype.handleMotorMessage = function(rcv){
         motorIndex = this.getArgInAdress(adr,cmp);
         console.log("whheel:",motorIndex,arg);
         //this.setMode(motorIndex,0);
-        misGUI.speed(+motorIndex,arg);
+        misGUI.motorSpeed(+motorIndex,arg);
     }else if(adr.startsWith(cmp = "/mbk/motors/speed/")){
         motorIndex = this.getArgInAdress(adr,cmp);
         console.log("speed:",motorIndex,arg);
@@ -256,22 +259,22 @@ OscManager.prototype.handleMotorMessage = function(rcv){
         console.log("motorIndex:",motorIndex,arg);
         //this.setMode(motorIndex,0);
         dxlManager.setSpeed(+motorIndex,arg)
-        misGUI.speed(+motorIndex,arg);
+        misGUI.motorSpeed(+motorIndex,arg);
     }else if(adr.startsWith(cmp = "/mbk/motors/joint/")){
         motorIndex = this.getArgInAdress(adr,cmp);
         //this.setMode(motorIndex,1);
         var a = dxlManager.setAngle(+motorIndex,arg);
-        misGUI.angle(motorIndex,a);
+        misGUI.motorAngle(motorIndex,a);
     }else if(adr.startsWith(cmp = "/mbk/motors/goal/")){
         motorIndex = this.getArgInAdress(adr,cmp);
         var a = dxlManager.setAngle(+motorIndex,arg);
-        misGUI.angle(motorIndex,a);
+        misGUI.motorAngle(motorIndex,a);
     }else if(adr.startsWith(cmp = "/mbk/motors/wheeljoint/")){
         motorIndex = this.getArgInAdress(adr,cmp);
         var divMotor = misGUI.getMotorUI(motorIndex);
         //misGUI.setValue(motorIndex,"joint",arg);
-        if(divMotor.find("[name=mode]").prop('checked')) misGUI.speed(motorIndex,arg);
-        else misGUI.angle(motorIndex,arg);
+        if(divMotor.find("[name=mode]").prop('checked')) misGUI.motorSpeed(motorIndex,arg);
+        else misGUI.motorAngle(motorIndex,arg);
     }else if(adr.startsWith(cmp = "/mbk/motors/stopAll")){ // stops motors and anims
         //dxlManager.stopAll(); //TODO: gui....?
         dxlManager.stopAllMotors();
@@ -306,41 +309,6 @@ OscManager.prototype.getStringInAdress = function(adrSrc,adrCmp){
     return adrSrc.substring(adrCmp.length);
 }
 
-// CEC: plus utile.. Didier, enlève si t'es ok
-OscManager.prototype.initCm9Receiver = function(){
-    
-    var inport = 5555;
-    this.oscCm9Receiver = udp.createSocket("udp4", function(msg, rinfo) {
-    var error, error1;
-    try {
-        var rcv = osc.fromBuffer(msg);
-        var adr = rcv.address;
-        if(adr.startsWith("/mbk/sensors")){
-            console.log("osc msg:",rcv.address,rcv.args[0].value,rcv.args[1].value);
-            //////////
-            //now we have different inputs that can change sensor value, so better to
-            //send the osc sensor values directly from the onValue method..
-            //new:
-            var sensorPin = rcv.args[0].value;
-            var sensorVal = rcv.args[1].value;
-            var sensor = sensorManager.getSensorWithPin(sensorPin);
-            sensor.onValue(sensorVal);
-            //old:
-            //oscManager.handleSensorMessage(rcv); //le self. ne marchait pas!!!
-            //////////
-        }else{
-            console.log("invalid OSC message: " + rcv);
-        }
-        return rcv;
-        } catch (error1) {
-            error = error1;
-            return console.log("invalid OSC packet " + error);
-        }
-    });
-    
-    this.oscCm9Receiver.bind(inport);
-
-}
 
 OscManager.prototype.sendSensorMessage = function(sensorID,sensorVal){
 

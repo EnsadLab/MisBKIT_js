@@ -30,6 +30,8 @@ function Animation(id,folder,name){
     this.keySize  = 0;
     this.keyIndex = 0;
 };
+module.exports = Animation;
+
 
 Animation.prototype.discard=function(){
     this.stopRec();

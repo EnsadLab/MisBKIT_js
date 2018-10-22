@@ -1,6 +1,36 @@
 /**
 * Created by Cecile on 27/07/17.
+* Deep Modification by Didier:
+*  connections moved from Sensor.js
+*
 */
+
+/*
+* Didier:
+* questions:
+* isMapped & onMidi ne peuvent-ils être dans le même fonction ? 
+* (idem avec dxl)
+*
+* un seul inputEnabled, au lieu de xxxxEnabled ? 
+* ou bien inputDatas = {enabled:true , ... ... ...}
+*
+*/
+
+var Sensor = require("./Sensor.js");
+
+var connections = [
+    "default",
+    "cm9",
+    "osc",
+    "midi",
+    "motor",
+    "mobilizing", 
+    "animations",
+    "robus",
+    "sinus",
+    "random"
+]
+
 
 class SensorManager{
     constructor(){
@@ -11,6 +41,8 @@ class SensorManager{
         this.sensorFolder = "";
         this.sensorID = 0;
         this.sensor_files = [];
+        this.sensorSelected = undefined;
+        this.loading = false;
     }
 
     cmpReverse(a,b) {
@@ -59,6 +91,11 @@ class SensorManager{
 
     }
 
+    //MisGUI.prototype.setManagerValue = function( className , func , value , eltID, param){   
+    //opt: {class:classname,id:eltID,func:func,param:param,val:value}
+    //MisGUI.prototype.showValue=function(opt){
+
+
     initSensor(eltID){
 
         var sensor = this.getSensorWithID(eltID);
@@ -70,6 +107,9 @@ class SensorManager{
         });
         // for those where func != changeSettingsVariable
         misGUI.setManagerValue("sensorManager","enable",sensor.s.enabled,sensor.ID);
+        //MisGUI.showValue({class:"sensorManager",func:"ena"})
+
+
         misGUI.setManagerValue("sensorManager","onNameText",sensor.s.name,sensor.ID);
         misGUI.setManagerValue("sensorManager","onMinValue",sensor.s.valMin,sensor.ID);
         misGUI.setManagerValue("sensorManager","onMaxValue",sensor.s.valMax,sensor.ID);
@@ -121,6 +161,13 @@ class SensorManager{
         this.sensor_files = sensor_files;
     }
 
+    uiLoad(){ //Becoz folder
+        if(!this.loading){ //prevent multiclicks 
+            this.loading = true
+            misGUI.openLoadDialog("Load sensor:",this.sensorFolder,this.loadSensorFromGUI.bind(this))
+        }
+    }
+
     loadSensorFromGUI(filename){
         var sensorID = this.loadSensorFromJson(filename);
         if(sensorID != undefined){
@@ -129,6 +176,7 @@ class SensorManager{
             this.initSensor(sensorID);
             MisGUI_sensors.selectSensor(sensorID);
         }
+        this.loading = false
     }
 
     loadSensors(){
@@ -137,7 +185,6 @@ class SensorManager{
             sensorManager.loadSensorFromJson(this.sensorFolder + this.sensor_files[index].name + ".json");
         }
         this.init();
-        //robusManager.connect(); // CEC: Didier? est-ce toujours nécessaire? NON
     }
 
     loadSensorFromJson(fullFilenamePath){
@@ -189,32 +236,27 @@ class SensorManager{
                 sensor.copySettings(s.sensors[i]);
                 this.sensors.push(sensor);
             }
-
             this.init();    
         }
     }
 
-
-    cmd(func,eltID,arg1,arg2){
-        console.log("SensorCmd:",func,eltID,arg1,arg2);
+    cmd(func,eltID,val,param){
+        console.log("SensorCmd:",func,eltID,val,param);
         if(this[func]){
-            if(eltID!=undefined)this[func](eltID,arg1,arg2);
-            else this[func](arg1,arg2);
+            if(eltID!=undefined)this[func](eltID,val,param);
+            else this[func](val,param);
         }
     }
 
     selectSensor(eltID,arg){
-        console.log("sensorManager.selectSensor ",eltID);
         MisGUI_sensors.selectSensor(eltID);
+        var sensor = this.getSensorWithID(eltID);
+
+        this.setPopupValues(eltID); //Didier: A REVOIR: updates UI parameters
     }
 
     removeSensor(eltID,arg){
         console.log("sensorManager.removeSensor", eltID);
-
-        /*
-        for(var index in this.sensors){
-            console.log("REMOVE TEST: sesnsor: ",this.sensors[index].ID);
-        }*/
 
         var sensor = this.getSensorWithID(eltID);
         if(sensor != undefined){
@@ -268,17 +310,46 @@ class SensorManager{
 
     enable(eltID,onoff){
         console.log("sensorManager.enable:",onoff);
+        var sensor = this.getSensorWithID(eltID); 
         this.getSensorWithID(eltID).s.enabled = onoff;
         this.saveSensorSettings();
+        /*
+        if(sensor.s.input_entry=="random"){
+            console.log("RANDOM onoff:",onoff);
+        }
+        */
+
         /*for(var i=0; i<this.sensors.length;i++){
             console.log("test",i,this.sensors[i].ID,this.sensors[i].s.enabled);
         } */ 
     }
 
+    inputOnOff(eltID,onoff,param){ //Didier
+        console.log("sensorManager.enableInput:",eltID,onoff,param);
+        var sensor = this.getSensorWithID(eltID);
+        if(sensor){
+            //sensor.inputEnabled = onoff; //remplacer xxxEnabledInput
+            sensor.inputOnOff(onoff,param);
+        }
+    }
+
+
+
     changeSettingsVariable(eltID,value,name){
         console.log("sensorManager.changesettingsvariable",eltID,value,name);
         var sensor = this.getSensorWithID(eltID);
         if(sensor){
+            /*
+            if(name == "randomEnabledInput"){
+                if(value != sensor.s[name]){ // thrown twice
+                console.log("RANDOM onoff:",sensor.s.input_entry,value);
+                sensor.randomOnOff(value);
+                }
+           }
+           */
+
+
+
             sensor.s[name]=value;
                         //tester if sensor.s[name] exists ???
             /*TODO TODO: old version..
@@ -295,6 +366,7 @@ class SensorManager{
             //console.log("sensorSetting:",sensor.s);
             */
            this.saveSensorSettings();
+
         }    
     }
 
@@ -311,12 +383,16 @@ class SensorManager{
         
         console.log("change input selection:",input);
         if(this.checkConnection(input) && this.getSensorWithID(eltID) != undefined){
+
+            this.getSensorWithID(eltID).inputOnOff(false); //Didier 
+
             this.getSensorWithID(eltID).s.input_entry = input;
     
             // disable previous selected entry - diable all entries
             $.each(connections,function(i,name){
                 var k = name + "EnabledInput";
                 sensorManager.getSensorWithID(eltID).s[k] = false;
+                console.log("disable:",name);
                 misGUI.setManagerValue("sensorManager","changeSettingsVariable",false,eltID,name+"EnabledInput");
             });
             
@@ -499,7 +575,7 @@ class SensorManager{
     // basically, juste useful for the console output warning..
     checkConnection(str){
         if(! connections.includes(str)){
-            console.log("CAREFUL!! A sensor input/output has not been defined correctly in the html code."); 
+            console.log("CAREFUL!! A sensor input/output has not been defined correctly in the html code.",str); 
             return false;
         }
         return true;
@@ -719,10 +795,11 @@ class SensorManager{
     }
 
     onRobusParam(eltID,value,param){
-        //console.log("onRobusParam:",eltID,value,param);
+        console.log("onRobusParam:",eltID,value,param);
         var sensor = this.getSensorWithID(eltID);
         if(sensor != undefined){
-            sensor.s.robusParams[param]=value;
+            console.log("robusParams:",sensor.s);
+            sensor.s.robusInputParams[param]=value;
             //console.log("robusParam:",sensor.s.robusParams);
             //robusManager.addSensorEmitter(eltID,sensor.s.robusParams);
 
@@ -733,7 +810,7 @@ class SensorManager{
     onRobusValue(event){
         for(var i=0; i<this.sensors.length;i++){
             if( this.sensors[i].s.robusEnabledInput ){ //this.sensors[i].s.input_entry=="robus"){
-                var p = this.sensors[i].s.robusParams;
+                var p = this.sensors[i].s.robusInputParams;
                 if(event.gate==p.gate && event.alias==p.module ){
                     //console.log("onRobusValue:",p.pin);
                     if(event[p.pin])
@@ -743,7 +820,6 @@ class SensorManager{
         }
     }
 
-    //className , func , value , eltID, param
     robusInitSelections(){
         var gates = robusManager.getGates();
         //console.log("robusInitSelections:",gates)
@@ -751,362 +827,46 @@ class SensorManager{
             var sensor = this.sensors[i];
             if(this.sensors[i].s.input_entry=="robus"){ //?do it for all sensors?
                 misGUI.setManagerValue("robusInput","onRobusParam",gates,sensor.ID,"gate");
-                var modules = robusManager.getModules(sensor.s.robusParams);
+                var modules = robusManager.getModules(sensor.s.robusInputParams);
                 misGUI.setManagerValue("robusInput","onRobusParam",modules,sensor.ID,"module");
-                var pins = robusManager.getPins(sensor.s.robusParams);
+                var pins = robusManager.getPins(sensor.s.robusInputParams);
                 misGUI.setManagerValue("robusInput","onRobusParam",pins,sensor.ID,"pin");
             }
         }
     }
 
-
-}
-
-
-/*
-
-SensorManager = function () {
-
-    //this.sensors = new Array();
-    this.sensors = {};
-    this.configurationFolder = "";
-    this.sensorID = 0;
-};
-
-SensorManager.prototype.folderIsReady = function(configurationFolder){
-    this.configurationFolder = configurationFolder;
-    this.loadSensorSettings();
-}
+    //DELETED onSinusPopup(eltID,arg1,arg2){
+    //DELETED onRandomPopup(eltID,arg1,arg2){
 
 
-// Method called when user has modified the sensors.json file
-SensorManager.prototype.loadSensorSettings = function () {
-    console.log("!------loadUserSensorSettings");
-    //cm9Com.removeAllCallbacks();    
-    robusManager.reset(); //DB important: remove allcallbacks
-
-    var json;
-    try{
-        json = fs.readFileSync(this.configurationFolder + "sensors.json", 'utf8');
-    }catch(err){
-        if (err.code === 'ENOENT') {
-            console.log("File " + this.configurationFolder+ "sensors.json not found!");
-        }else{
-            console.log("Problem loading sensors.json file");
-        }
-    }
-    if (json) {
-        
-        var s = JSON.parse(json);
-
-        // copy old versions to see if some sensors had been erased
-        var oldSensors = JSON.parse(JSON.stringify(this.sensors))
-
-        // empty current sensors array
-        //this.sensors = {};
-        this.removeAllSensors();
-
-        //TODO: delete all gui sensor elements
-
-        // create new sensors from the json file
-        this.sensorID = 0;
-        /* ignore for now..
-        for(var i=0;i<s.sensors.length;i++){
-            //this.sensors.push( new Sensor() );
-            var id = "S"+this.sensorID++; 
-            this.sensors[id]= new Sensor(); //TODO? new Sensor(id) 
-            this.sensors[id].ID = id;
-            this.sensors[id].copySettings(s.sensors[i]);
-            //console.log("s... ",this.sensors[id].s);
-            //console.log("s... ",this.sensors[id].s.cm9Pin);
-        }*/
-
-        //settingsManager.copyPasteFromUserFolder("sensors.json");
-
-        /* for now..
-        this.updateGUI();
-        robusManager.connect(); 
-
-
+    setPopupValues(eltID){ //val param
+        var sensor = this.getSensorWithID(eltID);
+        var entry  = sensor.s.input_entry;
+        misGUI.setEltID(entry+"Popup",eltID); //!!! reuse of same html dialog ... toThink
+        var p = sensor.s[ entry+"Params" ]; //ex "sinusParams"
+        //name in title 
+        misGUI.setManagerValue("sensorManager",entry+"Name",sensor.s.name); //ex "sinusName"
+        misGUI.changeSettings("sensorManager","inputParam",p,eltID);       //ex "sinusParam"
     }
 
-}
+    //DELETED sinusParam(eltID,value,param){ //eltID,param,value
+    //DELETED randomParam(eltID,value,param){
 
-
-SensorManager.prototype.updateGUI = function () {
-
-    console.log("classname: ",this.className);
-    misGUI.initManagerFunctions(this,this.className);
-    misGUI.cloneElement(".single-sensor",1);
-    misGUI.cloneElement(".single-sensor",2);
-    misGUI.cloneElement(".single-sensor",3);
-
-
-    // update the sensors panel in the GUI
-    /* ignore for now
-    $.each(this.sensors, function(i,sensor) {
-        misGUI.addSensor(sensor.s,sensor.ID);       
-    });
-    */    
-
-
-    // test ...
-    //misGUI.setSensorValue("S0",42);
-    //misGUI.setSensorRange("S1",50,133,100);
-    //misGUI.setSensorTolerance("S0",42);
-    //console.log("getPin:",this.getSensorWithPin(7));
-
-    /* for now..
-}
-
-
-
-SensorManager.prototype.changeSetting = function(sensorID,name,value){
-    console.log("SensorManager.changeSetting:",sensorID,name,value);
-    var sensor = this.sensors[sensorID];
-    if(sensor){
-        //tester if sensor.s[name] exists ???
-        sensor.s[name]=value;
-        switch(name){
-                case "valMin":
-                case "valMax":
-                    //update min max tolerance threshold
-                    if(sensor.s.threshold<sensor.s.valMin)sensor.s.threshold=sensor.s.valMin;
-                    if(sensor.s.threshold>sensor.s.valMax)sensor.s.threshold=sensor.s.valMax;                    
-                    misGUI.changeSensor(sensor.s,sensorID);                
-                    break;
-                default:            
-        }
-        //console.log("sensorSetting:",sensor.s);
-    }    
-}
-
-
-// called from the GUI when the sensor value has been changed
-SensorManager.prototype.handleSensorValue = function(sensorID, sensorValue){
-    var sensor = this.sensors[sensorID];
-    if(sensorValue >= sensor.s.valMin && sensorValue < (sensor.s.threshold-sensor.s.tolerance)){ 
-        sensor.area = 0;
-        //console.log("sensor area 0");
-        if(sensor.oldArea != sensor.area){
-            // trigger animation 1
-            //console.log("Trigger left animation ",sensor.s.anim1);
-            this.startAnim(sensor.s.anim1, sensor.s.anim2);
-        }
-    }else if(sensorValue >= (sensor.s.threshold + sensor.s.tolerance)){
-        sensor.area = 1;
-        //console.log("sensor area 1");
-        if(sensor.oldArea != sensor.area){
-            // trigger animation 2
-            //console.log("Trigger right animation ",sensor.s.anim2);
-            this.startAnim(sensor.s.anim2, sensor.s.anim1);
-        }
+    inputParam(eltID,value,param){
+        //console.log("onRandomParam:",eltID,param,value);
+        var sensor = this.getSensorWithID(eltID);
+        if(sensor != undefined){
+            var entry  = sensor.s.input_entry;
+            var p = sensor.s[entry+"Params"]; 
+            console.log("....Params:",entry,p); //sensor.s[entry+"Param"]);
+            sensor.s[entry+"Params"][param]=+value;
+        }        
     }
 
-    sensor.oldArea = sensor.area;
-}
 
-//called by cm9Manager // array of sensor values, one loop.
-SensorManager.prototype.handlePinValues=function(vals){
-    var nbv = vals.length;
-    $.each(this.sensors,function(i,sensor) {
-        if( sensor.s.cm9Enabled ){
-            var pin = +sensor.s.cm9Pin;
-            if( (pin>=0)&&(pin<nbv) ){
-                sensor.onValue(vals[pin]);
-            }
-        }
-    });
-}
-
-//Motor position -> sensor.s.fromMotorIndex
-SensorManager.prototype.handleDxlPos=function(index,nval){
-    //console.log("handleDxlPos:",index,nval);
-    $.each(this.sensors,function(i,sensor) {
-        //console.log("handleDxlPos:",i,sensor.s.fromMotorEnabled);
-        if(sensor.s.fromMotorEnabled){
-            if(+sensor.s.fromMotorIndex == index){
-                sensor.onNormValue(nval);
-            }
-        }
-    });        
-}
-
-SensorManager.prototype.startAnim = function(animPlaying, animStopping){
-
-    // start playing animations
-    var animIDs = dxlManager.getAnimID(animPlaying);
-    for(var i=0; i<animIDs.length; i++){ 
-        var divAnim = misGUI.divAnim(animIDs[i]);
-        divAnim.find(".play").click();
-    }
-
-    // stop other animations
-    animIDs = dxlManager.getAnimID(animStopping);
-    for(var i=0; i<animIDs.length; i++){ 
-        var divAnim = misGUI.divAnim(animIDs[i]);
-        divAnim.find(".stop").click();
-    }
-    
 
 }
+var snsmng = new SensorManager();
+module.exports = snsmng;
 
 
-SensorManager.prototype.getSensorWithPin = function(sensorPin){
-    var result = undefined;  
-    $.each(this.sensors, function(i,sensor) {
-        //console.log("pin:",sensorPin,sensor.s.pin);
-        if( sensor.s.cm9Pin == sensorPin){
-            result = sensor;
-            return false; //break
-        }
-    });    
-    return result;
-}
-
-
-//method called when a gui entry has been changed
-SensorManager.prototype.saveSensorSettings = function () {
-        
-        var s = {}; //settings
-        s.sensors = [];
-
-        $.each(this.sensors, function(i,sensor) {
-            s.sensors.push(sensor.getSettings());
-        });    
-    
-        var json = JSON.stringify(s, null, 2);
-        //Didier: dont overwrite default file
-        //fs.writeFileSync(__dirname + "/sensors.json", json);
-        //settingsManager.copyPasteToUserFolder("sensors.json");
-        settingsManager.saveToConfigurationFolder("sensors.json",json);
-        //console.log(json);
-};
-
-// Simulates the reloading of the sensors.json file
-SensorManager.prototype.onMetaKey = function(char){
-    console.log("METAKEY",+char);
-}
-
-// Simulates the reloading of the sensors.json file //voir index.js keydown Didier
-SensorManager.prototype.onKeyCode = function(char){
-    console.log("METAKEY",+char);
-    if(char=='M'){ // reset the gui according to the changed elements in the json
-        console.log("Resetting sensor settings into GUI");
-        this.loadSensorSettings();
-        this.saveSensorSettings(); // weird but works like this... bug..
-    }
-}
-
-SensorManager.prototype.removeAllSensors = function(){
-    //cm9Com.removeAllCallbacks();    
-    robusManager.reset();
-    for( id in this.sensors ){
-        this.removeSensor(id);        
-    }
-}
-
-SensorManager.prototype.removeSensor = function(id){
-    console.log("Sensors removing:",id);
-    if( id in this.sensors){
-        misGUI.removeSensor(id);
-        this.sensors[id].discard();
-        delete this.sensors[id];
-    }
-    for( id in this.sensors ){
-        console.log("afterRemove:",id);
-    }
-
-}
-
-SensorManager.prototype.freezeAllSensors = function(){
-    for(id in this.sensors){
-        var s = this.sensors[id].freezeSensor();
-    }
-}
-
-SensorManager.prototype.unfreezeAllSensors = function(){
-    for(id in this.sensors){
-        var s = this.sensors[id].unfreezeSensor();
-    }
-}
-
-SensorManager.prototype.getSensorSetting = function(id,wich){
-    return this.sensors[id].s[wich];
-}
-
-SensorManager.prototype.sensorEnable = function(id,onoff){
-    this.sensors[id].s.enabled = onoff;    
-    console.log("sensor enable:",id,onoff);
-    this.saveSensorSettings();
-}
-
-SensorManager.prototype.onName = function(id,val){
-    this.sensors[id].s.name = val;
-    this.sensors[id].onName(val);
-    console.log("changeName:",id,val);
-    this.saveSensorSettings();
-}
-
-// SensorManager.prototype.onTolerance = function(id,val){
-//     this.sensors[id].s.tolerance = parseInt(val);
-//     //console.log("changeTolerance:",id,val);
-//     this.saveSensorSettings();
-// }
-
-// SensorManager.prototype.onThreshold = function(id,val){
-//     this.sensors[id].s.threshold = parseInt(val);
-//     //console.log("changeTheshold:",id,val);
-//     //this.saveSensorSettings(); //done when slider stops cf MisGUI
-// }
-
-SensorManager.prototype.onChangeAnim = function(id,wich,txt){
-    console.log("changed anim:",id,wich,txt);
-    this.sensors[id].s[wich]=txt;    
-    this.saveSensorSettings();
-}
-
-SensorManager.prototype.isMapped = function(type,port,cmd,nbID){
-    for(id in this.sensors){
-        var s = this.sensors[id].s;
-        var cmd_bool = false;
-        if(cmd == "note") cmd_bool = true;
-        if(s.midiPort == port && s.midiCmd == cmd_bool && s.midiMapping == nbID && s.midiEnabled){
-            return true;
-        }
-    }
-    return false;
-}
-
-SensorManager.prototype.getSensorIds = function(type,port,cmd,nbID){
-    var sensorIDs = new Array();
-    for(id in this.sensors){
-        var s = this.sensors[id].s;
-        var cmd_bool = false;
-        if(cmd == "note") cmd_bool = true;
-        if(s.midiPort == port && s.midiCmd == cmd_bool && s.midiMapping == nbID && s.midiEnabled){
-            sensorIDs.push(id);
-        }
-    }
-    return sensorIDs;
-}
-
-SensorManager.prototype.onMidi = function(id,type,arg){
-    
-    var sensor = this.sensors[id];
-    var mappped_arg = Math.round(arg*(sensor.s.valMax-sensor.s.valMin)/127 + sensor.s.valMin);
-    this.sensors[id].onValue(mappped_arg);
-    
-}
-
-SensorManager.prototype.addEmptySensor = function(){
-    //console.log("SensorManager.addEmptySensor");
-    var id = "S"+this.sensorID; 
-    this.sensors[id]= new Sensor(); //TODO? new Sensor(id)
-    this.sensors[id].s.name = "Sensor_"+this.sensorID;
-    this.sensors[id].ID = id;
-    misGUI.addSensor(this.sensors[id].s,id); 
-    this.sensorID++;      
-}
-
-*/
