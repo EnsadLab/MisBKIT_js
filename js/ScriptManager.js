@@ -3,27 +3,29 @@
  */
  //TODO : UI : [save as]  or [name]
 
- motor = require("./DxlManager.js"); //motor.foo() = dxlManager.foo()
 
-var delay = function(ms){
-    console.log("----- DELAY -----",ms);
+dxl = require("./DxlManager.js"); //dxl.foo() = dxlManager.foo()
+function sleep(millis) {
+    console.log("sleep:",millis)
+    return new Promise(resolve => setTimeout(resolve, millis));
 }
 
 
 class scriptManager {
     constructor(){
-        console.log("scriptManager constructor")
         this.className = "scriptManager";
         this.folder = "";
         this.currentName = "example.js";
+        this.scriptNames = ["example.js"];
         this.running = false;
+        this.insideLoop = false;
         this.script = function(){};
         //should I store source here ?
     }
     
     init(){
         console.log("scriptManager init")
-        misGUI.initManagerFunctions(this,this.className);    
+        misGUI.initManagerFunctions(this,this.className);
     }
 
     folderIsReady(folder){
@@ -38,39 +40,36 @@ class scriptManager {
     }
 
     setName(name){
-        if( name.indexOf('.')<0 ) //no extension
+        if( name.indexOf('.')<0 ) //force .js ?
             this.currentName = name+".js";
         else
             this.currentName = name;
     }
 
-    load(){ //Becoz folder
+    uiLoad(){ //Becoz folder
         this.stop();
-        misGUI.openLoadDialog("Load script :",this.folder+this.currentName,this.loadCurrent.bind(this))
+        misGUI.openLoadDialog("Load script :",this.folder+this.currentName,this.loadSource.bind(this))
     }
-
-    loadCurrent( filePath ){
-        this.stop();        
-        console.log("scriptManager loading:",filePath);
+    loadSource( filePath ){
+        this.stop();
         var i = filePath.lastIndexOf('/')+1;
         if(i>1){
             this.currentName = filePath.slice(i);
-            this.folder = filePath.slice(0,i);
-            misGUI.showValue({class:this.className,func:"setName",val:this.currentName})
+            this.folder = filePath.slice(0,i); //back to setting Manager ?
         }
         //else ... what !?
 
         var code = fs.readFileSync( filePath , 'utf8');
         if(code != undefined){
+            misGUI.showValue({class:this.className,func:"setName",val:this.currentName});
             misGUI.setScript(code);
         }
     }
 
-    save(){
-        misGUI.openSaveDialog("Save script",this.folder+this.currentName,this.saveCurrent.bind(this));
+    uiSave(){
+        misGUI.openSaveDialog("Save script",this.folder+this.currentName,this.saveSource.bind(this));
     }
-
-    saveCurrent( pathfile ){
+    saveSource( pathfile ){
         console.log("scriptManager saving",pathfile);
         if(pathfile!=undefined){
             var code = misGUI.getScript();
@@ -81,32 +80,61 @@ class scriptManager {
     update(){ //called by MisBKIT.js
         if(this.running){
             try{
+                this.insideLoop = true;
                 this.script.loop();
             }catch(err){
                 this.stop();
                 misGUI.alert("Script Error :\n"+err);
-            }
+            }            
+            this.insideLoop = false;
         }
     }
 
     run(){
+        console.log("--------");
         this.stop();
-        this.saveCurrent(this.folder+this.currentName); //modified ?
+        this.saveSource(this.folder+this.currentName); //modified ?
         var code = misGUI.getScript();
         try{
             this.script = new Function(code); //"return 42  OK"
             this.script.call(this.script);    //construct, with good this
             //console.log("function?:",typeof(this.script.setup));
 
+            this.wantstop = false;
+            this.delayTime = 0;
+
+            console.log("gene:",typeof(generator))
+
+            /*
+            this.sleep = function(ms){
+                return new Promise(resolve=>{ setTimeout(resolve,ms)})
+            }
+            */
 
             this.script.delay = async function(ms){
                 console.log("---- DELAY -----",ms);
-                return new Promise(resolve  => {
-                    setTimeout(() => {
-                        console.log("resolve?");
-                    resolve(2);
-                    }, ms);
-                });
+                sleep(ms)
+                console.log("---- DELAY END-----",ms);
+                
+                /* NO: this affect all node process !!!
+                this.delayTime = Date.now();
+                console.log("---- DELAY loop -----",ms,this.delayTime);
+                while( (Date.now()-this.delayTime)<ms ){
+                    if(this.wantstop){
+                        throw { name:"stop",toString:function(){return "STOOOP!";}}
+                    }
+                }
+                console.log("---- DELAY END -----");
+                */
+                /*
+                throw { 
+                    name:        "delay", 
+                    level:       "Show Stopper", 
+                    message:     "_"+ms, 
+                    toString:    function(){return this.name + ": " + this.message;} 
+                    //okay but how to resume
+                  };
+                */
             }
 
 
@@ -116,7 +144,7 @@ class scriptManager {
         }catch(err){
             misGUI.alert("Script Error :\n"+err);
             console.log("RUN ERROR")
-            this.logError(err);
+            //this.logError(err);
         }
     }
 
@@ -142,6 +170,7 @@ class scriptManager {
         console.log("scriptManager stopped");
     }
 
+    /*
     delay(ms){ 
         console.log("---- DELAY -----",ms);
         return new Promise(resolve  => {
@@ -150,6 +179,7 @@ class scriptManager {
             }, ms);
         });
     }
+    */
 
     /*
     logError(err){

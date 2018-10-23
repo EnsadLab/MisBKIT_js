@@ -57,7 +57,7 @@ function UIshowAdvanced(){
 	$(".motors-settings").css("z-index", 1);
 	$(".motors-settings ").css("display", "block");
 
-	console.log("coucou");
+	//console.log("coucou");
 
 
 }

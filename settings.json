@@ -1,5 +1,5 @@
 {
-  "savecount": 116,
+  "savecount": 140,
   "cm9Num": 0,
   "oscPorts": {
     "oscRemoteIP": "localhost",
@@ -12,6 +12,9 @@
   "anims": [],
   "sensors": [
     {
+      "name": "Sensor_name"
+    },
+    {
       "name": "Random00"
     },
     {
@@ -20,9 +23,9 @@
   ],
   "motors": [
     {
-      "dxlID": 23,
+      "dxlID": 0,
       "enabled": false,
-      "model": 12,
+      "model": -1,
       "clockwise": true,
       "mode": 0,
       "jointSpeed": 5,
@@ -35,7 +38,7 @@
         "port": "",
         "msg": "CC:0"
       },
-      "id": 23
+      "id": 0
     },
     {
       "dxlID": 0,
