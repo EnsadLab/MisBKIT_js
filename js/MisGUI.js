@@ -87,12 +87,12 @@ MisGUI.prototype.radioHide = function(selector,eltid){
 }
 
 
-
-
 /*
   ex: cloneElement(".single-gizmo",42);
   ex: cloneElement(".single-gizmo","giz42","giz41");
   ex: cloneElement(".single-gizmo");
+  @param eltID: the parameter eltID of the new cloned element
+  @param afterID: when given, the new cloned element will be inserted after the element with the given afterID
  */
 MisGUI.prototype.cloneElement = function(selector,eltID,afterID){ //eltID may be a string
     var model = $(selector).first();      //model MUST be first ---> insertAfter
@@ -215,7 +215,13 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                 case "submit":  //button
                     $(this).on("click",function(){
                         console.log("button",$(this).attr("func"),manager);
+                        // TEST pour le startRecord ds les anims.. j'ai rajouté l'attribut value
+                        var v = $(this).attr("value"); // "true","false" --- ou plutôt 0,1 ?? .. et ptet pas utiliser l'arg value...
+                        var vstring = "true";
+                        if(v == "true") vstring = "false";
+                        $(this).attr("value",vstring);
                         manager.cmd($(this).attr("func"),$(this).attr("eltID"),true,$(this).attr("param")); //value? param? ... à discuter                           
+                        //manager.cmd($(this).attr("func"),$(this).attr("eltID"),vstring,$(this).attr("param")); //value? param? ... à discuter                           
                     });
                     break;
                 default:
@@ -730,6 +736,7 @@ MisGUI.prototype.midiMotorSettings = function(midiMappingSettings,midiPorts){
 
     //selections:
     this.updateMidiMotorSelection(motorIndex,midiPort,midiPorts);
+//
 */
     var idx = midiMappingSettings.motorIndex;
     var mod = (midiMappingSettings.cmd == "note"); //CC:false note:true
@@ -743,11 +750,13 @@ MisGUI.prototype.midiMotorSettings = function(midiMappingSettings,midiPorts){
         });
 
     this.updateMidiMotorSelection(idx,midiMappingSettings.port,midiPorts);
+    
 }
 
 MisGUI.prototype.updateMidiMotorSelection = function(motorIndex,midiPortSelected,midiPorts){
 
     //this array should be built in MidiManager ...
+    console.log("---------------updateMidiMotorSelection");
     var ports = ["none"]; 
     for(var i=0;i<midiPorts.length;i++){
         var portName = midiPorts[i].portName;
@@ -817,13 +826,9 @@ MisGUI.prototype.selectMidiMappingPort = function(motorID, name){
 MisGUI.prototype.init =function(){
     console.log("----- INIT GUI -----");
     var self = this;
-
-    var anim = $("#divAnims").find(".single-anim:first");
-    anim.hide();
-    anim.find(".gear").data("id","animPopup"); //GRRR ??? is undefined ???
     
     this.initMotorDiv();
-    this.initAnims();
+
     /* >>> this.initMotorDiv(); + this.addMotor
     //clone MotorsConfig(advanced)
     //var parent = $("#dxlConfig");
@@ -974,21 +979,18 @@ MisGUI.prototype.init =function(){
     });
     */
 
-
-
-    
-
     $("#loadAnim").on("click",function(){
         //TODO generic  loadUI , with folder
         dialog.showOpenDialog({properties:['openFile','multiSelections']},function(filenames) {
             if(filenames){
                 for(var i=0;i<filenames.length;i++) {
-                    dxlManager.loadAnim(filenames[i]);
+                    animManager.loadAnim(filenames[i],false);
                 }
             }
         });
     });
 
+    // ??? is it used??
     $("#saveAnim").on("click",function(){
         if(dialog) {
             // / *versionHTML
@@ -1010,8 +1012,9 @@ MisGUI.prototype.init =function(){
     $("#anim-freeze").on('click',function(){
         if($('#anim-freeze').is(":checked")){
             console.log("---- anim stop all");
-            dxlManager.stopAllAnims();
-            dxlManager.stopAllMotors();
+            //animManager.stopAll();
+            //dxlManager.stopAllMotors();
+            dxlManager.stopAll();
         }
     });
 
@@ -1315,185 +1318,17 @@ MisGUI.prototype.dxlEnabled = function(index,val){
     bt.prop("checked",(val!=0));
 }
 
-
+// TODO: we leave it for now since it is used by OSC and Sensors
 MisGUI.prototype.divAnim = function(animId){
     return $('.single-anim[eltID='+animId+']');
 }
 
-MisGUI.prototype.initAnims = function(){
-    var model = $("#sortable-anim").find(".single-anim:first");
-    model.hide();
-    var tracks = model.find("[name=track]");
-    /* //inutile
-    var nt = tracks.length;
-    for (var i = 0; i < nt; i++) {
-        $(tracks[i]).prop("class", "motor-none");
-        //$(tracks[i]).data("index", i);
-    }
-    */
-    var self = this;
-    tracks.on("click", function () {
-        var v = this.checked ? 1 : 0;
-        console.log("DBG_track:", $(this).data("id"), " i:", $(this).data("index"), " ", v);
-        //self.track($(this).data("id"));
-        self.track($(this).attr("eltID"));
-    });
-
-    
-}
-
-MisGUI.prototype.addAnim = function(animId,aName,keyCode) {
-    console.log("================MisGUI:addAnim:", animId, " ", aName);
-
-    var self = this;
-    //var parent = $("#divAnims").find("[name=listAnims]");
-    var parent = $("#sortable-anim");
-    var model = parent.find(".single-anim:first");
-    //model.hide();
-
-    //model.find(".gear").data("id","animPopup"); //GRRR ??? is undefined ???
-
-    var clone = model.clone(true);
-    clone.attr('eltID', animId); //select only find attr
-    clone.find("*").attr('eltID', animId);
-
-    //clone.find("input").attr('data-id', animId);
-    //clone.find("button").attr('data-id', animId);
-    
-    var tracks = clone.find("[name=track]");
-    /* //inutile
-    var nt = tracks.length;
-    for (var i = 0; i < nt; i++) {
-        $(tracks[i]).prop("class", "motor-none");
-        //$(tracks[i]).data("index", i);
-    }
-    */
-    /*
-    tracks.on("click", function () {
-        var v = this.checked ? 1 : 0;
-        //console.log("DBG_track:", $(this).data("id"), " i:", $(this).data("index"), " ", v);
-        //self.track($(this).data("id"));
-        self.track($(this).attr("eltID"));
-    });
-    */
-   
-    clone.find(".close").on("click", function () {
-        //killAnim
-        var animId = $(this).attr("eltID");
-        var a = self.divAnim(animId);
-        if (a.length > 0) {
-            a.remove();
-            dxlManager.removeAnim(animId);
-        }
-        console.log("GUI.killanim:",animID);
-        MisGUI_sensors.setSensorAnims();
-    });
-
-    clone.find(".play").on("click", function () {
-        UIplayAnim(this);
-        dxlManager.startAnim($(this).attr("eltID"));
-    });
-
-    clone.find(".stop").on("click", function () {
-        console.log("stop:", $(this).attr("eltID"));
-        dxlManager.stopAnim($(this).attr("eltID"));
-        UIstopAnim(this);
-    });
-
-
-    clone.find(".loop").css("opacity",0.6);
-
-    clone.find(".loop").on("click", function () {
-        var onoff = UIloopAnim(this);
-        console.log("ONLOOP:",$(this).attr("eltID"),$(this).prop("type"),onoff);
-        dxlManager.loopAnim($(this).attr("eltID"), onoff);
-    });
-
-    clone.find("[name=animName]")
-        .val(aName)
-        .on("change", function () {
-            var zis = $(this);
-            dxlManager.renameAnim(zis.attr("eltID"), zis.val());
-            MisGUI_sensors.setSensorAnims();
-        });
-
-    clone.find("[name=animKey]")
-        .val(keyCode)
-        .on("change",function(){
-            var zis = $(this);
-            dxlManager.setKeyCode(zis.attr("eltID"),zis.val());
-    });
-
-    clone.insertAfter(model);
-    clone.show();
-
-    MisGUI_sensors.setSensorAnims();    
-}
-
-MisGUI.prototype.playAnim=function(id,v){
-    if(v>0)dxlManager.startAnim(id);
-    else dxlManager.stopAnim(id);
-}
-
-MisGUI.prototype.animCheck=function(animId,v){
-    if(v)UIplayAnim(this.divAnim(animId).find(".play"));
-    else UIstopAnim(this.divAnim(animId).find(".stop"));
-}
-
-MisGUI.prototype.animLoopOnOff=function(animId,onoff){
-    var bt = this.divAnim(animId).find(".loop:first");
-    if(bt){
-        UIloopAnim(bt,onoff);
-    }
-}
-
-
-MisGUI.prototype.animProgress=function(animId,v) {
-    //$('.divAnim[data-id=' + animId + ']:first').find('[name="progress"]:first').val(v);
-    var parent = $('.single-anim[eltID='+animId+']');
-    parent.find('[name="progress"]:first').val(v);
-}
-
-
-/**
- *
- * @param animId
- * @param tracks {play:true,i:imot,f:"angle"}
- */
-MisGUI.prototype.animTracks=function(animId,tracks){
-    var parent = $('.single-anim[eltID='+animId+']')
-    //console.log("DBG_animTracks:",parent.length);
-    var bts = parent.find('[name="track"]');
-    var nbt = bts.length;
-    for(var i=0;i<nbt;i++){
-        $(bts[i]).prop("class","motor-none").prop("checked",false);
-    }
-    for(var i=0;i<tracks.length;i++){
-        var im = tracks[i].i; //!!! test nbm
-        console.log("DGBtracks:",tracks[i].f);
-
-        if(tracks[i].f=="angle")$(bts[im]).prop("class","motor-angle");
-        else if(tracks[i].f=="speed")$(bts[im]).prop("class","motor-speed");
-        $(bts[im]).prop("checked",true);
-    }
-
-};
-
-MisGUI.prototype.track=function(animId,v) {
-    var parent = $('.single-anim[eltID='+animId+']')
-    var bts = parent.find('[name="track"]');
-    for(var i=0;i<bts.length;i++) {
-        var onoff = $(bts[i]).prop("checked");
-        console.log("click track:",i," ",onoff);
-        dxlManager.animChannel(animId,i,onoff);
-    }
-}
 
 MisGUI.prototype.scanMidiPorts = function(){
     var self = this;
     var sel = $("#midi-available");
     
-    console.log("Scanning midi ports");
+    console.log("----------------> Scanning midi ports");
 
     sel.empty();
 
@@ -1525,6 +1360,7 @@ MisGUI.prototype.scanMidiPorts = function(){
                 });
             }
         );  
+        console.log("-----> midi motor mappings",motorMappingManager.motorMappings.length);
         for(var i=0; i<motorMappingManager.motorMappings.length; i++){
             var m = motorMappingManager.motorMappings[i].m;
             this.updateMidiMotorSelection(m.motorIndex,m.port,midiPortManager.midiPorts);
@@ -1781,14 +1617,12 @@ $("input.btnGlobalMotor").bind('click', function() {
         $(".allMotors").css("pointer-events", "none");
     }
     
-
 });
 
 
 //Animations
 
 $("input.btnGlobalAnim").bind('click', function() {
-
 
     if($(".animations").css("pointer-events")=="none"){
         $(".animations").css("opacity", 1);
@@ -1888,8 +1722,6 @@ function frontBlinkInfo(){
 
     $(".midi-blinker").prop('title', infoChanel+' - '+infoMode+' - '+indexMapping);
 
-
-
 }
 
 /*
@@ -1909,7 +1741,44 @@ function midiPanelOver(){
     console.log("midi over");
 }
 
-//before cleaning 1992
-    
+
+// NEW animation modale -- Alex changes
+$("#newAnim").bind('click', function(){
+    $(".modalNewAnim").css("display", "block");
+    $(".modalNewAnim button:first-of-type").prop("disabled",true);
+
+});
 
 
+//cancel
+$(".modalNewAnim").find("#newAnimCancel").bind('click', function(){
+    $(".modalNewAnim").css("display", "none");    
+})
+
+//select
+$(".modalNewAnim").find("span").bind('click', function(){
+
+    if($(this).hasClass('selected')){
+        $(this).removeClass('selected');
+        $(".modalNewAnim span").removeClass('selected');
+        $(".modalNewAnim button:first-of-type").css("opacity", 0.3);
+        $(".modalNewAnim button:first-of-type").prop("disabled",true);
+
+    }else{
+        $(".modalNewAnim span").removeClass('selected');
+        $(this).addClass('selected');
+        $(".modalNewAnim button:first-of-type").css("opacity", 1);
+        $(".modalNewAnim button:first-of-type").prop("disabled",false);
+    }
+
+})
+
+// load
+$(".modalNewAnim").find("#newAnimLoad").bind('click', function(){
+    var selectedType = $(".listAnimType .selected").attr("name");
+    console.log("load anim "+ selectedType);
+    $(".modalNewAnim span").removeClass('selected');
+    $(".modalNewAnim").find("#newAnimLoad").css("opacity", 0.3);
+    $(".modalNewAnim").css("display", "none"); 
+    animManager.addAnim(selectedType);
+})

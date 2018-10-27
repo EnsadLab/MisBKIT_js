@@ -317,6 +317,7 @@ window.onload = function() {
                 motorMappingManager.onMetaKey(String.fromCharCode(event.keyCode));
             }else{
                 dxlManager.onKeyCode(String.fromCharCode(event.keyCode));
+                animManager.onKeyCode(String.fromCharCode(event.keyCode));
                 motorMappingManager.onKeyCode(String.fromCharCode(event.keyCode));
                 sensorManager.onKeyCode(String.fromCharCode(event.keyCode));
             }return false;

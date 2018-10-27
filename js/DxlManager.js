@@ -57,14 +57,6 @@ function DxlManager(){
     this.savecount = 0; //debugg
 
     this.motors = [];
-    this.recIndices = [];
-    this.recording  = false;
-    this.recStep    = 0;
-    this.recAnim    = null;
-    this.animationID = 0;
-    this.animations = [];
-    this.animFolder  = "";
-    this.animPlaying = [];
 
     this.updateTimer = undefined;
   
@@ -214,8 +206,11 @@ DxlManager.prototype.saveSettings = function () {
     }
 
     //TODO GUI order
-    for (var k in this.animations) {
-        s.anims.push({name: this.animations[k].fileName, key: this.animations[k].keyCode});
+    for (var k in animManager.animations) {
+        // only save the one that are already recorded
+        if(animManager.animations[k].channels.length > 0) {
+            s.anims.push({name: animManager.animations[k].fileName, key: animManager.animations[k].keyCode});
+        }
     }
 
     for(var index in sensorManager.sensors){
@@ -278,17 +273,8 @@ DxlManager.prototype.loadSettings = function () {
             misGUI.motorSettings(i, this.motors[i].m);
         }
 
-
-        for (var i = 0; i < s.anims.length; i++) {
-            var id = this.animationID++;
-            var anim = new Animation("A" + id, this.animFolder, s.anims[i].name);
-            anim.keyCode = s.anims[i].key;
-            console.log("animkey:",anim.keycode);
-            anim.load(s.anims[i].name);
-        }
-
+        animManager.loadSettings(s.anims);
         sensorManager.setLoadedSensors(s.sensors);
-
         console.log("trying to open midiport:",this.midiPort);
         midiPortManager.openMidiAtStart(s.midiEnabled);
 
@@ -318,7 +304,7 @@ DxlManager.prototype.robusCB = function(val){
 */
 
 DxlManager.prototype.folderIsReady = function(animationFolder){
-    this.animFolder = animationFolder;
+    animManager.animFolder = animationFolder;
     this.loadSettings();
 }
 
@@ -345,7 +331,8 @@ DxlManager.prototype.cm9OnOff= function(onoff){
         //misGUI.cm9State("OFF");
         //this.stopAll();
         this.freezeAllMotors();
-        this.stopAllAnims();
+        //this.stopAllAnims();
+        animManager.stopAllAnims();
         cm9Com.pushMessage("dxlStop\n");    
     }
 }
@@ -353,11 +340,6 @@ DxlManager.prototype.cm9OnOff= function(onoff){
 //DELETED DxlManager.prototype.setPause = function(nframes){
 
 DxlManager.prototype.update = function(){
-
-    for(var k in this.animPlaying){
-        var p = this.animations[k].playKey();
-        misGUI.animProgress(k,100-p);
-    }
 
     var nbm=this.motors.length;
     var t  = Date.now();
@@ -397,10 +379,6 @@ DxlManager.prototype.update = function(){
         }
     }
 */
-    if(this.recording){
-        this.recKey();
-    }
-
 
     //setTimeout(this.update.bind(this),50);
 }
@@ -459,9 +437,9 @@ DxlManager.prototype.stopAll = function() {
         this.motors[i].enable(false);
         misGUI.dxlEnabled(i,false);
         misGUI.motorSpeed(i,0);
-
     }
-    this.stopAllAnims();
+    //this.stopAllAnims();
+    animManager.stopAll();
     cm9Com.pushMessage("dxlStop\n");
 }
 
@@ -497,7 +475,8 @@ DxlManager.prototype.unfreezeAllMotors = function(){
 }
 
 DxlManager.prototype.startReadDxl = function(dxlId) {
-    this.stopAllAnims();
+    //this.stopAllAnims();
+    animManager.stopAllAnims();
     this.refreshID = dxlId;
     this.refreshAddr = 0;
 }
@@ -767,7 +746,6 @@ DxlManager.prototype.setSpeedN = function(index,val){
 };
 
 
-
 DxlManager.prototype.onPlay = function(index,val){
     if(index<this.motors.length){
         var dxl = this.motors[index];
@@ -777,7 +755,6 @@ DxlManager.prototype.onPlay = function(index,val){
             misGUI.motorSpeed( dxl.speed(val) );
     }
 };
-
 
 
 /*
@@ -793,105 +770,13 @@ DxlManager.prototype.dxlEnabled=function(index,val){
 }
 */
 
-DxlManager.prototype.startRec=function(name){
-    if(this.animFolder.length>0){
-        nbm = this.motors.length;
-        this.recIndices = [];
-        for (var i = 0; i < nbm; i++) {
-            if (this.motors[i].rec) {
-                this.recIndices.push(i);
-            }
-        }
 
-        if (this.recIndices.length > 0) {
-            //console.log("RECnbMotors:",this.recIndices.length);
-            var date = new Date(Date.now());
-            var y = date.getFullYear();
-            var m = ("00"+(date.getUTCMonth()+1)).slice(-2);
-            var d = ("00"+date.getUTCDate()).slice(-2);
-            var h = ("00"+date.getHours()).slice(-2);
-            var mn = ("00"+date.getMinutes()).slice(-2);
-            var s  = ("00"+date.getSeconds()).slice(-2);
-            var name = y+"-"+m+"-"+d+"-"+h+"h"+mn+"-"+s;
-
-            this.recAnim = new Animation("A"+this.animationID,this.animFolder,name);
-            this.animationID++;
-            this.recAnim.startRec(this.recIndices);
-            this.recording = true;
-
-        }
-        else { //NO MOTOR TO REC
-            misGUI.recOff();
-            this.recording = false;
-        }
-    }
-    else{ //open dialogBox ... select anim folder
-        misGUI.recOff();
-        this.recording = false;
-    }
-}
-
-DxlManager.prototype.recKey=function() {
-    if(this.recAnim){
-        var key = [];
-        var nbr = this.recIndices.length;
-        for(var i=0;i<nbr;i++){
-            var dxl = this.motors[this.recIndices[i]];
-            if(dxl.m.mode==0)key.push(dxl.wantedAngle); //dxl.angle());
-            else key.push(dxl.speed());
-        }
-        this.recAnim.recKey(key);
-    }
-}
-
-DxlManager.prototype.stopRec=function(){
-    this.recording = false;
-    if(this.recAnim) {
-        this.recAnim.stopRec();
-        //--->animLoaded
-    }
-};
-
-DxlManager.prototype.loadAnim=function(fullPath) {
-    console.log("LOADANIM()---------",this.animationID);
-
-    var name  = fullPath;
-    var slash = fullPath.lastIndexOf('/')+1;
-    if(slash>1){
-        this.animFolder = fullPath.substr(0,slash);
-        name = fullPath.substr(slash);
-    }
-    var id = "A"+this.animationID;
-    this.animationID++;
-    console.log("loadAnim:",this.animFolder," ",name);
-    var anim = new Animation(id,this.animFolder,name);
-    anim.load();
-};
-
-DxlManager.prototype.animLoaded=function(anim){
-    //this.animations.push({id:this.animationID,a:anim});
-    var id = anim.id;
-    console.log("ANIMLOADED---------(",id,")",this.animationID);
-    this.animations[id]=anim;
-    misGUI.addAnim(id,anim.fileName,anim.keyCode);
-    misGUI.animTracks(id,anim.channels);
-    this.recAnim = null; //TOTHINK ???
-
-};
-
-DxlManager.prototype.startAnim=function(id){
-    var anim = this.animations[id];
-    if(anim){
-        anim.startPlay();
-        this.animPlaying[id]=anim; //ok not twice
-    }
-}
-
+// leave it for now, because OscManager is using it... and don't want to get a mess in git
 DxlManager.prototype.getAnimID=function(animName){
     var anims = []; // in case there are multiple anims with same name
-    for(var k in this.animations){
-        if(this.animations[k].fileName == animName){
-            anims.push(this.animations[k].id);
+    for(var k in animManager.animations){
+        if(animManager.animations[k].fileName == animName){
+            anims.push(animManager.animations[k].id);
         }
     }
     return anims;
@@ -916,15 +801,7 @@ DxlManager.prototype.onKeyCode = function(keyCode){
         //this.motors[0]._regRead=0;
     }
     */
-    else {
-        for (var k in this.animations) {
-            console.log("animK:",k,this.animations[k].keyCode);
-            if (this.animations[k].keyCode.indexOf(keyCode)>=0) {
-                this.startAnim(k);
-                misGUI.animCheck(k, 1);
-            }
-        }
-    }
+   
 }
 
 // DXL SCAN functions ---------------------
@@ -990,53 +867,6 @@ DxlManager.prototype.dxlID = function(index,id){
 };
 
 
-DxlManager.prototype.setKeyCode = function(id,keyCode){
-    var anim = this.animations[id];
-    if(anim){
-        if( keyCode==undefined){
-            keyCode = "";
-        }
-        keyCode = keyCode.replace(/\u0000/g,'');
-        keyCode = keyCode.replace(/ /g,'');
-
-        console.log("setkeycode:",keyCode.length,keyCode);
-
-        if(anim.keyCode != keyCode){
-            anim.keyCode = keyCode;
-            //console.log("setkeycode: len:",anim.keyCode.length);
-            //console.log("setkeycode: charcode0:",anim.keyCode.charCodeAt(0));
-            //console.log("setkeycode: charcode1:",anim.keyCode.charCodeAt(1));
-            anim.save();
-        }
-
-    }
-
-}
-
-DxlManager.prototype.stopAnim=function(id){
-    var anim = this.animPlaying[id];
-    if(anim) {
-        delete this.animPlaying[id];
-        anim.stopPlay();
-        misGUI.animCheck(id,0);
-    }
-}
-
-DxlManager.prototype.loopAnim=function(id,onoff){ //set anim.loop true/false //?loop count?
-    var anim = this.animations[id];
-    if(anim){
-        anim.loop = onoff;
-        misGUI.animLoopOnOff(id,onoff);
-    }
-}
-
-DxlManager.prototype.animChannel=function(id,num,onoff){
-    var anim=this.animations[id];
-    if(anim){
-        anim.channelEnable(num,onoff);
-    }
-}
-
 DxlManager.prototype.playKey=function(cmd,index,val) { //cmd = "angle" or "speed"
     //console.log("***************dxlm.playkey:",cmd," ",index," ",val);
     /*
@@ -1047,38 +877,6 @@ DxlManager.prototype.playKey=function(cmd,index,val) { //cmd = "angle" or "speed
     */
    this.motors[index].onValue(val);
 }
-
-DxlManager.prototype.stopAllAnims = function() {
-    for (var k in this.animPlaying) {
-        this.animations[k].stopPlay();
-        misGUI.animCheck(k, 0);
-    }
-    for (var k in this.animPlaying) {
-        delete this.animPlaying[k];
-    }
-}
-
-DxlManager.prototype.renameAnim=function(id,name){
-    var anim = this.animations[id];
-    console.log("rename:",id," ",name);
-    if(anim){
-        console.log(" oldname:",anim.fileName);
-        anim.save(name);
-        //TOTHINK delete old ??? : no: duplicate anim = safe
-    }
-}
-
-DxlManager.prototype.removeAnim=function(id){
-    var anim = this.animations[id];
-    console.log("remove",id," ",anim.fileName);
-
-    if(anim) {
-        anim.discard();
-        delete this.animPlaying[id];
-        delete this.animations[id];
-    }
-}
-
 
 DxlManager.prototype.servoByIndex = function(index){
     if(index<this.motors.length)

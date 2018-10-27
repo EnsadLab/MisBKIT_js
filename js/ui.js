@@ -191,19 +191,9 @@ var editor = CodeMirror(document.body.getElementsByClassName("input-code")[0], {
 
 
 
-
-
-
-
-
-
-
 $( ".draggable" ).draggable();
 
 $(".modale").css("display", "none");
-
-
-
 
 $(".gear").bind("click", modaleGear);
 
@@ -309,16 +299,34 @@ $(".single-sensor").contextmenu(function(e) {
     $(this).addClass('selected');
 
 });
-    
+
+//RIGHT CLICK FOR SENSOR OUTPUT
+$("#sortable-sens-output section").contextmenu(function(e) {
+    contextmenuBox(e.pageX, e.pageY, "sensor-output");
+    $(this).addClass('selected');
+});
+
+//RIGHT CLICK FOR ANIMATIONS
+$(".single-anim").contextmenu(function(e) {
+	console.log("youhou");
+	$(".single-anim").removeClass('selected'); // careful.. in Alex code, there were two versions...
+    contextmenuBox(e.pageX, e.pageY, "single-anim");
+    $(this).addClass('selected');
+
+});
+
 
 
 // CONTEXT MENU
+
 function contextmenuBox(x, y, elemt){
+
+	console.log("elmt",elemt);
 
     if($(".context-box")){
         $(".context-box").remove();
         $("#sortable-sens-output section").removeClass('selected');
-        $("#sortable-sens .selected").removeClass('selected');
+        //$("#sortable-sens .selected").removeClass('selected');
     }
 
     // SENSOR-OUTPUT CASE
@@ -344,11 +352,13 @@ function contextmenuBox(x, y, elemt){
 
         document.body.appendChild(div);
 
-        $(".remove-output").bind("click", removeOutput);
+		// TODO: check if it is still working
+        $(".remove-output").bind("click", removeSensorOutput);
     
     }
 
-    // SINGLE-SENSOR CASE
+	// SINGLE-SENSOR CASE
+	// TODO: in the previous version, we used the cross button... be sure it works!!
     else if(elemt === "single-sensor"){
 
         var div = document.createElement("DIV");
@@ -373,15 +383,17 @@ function contextmenuBox(x, y, elemt){
         document.body.appendChild(div);
 
         $(".remove-sensor").bind("click", function(){
-            var eltID = $("#sortable-sens .selected").attr('eltID');
-            sensorManager.removeSensor(eltID);
+            //var eltID = $("#sortable-sens .selected").attr('eltID');
+			//sensorManager.removeSensor(eltID);
         });
 
 
     }
 
     // ANIMATION
-    else if(elemt === "animation"){
+    else if(elemt === "single-anim"){
+		console.log("yeeh ain single anim");
+		
     	var div = document.createElement("DIV");
         div.className = "context-box";
         div.style.left = x+"px";
@@ -404,15 +416,9 @@ function contextmenuBox(x, y, elemt){
         document.body.appendChild(div);
 
          $(".remove-animation").bind("click", function(){
-            var eltID = $("#sortable-anim .selected").attr('eltID');
-
-            //---> remove anime slot
-
+			MisGUI_anims.removeAnimation();
         });
     }
-
-
-    
 
     $("body").bind("click", removeContext);
 
@@ -427,19 +433,6 @@ function removeContext(){
 
     }
 }
-
-
-
-
-// Animation context
-$(".single-anim").contextmenu(function(e) {
-    $(".single-anim").removeClass('selected');
-    contextmenuBox(e.pageX, e.pageY, "animation");
-    $(this).addClass('selected');
-});
-
-
-
 
 
 /*

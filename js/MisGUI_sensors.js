@@ -294,12 +294,14 @@ MisGUI_sensors.initRobusSelect = function(gate,modules){
 
 
 //RIGHT CLICK FOR OUTPUT
+/*
 $("#sortable-sens-output section").contextmenu(function(e) {
     contextmenuBox(e.pageX, e.pageY);
     $(this).addClass('selected');
 });
-    
+*/  
 
+/*
 function contextmenuBox(x, y){
 
     if($(".context-box")){
@@ -325,20 +327,23 @@ function contextmenuBox(x, y){
 
     document.body.appendChild(div);
 
-    $(".remove-output").bind("click", removeOutput);
+    //$(".remove-output").bind("click", removeOutput);
 
     $("body").bind("click", removeContext);
 
-}
+}*/
 
+
+/*
 function removeContext(){
     if($(".context-box")){
         $(".context-box").remove();
         $("#sortable-sens-output section").removeClass('selected');      
     }
 }
+*/
 
-function removeOutput(){
+function removeSensorOutput(){
     var eltID = $("#sortable-sens-output .selected").attr('eltID');
     var name = $("#sortable-sens-output .selected").attr('name');
 

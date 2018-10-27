@@ -330,6 +330,8 @@ Dxl.prototype.joint = function(){
     this.speed(this.m.jointSpeed);
     misGUI.motorAngle(this.index,this.wantedAngle); //updated by currPos
     console.log("----- Dxl.joint: ----",this.index,this.m.mode,this._curAngle);
+    // let the animations know about the change so that the label can be changed
+    animManager.setTrackForRecord(this.index,this.m.mode);
     if(this.m.dxlID>0){
         if(this.m.model==-1){ //ask for model
             console.log("-----------askForModel");
@@ -349,6 +351,7 @@ Dxl.prototype.wheel = function(){
     this.dxlSpeed = 0;
     this.wantedSpeed = 0;
     console.log("----- Dxl.wheel: ----",this.index,this.m.mode);
+    animManager.setTrackForRecord(this.index,this.m.mode);
     return this;
 };
 

@@ -32,6 +32,7 @@ MotorMappingManager.prototype.loadMappingSettings = function () {
          
         var s = JSON.parse(json);
         console.log(s);
+
         // copy old versions to see if some motor mappings had been erased
        // var oldMotorMappings = JSON.parse(JSON.stringify(this.motorMappings))
 

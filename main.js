@@ -37,7 +37,8 @@ app.on('ready', function() {
   console.log("versions:",process.versions); //v5.10.0
   //console.log("version electron:",process.versions['electron']); //v5.10.0
   //console.log("version chrome:",process.versions['chrome']); //v5.10.0
-  mainWindow = new BrowserWindow({width: 1280, height: 760});
+  //mainWindow = new BrowserWindow({width: 1280, height: 760});
+  mainWindow = new BrowserWindow({width: 1520, height: 760});
 
   mainWindow.loadURL('file://' + __dirname + '/index.html');
   //mainWindow.loadURL('file://' + __dirname + '/index_alex.html');

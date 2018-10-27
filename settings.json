@@ -1,6 +1,6 @@
 {
-  "savecount": 108,
-  "cm9Num": 0,
+  "savecount": 326,
+  "cm9Num": 1,
   "oscPorts": {
     "oscRemoteIP": "localhost",
     "oscLocalPort": 4444,
@@ -10,14 +10,7 @@
   "midiEnabled": true,
   "midiPorts": [],
   "anims": [],
-  "sensors": [
-    {
-      "name": "Random00"
-    },
-    {
-      "name": "SinusTest"
-    }
-  ],
+  "sensors": [],
   "motors": [
     {
       "dxlID": 23,
@@ -38,11 +31,29 @@
       "id": 23
     },
     {
+      "dxlID": 5,
+      "enabled": false,
+      "model": -1,
+      "clockwise": true,
+      "mode": 0,
+      "jointSpeed": 100,
+      "angleMin": -150,
+      "angleMax": 150,
+      "speedMin": -100,
+      "speedMax": 100,
+      "torqueMax": 1023,
+      "midi": {
+        "port": "",
+        "msg": "CC:0"
+      },
+      "id": 5
+    },
+    {
       "dxlID": 0,
       "enabled": false,
       "model": -1,
       "clockwise": true,
-      "mode": -1,
+      "mode": 1,
       "jointSpeed": 100,
       "angleMin": -150,
       "angleMax": 150,
@@ -60,7 +71,7 @@
       "enabled": false,
       "model": -1,
       "clockwise": true,
-      "mode": -1,
+      "mode": 1,
       "jointSpeed": 100,
       "angleMin": -150,
       "angleMax": 150,
@@ -78,7 +89,7 @@
       "enabled": false,
       "model": -1,
       "clockwise": true,
-      "mode": -1,
+      "mode": 0,
       "jointSpeed": 100,
       "angleMin": -150,
       "angleMax": 150,
@@ -96,25 +107,7 @@
       "enabled": false,
       "model": -1,
       "clockwise": true,
-      "mode": -1,
-      "jointSpeed": 100,
-      "angleMin": -150,
-      "angleMax": 150,
-      "speedMin": -100,
-      "speedMax": 100,
-      "torqueMax": 1023,
-      "midi": {
-        "port": "",
-        "msg": "CC:0"
-      },
-      "id": 0
-    },
-    {
-      "dxlID": 0,
-      "enabled": false,
-      "model": -1,
-      "clockwise": true,
-      "mode": -1,
+      "mode": 1,
       "jointSpeed": 100,
       "angleMin": -150,
       "angleMax": 150,
