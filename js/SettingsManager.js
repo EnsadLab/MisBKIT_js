@@ -188,3 +188,14 @@ SettingsManager.prototype.saveToSensorFolder = function(filename,data){
     fs.writeFileSync(this.sensorFolder + filename, data ); 
 }
 
+SettingsManager.prototype.loadConfiguration = function(filename){
+    console.log("loading:",this.configurationFolder + filename )
+    var datas = undefined;
+    try{
+        datas = fs.readFileSync( this.configurationFolder + filename , 'utf8');
+    }catch(err){
+        console.log("loadConfiguration:",err);
+    } //Alert?
+    return datas;
+}
+

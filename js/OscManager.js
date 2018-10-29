@@ -335,8 +335,6 @@ OscManager.prototype.sendSensorMessage = function(sensorID,sensorVal){
     this.udpUserSender.send(buf, 0, buf.length, this.s.oscRemotePort, this.s.oscRemoteIP );
 }
 
-
-
 OscManager.prototype.handleSensorMessage = function(rcv,mobz_connexion){
 
     var adr = rcv.address;

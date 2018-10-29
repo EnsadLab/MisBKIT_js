@@ -320,6 +320,7 @@ window.onload = function() {
                 animManager.onKeyCode(String.fromCharCode(event.keyCode));
                 motorMappingManager.onKeyCode(String.fromCharCode(event.keyCode));
                 sensorManager.onKeyCode(String.fromCharCode(event.keyCode));
+                scriptManager.call("onkey",event.key); //no arrows ...
             }return false;
         }
     });

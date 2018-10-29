@@ -57,7 +57,7 @@ function UIshowAdvanced(){
 	$(".motors-settings").css("z-index", 1);
 	$(".motors-settings ").css("display", "block");
 
-	console.log("coucou");
+	//console.log("coucou");
 
 
 }
@@ -168,12 +168,10 @@ function stopCode(){
 // FOR CODEMIROR (code editor in script mode)
 var value = "// minimal example\n\n"
 		  + "var a = 0\n\n"
-		  + "this.setup = function(){\n"
-		  + "   console.log('setup!');\n"
-		  + "}\n"
+		  + "dxl.dxlMode(0,'joint')\n\n"
 		  + "this.loop = function(){\n"
-		  + "  dxlManager.setAngle(0, Math.sin(a)*150 );\n"
-		  + "  a+=0.2;\n"
+		  + "  dxl.setAngle(0, Math.sin(a)*150 )\n"
+		  + "  a+=0.2\n"
 		  + "}\n";
 			  
 var editor = CodeMirror(document.body.getElementsByClassName("input-code")[0], {

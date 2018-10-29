@@ -1,5 +1,5 @@
 {
-  "savecount": 326,
+  "savecount": 247,
   "cm9Num": 1,
   "oscPorts": {
     "oscRemoteIP": "localhost",
@@ -13,11 +13,11 @@
   "sensors": [],
   "motors": [
     {
-      "dxlID": 23,
+      "dxlID": 0,
       "enabled": false,
-      "model": 12,
+      "model": -1,
       "clockwise": true,
-      "mode": 1,
+      "mode": 0,
       "jointSpeed": 5,
       "angleMin": -150,
       "angleMax": 150,
@@ -28,7 +28,7 @@
         "port": "",
         "msg": "CC:0"
       },
-      "id": 23
+      "id": 0
     },
     {
       "dxlID": 5,
