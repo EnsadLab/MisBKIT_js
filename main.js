@@ -12,7 +12,7 @@
 //electron-packager . --platform=darwin --arch=x64 --overwrite --icon=misbkit.icns
 //electron-packager . --platform=darwin --arch=x64 --overwrite --icon=misbkit.icns --prune=true --out=/Users/Didier/Documents/Dev/_MisBKIT_releases
 
-
+// git test....
 
 //cecile path: /Users/Cecile ?
 //didier path: /Users/Didier/Documents/
