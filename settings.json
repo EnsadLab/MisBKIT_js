@@ -1,6 +1,6 @@
 {
-  "savecount": 140,
-  "cm9Num": 0,
+  "savecount": 247,
+  "cm9Num": 1,
   "oscPorts": {
     "oscRemoteIP": "localhost",
     "oscLocalPort": 4444,
@@ -63,7 +63,7 @@
       "enabled": false,
       "model": -1,
       "clockwise": true,
-      "mode": -1,
+      "mode": 1,
       "jointSpeed": 100,
       "angleMin": -150,
       "angleMax": 150,
