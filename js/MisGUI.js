@@ -1758,6 +1758,7 @@ $(".modalNewAnim").find("#newAnimCancel").bind('click', function(){
 $(".modalNewAnim").find("span").bind('click', function(){
 
     if($(this).hasClass('selected')){
+        console.log("############");
         $(this).removeClass('selected');
         $(".modalNewAnim span").removeClass('selected');
         $(".modalNewAnim button:first-of-type").css("opacity", 0.3);
