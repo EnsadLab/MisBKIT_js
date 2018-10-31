@@ -46,6 +46,7 @@ module.exports = class MisBKIT{
         dxlManager.init(); //before loadSettings
         robusManager.init();
         scriptManager.init();
+        oscManager.init();
 
         settingsManager.loadSettings();
 

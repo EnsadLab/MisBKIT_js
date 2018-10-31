@@ -32,7 +32,6 @@ const OS = require('os');
 var fs = require('fs');
 
 const udp  = require('dgram');
-const osc  = require('osc-min');
 const serialPort = require('serialport');
 
 

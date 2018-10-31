@@ -5,8 +5,9 @@ dxl    = require("./DxlManager.js"); //dxl.foo() = dxlManager.foo()
 anim   = require("./AnimManager.js");
 sensor = require("./SensorManager.js");
 midi   = require("./MidiPortManager.js")
-//osc    = require("./OscManager.js") //tochange osc global
+osc    = require("./OscManager.js") //tochange osc global
 ui     = require("./MisGUI.js");
+
 
 
 /*
@@ -16,7 +17,7 @@ function scriptSleep(delay,arg){
 */
   
 
-//TODO multiple scripts
+//TODO multiple scripts (GUI)
 class scriptManager {
     constructor(){
         this.className = "scriptManager";
@@ -24,10 +25,10 @@ class scriptManager {
         this.current = 0; //future multiscripts
         this.scriptNames = ["example.js"]; //future multiscripts
         this.frozen = false;
-        //this.scripts = []; //future multiscripts
+        //this.scripts = {}; //future multiscripts
         //--------------
 
-        this.script = undefined;
+        this.script = {};
         this.pauseTimer  = undefined;
         this.nextTask    = undefined;
     }
@@ -45,14 +46,15 @@ class scriptManager {
     }
 
     call(func,arg){
-        //test if running?
-        if(typeof(this.script[func])=='function'){
-            try{
-                return this.script[func](arg)
-            }catch(err){
-                if(err!="exit")
-                    misGUI.alert("Script Error in "+func+"\n"+err);
-                this.stop();
+        if(this.script._running){
+            if(typeof(this.script[func])=='function'){
+                try{
+                    return this.script[func](arg)
+                }catch(err){
+                    if(err!="exit")
+                        misGUI.alert("Script Error in "+func+"\n"+err);
+                    this.stop();
+                }
             }
         }
     }
@@ -128,10 +130,8 @@ class scriptManager {
     }
 
     update(){ //called by MisBKIT.js
-        if(this.script==undefined)
-            return;
-
-        this.script._update();
+        if(this.script._running)
+            this.script._update();
         /*
         try{
             this.script._update();

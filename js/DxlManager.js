@@ -34,24 +34,6 @@ const ERR_INSTR     = 0x40;
 const MISB_INSTR    = 0x7F;
 const MISB_ADDR     = 0xFD;
 
-/* ---> dlxMotor.js
-const ADDR_MODEL       = 0;
-const ADDR_ID          = 3;
-const ADDR_CW_LIMIT    = 6;
-const ADDR_CCW_LIMIT   = 8;
-const ADDR_TORQUE_ENABLE = 24;
-const ADDR_LED         = 25;
-const ADDR_MARGIN_CW   = 26;
-const ADDR_MARGIN_CCW  = 27;
-const ADDR_SLOPE_CW    = 28;
-const ADDR_SLOPE_CCW   = 29;
-const ADDR_GOAL        = 30; //0x1E
-const ADDR_SPEED       = 32;
-const ADDR_TORQUE      = 34;
-const ADDR_POSITION    = 36;
-const ADDR_TEMPERATURE = 43;
-*/
-
 function DxlManager(){
 
     this.savecount = 0; //debugg
@@ -104,7 +86,7 @@ DxlManager.prototype.cmdOld = function(cmd,index,arg){
 //dxlID clockwise angleMin angleMax speedMin speedMax
 //joint wheel recCheck enable angle velocity
 DxlManager.prototype.cmd = function(func,eltID,val,param){
-    //console.log("dxlManager:cmd:",func,eltID,val,param);
+    console.log("dxlManager:cmd:",func,eltID,val,param);
     if(this[func]){
         this[func](+eltID,val,param); //eltID=index
     }
@@ -163,20 +145,27 @@ DxlManager.prototype.checkRec = function(eltID,val){
         this.motors[eltID].rec = val;
     }
 }
+
+DxlManager.prototype.setMode = function(eltID,val){
+    this.dxlMode(eltID,val);
+}
+//TODO change name to setMode 
 DxlManager.prototype.dxlMode = function(eltID,val){ //true=wheel false=joint
     if(this.motors[eltID]){
+        var m = false;
         switch(val){
             case false: case 0: case "joint": case "J":
                 this.motors[eltID].joint(eltID);
                 break;
             case true: case 1: case "wheel": case "W":
                 this.motors[eltID].wheel(eltID);
+                m=true;
                 break;
             //TODO multitour ... GUI   
         }
-
+        misGUI.showValue({class:"dxlManager",func:"dxlMode",id:eltID,val:m})
     }
-    misGUI.motorMode(eltID,val);
+    //misGUI.motorMode(eltID,val);
 }
 
 
@@ -187,7 +176,7 @@ DxlManager.prototype.saveSettings = function () {
     s.cm9Num = cm9Com.num;
     //s.serialPort = cm9Com.serialName;
     //s.midiPort = midiPortManager.getCurrentPortName();
-    s.oscPorts = oscManager.s;
+    s.oscPorts = oscManager.getSettings();
     s.webSocket = "none";
 
     s.midiEnabled = midiPortManager.enabled;
@@ -226,7 +215,8 @@ DxlManager.prototype.saveSettings = function () {
 
     var json = JSON.stringify(s, null, 2);
     //fs.writeFileSync(__dirname + "/settings.json", json);
-    fs.writeFileSync(__appPath + "/settings.json", json);
+    //fs.writeFileSync(__appPath + "/settings.json", json);
+    settingsManager.saveToConfigurationFolder("settings.json",json);
     console.log(json);
 
     return this.savecount;
@@ -234,8 +224,8 @@ DxlManager.prototype.saveSettings = function () {
 
 DxlManager.prototype.loadSettings = function () {
     console.log("loading dxl manager settings:");
-    //var json = fs.readFileSync(__dirname + "/settings.json", 'utf8');
-    var json = fs.readFileSync(__appPath + "/settings.json", 'utf8');
+    //var json = fs.readFileSync(__appPath + "/settings.json", 'utf8');
+    var json = settingsManager.loadConfiguration("settings.json");
     if (json) {
         var s = JSON.parse(json);
         //this.serialPort = s.serialPort;
@@ -435,12 +425,15 @@ DxlManager.prototype.stopAll = function() {
     console.log("DxlManager.stopAll:")
     for (var i = 0; i < this.motors.length; i++) {
         this.motors[i].enable(false);
-        misGUI.dxlEnabled(i,false);
+        //misGUI.dxlEnabled(i,false);
+        //<input func="dxlEnable"
         misGUI.motorSpeed(i,0);
     }
     //this.stopAllAnims();
     animManager.stopAll();
     cm9Com.pushMessage("dxlStop\n");
+
+    misGUI.showValue({class:"dxlManager",func:"dxlEnable",val:false}) //no id -> all
 }
 
 DxlManager.prototype.stopAllMotors = function(){

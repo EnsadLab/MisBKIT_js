@@ -93,10 +93,10 @@
 					</div>
 				</div>
 
-				<div id="divOSC" class="plug">
+				<div id="divOSC" class="plug oscManager">
 					<p>
 						OSC  <span class="status"></span>
-						<input id="btOSC" type="checkbox" class="small warning cmdOnOff" name ="enable" title="enable/disable">
+						<input type="checkbox" func="onOff" eltID="OSC0" class="small warning cmdOnOff" name ="enable" title="enable/disable">
 					</p>
 					<div class="content advanced">
 						<br>OSC :<br>
@@ -105,12 +105,12 @@
 							<div class="infoIP">Local IP: localhost</div>
 						</font>
 						input Port:
-						<input type="number" class="small set-value cmdInt" name="oscLocalPort" align="right" placeholder="6666">
+						<input type="number" func="setParam" param="localPort" eltID="OSC0" class="small set-value cmdInt" name="oscLocalPort" align="right" placeholder="6666">
 						<hr>
-						IP:<input type="text" class="name cmdString" name="oscRemoteIP" placeholder="255.255.255.255" size="18" title="address IP">
+						IP:<input type="text" func="setParam" param="clientIP" eltID="OSC0" class="name cmdString" name="oscRemoteIP" placeholder="255.255.255.255" size="18" title="address IP">
 						<!--input type="number" class="OSC-setting" placeholder="port" name=""-->
 						output Port:
-						<input type="number" class="small set-value cmdInt" name="oscRemotePort" align="right" placeholder="7777">
+						<input type="number" func="setParam" param="clientPort" eltID="OSC0" class="small set-value cmdInt" name="oscRemotePort" align="right" placeholder="7777">
 						<!--ul></ul-->
 						<hr>
 						<button id="addConnexionOSC">Add OSC CONNEXION</button>

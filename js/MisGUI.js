@@ -171,9 +171,12 @@ ex: html : <div class="myManager">
 */
 MisGUI.prototype.initManagerFunctions = function(manager,className){
     var parents = $("."+className);
+    console.log("GUI_MANAGER:",className,parents.length)
+
     parents.find("*").each(function(i) {
         var func = $(this).attr("func");
         $(this).data("manager",manager); //inutile ? keep manager ?
+        //console.log("GUI_MANAGER:",className,func)
         if(func){
             //console.log("INIT:",$(this).prop("tagName"),$(this).prop("type"));
 
@@ -622,7 +625,6 @@ MisGUI.prototype.motorAngle = function(index,val){
 }
 
 MisGUI.prototype.motorSpeed = function(index,val){ //[-100,100]
-    //if(index<this.rotSpeeds.length){
     if(this.rotSpeeds[+index]){
         var v = this.rotSpeeds[+index].setValue(+val).value;
         $("#divMotors .num_rotary").filter("[eltID="+index+"]").val(v.toFixed(1));
@@ -637,7 +639,6 @@ MisGUI.prototype.needle = function(index,val){
 }
 
 MisGUI.prototype.getMotorUI = function(index){
-    //return $("#divMotors .single-motor").eq(index);
     return $("#divMotors .single-motor").filter("[eltID="+index+"]");
 }
 MisGUI.prototype.getMotorStg = function(index){
@@ -1112,6 +1113,7 @@ MisGUI.prototype.init =function(){
     });
     */
 
+    /*
     divOsc = $("#divOSC");
     divOsc.find("#btOSC").click(function(){
         console.log("osc ON",this.checked);
@@ -1129,6 +1131,7 @@ MisGUI.prototype.init =function(){
         console.log("divOSC:mouseenter");
         misGUI.scanIPv4();
     });
+    */
 
 
     $("#addEmptySensor").on("click",function(){
@@ -1229,11 +1232,12 @@ MisGUI.prototype.initMotorDiv = function(){
 }
 
 
-
+/*
 MisGUI.prototype.enableOSC = function(onoff){
     $("#divOSC").find("#btOSC").prop("checked",onoff);
 }
-
+*/
+/*
 MisGUI.prototype.showOSC = function(settings){
     console.log("==========showosc:",settings);
     var div = $("#divOSC");
@@ -1241,6 +1245,7 @@ MisGUI.prototype.showOSC = function(settings){
     div.find("[name=oscRemoteIP]").val(settings.oscRemoteIP);
     div.find("[name=oscRemotePort]").val(settings.oscRemotePort);    
 }
+*/
 
 MisGUI.prototype.openLoadDialog = function( title , path , callback ){
     dialog.showOpenDialog({

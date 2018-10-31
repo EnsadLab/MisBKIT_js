@@ -168,7 +168,7 @@ function stopCode(){
 // FOR CODEMIROR (code editor in script mode)
 var value = "// minimal example\n\n"
 		  + "var a = 0\n\n"
-		  + "dxl.dxlMode(0,'joint')\n\n"
+		  + "dxl.setMode(0,'joint')\n\n"
 		  + "this.loop = function(){\n"
 		  + "  dxl.setAngle(0, Math.sin(a)*150 )\n"
 		  + "  a+=0.2\n"
