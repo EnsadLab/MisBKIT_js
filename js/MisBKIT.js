@@ -11,7 +11,8 @@ robusManager  = require("./RobusManager.js");
 oscManager    = require("./OscManager.js");
 oscMobilizing = require("./OscMobilizing.js");
 scriptManager = require("./ScriptManager.js");
-animManager = require("./AnimManager.js");
+animManager   = require("./AnimManager.js");
+pythonManager = require("./PythonManager.js");
 
 module.exports = class MisBKIT{
     constructor(){
@@ -47,6 +48,7 @@ module.exports = class MisBKIT{
         robusManager.init();
         scriptManager.init();
         oscManager.init();
+        pythonManager.init();
 
         settingsManager.loadSettings();
 

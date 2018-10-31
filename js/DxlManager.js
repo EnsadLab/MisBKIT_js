@@ -2,6 +2,10 @@
  * Created by Didier on 27/04/16.
  */
 
+ //TODO generic MotorManager
+ //TODO general settings in MisBKIT.js
+ //TODO ... ... ... ...
+
 var Dxl = require("./DxlMotor.js");
 var Animation = require("./Animations.js");
 var animManager = require("./AnimManager.js"); //TODO :move anim functions to AnimManager
@@ -182,6 +186,7 @@ DxlManager.prototype.saveSettings = function () {
     s.midiEnabled = midiPortManager.enabled;
     
     s.midiPorts = [];
+    s.python = pythonManager.getSettings();
     s.anims = [];
     s.sensors = [];
     s.motors = [];
@@ -246,6 +251,7 @@ DxlManager.prototype.loadSettings = function () {
         //this.oscHost = s.oscHost;
         //oscManager.s = s.oscPorts;
         oscManager.setSettings(s.oscPorts);
+        pythonManager.setSettings(s.python)
 
         this.webSocket = s.webSocket;
 
@@ -707,7 +713,7 @@ DxlManager.prototype.onControl = function(index,val){
 
 
 DxlManager.prototype.setAngle = function(index,val){ //degrés
-    //console.log("DxlManager:setangle:",index,val);
+    console.log("DxlManager:setangle:",index,val);
     if(index<this.motors.length){
         var a = this.motors[index].angle(val);
         misGUI.motorAngle(index,a);

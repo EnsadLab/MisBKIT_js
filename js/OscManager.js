@@ -152,6 +152,8 @@ OscManager.prototype.init = function(){
 }
 
 OscManager.prototype.cmd = function(func,id,val,param){
+    if(id==undefined)
+        id = "OSC0";
     if(typeof(this[func])=='function')
         this[func](id,val,param)
 }

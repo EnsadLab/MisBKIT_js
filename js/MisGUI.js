@@ -197,7 +197,8 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                 case "select-one": //select
                     //console.log("***",$(this)); 
                     $(this).on("change",function(){
-                        console.log("INPUTCHANGE:",$(this).data("prevval"),$(this).val());
+                        console.log("INPUTCHANGE:",manager);
+                        //console.log("INPUTCHANGE:",$(this).data("prevval"),$(this).val());
                         //console.log("FUNCCHANGE:",$(this).attr("eltID"),$(this).attr("param"));
                         //$(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());                            
                         // CEC: !!!!! Prob avec prop("manager").. pas bien stocké dans la balise

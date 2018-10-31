@@ -146,20 +146,32 @@ function showScript(){
 
 // SCript function
 $("#run-code").bind('click', function(){
-	console.log("#runcode:1",this);
+	/*
 	$(this).html('Running...');
 	$(this).addClass('active');
-	$(this).css('opacity', 0.5);	
+	$(this).css('opacity', 0.5);
+	*/
+	/*
+	$("#run-code").html('Running...');
+	$("#run-code").addClass('active');
+	$("#run-code").css('opacity', 0.5);
 	$("#stop-code").css('opacity', 1);
 	console.log("#runcode:2",this);
+	*/
 })
+function runcode(){
+	$("#run-code").html('Running...')
+		.addClass('active')
+		.css('opacity', 0.5)
+	$("#stop-code").css('opacity', 1);
+}
 
-$("#stop-code").bind('click', stopCode);
+
+//$("#stop-code").bind('click', stopCode);
 function stopCode(){
-	console.log("#stopcode");
-	$("#run-code").html('Run');
-	$("#run-code").removeClass('active');
-	$("#run-code").css('opacity', 1);
+	$("#run-code").html('Run')
+		.removeClass('active')
+		.css('opacity', 1);
 	//$(this).css('opacity', 0.5);  //called from elsewhere (eg stopped before load)
 	$("#stop-code").css('opacity', 0.5);
 	//$("#stop-code").unbind('click', stopCode); //??? why ???
