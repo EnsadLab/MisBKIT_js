@@ -270,10 +270,10 @@ MisGUI.prototype.showParams=function(opt){
             if(e.length>0){
                 this.setElementValue(e,opt.val[p]);
             }
-            //else console.log("showParam:notfound",p);
+            else console.log("showParam:notfound",p);
         }
     }
-    //else console.log("*****GUIPARAMS NOT FOUND:",sel);
+    else console.log("*****GUIPARAMS NOT FOUND:",sel);
 }
 
 
@@ -1743,42 +1743,52 @@ function midiPanelOver(){
 
 // NEW animation modale -- Alex changes
 $("#newAnim").bind('click', function(){
-    $(".modalNewAnim").css("display", "block");
-    $(".modalNewAnim button:first-of-type").prop("disabled",true);
+    $("#modalNewAnim").css("display", "block");
+    $("#modalNewAnim button:first-of-type").prop("disabled",true);
 
 });
 
 
 //cancel
-$(".modalNewAnim").find("#newAnimCancel").bind('click', function(){
-    $(".modalNewAnim").css("display", "none");    
+$("#modalNewAnim").find("#newAnimCancel").bind('click', function(){
+    $("#modalNewAnim").css("display", "none");    
 })
 
 //select
-$(".modalNewAnim").find("span").bind('click', function(){
+$("#modalNewAnim").find("span").bind('click', function(){
 
+    //console.log("yeeha!!!!!");
     if($(this).hasClass('selected')){
-        console.log("############");
+        //console.log("------> selected",this.id,"a",this.value);
+        /*
+        // TODO: removed because it comes twice in this bind... why?? Wasn't like this in my version.
         $(this).removeClass('selected');
-        $(".modalNewAnim span").removeClass('selected');
-        $(".modalNewAnim button:first-of-type").css("opacity", 0.3);
-        $(".modalNewAnim button:first-of-type").prop("disabled",true);
+        console.log($(this));
+        console.log("#modalNewAnim",$("#modalNewAnim"));
+        $("#modalNewAnim span").removeClass('selected');
+        $("#modalNewAnim button:first-of-type").css("opacity", 0.3);
+        $("#modalNewAnim button:first-of-type").prop("disabled",true);
+        */
 
     }else{
-        $(".modalNewAnim span").removeClass('selected');
+        console.log("------> NOT selected",this.id,"a",this.value);
+        $("#modalNewAnim span").removeClass('selected');
         $(this).addClass('selected');
-        $(".modalNewAnim button:first-of-type").css("opacity", 1);
-        $(".modalNewAnim button:first-of-type").prop("disabled",false);
+        $("#modalNewAnim button:first-of-type").css("opacity", 1);
+        $("#modalNewAnim button:first-of-type").prop("disabled",false);
     }
 
 })
 
 // load
-$(".modalNewAnim").find("#newAnimLoad").bind('click', function(){
+$("#modalNewAnim").find("#newAnimLoad").bind('click', function(){
+    // TODO BUG: pourquoi on rentre ici deux fois... un lien ac l'autre bug du select??
     var selectedType = $(".listAnimType .selected").attr("name");
     console.log("load anim "+ selectedType);
-    $(".modalNewAnim span").removeClass('selected');
-    $(".modalNewAnim").find("#newAnimLoad").css("opacity", 0.3);
-    $(".modalNewAnim").css("display", "none"); 
-    animManager.addAnim(selectedType);
+    if(selectedType != undefined){
+        $("#modalNewAnim span").removeClass('selected');
+        $("#modalNewAnim").find("#newAnimLoad").css("opacity", 0.3);
+        $("#modalNewAnim").css("display", "none"); 
+        animManager.addAnim(selectedType);
+    }
 })
