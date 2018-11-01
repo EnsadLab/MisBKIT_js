@@ -72,9 +72,8 @@ class AnimManager {
         this.animations[id] = anim; 
         this.animationID++;
 
-        
-
         misGUI.cloneElement("#anim-" + selectedType,id);
+
         if(selectedType == "record"){
             MisGUI_anims.setRecordTracks(id,anim.recordchannels);
         } else {
@@ -84,10 +83,10 @@ class AnimManager {
             // I didn't want to explicit every parameter in the settings of the animation... 
             // more generic this way for future generators
             var params = {};
-            anim.s.nbparams = 3;
+            anim.s.nbparams = 3; // fake nb param values for now......
             for(var i=0; i<anim.s.nbparams; i++){
                 var k = "param" + i;
-                params[k] = i*10;
+                params[k] = i*10; // fake values for now.......
             }
             
             //console.log("params:",params);
