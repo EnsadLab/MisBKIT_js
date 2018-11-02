@@ -28,7 +28,7 @@ SettingsManager.prototype.loadSettings = function(){
         this.chooseMisBKITFolder();
         
     }
-    this.getScriptFolder();
+    scriptManager.folderIsReady(this.scriptFolder);//in any case , no?
 };
 SettingsManager.prototype.saveSettings = function () {
     console.log("entering settings manager save");
@@ -134,7 +134,6 @@ SettingsManager.prototype.getScriptFolder = function(){   //name , cb ){
             }
         });
     }
-    scriptManager.folderIsReady(this.scriptFolder);
 }
 
 

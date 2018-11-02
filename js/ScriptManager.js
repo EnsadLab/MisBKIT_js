@@ -5,8 +5,9 @@ dxl    = require("./DxlManager.js"); //dxl.foo() = dxlManager.foo()
 anim   = require("./AnimManager.js");
 sensor = require("./SensorManager.js");
 midi   = require("./MidiPortManager.js")
-//osc    = require("./OscManager.js") //tochange osc global
+osc    = require("./OscManager.js") //tochange osc global
 ui     = require("./MisGUI.js");
+
 
 
 /*
@@ -16,7 +17,7 @@ function scriptSleep(delay,arg){
 */
   
 
-//TODO multiple scripts
+//TODO multiple scripts (GUI)
 class scriptManager {
     constructor(){
         this.className = "scriptManager";
@@ -24,10 +25,10 @@ class scriptManager {
         this.current = 0; //future multiscripts
         this.scriptNames = ["example.js"]; //future multiscripts
         this.frozen = false;
-        //this.scripts = []; //future multiscripts
+        //this.scripts = {}; //future multiscripts { id:{}, ... }
         //--------------
 
-        this.script = undefined;
+        this.script = {};
         this.pauseTimer  = undefined;
         this.nextTask    = undefined;
     }
@@ -38,21 +39,22 @@ class scriptManager {
     }
 
     cmd(func,id,val,param){
-        console.log("scriptManager cmd:",func,id,val,param);
+        //console.log("scriptManager cmd:",func,id,val,param);
         if(this[func]!=undefined){
             this[func](val,param);    
         }
     }
 
     call(func,arg){
-        //test if running?
-        if(typeof(this.script[func])=='function'){
-            try{
-                return this.script[func](arg)
-            }catch(err){
-                if(err!="exit")
-                    misGUI.alert("Script Error in "+func+"\n"+err);
-                this.stop();
+        if(this.script._running){
+            if(typeof(this.script[func])=='function'){
+                try{
+                    return this.script[func](arg)
+                }catch(err){
+                    if(err!="exit")
+                        misGUI.alert("Script Error in "+func+"\n"+err);
+                    this.stop();
+                }
             }
         }
     }
@@ -128,10 +130,8 @@ class scriptManager {
     }
 
     update(){ //called by MisBKIT.js
-        if(this.script==undefined)
-            return;
-
-        this.script._update();
+        if(this.script._running)
+            this.script._update();
         /*
         try{
             this.script._update();
@@ -226,11 +226,13 @@ class scriptManager {
 
             //construt script with own this
             this.script.call(this.script);
+            this.script._running = true;
 
-            //call setup()
-            this.call("setup");
+            if(this.script._running) // error may stop it
+                this.call("setup");
 
-            this.play();
+            if(this.script._running) // error may stop it
+                this.play();
             
         }catch(err){
             misGUI.alert("Script Error :\n"+err);
@@ -243,19 +245,20 @@ class scriptManager {
         if(this.script){
             this.script._xTime = Date.now();
             this.script._running = true;
+            runcode()
         }
     }
 
     stop(){
-        if(this.script){
+        if(this.script._running){
             this.call("stop");
             this.script._running = false;
             this.script._prevTask = undefined;
             this.script._nextTask = undefined;
+            //misGUI.stopScript();  //update buttons ??? 
+            stopCode(); //??? --> les boutons ne se transforment plus ?????? 
+            console.log("scriptManager stopped");
         }
-        //misGUI.stopScript();  //update buttons ??? 
-        //stopCode(); //??? --> les boutons ne se transforment plus ?????? 
-        console.log("scriptManager stopped");
     }
 
     onFreeze(onoff){ //TODO GUI
