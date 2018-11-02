@@ -67,7 +67,7 @@ class OscUDP{
         var a = [];
         for(var i=1;i<spl.length;i++){
             if(spl[i].length>0){ //espaces multiples
-                var v = parseFloat(spl[i]);
+                var v = +spl[i]; //meilleur que parseFloat
                 if(isNaN(v))
                     a.push({type:'s',value:spl[i]});
                 else
@@ -196,11 +196,11 @@ OscManager.prototype.addPort = function(type){
 OscManager.prototype.rcv = function(addr,args){
     console.log("OSC MANAGER rcv:",addr,args)
     var route = addr.split('/')
-    console.log("-osc  MBK",route[1])
-    console.log("-osc mang",route[2])
-    console.log("-osc func",route[3])
-    console.log("-osc  id ",route[4])
-    console.log("-osc args",args)
+    //console.log("-osc  MBK",route[1])
+    //console.log("-osc mang",route[2])
+    //console.log("-osc func",route[3])
+    //console.log("-osc  id ",route[4])
+    //console.log("-osc args",args)
     // /mbk/  facultatif? à voir aprés usage
     if(route[1]=="mbk"){
         var m = managers[route[2]];

@@ -32,7 +32,7 @@ MidiPortManager.prototype.open = function (p) {
     }*/
 
     if(isNaN(p)){
-        console.log("OPENING midi by name",p);
+        console.log("OPENING midi by name",p,this.midiPorts.length);
         var found = false;
         console.log("length", this.midiPorts.length);
         for(var i=0; i<this.midiPorts.length; i++){
@@ -98,14 +98,14 @@ MidiPortManager.prototype.addMidiPort = function(portName, portID){
         }
     }
     if(!found){
-        //console.log("Midiport " + portName + " has been added");
-        try{ 
+        console.log("Midiport " + portName + " has been added");
+        //try{ 
             var midiPortNew = new MidiPort(); 
             midiPortNew.enabledOnGUI = true;
             midiPortNew.portName = portName;
             midiPortNew.portID = portID;
             this.midiPorts.push(midiPortNew);
-        }catch(e){console.log(e);}
+        //}catch(e){console.log(e);}
     }
     
 };

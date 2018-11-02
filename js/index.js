@@ -183,8 +183,10 @@ window.onload = function() {
     //var toto = require("./js/AnimManager.js");
 
 
-    var MisBKit = require("./js/MisBKIT.js");
-    var MBK = new MisBKit();
+    //var MisBKit = require("./js/MisBKIT.js");
+    //MBK = new MisBKit();
+
+    MBK = require("./js/MisBKIT.js");
     MBK.init(); //needs misGUI initialized
 
     
@@ -214,7 +216,9 @@ window.onload = function() {
         if($(e.target).is('textarea'))
             return;
 
-        console.log("keyDown-KeyCode:", e.keyCode);
+        //console.log("keyDown-KeyCode:", e);
+        //console.log("keyDown-KeyCode:", e.keyCode);
+        scriptManager.call("onKey",e.key);
 
         if(e.metaKey || e.ctrlKey){
             console.log("keyDown-metaKC:",e.keyCode);
@@ -319,7 +323,6 @@ window.onload = function() {
                 animManager.onKeyCode(String.fromCharCode(event.keyCode));
                 motorMappingManager.onKeyCode(String.fromCharCode(event.keyCode));
                 sensorManager.onKeyCode(String.fromCharCode(event.keyCode));
-                scriptManager.call("onkey",event.key); //no arrows ...
             }return false;
         }
     });

@@ -14,7 +14,7 @@ class PythonManager{
         this.className = "pythonManager"
         this.scriptFile;
         this.pyshell;
-        this.pyVersion = 'python3' //{pythonPath:'python3'}
+        this.pyVersion = 'python' //{pythonPath:'python3'}
     }
 
     init(){
@@ -43,7 +43,13 @@ class PythonManager{
         if(obj.scriptFile != undefined)
             this.scriptFile = obj.scriptFile
         console.log("python settings:",this)
+        misGUI.showValue({class:this.className,func:"setPyVersion",val:this.pyVersion})
         misGUI.showValue({class:this.className,func:"scriptPath",val:this.scriptFile})
+    }
+
+    uiLoad(){
+        this.close();
+        misGUI.openLoadDialog("Python to launch:",this.scriptFile,this.scriptPath.bind(this))
     }
 
     scriptPath( fullpath ){
@@ -52,10 +58,23 @@ class PythonManager{
         this.scriptFile = fullpath;
     }
 
+    setPyVersion(str){
+        this.pyVersion = str;  
+    }
+
     onOff( onoff ){
         console.log("python:onOff:",onoff)
         if(onoff)this.open();
         else this.close();
+    }
+
+    send(str){
+        if(this.pyshell){
+            try{ this.pyshell.send(str) }
+            catch(err){
+                misGUI.alert("Python Error :\n"+err);
+            }
+        }
     }
 
     open(){ // connection syntax
@@ -69,15 +88,18 @@ class PythonManager{
             },function(){
                 console.log("python new callback ?")
             });
-            console.log("on PythonShell")
             this.pyshell.on("stderr",function(err){
                 console.log("python.stderr:",err)
                 self.close();
                 misGUI.showValue({class:self.className,func:"onOff",val:"ERROR"})
+                misGUI.alert("Python Error:\n"+err);
             })
             this.pyshell.on('message',function (msg) {
-                console.log("python msg:",msg);
-                //TODO exec message
+                //EXEC message :
+                var rep = MBK.stringFunc(msg);
+                if(rep != undefined)
+                    self.send(""+rep)
+                console.log("python msg:",msg,rep);
             });
             misGUI.showValue({class:this.className,func:"onOff",val:true})
         }catch(err){
