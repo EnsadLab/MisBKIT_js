@@ -38,6 +38,7 @@ class scriptManager {
         misGUI.initManagerFunctions(this,this.className);
     }
 
+    // id useless with monoscript 
     cmd(func,id,val,param){
         //console.log("scriptManager cmd:",func,id,val,param);
         if(this[func]!=undefined){
@@ -46,6 +47,7 @@ class scriptManager {
     }
 
     call(func,arg){
+        //console.log("sriptManager:",func,arg)
         if(this.script._running){
             if(typeof(this.script[func])=='function'){
                 try{
@@ -57,10 +59,6 @@ class scriptManager {
                 }
             }
         }
-    }
-
-    onkey(arg){
-        console.log("scriptOnKey:",arg)
     }
 
     folderIsReady(folder){
@@ -98,6 +96,7 @@ class scriptManager {
         this.stop();
         misGUI.openLoadDialog("Load script :",this.folder+this.scriptNames[0],this.loadSource.bind(this))
     }
+
     loadSource( filePath ){
         console.log("LoadSource:",filePath)
         this.stop();
@@ -122,7 +121,7 @@ class scriptManager {
         misGUI.openSaveDialog("Save script",this.folder+this.scriptNames[0],this.saveSource.bind(this));
     }
     saveSource( pathfile ){
-        console.log("scriptManager saving",pathfile);
+        //console.log("scriptManager saving",pathfile);
         if(pathfile!=undefined){
             var code = misGUI.getScript();
             fs.writeFileSync( pathfile , code ); 
@@ -132,23 +131,6 @@ class scriptManager {
     update(){ //called by MisBKIT.js
         if(this.script._running)
             this.script._update();
-        /*
-        try{
-            this.script._update();
-        }catch(err){
-            var str=err.toString();
-            if(str=="pause"){
-                console.log("WANTPAUSE");
-            }
-            else if(str.startsWith("task")){
-                console.log("TASK",err);
-            }else{
-                this.stop();
-                misGUI.alert("Script Error :\n"+err);
-            }
-           misGUI.alert("Script Error :\n"+err);
-        }
-        */
     }
 
     run(){ //todo: gui unfreeze ?
@@ -175,11 +157,28 @@ class scriptManager {
                     
         try{
             this.script = new Function(code);
+            this.script.first = false;
+            this.script.last  = false; 
             this.script._prevTask = undefined;
             this.script._currTask = "loop"
             this.script._nextDuration  = undefined;
             this.script._xTime = 0
             this.script._xTimeout = undefined;
+
+            this.script.nextTask = function(){
+                console.log("----NEXT TASK----",this._currTask,this._nextDuration)
+                // next duration if set with next() or timeout()
+                this._xTimeout=this._nextDuration
+                this._nextDuration=undefined
+                //task_init if exist
+                self.call(this._currTask+"_init")
+            
+                this._prevTask = "loop"; //??? default ???
+                this.first = true;
+                this._xTime = Date.now();
+                self.call(this._currTask,0);
+                this.first = false;
+            }
 
             this.script._update = function(){
                 if(!this._running)
@@ -200,7 +199,7 @@ class scriptManager {
                         this._currTask = this._nextTask;
                         this._nextTask = undefined
                     }
-
+                    /*
                     this._xTime = Date.now();
 
                     // next duration if set with next() or timeout()
@@ -212,42 +211,45 @@ class scriptManager {
                     
                     //default "nextTask" = 'caller'
                     console.log("prev=",curr)
+                    this.first = true;
                     this._prevTask = curr;
-                    dt = 0; //for comming call
+                    self.call(this._currTask,0);
+                    this.first = false;
+                    */
+                    this.nextTask();
                 }
+                else{
+                    if( (this._xTimeout-dt)<45 ) //mmmm
+                        this.last = true;
 
-                //call task
-                var r = self.call(this._currTask,dt);
-                if(typeof(r)=='string'){
-                    this._nextTask = r;
-                    this.script._xTimeout = 0;
+                    var r = self.call(this._currTask,dt);
+                    this.last = false;
                 }
             }//update
 
             //construt script with own this
+            console.log("======== CONSTRUCT ========")
+            misGUI.scriptOnOff(true);  
             this.script.call(this.script);
             this.script._running = true;
-
+    
             if(this.script._running) // error may stop it
                 this.call("setup");
 
             if(this.script._running) // error may stop it
-                this.play();
+                this.script.nextTask() //"loop"
             
         }catch(err){
             misGUI.alert("Script Error :\n"+err);
-            console.log("RUN ERROR")
         }
     }
-
+    /*
     play(){ //TODO : unfreeze ?
         console.log("PLAY:")
-        if(this.script){
-            this.script._xTime = Date.now();
-            this.script._running = true;
-            runcode()
-        }
+        this.script._xTime = Date.now();
+        this.script._running = true;
     }
+    */
 
     stop(){
         if(this.script._running){
@@ -255,8 +257,8 @@ class scriptManager {
             this.script._running = false;
             this.script._prevTask = undefined;
             this.script._nextTask = undefined;
-            //misGUI.stopScript();  //update buttons ??? 
-            stopCode(); //??? --> les boutons ne se transforment plus ?????? 
+            misGUI.scriptOnOff(false);  //update buttons ??? 
+            //stopCode(); //??? --> les boutons ne se transforment plus ?????? 
             console.log("scriptManager stopped");
         }
     }
@@ -270,7 +272,7 @@ class scriptManager {
     }
 
     /*
-    delay(ms){ 
+    delay(ms){ //needs async/await ...
         console.log("---- DELAY -----",ms);
         return new Promise(resolve  => {
             setTimeout(() => {
@@ -291,9 +293,6 @@ class scriptManager {
         console.log(" dscr",err.description)
         console.log(" stack",err.stack)
     }
-
-
 }
-scriptManager  = new scriptManager();
-module.exports = scriptManager;
+module.exports = new scriptManager();
 

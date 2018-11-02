@@ -22,8 +22,14 @@
 //cc 61  marker <
 //cc 62  marker >
 
+var MIDI = require('midi');
+
 
 MidiPort = function () {
+    if(MIDI==null) // cant explain
+        MIDI = require('midi');
+
+
     this.enabled = false;
     this.enabledOnGUI = false;
     this.midiIn = new MIDI.input();
@@ -37,6 +43,7 @@ MidiPort = function () {
     this.midiIn.on('message', function (dt, msg) {
         if(self.enabled) {
 
+            scriptManager.call("onMidi",{port:self.portID,midi:msg});
             /*
             www.computermusicresource.com/MIDI.Commands.html
             m[0] : status (128-255) -> (128-159):notes, (176-191): CC (176=CC chanel 1, 177=CC chanel 2...), ...

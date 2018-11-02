@@ -250,7 +250,7 @@ MisGUI.prototype.changeSettings = function(className,func,params,eltID){
 
 //opt: {class:classname,id:eltID,func:func,param:param,val:value}
 MisGUI.prototype.showValue=function(opt){
-    console.log("showValue:",opt);
+    //console.log("showValue:",opt);
     var sel = "."+opt.class+" ";
     if(opt.id!=undefined)sel+="[eltID="+opt.id+"]";
     if(opt.func!=undefined)sel+="[func="+opt.func+"]";
@@ -306,7 +306,7 @@ MisGUI.prototype.setElementValue = function(elt,value){
                         e.val(value);
                     break;
                 case "checkbox":
-                    console.log("CHECKBOX",value);
+                    //console.log("CHECKBOX",value);
                     if(e.is(".onoff")) self.onoffState(e,value); //ON , OFF , ERROR
                     else e.prop("checked",value);    
                     break;
@@ -1534,8 +1534,20 @@ MisGUI.prototype.setScript = function(code){
     editor.setValue(code); // cf ui.js
 }
 
-MisGUI.prototype.stopScript = function(){
-    stopCode(); // cf ui.js
+MisGUI.prototype.scriptOnOff = function(onoff){
+    console.log("====== scriptOnOff =====",onoff)
+    if(onoff){
+        $("#run-code").html('Running...')
+            .addClass('active')
+            .css('opacity', 0.5)
+        $("#stop-code").css('opacity', 1);
+    }
+    else{
+        $("#run-code").html('Run')
+    		.removeClass('active')
+    		.css('opacity', 1);
+    	$("#stop-code").css('opacity', 0.5);
+    }
 }
 
 

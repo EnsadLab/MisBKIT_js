@@ -177,9 +177,15 @@
 						<input func="onOff" type="checkbox" class="small onoff" name ="enable" title="enable/disable"> 
 					</p>
 					<div id="pyContent" class="content">
-						<br>script to launch (fullPath) :
-						<input func="scriptPath" type="text" class="small" style="width:100%;" placeholder="...">
-						<!--span class="status" id="cm9Text">...</span-->
+						<br>
+						<button func="uiLoad" class="float-left">Load</button>
+						<select func="setPyVersion" class= "float-right small">
+							<option value="python">python</option>
+							<option value="python3">python3</option>
+						</select>
+						<br><!--hr-->
+						<input func="scriptPath" type="text" class="small tiny" style="width:100%;">
+						<!--span func="log">...</span-->
 					</div>
 
 				</div>

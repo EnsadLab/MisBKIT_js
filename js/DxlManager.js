@@ -713,7 +713,7 @@ DxlManager.prototype.onControl = function(index,val){
 
 
 DxlManager.prototype.setAngle = function(index,val){ //degrés
-    console.log("DxlManager:setangle:",index,val);
+    //console.log("DxlManager:setangle:",index,val);
     if(index<this.motors.length){
         var a = this.motors[index].angle(val);
         misGUI.motorAngle(index,a);
