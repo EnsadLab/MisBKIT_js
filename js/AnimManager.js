@@ -86,7 +86,11 @@ class AnimManager {
             anim.s.nbparams = 3; // fake nb param values for now......
             for(var i=0; i<anim.s.nbparams; i++){
                 var k = "param" + i;
-                params[k] = i*10; // fake values for now.......
+                if(selectedType == "sinus"){ if(i==0) params[k]=0;else if(i==1)params[k]=1.0;else if(i==2)params[k]=1.0; }
+                else if(selectedType == "random"){
+                    params[k] = i*10; // fake values for now.......
+                }
+                
             }
             
             //console.log("params:",params);
@@ -159,7 +163,7 @@ class AnimManager {
         var anim=this.animations[eltID];
         if(anim){
             //var paramIndex = parseInt(param.substring("param".length));
-            anim.s.params[param] = parseInt(val);
+            anim.s.params[param] = parseFloat(val);
             console.log("params",anim.s.params);
             anim.save();
         }

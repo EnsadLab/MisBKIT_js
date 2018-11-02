@@ -12,7 +12,7 @@ var dialog  = remote.require('dialog');
 //float values
 
 // params
-// sinus: param[0]: amplitude, param[1]: Frequence, param[2]: offset
+// sinus: param[0]: offset, param[1]: Frequency, param[2]: amplitude[0.0,1.0]
 // random: param[0]: , param[1]: , param[2]: , param[3]
 
 function Animation(id,folder,name){
@@ -45,6 +45,7 @@ function Animation(id,folder,name){
     this.firstIndex = 0;
     this.keySize  = 0;
     this.keyIndex = 0;
+    this.sinusTimer = 0;
 };
 module.exports = Animation;
 
@@ -258,6 +259,7 @@ Animation.prototype.load = function(fname, addToGui){ //sync
             this.fileName = this.fileName.substring(0,this.fileName.length-5); // we'll add the ".json" while saving
             this.copySettings(s);
             this.channels = this.s.channels;
+            this.nbChannels = this.s.channels.length;
             if(addToGui) animManager.animLoaded(this); 
             MisGUI_anims.setPlayingTracks(this.id,this.channels);
             MisGUI_anims.setAnimName(this.id,this.fileName);
@@ -313,24 +315,29 @@ Animation.prototype.load = function(fname, addToGui){ //sync
 
 Animation.prototype.startPlay = function() {
     //console.log("startPlay:");
-    if(this.datas==null){
-        this.playing  = false;
-        return;
-    }
-    //console.log("StartPlay:",this.datas.length);
-    //console.log("channels:",this.channels);
-    this.keyIndex = this.firstIndex;
-    if(this.playing == false){  //prevent joint/wheel each loop
-        for(var c=0;c<this.nbChannels;c++){
-            if(this.channels[c].play){ //TOTHINK
-                if( this.channels[c].f=="angle" )
-                    dxlManager.cmd("joint",this.channels[c].i);
-                else
-                    dxlManager.cmd("wheel",this.channels[c].i);
+    if(this.s.type == "sinus") {
+        this.sinusTimer = 0;
+        this.playing = true;
+    } else if(this.s.type == "record") {
+        if(this.datas==null){
+            this.playing  = false;
+            return;
+        }
+        //console.log("StartPlay:",this.datas.length);
+        //console.log("channels:",this.channels);
+        this.keyIndex = this.firstIndex;
+        if(this.playing == false){  //prevent joint/wheel each loop
+            for(var c=0;c<this.nbChannels;c++){
+                if(this.channels[c].play){ //TOTHINK
+                    if( this.channels[c].f=="angle" )
+                        dxlManager.cmd("joint",this.channels[c].i);
+                    else
+                        dxlManager.cmd("wheel",this.channels[c].i);
+                }
             }
         }
+        this.playing  = true;
     }
-    this.playing  = true;
     //setTimeout(testPlay,100);//!!!!!id
 }
 
@@ -357,34 +364,44 @@ Animation.prototype.getPercent = function() {
  * returns % progress
  */
 Animation.prototype.playKey = function() {
-    if((this.playing==false)||(this.datas==null))
+    //console.log("playKey",this.s.type);
+    if(this.s.type == "sinus"){
+        this.updateSinus();
         return 0;
+    } else if(this.s.type == "random"){
+        this.updateRandom();
+        return 0;
+    } else if(this.s.type == "record"){
+        if((this.playing==false)||(this.datas==null))
+            return 0;
 
-    var ik = this.keyIndex;
-    this.keyIndex+=this.keySize;
+        var ik = this.keyIndex;
+        this.keyIndex+=this.keySize;
 
-    //console.log("playkey:",ik," ",this.channels[0].play);
+        //console.log("playkey:",ik," ",this.channels[0].play);
 
-    if(this.keyIndex<this.datas.length){
-        for(var c=0;c<this.nbChannels;c++){
-            if(this.channels[c].play) {
-                var v = this.datas.readFloatLE(ik);
-                //console.log("anim.playkey:",ik,v);
-                //console.log("play:",this.channels[c].i, " ", this.datas.readInt16LE(ik));
-                //console.log("play:",this.channels[c].i," ", this.datas.readFloatLE(ik));
-                dxlManager.playKey(this.channels[c].f,this.channels[c].i,this.datas.readFloatLE(ik));
+        if(this.keyIndex<this.datas.length){
+            for(var c=0;c<this.nbChannels;c++){
+                if(this.channels[c].play) {
+                    var v = this.datas.readFloatLE(ik);
+                    console.log("anim.playkey:",ik,v);
+                    //console.log("play:",this.channels[c].i, " ", this.datas.readInt16LE(ik));
+                    //console.log("play:",this.channels[c].i," ", this.datas.readFloatLE(ik));
+                    dxlManager.playKey(this.channels[c].f,this.channels[c].i,this.datas.readFloatLE(ik));
+                }
+                ik+=4; //float32
             }
-            ik+=4; //float32
         }
-    }
-    else{
-        if(this.loop) this.startPlay();
-        else this.stopPlay();
-    }
+        else{
+            if(this.loop) this.startPlay();
+            else this.stopPlay();
+        }
 
-    return (this.datas.length-this.keyIndex)*100/this.datas.length;
-
+        return (this.datas.length-this.keyIndex)*100/this.datas.length;
+    }
 }
+
+
 Animation.prototype.stopPlay = function() {
     this.playing  = false;
     animManager.stopAnim(this.id);
@@ -399,6 +416,27 @@ Animation.prototype.stopPlay = function() {
         }
     }
     
+}
+
+// sinus: param[0]: offset, param[1]: Frequency, param[2]: amplitude[0.0,1.0]
+Animation.prototype.updateSinus = function() {
+
+    this.sinusTimer += 0.2;
+    var a = this.sinusTimer;
+    //console.log("offset",this.s.params["param0"]);
+    var v = this.s.params["param2"]*Math.sin(a*this.s.params["param1"]) + this.s.params["param0"];
+    var nv = v*0.5 + 0.5;
+    for(var c=0;c<this.nbChannels;c++){
+        if(this.channels[c].play) {
+            //console.log("channel",c,"sinus val:",v,nv);
+            //dxlManager.playKey(this.channels[c].f,this.channels[c].i,value);
+            dxlManager.onNormControl(this.channels[c].i,nv);
+        }
+    }
+}
+
+Animation.prototype.updateRandom = function() {
+
 }
 
 

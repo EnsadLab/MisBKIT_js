@@ -992,6 +992,7 @@ MisGUI.prototype.init =function(){
     });
 
     // ??? is it used??
+    // --> NO....
     $("#saveAnim").on("click",function(){
         if(dialog) {
             // / *versionHTML
@@ -1141,7 +1142,7 @@ MisGUI.prototype.init =function(){
     
     $(".midiPlug").bind("mouseenter", midiPanelOver);//mouseover
     function midiPanelOver(){
-        console.log("midi over");
+        //console.log("midi over");
         misGUI.scanMidiPorts();
     }
 
@@ -1741,10 +1742,12 @@ $(".cm9Plug").on("mouseover",function(){
     cm9Com.checkConnection();
 })
 
+/* already done in the init() function
 $(".midiPlug").bind("mouseover", midiPanelOver);
 function midiPanelOver(){
-    console.log("midi over");
+    //console.log("midi over");
 }
+*/
 
 
 // NEW animation modale -- Alex changes
