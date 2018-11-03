@@ -591,39 +591,39 @@
 						<!-- Sinus Anim -->
 						<li class="single-anim sinus-anim ui-state-default" id="anim-sinus" eltID="example">
 							<h3>SINUS</h3>
-							<input type="text" class="name" placeholder="animation's name" name="animName" size="40">
+							<input type="text" class="name" placeholder="animation's name" func="renameAnim" name="animName" size="40">
 							<div class="anim-motors">
-								<input type="text" class="shorcut" placeholder="..." name="animKey">
+								<input type="text" class="shorcut" placeholder="_" func="onKeyShortcut" name="animKey">
 								
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="0">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="1">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="2">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="3">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="4">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="5">
 
 								<div class="controls">
-									<button class="play"><img src="assets/play.png" alt="" name="play"></button>
-									<button class="stop"><img src="assets/stop.png" alt="" name="stop"></button>
+									<button class="play" func="startAnim" name="play"><img src="assets/play.png" alt="" name="play"></button>
+									<button class="stop" func="stopAnim"name="stop"><img src="assets/stop.png" alt="" name="stop"></button>
 									<!-- loop checkbox -->
-									<input type="checkbox" class="loop" name="loop">
+									<!--<input type="checkbox" class="loop" name="loop">-->
 								</div>
 
-								<meter name="progress" class="progress" value="70" max="100"></meter>
+								<!--<meter name="progress" class="progress" value="70" max="100"></meter>-->
 
 							</div>
 							<div class="ctrl-row text-right">
 								<div class="info">
-									<p class="text-left">Offset :</p>
-									<input type="number" class="small tiny" value="34">
+									<p class="text-left">Offset [-1.0,1.0]:</p>
+									<input type="number" class="small tiny" value="34" func="changeParam" param="param0">
 								</div>
 								<div class="info">
-									<p class="text-left">Frequence :</p>
-									<input type="number" class="small tiny" value="34">
+									<p class="text-left">Frequency-ex:0.1(slow),2.0(quick):</p>
+									<input type="number" class="small tiny" value="34" func="changeParam" param="param1">
 								</div>
 								<div class="info">
-									<p class="text-left">Amplitude :</p>
-									<input type="number" class="small tiny" value="34">
+									<p class="text-left">Amplitude [0.0,1.0]:</p>
+									<input type="number" class="small tiny" value="34" func="changeParam" param="param2">
 								</div>
 							</div>
 						</li>
@@ -632,43 +632,43 @@
 						<!-- Random Anim -->
 						<li class="single-anim random-anim ui-state-default" id="anim-random" eltID="example">
 							<h3>RANDOM</h3>
-							<input type="text" class="name" placeholder="animation's name" name="animName" size="40">
+							<input type="text" class="name" placeholder="animation's name" func="renameAnim" name="animName" size="40">
 							<div class="anim-motors">
-								<input type="text" class="shorcut" placeholder="..." name="animKey">
+								<input type="text" class="shorcut" placeholder="_" func="onKeyShortcut" name="animKey">
 								
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="0">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="1">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="2">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="3">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="4">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="5">
 
 								<div class="controls">
-									<button class="play"><img src="assets/play.png" alt="" name="play"></button>
-									<button class="stop"><img src="assets/stop.png" alt="" name="stop"></button>
+									<button class="play" func="startAnim" name="play"><img src="assets/play.png" alt="" name="play"></button>
+									<button class="stop" func="stopAnim"name="stop"><img src="assets/stop.png" alt="" name="stop"></button>
 									<!-- loop checkbox -->
-									<input type="checkbox" class="loop" name="loop">
+									<!--<input type="checkbox" class="loop" name="loop">-->
 								</div>
 
-								<meter name="progress" class="progress" value="70" max="100"></meter>
+								<!--<meter name="progress" class="progress" value="70" max="100"></meter>-->
 
 							</div>
 							<div class="ctrl-row text-right">
 								<div class="info">
 									<p class="text-left">interval :</p>
-									<input type="number" class="small tiny" value="34">
+									<input type="number" class="small tiny" value="34" func="changeParam" param="param0">
 								</div>
 								<div class="info">
 									<p class="text-left">tolerance :</p>
-									<input type="number" class="small tiny" value="34">
+									<input type="number" class="small tiny" value="34" func="changeParam" param="param1">
 								</div>
 								<div class="info">
 									<p class="text-left">max :</p>
-									<input type="number" class="small tiny" value="34">
+									<input type="number" class="small tiny" value="34" func="changeParam" param="param2">
 								</div>
 								<div class="info">
 									<p class="text-left">min :</p>
-									<input type="number" class="small tiny" value="34">
+									<input type="number" class="small tiny" value="34" func="changeParam" param="param3">
 								</div>
 							</div>
 						</li>
@@ -677,43 +677,43 @@
 						<!-- Trigger Anim -->
 						<li class="single-anim trigger-anim ui-state-default" id="anim-trigger" eltID="example">
 							<h3>TRIGGER</h3>
-							<input type="text" class="name" placeholder="animation's name" name="animName" size="40">
+							<input type="text" class="name" placeholder="animation's name" func="renameAnim" name="animName" size="40">
 							<div class="anim-motors">
-								<input type="text" class="shorcut" placeholder="..." name="animKey">
+								<input type="text" class="shorcut" placeholder="_" func="onKeyShortcut" name="animKey">
 								
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track"  func="selectTrackForPlay" param="0">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="1">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="2">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="3">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="4">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="5">
 
 								<div class="controls">
-									<button class="play"><img src="assets/play.png" alt="" name="play"></button>
-									<button class="stop"><img src="assets/stop.png" alt="" name="stop"></button>
+									<button class="play" func="startAnim" name="play"><img src="assets/play.png" alt="" name="play"></button>
+									<button class="stop" func="stopAnim"name="stop"><img src="assets/stop.png" alt="" name="stop"></button>
 									<!-- loop checkbox -->
-									<input type="checkbox" class="loop" name="loop">
+									<!--<input type="checkbox" class="loop" name="loop">-->
 								</div>
 
-								<meter name="progress" class="progress" value="70" max="100"></meter>
+								<!--<meter name="progress" class="progress" value="70" max="100"></meter>-->
 
 							</div>
 							<div class="ctrl-row text-right">
 								<div class="info">
 									<p class="text-left">interval :</p>
-									<input type="number" class="small tiny" value="34">
+									<input type="number" class="small tiny" value="34" func="changeParam" param="param0">
 								</div>
 								<div class="info">
 									<p class="text-left">dutaion :</p>
-									<input type="number" class="small tiny" value="34">
+									<input type="number" class="small tiny" value="34" func="changeParam" param="param1">
 								</div>
 								<div class="info">
 									<p class="text-left">max :</p>
-									<input type="number" class="small tiny" value="34">
+									<input type="number" class="small tiny" value="34" func="changeParam" param="param2">
 								</div>
 								<div class="info">
 									<p class="text-left">min :</p>
-									<input type="number" class="small tiny" value="34">
+									<input type="number" class="small tiny" value="34" func="changeParam" param="param3">
 								</div>
 							</div>
 						</li>
@@ -1209,14 +1209,14 @@
 		</div>
 
 
-		<div class="modalNewAnim draggable">
+		<div class="modalNewAnim draggable" id="modalNewAnim">
 			<h2>New Animation</h2>
 			<hr>
 			<div class="listAnimType">
 				<span name="record">Record</span>
 				<span name="sinus">Sinus</span>
 				<span name="random">Random</span>
-				<span name="trigger">Trigger</span>
+				<!--<span name="trigger">Trigger</span>-->
 			</div>
 			<button id="newAnimLoad" class="large">Load</button>
 			<button id="newAnimCancel" class="large">Cancel</button>

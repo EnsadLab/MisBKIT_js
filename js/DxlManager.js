@@ -202,8 +202,13 @@ DxlManager.prototype.saveSettings = function () {
     //TODO GUI order
     for (var k in animManager.animations) {
         // only save the one that are already recorded
-        if(animManager.animations[k].channels.length > 0) {
-            s.anims.push({name: animManager.animations[k].fileName, key: animManager.animations[k].keyCode});
+        console.log("... savine",animManager.animations[k].fileName);
+        if(animManager.animations[k].s.type == "record"){
+            if(animManager.animations[k].channels.length > 0) {
+                s.anims.push({name: animManager.animations[k].fileName, key: animManager.animations[k].s.keyCode});
+            }
+        } else {
+            s.anims.push({name: animManager.animations[k].fileName + ".json", key: animManager.animations[k].s.keyCode});
         }
     }
 

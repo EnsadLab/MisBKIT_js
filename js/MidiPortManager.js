@@ -19,7 +19,7 @@ MidiPortManager = function () {
     // boolean corresponding to the ON/OFF value in the midi panel
     this.enabled = false;
 
-    console.log("MIDI");
+    console.log("--> creating midiPortManager");
 
 };
 
@@ -34,7 +34,9 @@ MidiPortManager.prototype.open = function (p) {
     if(isNaN(p)){
         console.log("OPENING midi by name",p,this.midiPorts.length);
         var found = false;
+        console.log("length", this.midiPorts.length);
         for(var i=0; i<this.midiPorts.length; i++){
+            console.log("port_name",this.midiPorts[i].portName);
             if(this.midiPorts[i].portName == p){
                 this.midiPorts[i].open();
                 found = true;

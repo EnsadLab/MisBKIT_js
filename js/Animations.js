@@ -11,10 +11,20 @@ var dialog  = remote.require('dialog');
 //var anim = new Animation(__dirname+'/',"test2.anim");
 //float values
 
+// params
+// sinus: param[0]: offset, param[1]: Frequency, param[2]: amplitude[0.0,1.0]
+// random: param[0]: , param[1]: , param[2]: , param[3]
 
 function Animation(id,folder,name){
+    this.s = { //settings
+        type: "", // "record", "sinus", "random", "trigger"
+        keyCode: "",
+        nbparams: 0,
+        params: [],
+        channels: [], // TO be discussed if we cancel the other this.channels... it's so specific to the json that I left it like this for now.
+    };
     this.id = id;
-    this.keyCode = "";
+    //this.keyCode = "";
     this.fileFolder = folder;
     this.fileName = name;
     this.recording = false;
@@ -35,6 +45,7 @@ function Animation(id,folder,name){
     this.firstIndex = 0;
     this.keySize  = 0;
     this.keyIndex = 0;
+    this.sinusTimer = 0;
 };
 module.exports = Animation;
 
@@ -84,11 +95,11 @@ Animation.prototype.startRec = function(fname){
             var h = ("00"+date.getHours()).slice(-2);
             var mn = ("00"+date.getMinutes()).slice(-2);
             var s  = ("00"+date.getSeconds()).slice(-2);
-            // we create the name already now, but we'll rename it later?
             this.fileName= y+"-"+m+"-"+d+"-"+h+"h"+mn+"-"+s;
         }
     }
     console.log("startRec b ",this.fileName);
+    MisGUI_anims.setAnimName(this.id,this.fileName);
 
     this.recIndices = [];
     for(var c=0; c<this.recordchannels.length; c++){
@@ -191,34 +202,32 @@ Animation.prototype.recKey = function(){
     } 
 }
 
-/*
-Animation.prototype.recKey = function(values){
-    if(this.wStream) {
-        console.log("anim.reckey:",values);
-        //console.log("REC:",this.writeCount," ",this.recording);
-        for (var i = 0; i < this.nbChannels; i++) {
-            console.log("rec:",i," v:",values[i]);
-            //this.intBuff.writeInt16LE(values[i], i+i);
-            this.intBuff.writeFloatLE(values[i], i<<2);//32bit
-        }
-        this.wStream.write(this.intBuff,function(){
-            //console.log("written");
-        });
-        this.writeCount++;
+
+Animation.prototype.copySettings = function(s){
+    for(var e in s){
+        this.s[e]=s[e];
     }
 }
-*/
-
 
 
 Animation.prototype.save = function(fname){
-    console.log("save: keycode:",this.keyCode,this.keyCode.charCodeAt(0));
+    console.log("saveAnim:",this.fileFolder + this.fileName);
+    console.log("type",this.s.type,"keycode:",this.s.keyCode,this.s.keyCode.charCodeAt(0));
     if(fname) this.fileName = fname;
-    if(this.datas != null){
-        this.datas.writeInt8(this.keyCode.charCodeAt(0),1);
-        //if(this.datas!=null) {
-        console.log("saveAnim:",this.fileFolder + this.fileName);
-        fs.writeFileSync(this.fileFolder + this.fileName, this.datas);
+    if(this.s.type == "record"){
+        if(this.datas != null){
+            this.datas.writeInt8(this.s.keyCode.charCodeAt(0),1);
+            
+            fs.writeFileSync(this.fileFolder + this.fileName, this.datas);
+        }
+    } else {
+        this.s.channels = this.channels;
+        var json = JSON.stringify(this.s, null, 2);
+        if(!(this.fileName.endsWith(".json"))){
+            fs.writeFileSync(animManager.animFolder + this.fileName + ".json", json ); 
+        } else { // should not happen.. just in case.
+            fs.writeFileSync(animManager.animFolder + this.fileName, json ); 
+        }
     }
 }
 
@@ -232,75 +241,119 @@ Animation.prototype.load = function(fname, addToGui){ //sync
     if(fname) this.fileName = fname;
     this.playing = false;
     this.datas   = null;
-    var datas = fs.readFileSync(this.fileFolder+this.fileName);
-    if(datas){
-        console.log("DBG LoadAnim length:",datas.length);
-        console.log("DBG KeyCode:",datas.readInt8(1));
-        if(datas.readInt8(1)!=0)
-            this.keyCode = String.fromCharCode(datas.readInt8(1));
-        else
-            this.keyCode = "";
-        
-        var nbm = datas.readInt16LE(2); //nbChannels
-        //console.log("DBG LoadAnim nb motors:",nbm);
-        this.nbChannels = nbm;
-        this.channels = [];
-        var ih = 4; //'magic16 +nbc16'
-        for(var m=0;m<nbm;m++){
-            var imot = datas.readInt8(ih++);
-            var mode = datas.readInt8(ih++);
-            if(mode==0)this.channels.push({play:true,i:imot,f:"angle"});
-            else this.channels.push({play:true,i:imot,f:"speed"});
-            //console.log("DBG LoadAnim motor index:",imot," mode:",mode);
-            //console.log("DBG LoadAnim play:",this.channels[m].play);
+    if(this.fileName.endsWith(".json")){ // sinus, random, trigger types
+        var json;
+        try{
+            json = fs.readFileSync(this.fileFolder+this.fileName, 'utf8');
+        }catch(err){
+            if (err.code === 'ENOENT') {
+                console.log("File " + this.fileFolder+this.fileName + " not found!");
+            }else{
+                console.log("Problem loading " + this.fileFolder+this.fileName + " file");
+            }
         }
-        this.firstIndex = ih;
-        this.keySize = (nbm<<2);//float
-        this.datas = datas;
-        if(addToGui) animManager.animLoaded(this); 
-        MisGUI_anims.setPlayingTracks(this.id,this.channels);
-        MisGUI_anims.setAnimName(this.id,this.fileName);
-        MisGUI_anims.setKeyCode(this.id,this.keyCode);
-        //this.startPlay();
+        if (json) {
+            // create new animation from the json file
+            console.log("adding new animation from json file");
+            var s = JSON.parse(json);
+            this.fileName = this.fileName.substring(0,this.fileName.length-5); // we'll add the ".json" while saving
+            this.copySettings(s);
+            this.channels = this.s.channels;
+            this.nbChannels = this.s.channels.length;
+            if(addToGui) animManager.animLoaded(this); 
+            MisGUI_anims.setPlayingTracks(this.id,this.channels);
+            MisGUI_anims.setAnimName(this.id,this.fileName);
+            MisGUI_anims.setKeyCode(this.id,this.s.keyCode);
+            //console.log("loading.....params",this.s.params);
+            misGUI.showParams({
+                class: animManager.className,
+                func: "changeParam",
+                id: this.id,
+                val: this.s.params, 
+            });
+        }
     }
-    else{
-        console.log("LOAD ERROR:",this.fileFolder+this.fileName);
+    else { // record type
+        var datas = fs.readFileSync(this.fileFolder+this.fileName);
+        if(datas){
+            console.log("DBG LoadAnim length:",datas.length);
+            console.log("DBG KeyCode:",datas.readInt8(1));
+            if(datas.readInt8(1)!=0)
+                this.s.keyCode = String.fromCharCode(datas.readInt8(1));
+            else
+                this.s.keyCode = "";
+            
+            var nbm = datas.readInt16LE(2); //nbChannels
+            //console.log("DBG LoadAnim nb motors:",nbm);
+            this.nbChannels = nbm;
+            this.channels = [];
+            var ih = 4; //'magic16 +nbc16'
+            for(var m=0;m<nbm;m++){
+                var imot = datas.readInt8(ih++);
+                var mode = datas.readInt8(ih++);
+                if(mode==0)this.channels.push({play:true,i:imot,f:"angle"});
+                else this.channels.push({play:true,i:imot,f:"speed"});
+                //console.log("DBG LoadAnim motor index:",imot," mode:",mode);
+                //console.log("DBG LoadAnim play:",this.channels[m].play);
+            }
+            this.firstIndex = ih;
+            this.keySize = (nbm<<2);//float
+            this.datas = datas;
+            this.s.type = "record";
+            if(addToGui) animManager.animLoaded(this); 
+            MisGUI_anims.setPlayingTracks(this.id,this.channels);
+            MisGUI_anims.setAnimName(this.id,this.fileName);
+            MisGUI_anims.setKeyCode(this.id,this.s.keyCode);
+            //this.startPlay();
+        }
+        else{
+            console.log("LOAD ERROR:",this.fileFolder+this.fileName);
+        }
     }
 
 };
 
 Animation.prototype.startPlay = function() {
     //console.log("startPlay:");
-    if(this.datas==null){
-        this.playing  = false;
-        return;
-    }
-    //console.log("StartPlay:",this.datas.length);
-    //console.log("channels:",this.channels);
-    this.keyIndex = this.firstIndex;
-    if(this.playing == false){  //prevent joint/wheel each loop
-        for(var c=0;c<this.nbChannels;c++){
-            if(this.channels[c].play){ //TOTHINK
-                if( this.channels[c].f=="angle" )
-                    dxlManager.cmd("joint",this.channels[c].i);
-                else
-                    dxlManager.cmd("wheel",this.channels[c].i);
+    if(this.s.type == "sinus") {
+        this.sinusTimer = 0;
+        this.playing = true;
+    } else if(this.s.type == "record") {
+        if(this.datas==null){
+            this.playing  = false;
+            return;
+        }
+        //console.log("StartPlay:",this.datas.length);
+        //console.log("channels:",this.channels);
+        this.keyIndex = this.firstIndex;
+        if(this.playing == false){  //prevent joint/wheel each loop
+            for(var c=0;c<this.nbChannels;c++){
+                if(this.channels[c].play){ //TOTHINK
+                    if( this.channels[c].f=="angle" )
+                        dxlManager.cmd("joint",this.channels[c].i);
+                    else
+                        dxlManager.cmd("wheel",this.channels[c].i);
+                }
             }
         }
+        this.playing  = true;
     }
-    this.playing  = true;
     //setTimeout(testPlay,100);//!!!!!id
 }
 
 
 Animation.prototype.channelEnable=function(num,onoff){
-    console.log("--> channelEnable",this.channels.length);
+    console.log("--> channelEnable BEFORE",this.channels);
     for(var i=0;i<this.channels.length;i++){
         if(this.channels[i].i==num) {
             console.log(" channel ",i," m:",num," ",onoff);
             this.channels[i].play = onoff;
         }
     }
+    if(this.type != "record"){
+        this.save();
+    }
+    console.log("--> channelEnable AFTER",this.channels);
 }
 
 Animation.prototype.getPercent = function() {
@@ -311,34 +364,44 @@ Animation.prototype.getPercent = function() {
  * returns % progress
  */
 Animation.prototype.playKey = function() {
-    if((this.playing==false)||(this.datas==null))
+    //console.log("playKey",this.s.type);
+    if(this.s.type == "sinus"){
+        this.updateSinus();
         return 0;
+    } else if(this.s.type == "random"){
+        this.updateRandom();
+        return 0;
+    } else if(this.s.type == "record"){
+        if((this.playing==false)||(this.datas==null))
+            return 0;
 
-    var ik = this.keyIndex;
-    this.keyIndex+=this.keySize;
+        var ik = this.keyIndex;
+        this.keyIndex+=this.keySize;
 
-    //console.log("playkey:",ik," ",this.channels[0].play);
+        //console.log("playkey:",ik," ",this.channels[0].play);
 
-    if(this.keyIndex<this.datas.length){
-        for(var c=0;c<this.nbChannels;c++){
-            if(this.channels[c].play) {
-                var v = this.datas.readFloatLE(ik);
-                //console.log("anim.playkey:",ik,v);
-                //console.log("play:",this.channels[c].i, " ", this.datas.readInt16LE(ik));
-                //console.log("play:",this.channels[c].i," ", this.datas.readFloatLE(ik));
-                dxlManager.playKey(this.channels[c].f,this.channels[c].i,this.datas.readFloatLE(ik));
+        if(this.keyIndex<this.datas.length){
+            for(var c=0;c<this.nbChannels;c++){
+                if(this.channels[c].play) {
+                    var v = this.datas.readFloatLE(ik);
+                    console.log("anim.playkey:",ik,v);
+                    //console.log("play:",this.channels[c].i, " ", this.datas.readInt16LE(ik));
+                    //console.log("play:",this.channels[c].i," ", this.datas.readFloatLE(ik));
+                    dxlManager.playKey(this.channels[c].f,this.channels[c].i,this.datas.readFloatLE(ik));
+                }
+                ik+=4; //float32
             }
-            ik+=4; //float32
         }
-    }
-    else{
-        if(this.loop) this.startPlay();
-        else this.stopPlay();
-    }
+        else{
+            if(this.loop) this.startPlay();
+            else this.stopPlay();
+        }
 
-    return (this.datas.length-this.keyIndex)*100/this.datas.length;
-
+        return (this.datas.length-this.keyIndex)*100/this.datas.length;
+    }
 }
+
+
 Animation.prototype.stopPlay = function() {
     this.playing  = false;
     animManager.stopAnim(this.id);
@@ -353,6 +416,27 @@ Animation.prototype.stopPlay = function() {
         }
     }
     
+}
+
+// sinus: param[0]: offset, param[1]: Frequency, param[2]: amplitude[0.0,1.0]
+Animation.prototype.updateSinus = function() {
+
+    this.sinusTimer += 0.2;
+    var a = this.sinusTimer;
+    //console.log("offset",this.s.params["param0"]);
+    var v = this.s.params["param2"]*Math.sin(a*this.s.params["param1"]) + this.s.params["param0"];
+    var nv = v*0.5 + 0.5;
+    for(var c=0;c<this.nbChannels;c++){
+        if(this.channels[c].play) {
+            //console.log("channel",c,"sinus val:",v,nv);
+            //dxlManager.playKey(this.channels[c].f,this.channels[c].i,value);
+            dxlManager.onNormControl(this.channels[c].i,nv);
+        }
+    }
+}
+
+Animation.prototype.updateRandom = function() {
+
 }
 
 

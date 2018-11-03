@@ -37,23 +37,76 @@ class AnimManager {
         //if(this.animFolder.length>0) //TODO cec: should we check this? 
         console.log("--> add anim");
 
-        // we'll create the name when starting recording!
+        // we'll create the name when starting recording for type record!
         var name = "";
 
+        if(selectedType != "record") {
+            var date = new Date(Date.now());
+            var y = date.getFullYear();
+            var m = ("00"+(date.getUTCMonth()+1)).slice(-2);
+            var d = ("00"+date.getUTCDate()).slice(-2);
+            var h = ("00"+date.getHours()).slice(-2);
+            var mn = ("00"+date.getMinutes()).slice(-2);
+            var s  = ("00"+date.getSeconds()).slice(-2);
+            name = y+"-"+m+"-"+d+"-"+h+"h"+mn+"-"+s;
+        }
+
         var id = "A"+this.animationID;
+        console.log("ADDING NEW ANIMATION WITH ID",id);
         var anim = new Animation("A"+this.animationID,this.animFolder,name);
+        anim.s.type = selectedType;
         anim.recordchannels = [];
+        if(selectedType != "record") anim.channels = [];
         for(var m = 0; m < dxlManager.motors.length; m++){
             var mode = dxlManager.motors[m].m.mode;
             console.log("create recordchannel",m,mode);
-            if(mode==0)anim.recordchannels.push({record:false,i:m,f:"angle"});
-            else anim.recordchannels.push({record:false,i:m,f:"speed"}); // could be either 1(mode speed) or -1...
+            if(selectedType == "record"){
+                if(mode==0)anim.recordchannels.push({record:false,i:m,f:"angle"});
+                else anim.recordchannels.push({record:false,i:m,f:"speed"}); // could be either 1(mode speed) or -1...
+            } else {
+                if(mode==0)anim.channels.push({play:false,i:m,f:"angle"});
+                else anim.channels.push({play:false,i:m,f:"speed"}); // could be either 1(mode speed) or -1...
+            
+            }
         }
         this.animations[id] = anim; 
         this.animationID++;
 
         misGUI.cloneElement("#anim-" + selectedType,id);
-        MisGUI_anims.setRecordTracks(id,anim.recordchannels);
+
+        if(selectedType == "record"){
+            MisGUI_anims.setRecordTracks(id,anim.recordchannels);
+        } else {
+            MisGUI_anims.setPlayingTracks(id,anim.channels);
+            MisGUI_anims.setAnimName(id,anim.fileName);
+
+            // I didn't want to explicit every parameter in the settings of the animation... 
+            // more generic this way for future generators
+            var params = {};
+            anim.s.nbparams = 3; // fake nb param values for now......
+            for(var i=0; i<anim.s.nbparams; i++){
+                var k = "param" + i;
+                if(selectedType == "sinus"){ if(i==0) params[k]=0;else if(i==1)params[k]=1.0;else if(i==2)params[k]=1.0; }
+                else if(selectedType == "random"){
+                    params[k] = i*10; // fake values for now.......
+                }
+                
+            }
+            
+            //console.log("params:",params);
+            anim.s.params = params;
+
+            misGUI.showParams({
+                class: this.className,
+                func: "changeParam",
+                id: id,
+                val: params, 
+            });
+        
+        }
+
+        // we save the animation generators default values
+        if(selectedType != "record") anim.save();
 
     }
 
@@ -78,19 +131,22 @@ class AnimManager {
         }
     }
 
-    // called from the dxlManager
+    // called from the dxlManager.. not the best name for sinus and so on, but I don't want to change dxlmanager
     setTrackForRecord(index,mode) {
         for(var k in this.animations){
             var anim = this.animations[k];
             if(anim) {
-                console.log("recchannels BEFORE",anim.recordchannels);
-                console.log("anim id",anim.id,"index",index,"mode",mode);
-                
-                if(index >= 0 && index < anim.recordchannels.length) {// should not happen since recordChannels has same lenght as motors
-                    if(mode==0) anim.recordchannels[index].f = "angle";
-                    else anim.recordchannels[index].f = "speed";
-                    console.log("recchannels AFTER",anim.recordchannels);
-                    MisGUI_anims.setRecordTracks(anim.id,anim.recordchannels);
+                //console.log("anim id",anim.id,"index",index,"mode",mode);
+                if(anim.s.type == "record") {
+                    if(index >= 0 && index < anim.recordchannels.length) {// should not happen since recordChannels has same lenght as motors
+                        if(mode==0) anim.recordchannels[index].f = "angle";
+                        else anim.recordchannels[index].f = "speed";
+                        MisGUI_anims.setRecordTracks(anim.id,anim.recordchannels);
+                    }
+                } else {
+                    if(mode==0) anim.channels[index].f = "angle";
+                    else anim.channels[index].f = "speed";
+                    MisGUI_anims.setPlayingTracks(anim.id,anim.channels);
                 }
                 
             }
@@ -98,8 +154,19 @@ class AnimManager {
     }
 
     selectTrackForPlay(eltID,val,param) {
-        console.log("selectTrackForPlay", eltID,val,param);
+        console.log("AnimManager::selectTrackForPlay", eltID,val,param);
         this.animChannel(eltID,param,val);
+    }
+
+    changeParam(eltID,val,param){
+        console.log("AnimManager::changeParam", eltID,val,param);
+        var anim=this.animations[eltID];
+        if(anim){
+            //var paramIndex = parseInt(param.substring("param".length));
+            anim.s.params[param] = parseFloat(val);
+            console.log("params",anim.s.params);
+            anim.save();
+        }
     }
 
     onRecord(eltID,val) {
@@ -121,12 +188,13 @@ class AnimManager {
         for (var i = 0; i < anims.length; i++) {
             var id = this.animationID++;
             var anim = new Animation("A" + id, this.animFolder, anims[i].name);
-            anim.keyCode = anims[i].key;
-            console.log("animkey:",anim.keycode);
+            anim.s.keyCode = anims[i].key;
+            //console.log("animkey:",anim.keycode);
             anim.load(anims[i].name,true);
         }
     }
 
+    // not used.. done directly in dxlManager
     saveSettings() {
         console.log("AnimManager::saveSettings");
     }
@@ -228,11 +296,10 @@ class AnimManager {
         var id = anim.id;
         console.log("ANIMLOADED---------(",id,")",this.animationID);
         this.animations[id]=anim;
-        var selectedType = "record";
-        misGUI.cloneElement("#anim-" + selectedType,id);
+        misGUI.cloneElement("#anim-" + anim.s.type,id);
         MisGUI_anims.stopRec(id);
         //MisGUI_anims.setRecordTracks(id,anim.recordchannels);
-        //misGUI.addAnim(id,anim.fileName,anim.keyCode);
+        //misGUI.addAnim(id,anim.fileName,anim.s.keyCode);
         //misGUI.animTracks(id,anim.channels);
         //this.recAnim = null; //TOTHINK ???
     }
@@ -241,7 +308,7 @@ class AnimManager {
         console.log("AnimManager::renameAnim",eltID,val);
         var anim=this.animations[eltID];
         if(anim){
-            console.log(" oldname:",anim.fileName);
+            //console.log(" oldname:",anim.fileName);
             anim.save(val);
         }
     }
@@ -292,12 +359,12 @@ class AnimManager {
 
             console.log("setkeycode:",keyCode.length,keyCode);
 
-            if(anim.keyCode != keyCode){
-                anim.keyCode = keyCode;
-                console.log("---------> setting keycode",anim.keyCode,"and",keyCode);
-                //console.log("setkeycode: len:",anim.keyCode.length);
-                //console.log("setkeycode: charcode0:",anim.keyCode.charCodeAt(0));
-                //console.log("setkeycode: charcode1:",anim.keyCode.charCodeAt(1));
+            if(anim.s.keyCode != keyCode){
+                anim.s.keyCode = keyCode;
+                console.log("---------> setting keycode",anim.s.keyCode,"and",keyCode);
+                //console.log("setkeycode: len:",anim.s.keyCode.length);
+                //console.log("setkeycode: charcode0:",anim.s.keyCode.charCodeAt(0));
+                //console.log("setkeycode: charcode1:",anim.s.keyCode.charCodeAt(1));
                 anim.save();
             }
 
@@ -308,8 +375,8 @@ class AnimManager {
         console.log("KEYCODE:",keyCode);
 
         for (var k in this.animations) {
-            console.log("animK:",k,this.animations[k].keyCode);
-            if (this.animations[k].keyCode.indexOf(keyCode) >= 0) {
+            console.log("animK:",k,this.animations[k].s.keyCode);
+            if (this.animations[k].s.keyCode.indexOf(keyCode) >= 0) {
                 this.startAnim(k);
                 MisGUI_anims.animCheck(k, 1);
             }

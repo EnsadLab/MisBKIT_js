@@ -1,7 +1,17 @@
 {
+<<<<<<< HEAD
+  "savecount": 250,
+  "cm9Num": 1,
+  "oscPorts": {
+    "oscRemoteIP": "localhost",
+    "oscLocalPort": 4444,
+    "oscRemotePort": 6666
+  },
+=======
   "savecount": 1,
   "cm9Num": 0,
   "oscPorts": {},
+>>>>>>> develop
   "webSocket": "none",
   "midiEnabled": false,
   "midiPorts": [],

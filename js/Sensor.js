@@ -235,6 +235,7 @@ Sensor.prototype.sinusUpdate = function(){
         p.current = a;
         var v = Math.sin(a)*0.5+0.5;
         this.onNormValue(v);
+        //console.log("val:",v);
     //}    
 }
 
