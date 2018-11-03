@@ -197,13 +197,14 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                 case "select-one": //select
                     //console.log("***",$(this)); 
                     $(this).on("change",function(){
-                        console.log("INPUTCHANGE:",manager);
                         //console.log("INPUTCHANGE:",$(this).data("prevval"),$(this).val());
                         //console.log("FUNCCHANGE:",$(this).attr("eltID"),$(this).attr("param"));
                         //$(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());                            
                         // CEC: !!!!! Prob avec prop("manager").. pas bien stocké dans la balise
-                        //$(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());                           
-                        manager.cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val(),$(this).attr("param"));
+                        //$(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());
+                        var v = $(this).val();
+                        if( !isNaN(+v) ){v=+v} //OK: 127.0.0.1 -> NaN
+                        manager.cmd($(this).attr("func"),$(this).attr("eltID"),$(this).v,$(this).attr("param"));
                         //$(this).data("prevval",$(this).val());
 
                     });
@@ -603,7 +604,7 @@ MisGUI.prototype.setValue = function(index,name,val){
 }
 
 MisGUI.prototype.motorAngle = function(index,val){
-    //console.log("MisGUI.prototype.angle",index,val);
+    console.log("MisGUI.angle",index,val);
 
     //if(index<this.rotAngles.length){
     if(this.rotAngles[index]){
@@ -709,7 +710,7 @@ MisGUI.prototype.motorSettings = function(index,s){
     this.showParams({class:"dxlManager",id:index,val:s});
 
     $(".thermo [eltID="+index+"]").text("-°"); //wait info
-
+    //update rotaries
     this.angleMin(index,s.angleMin);
     this.angleMax(index,s.angleMax);
     this.speedMin(index,s.speedMin);

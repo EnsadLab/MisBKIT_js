@@ -128,7 +128,7 @@ DxlManager.prototype.midiMapping =function(eltID,val,param){
 
 DxlManager.prototype.dxlParam = function(eltID,val,param){
     //clockwise angleMin angleMax speedMin speedMax
-    console.log("dxlManager:dxlParam:",eltID,val,param);    
+    console.log("dxlManager:dxlParam:",eltID,val,param);
     if(this.motors[eltID]){
         this.motors[eltID].m[param]=val;
         misGUI.motorSettings(eltID,this.motors[eltID].m);
