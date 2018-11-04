@@ -557,7 +557,7 @@ MisGUI.prototype.midiMode =function(index,value){
 }
 
 MisGUI.prototype.motorMode =function(index,value){
-    //console.log("************ MisGUI.mode:",index,value);
+    console.log("************ MisGUI.mode:",index,value);
     if(this.rotSpeeds[index]){
         switch(value){
             case false: case 0: case "J": case "joint":
@@ -1538,18 +1538,20 @@ MisGUI.prototype.setScript = function(code){
 }
 
 MisGUI.prototype.scriptOnOff = function(onoff){
-    console.log("====== scriptOnOff =====",onoff)
+    console.log("====== scriptOnOff =====",onoff,$("#script-freeze").prop("checked"))
     if(onoff){
         $("#run-code").html('Running...')
             .addClass('active')
             .css('opacity', 0.5)
         $("#stop-code").css('opacity', 1);
+        $("#script-freeze").prop("checked",false); //!!! freeze = ~OnOff
     }
     else{
         $("#run-code").html('Run')
     		.removeClass('active')
     		.css('opacity', 1);
     	$("#stop-code").css('opacity', 0.5);
+        $("#script-freeze").prop("checked",true); //!!! freeze = ~OnOff
     }
 }
 

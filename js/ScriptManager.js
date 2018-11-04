@@ -63,8 +63,7 @@ class scriptManager {
 
     folderIsReady(folder){
         this.folder = folder
-        this.loadSettings()
-        this.loadSource(this.folder+this.scriptNames[0])
+        this.loadSource(this.folder+this.scriptNames[this.current])
     }    
     
     setName(name){
@@ -75,21 +74,21 @@ class scriptManager {
         this.saveSource(this.folder+this.scriptNames[0]); //modified ?
     }
 
-    saveSettings(){
-        var json = JSON.stringify({
+    getSettings(){
+        return {
             current:this.current,
             scripts:this.scriptNames
-        },null,2);
-        settingsManager.saveToConfigurationFolder("scripts.json",json);
+        }
     }
-    loadSettings(){
-        var json=settingsManager.loadConfiguration("scripts.json");
-        try{
-            var s = JSON.parse(json);
-            this.current = s.current;
-            this.scriptNames = s.scripts;
-            misGUI.showValue({class:this.className,func:"setName",val:this.scriptNames[0]});
-        }catch(err){}
+
+    setSettings(obj){ //!!! this.folder MUST be set , 
+        this.stop();
+        if(obj){
+            this.current = obj.current;
+            this.scriptNames = obj.scripts;
+            //!!! folder is not ready
+            //this.loadSource(this.folder+this.scriptNames[this.current]);
+        }
     }
 
     uiNew(){
@@ -104,7 +103,6 @@ class scriptManager {
         this.stop();
         misGUI.openLoadDialog("Load script :",this.folder+this.scriptNames[0],this.loadSource.bind(this))
     }
-
     loadSource( filePath ){
         console.log("LoadSource:",filePath)
         this.stop();
@@ -113,33 +111,28 @@ class scriptManager {
         var i = filePath.lastIndexOf('/')+1;
         if(i>1){
             this.scriptNames[0] = filePath.slice(i);
-            this.folder = filePath.slice(0,i); //back to setting Manager ?
-            this.saveSettings();
+            this.folder = filePath.slice(0,i); //back to settingsManager ?
+            //save folder in settings ?
         }
         //else ... what !?
 
         var code = fs.readFileSync( filePath , 'utf8');
         if(code != undefined){
-            //fs.writeFileSync(this.folder+"settings.json",JSON.stringify(s,null,2) ); 
             misGUI.showValue({class:this.className,func:"setName",val:this.scriptNames[0]});
             misGUI.setScript(code);
         }
     }
 
- 
     uiSave(){
         misGUI.openSaveDialog("Save script",this.folder+this.scriptNames[0],this.saveSource.bind(this));
     }
     saveSource( pathfile ){
-        //console.log("scriptManager saving",pathfile);
+        console.log("scriptManager saving",pathfile);
         if(pathfile!=undefined){
-            var code = misGUI.getScript();
-            fs.writeFileSync( pathfile , code ); 
+            var src = misGUI.getScript();
+            fs.writeFileSync( pathfile , src ); 
         }
     }
-
-
-
 
     update(){ //called by MisBKIT.js
         if(this.script._running)
@@ -191,7 +184,7 @@ class scriptManager {
                 this._xTime = Date.now();
                 self.call(this._currTask,0);
                 this.first = false;
-                this.log(this._currTask)
+                this.log("")
             }
 
             this.script._update = function(){
@@ -224,7 +217,9 @@ class scriptManager {
                 }
             }//update
 
-            this.script.log = function(str){                
+            this.script.log = function(...args){
+                var str= this._currTask+" : ";
+                args.forEach(e=>{str+=" "+e});
                 misGUI.showValue({class:"scriptManager",func:"log",val:str});
             }
 
@@ -244,13 +239,6 @@ class scriptManager {
             misGUI.alert("Script Error :\n"+err);
         }
     }
-    /*
-    play(){ //TODO : unfreeze ?
-        console.log("PLAY:")
-        this.script._xTime = Date.now();
-        this.script._running = true;
-    }
-    */
 
     stop(){
         if(this.script._running){
@@ -258,16 +246,16 @@ class scriptManager {
             this.script._running = false;
             this.script._prevTask = undefined;
             this.script._nextTask = undefined;
-            misGUI.scriptOnOff(false);  //update buttons ??? 
-            //stopCode(); //??? --> les boutons ne se transforment plus ?????? 
+            misGUI.scriptOnOff(false);  //update buttons , ... and "freeze"
             console.log("scriptManager stopped");
         }
     }
 
-    onFreeze(onoff){ //TODO GUI
+    freeze(onoff){ //!!! false->run  , true->stop
+        console.log("ScriptManager:onFreeze",onoff)
         if(onoff)
             this.stop()
-        else if(this.frozen)
+        else //if(this.frozen)
             this.run()
         this.frozen = onoff;
     }
