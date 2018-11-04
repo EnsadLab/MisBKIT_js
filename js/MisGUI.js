@@ -204,8 +204,9 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                         //$(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());
                         var v = $(this).val();
                         if( !isNaN(+v) ){v=+v} //OK: 127.0.0.1 -> NaN
-                        manager.cmd($(this).attr("func"),$(this).attr("eltID"),$(this).v,$(this).attr("param"));
-                        //$(this).data("prevval",$(this).val());
+                        console.log("GUI onchange:",v)
+                        manager.cmd($(this).attr("func"),$(this).attr("eltID"),v,$(this).attr("param"));
+                        console.log("    onchange:",$(this).attr("func"),$(this).attr("eltID"),v,$(this).attr("param"));
 
                     });
                     //console.log($("function",this.val));

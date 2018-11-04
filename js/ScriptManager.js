@@ -92,6 +92,14 @@ class scriptManager {
         }catch(err){}
     }
 
+    uiNew(){
+        this.stop();
+        this.saveSource( this.folder+this.scriptNames[0] )
+        this.scriptNames[0] = "no_name.js"
+        misGUI.showValue({class:this.className,func:"setName",val:this.scriptNames[0]});
+        misGUI.setScript("");
+    }
+
     uiLoad(){ //Becoz folder
         this.stop();
         misGUI.openLoadDialog("Load script :",this.folder+this.scriptNames[0],this.loadSource.bind(this))
@@ -100,6 +108,8 @@ class scriptManager {
     loadSource( filePath ){
         console.log("LoadSource:",filePath)
         this.stop();
+        this.saveSource( this.folder+this.scriptNames[0] )
+
         var i = filePath.lastIndexOf('/')+1;
         if(i>1){
             this.scriptNames[0] = filePath.slice(i);
@@ -127,6 +137,9 @@ class scriptManager {
             fs.writeFileSync( pathfile , code ); 
         }
     }
+
+
+
 
     update(){ //called by MisBKIT.js
         if(this.script._running)
@@ -178,6 +191,7 @@ class scriptManager {
                 this._xTime = Date.now();
                 self.call(this._currTask,0);
                 this.first = false;
+                this.log(this._currTask)
             }
 
             this.script._update = function(){
@@ -199,23 +213,6 @@ class scriptManager {
                         this._currTask = this._nextTask;
                         this._nextTask = undefined
                     }
-                    /*
-                    this._xTime = Date.now();
-
-                    // next duration if set with next() or timeout()
-                    this._xTimeout=this._nextDuration
-                    this._nextDuration=undefined
-
-                    //task_init if exist
-                    self.call(this._currTask+"_init")
-                    
-                    //default "nextTask" = 'caller'
-                    console.log("prev=",curr)
-                    this.first = true;
-                    this._prevTask = curr;
-                    self.call(this._currTask,0);
-                    this.first = false;
-                    */
                     this.nextTask();
                 }
                 else{
@@ -226,6 +223,10 @@ class scriptManager {
                     this.last = false;
                 }
             }//update
+
+            this.script.log = function(str){                
+                misGUI.showValue({class:"scriptManager",func:"log",val:str});
+            }
 
             //construt script with own this
             console.log("======== CONSTRUCT ========")
