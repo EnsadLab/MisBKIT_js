@@ -509,7 +509,7 @@
 				
 				<div class="animations animManager" id="divAnims">
 					<div class="ctrl-row">
-						<button id="loadAnim" class="animBTN float-right"> Load animation</button>
+						<button id="loadAnim" func="uiLoad" class="animBTN float-right"> Load animation</button>
 
 						
 
@@ -725,7 +725,7 @@
 				<div class="ctrl-row">
 					<button id="addEmptySensor" class="sensorsBTN float-left">New</button>
 
-					<button id="loadSensor" class="sensorsBTN float-right">Save</button>
+					<!--<button id="loadSensor" class="sensorsBTN float-right">Save</button>-->
 					<button func="uiLoad" id="loadSensor" class="sensorsBTN float-right">Load</button>
 				</div>
 
@@ -756,7 +756,7 @@
 						<option value="osc">OSC</option>
 						<option value="midi">Midi</option>
 						<option value="motor">Mapping from motor</option>
-						<option value="mobilizing">Mobilizing</option>
+						<!--<option value="mobilizing">Mobilizing</option>-->
 						<option value="robus">Robus</option>
 						<option value="sinus">Sinus</option>
 						<option value="random">Random</option>
@@ -936,7 +936,7 @@
 							<img id="sensor-detector-max" src="assets/sensor-max-icon.png" alt="">
 							<input type="number" func="onMaxValue" name="max-value-sensors" class="medium tiny" value="100">
 						</div>
-						<div class="live-value-ui grey">•</div>
+						<div class="live-value-ui grey" id="live-value-ui-grey">•</div>
 						<div class="live-value-ui">•</div>
 						<div class="green-bar"></div>
 					</div>
@@ -946,7 +946,7 @@
 						<option value="osc">send OSC messages</option>
 						<option value="midi">send Midi</option>
 						<option value="motor">Map values to motor</option>
-						<option value="mobilizing">send to Mobilizing</option>
+						<!--<option value="mobilizing">send to Mobilizing</option>-->
 					</select>
 					<div>
 
@@ -1021,6 +1021,8 @@
 								<section name="osc">
 									<div class="medium float-left ">
 										<input type="checkbox"  func="changeSettingsVariable" class="small cmdOnOff" param ="oscEnabledOutput" title="enable/disable">
+										<!-- TODO ALEX -->
+										<input type="text" func="changeSettingsVariable" class="medium tiny float-right" placeholder="osc adress" param="oscAdress">
 										<h4>OSC</h4>
 									</div>
 

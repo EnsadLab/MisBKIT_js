@@ -53,7 +53,7 @@ class MisBKIT{
         //sensorManager = new SensorManager();
     
         try{ midiPortManager = new MidiPortManager(); }catch(e){console.log(e);}
-
+        
         //oscMobilizing = new OscMobilizing();        
 
         sensorManager.init();

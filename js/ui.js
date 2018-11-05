@@ -393,8 +393,8 @@ function contextmenuBox(x, y, elemt){
         document.body.appendChild(div);
 
         $(".remove-sensor").bind("click", function(){
-            //var eltID = $("#sortable-sens .selected").attr('eltID');
-			//sensorManager.removeSensor(eltID);
+            var eltID = $("#sortable-sens .selected").attr('eltID');
+			sensorManager.removeSensor(eltID);
         });
 
 
