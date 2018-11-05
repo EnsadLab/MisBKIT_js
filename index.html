@@ -93,10 +93,10 @@
 					</div>
 				</div>
 
-				<div id="divOSC" class="plug">
+				<div id="divOSC" class="plug oscManager">
 					<p>
 						OSC  <span class="status"></span>
-						<input id="btOSC" type="checkbox" class="small warning cmdOnOff" name ="enable" title="enable/disable">
+						<input type="checkbox" func="onOff" eltID="OSC0" class="small warning cmdOnOff" name ="enable" title="enable/disable">
 					</p>
 					<div class="content advanced">
 						<br>OSC :<br>
@@ -105,12 +105,12 @@
 							<div class="infoIP">Local IP: localhost</div>
 						</font>
 						input Port:
-						<input type="number" class="small set-value cmdInt" name="oscLocalPort" align="right" placeholder="6666">
+						<input type="number" func="setParam" param="localPort" eltID="OSC0" class="small set-value cmdInt" name="oscLocalPort" align="right" placeholder="6666">
 						<hr>
-						IP:<input type="text" class="name cmdString" name="oscRemoteIP" placeholder="255.255.255.255" size="18" title="address IP">
+						IP:<input type="text" func="setParam" param="clientIP" eltID="OSC0" class="name cmdString" name="oscRemoteIP" placeholder="255.255.255.255" size="18" title="address IP">
 						<!--input type="number" class="OSC-setting" placeholder="port" name=""-->
 						output Port:
-						<input type="number" class="small set-value cmdInt" name="oscRemotePort" align="right" placeholder="7777">
+						<input type="number" func="setParam" param="clientPort" eltID="OSC0" class="small set-value cmdInt" name="oscRemotePort" align="right" placeholder="7777">
 						<!--ul></ul-->
 						<hr>
 						<button id="addConnexionOSC">Add OSC CONNEXION</button>
@@ -170,13 +170,25 @@
 					</p>
 				</div>
 
-				<!--div class="plug" >
+				<div class="plug pythonManager">
+					<!--button class="gear"><img src="assets/settings.png"></button-->
 					<p>
-						ADVANCED :
-						<button class="gear"><img src="assets/settings.png"></button>
+						PYTHON
+						<input func="onOff" type="checkbox" class="small onoff" name ="enable" title="enable/disable"> 
 					</p>
-						<input type="text" size="3">
-				</div-->
+					<div id="pyContent" class="content">
+						<br>
+						<button func="uiLoad" class="float-left">Load</button>
+						<select func="setPyVersion" class= "float-right small">
+							<option value="python">python</option>
+							<option value="python3">python3</option>
+						</select>
+						<br><!--hr-->
+						<input func="scriptPath" type="text" class="small tiny" style="width:100%;">
+						<!--span func="log">...</span-->
+					</div>
+
+				</div>
 
 
 			</div>
@@ -209,8 +221,8 @@
 						<h2 id="sens">Sensors </h2> <input type="checkbox" class="small btnGlobalSensors" id="sensor-freeze" name ="enable"title="enable/disable">
 					</div>
  
-					<div class="tab" id="script">
-						<h2 id="script">Script </h2> <input type="checkbox" class="small btnGlobalSensors" id="sensor-freeze" name ="enable"title="enable/disable">
+					<div class="tab scriptManager" id="script">
+						<h2 id="script">Script </h2> <input func="freeze" type="checkbox" class="small btnGlobalSensors" id="script-freeze" name ="enable"title="enable/disable">
 					</div>
 				
 			
@@ -497,7 +509,7 @@
 				
 				<div class="animations animManager" id="divAnims">
 					<div class="ctrl-row">
-						<button id="loadAnim" class="animBTN float-right"> Load animation</button>
+						<button id="loadAnim" func="uiLoad" class="animBTN float-right"> Load animation</button>
 
 						
 
@@ -579,39 +591,39 @@
 						<!-- Sinus Anim -->
 						<li class="single-anim sinus-anim ui-state-default" id="anim-sinus" eltID="example">
 							<h3>SINUS</h3>
-							<input type="text" class="name" placeholder="animation's name" name="animName" size="40">
+							<input type="text" class="name" placeholder="animation's name" func="renameAnim" name="animName" size="40">
 							<div class="anim-motors">
-								<input type="text" class="shorcut" placeholder="..." name="animKey">
+								<input type="text" class="shorcut" placeholder="_" func="onKeyShortcut" name="animKey">
 								
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="0">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="1">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="2">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="3">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="4">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="5">
 
 								<div class="controls">
-									<button class="play"><img src="assets/play.png" alt="" name="play"></button>
-									<button class="stop"><img src="assets/stop.png" alt="" name="stop"></button>
+									<button class="play" func="startAnim" name="play"><img src="assets/play.png" alt="" name="play"></button>
+									<button class="stop" func="stopAnim"name="stop"><img src="assets/stop.png" alt="" name="stop"></button>
 									<!-- loop checkbox -->
-									<input type="checkbox" class="loop" name="loop">
+									<!--<input type="checkbox" class="loop" name="loop">-->
 								</div>
 
-								<meter name="progress" class="progress" value="70" max="100"></meter>
+								<!--<meter name="progress" class="progress" value="70" max="100"></meter>-->
 
 							</div>
 							<div class="ctrl-row text-right">
 								<div class="info">
-									<p class="text-left">Offset :</p>
-									<input type="number" class="small tiny" value="34">
+									<p class="text-left">Offset [-1.0,1.0]:</p>
+									<input type="number" class="small tiny" value="34" func="changeParam" param="param0">
 								</div>
 								<div class="info">
-									<p class="text-left">Frequence :</p>
-									<input type="number" class="small tiny" value="34">
+									<p class="text-left">Frequency-ex:0.1(slow),2.0(quick):</p>
+									<input type="number" class="small tiny" value="34" func="changeParam" param="param1">
 								</div>
 								<div class="info">
-									<p class="text-left">Amplitude :</p>
-									<input type="number" class="small tiny" value="34">
+									<p class="text-left">Amplitude [0.0,1.0]:</p>
+									<input type="number" class="small tiny" value="34" func="changeParam" param="param2">
 								</div>
 							</div>
 						</li>
@@ -620,43 +632,43 @@
 						<!-- Random Anim -->
 						<li class="single-anim random-anim ui-state-default" id="anim-random" eltID="example">
 							<h3>RANDOM</h3>
-							<input type="text" class="name" placeholder="animation's name" name="animName" size="40">
+							<input type="text" class="name" placeholder="animation's name" func="renameAnim" name="animName" size="40">
 							<div class="anim-motors">
-								<input type="text" class="shorcut" placeholder="..." name="animKey">
+								<input type="text" class="shorcut" placeholder="_" func="onKeyShortcut" name="animKey">
 								
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="0">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="1">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="2">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="3">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="4">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="5">
 
 								<div class="controls">
-									<button class="play"><img src="assets/play.png" alt="" name="play"></button>
-									<button class="stop"><img src="assets/stop.png" alt="" name="stop"></button>
+									<button class="play" func="startAnim" name="play"><img src="assets/play.png" alt="" name="play"></button>
+									<button class="stop" func="stopAnim"name="stop"><img src="assets/stop.png" alt="" name="stop"></button>
 									<!-- loop checkbox -->
-									<input type="checkbox" class="loop" name="loop">
+									<!--<input type="checkbox" class="loop" name="loop">-->
 								</div>
 
-								<meter name="progress" class="progress" value="70" max="100"></meter>
+								<!--<meter name="progress" class="progress" value="70" max="100"></meter>-->
 
 							</div>
 							<div class="ctrl-row text-right">
 								<div class="info">
 									<p class="text-left">interval :</p>
-									<input type="number" class="small tiny" value="34">
+									<input type="number" class="small tiny" value="34" func="changeParam" param="param0">
 								</div>
 								<div class="info">
 									<p class="text-left">tolerance :</p>
-									<input type="number" class="small tiny" value="34">
+									<input type="number" class="small tiny" value="34" func="changeParam" param="param1">
 								</div>
 								<div class="info">
 									<p class="text-left">max :</p>
-									<input type="number" class="small tiny" value="34">
+									<input type="number" class="small tiny" value="34" func="changeParam" param="param2">
 								</div>
 								<div class="info">
 									<p class="text-left">min :</p>
-									<input type="number" class="small tiny" value="34">
+									<input type="number" class="small tiny" value="34" func="changeParam" param="param3">
 								</div>
 							</div>
 						</li>
@@ -665,43 +677,43 @@
 						<!-- Trigger Anim -->
 						<li class="single-anim trigger-anim ui-state-default" id="anim-trigger" eltID="example">
 							<h3>TRIGGER</h3>
-							<input type="text" class="name" placeholder="animation's name" name="animName" size="40">
+							<input type="text" class="name" placeholder="animation's name" func="renameAnim" name="animName" size="40">
 							<div class="anim-motors">
-								<input type="text" class="shorcut" placeholder="..." name="animKey">
+								<input type="text" class="shorcut" placeholder="_" func="onKeyShortcut" name="animKey">
 								
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
-								<input type="checkbox" class="motor-none" name="track">
+								<input type="checkbox" class="motor-none" name="track"  func="selectTrackForPlay" param="0">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="1">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="2">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="3">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="4">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="5">
 
 								<div class="controls">
-									<button class="play"><img src="assets/play.png" alt="" name="play"></button>
-									<button class="stop"><img src="assets/stop.png" alt="" name="stop"></button>
+									<button class="play" func="startAnim" name="play"><img src="assets/play.png" alt="" name="play"></button>
+									<button class="stop" func="stopAnim"name="stop"><img src="assets/stop.png" alt="" name="stop"></button>
 									<!-- loop checkbox -->
-									<input type="checkbox" class="loop" name="loop">
+									<!--<input type="checkbox" class="loop" name="loop">-->
 								</div>
 
-								<meter name="progress" class="progress" value="70" max="100"></meter>
+								<!--<meter name="progress" class="progress" value="70" max="100"></meter>-->
 
 							</div>
 							<div class="ctrl-row text-right">
 								<div class="info">
 									<p class="text-left">interval :</p>
-									<input type="number" class="small tiny" value="34">
+									<input type="number" class="small tiny" value="34" func="changeParam" param="param0">
 								</div>
 								<div class="info">
 									<p class="text-left">dutaion :</p>
-									<input type="number" class="small tiny" value="34">
+									<input type="number" class="small tiny" value="34" func="changeParam" param="param1">
 								</div>
 								<div class="info">
 									<p class="text-left">max :</p>
-									<input type="number" class="small tiny" value="34">
+									<input type="number" class="small tiny" value="34" func="changeParam" param="param2">
 								</div>
 								<div class="info">
 									<p class="text-left">min :</p>
-									<input type="number" class="small tiny" value="34">
+									<input type="number" class="small tiny" value="34" func="changeParam" param="param3">
 								</div>
 							</div>
 						</li>
@@ -713,7 +725,7 @@
 				<div class="ctrl-row">
 					<button id="addEmptySensor" class="sensorsBTN float-left">New</button>
 
-					<button id="loadSensor" class="sensorsBTN float-right">Save</button>
+					<!--<button id="loadSensor" class="sensorsBTN float-right">Save</button>-->
 					<button func="uiLoad" id="loadSensor" class="sensorsBTN float-right">Load</button>
 				</div>
 
@@ -744,7 +756,7 @@
 						<option value="osc">OSC</option>
 						<option value="midi">Midi</option>
 						<option value="motor">Mapping from motor</option>
-						<option value="mobilizing">Mobilizing</option>
+						<!--<option value="mobilizing">Mobilizing</option>-->
 						<option value="robus">Robus</option>
 						<option value="sinus">Sinus</option>
 						<option value="random">Random</option>
@@ -924,7 +936,7 @@
 							<img id="sensor-detector-max" src="assets/sensor-max-icon.png" alt="">
 							<input type="number" func="onMaxValue" name="max-value-sensors" class="medium tiny" value="100">
 						</div>
-						<div class="live-value-ui grey">•</div>
+						<div class="live-value-ui grey" id="live-value-ui-grey">•</div>
 						<div class="live-value-ui">•</div>
 						<div class="green-bar"></div>
 					</div>
@@ -934,7 +946,7 @@
 						<option value="osc">send OSC messages</option>
 						<option value="midi">send Midi</option>
 						<option value="motor">Map values to motor</option>
-						<option value="mobilizing">send to Mobilizing</option>
+						<!--<option value="mobilizing">send to Mobilizing</option>-->
 					</select>
 					<div>
 
@@ -1009,6 +1021,8 @@
 								<section name="osc">
 									<div class="medium float-left ">
 										<input type="checkbox"  func="changeSettingsVariable" class="small cmdOnOff" param ="oscEnabledOutput" title="enable/disable">
+										<!-- TODO ALEX -->
+										<input type="text" func="changeSettingsVariable" class="medium tiny float-right" placeholder="osc adress" param="oscAdress">
 										<h4>OSC</h4>
 									</div>
 
@@ -1092,12 +1106,16 @@
 
 			<div class="script-panel scriptManager">
 				<div class="ctrl-row">
+					<button func="uiNew" id="load-code" class="float-left">New</button>
 					<button func="uiLoad" id="load-code" class="float-left">Load</button>
-					<input  func="setName" type="text" class="float-left medium" placeholder="Script_name" size="58">
+					<input  func="setName" type="text" class="float-left medium" placeholder="Script_name" size="40">
 					<button func="stop" id="stop-code" class="float-right stop">Stop</button>
 					<button func="run"  id="run-code" class="float-right valid">Run</button>
-					
 				</div>
+				<font color='lightgreen'>
+					<span func="log">Script info</span>
+				</font>
+
 				<div class="input-code">
 					
 				</div>
@@ -1197,14 +1215,14 @@
 		</div>
 
 
-		<div class="modalNewAnim draggable">
+		<div class="modalNewAnim draggable" id="modalNewAnim">
 			<h2>New Animation</h2>
 			<hr>
 			<div class="listAnimType">
 				<span name="record">Record</span>
 				<span name="sinus">Sinus</span>
 				<span name="random">Random</span>
-				<span name="trigger">Trigger</span>
+				<!--<span name="trigger">Trigger</span>-->
 			</div>
 			<button id="newAnimLoad" class="large">Load</button>
 			<button id="newAnimCancel" class="large">Cancel</button>

@@ -6,6 +6,9 @@ var MIDI = null;
 
 MidiPortManager = function () {
 
+    //this.MIDI = require('midi');
+
+    
     if(MIDI==null) {
         MIDI = require('midi');
     }
@@ -19,7 +22,7 @@ MidiPortManager = function () {
     // boolean corresponding to the ON/OFF value in the midi panel
     this.enabled = false;
 
-    console.log("MIDI");
+    console.log("--> creating midiPortManager");
 
 };
 
@@ -32,9 +35,11 @@ MidiPortManager.prototype.open = function (p) {
     }*/
 
     if(isNaN(p)){
-        console.log("OPENING midi by name",p);
+        console.log("OPENING midi by name",p,this.midiPorts.length);
         var found = false;
+        console.log("length", this.midiPorts.length);
         for(var i=0; i<this.midiPorts.length; i++){
+            console.log("port_name",this.midiPorts[i].portName);
             if(this.midiPorts[i].portName == p){
                 this.midiPorts[i].open();
                 found = true;
@@ -64,6 +69,7 @@ MidiPortManager.prototype.open = function (p) {
 MidiPortManager.prototype.openMidiAtStart = function(enabled){
     
     this.enabled = true;
+    misGUI.scanMidiPorts();
     misGUI.simSelectMidiPorts(enabled);
    /* if(this.isValidMidiPort(portName)){
         misGUI.simSelectPort(portName);
@@ -96,14 +102,14 @@ MidiPortManager.prototype.addMidiPort = function(portName, portID){
         }
     }
     if(!found){
-        //console.log("Midiport " + portName + " has been added");
-        try{ 
+        console.log("Midiport " + portName + " has been added");
+        //try{ 
             var midiPortNew = new MidiPort(); 
             midiPortNew.enabledOnGUI = true;
             midiPortNew.portName = portName;
             midiPortNew.portID = portID;
             this.midiPorts.push(midiPortNew);
-        }catch(e){console.log(e);}
+        //}catch(e){console.log(e);}
     }
     
 };
@@ -111,6 +117,7 @@ MidiPortManager.prototype.addMidiPort = function(portName, portID){
 MidiPortManager.prototype.sendMidi = function(portName, cmd, index, val){
     for(var i=0; i<this.midiPorts.length; i++){
         if(this.midiPorts[i].portName == portName){
+            //console.log("---> sending Midi",portName,cmd,index,val);
             this.midiPorts[i].sendMidi(cmd,index,val);
         }
     }

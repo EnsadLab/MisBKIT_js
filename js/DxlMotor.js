@@ -150,13 +150,17 @@ Dxl.prototype.copySettings = function(dxl){
     }
     else{ //copy from settings
         for(var e in dxl){
-            this.m[e]=dxl[e]; //allow adding setting
+            //console.log("***copySettings:",e,typeof(this.m[e]));
+            if(typeof(this.m[e])=='number')
+                this.m[e]=+dxl[e];
+            else            
+                this.m[e]=dxl[e]; //!!! allow adding setting !!!
             //console.log("***copySettings:",e,this.m[e]);
         }        
     }
-
     if(this.m.id==0)this.m.id=this.m.dxlID; //m.id deprecated
     else if(this.m.dxlID==0)this.m.dxlID=this.m.id;
+    //console.log("***copySettings:",this.m);
 }
 
 Dxl.prototype.getSettings=function(){
@@ -319,8 +323,8 @@ Dxl.prototype.unfreezeMotor = function(){
 }
 
 Dxl.prototype.angleRange = function(min,max){
-    this.m.angleMin = min;
-    this.m.angleMax = max;
+    this.m.angleMin = +min;
+    this.m.angleMax = +max;
     return this;
 };
 
@@ -405,9 +409,10 @@ Dxl.prototype.onNormValue =function(val){ //angle  ou  speed normalisé
 }
 
 Dxl.prototype.angle = function(a){
+    console.log("Dxl.angle:",a)
     if(a!=undefined) {
-        if (a > this.m.angleMax)a = this.m.angleMax;
-        else if (a < this.m.angleMin)a = this.m.angleMin;
+        if (a > this.m.angleMax) a = this.m.angleMax;
+        else if (a < this.m.angleMin) a = this.m.angleMin;
         this.wantedAngle  = a;
         this.dxlGoal = this.angle2pos(a);
         return a;
@@ -417,11 +422,14 @@ Dxl.prototype.angle = function(a){
     }
 };
 
-Dxl.prototype.nAngle = function(an) {
-    //console.log("nangle:",a," min:",this.m.angleMin," max:",this.m.angleMax);
-    if(an>1)an=1.0;
-    else if(an<-1)an=-1.0;
-    return this.angle( this.m.angleMin + an * (this.m.angleMax - this.m.angleMin) );
+// [0 n 1]
+Dxl.prototype.nAngle = function( n) {
+    console.log("nangle:",n," min:",this.m.angleMin," max:",this.m.angleMax);
+    if(n<0)n=0;
+    else if(n>1)n=1.0;
+    //console.log("nangle:",this.m.angleMin + n*(this.m.angleMax - this.m.angleMin));
+    console.log("nangle:",((this.m.angleMax - this.m.angleMin)*n + this.m.angleMin) );
+    return this.angle( (this.m.angleMax - this.m.angleMin)*n + this.m.angleMin );
 };
 
 Dxl.prototype.speed = function(s){
@@ -442,9 +450,10 @@ Dxl.prototype.speed = function(s){
     }
 };
 
+//speed normalisée [0,1] !!! 'nospeed' depends on min max 
 Dxl.prototype.nSpeed = function(s) {
     if(s>1)s=1.0;
-    else if(s<-1)s=-1.0;
+    else if(s<0)s=0;
     return this.speed(this.m.speedMin + s * (this.m.speedMax - this.m.speedMin) );
 };
 

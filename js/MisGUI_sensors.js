@@ -234,12 +234,18 @@ MisGUI_sensors.initSlider = function(eltID,minVal,maxVal,threshold,tolVal){
 
 }
 
-MisGUI_sensors.setSensorValue = function(eltID, sensorValue, percent){
+MisGUI_sensors.setSensorValue = function(eltID, sensorValue, percent, fsensorValue, fpercent){
     var div = $(".sensor-setting-more").filter("[eltID="+ eltID + "]");
-    div.find(".live-value").html(sensorValue.toString().substr(0,6));
+    div.find(".live-value").html(fsensorValue.toString().substr(0,6));
+    if(fpercent < 0 ) fpercent = 0;
+    if(fpercent > 100) fpercent = 100;
+    // TODO ALEX: pourquoi le point gris ne se met pas à jour...
+    // percent sera entre 0 et 100.. là, un exemple avec 40
+    div.find("#live-value-ui-grey").css("left", 40+"%"); // gray circle
+    //div.find("#live-value-ui-grey").css("left", percent+"%"); // gray circle
     if(percent < 0 ) percent = 0;
     if(percent > 100) percent = 100;
-    div.find(".live-value-ui").css("left", percent+"%");
+    div.find(".live-value-ui").css("left", (fpercent-10)+"%"); // green circle
     var divThumbnail = $(".sensor-setting").filter("[eltID="+ eltID + "]");
     divThumbnail.find(".live-value-ui").css("left", percent+"%");
    // console.log("value",sensorValue);

@@ -28,7 +28,9 @@ SettingsManager.prototype.loadSettings = function(){
         this.chooseMisBKITFolder();
         
     }
-    this.getScriptFolder();
+    this.copyScriptExamples();
+
+    scriptManager.folderIsReady(this.scriptFolder);//in any case , no?
 };
 SettingsManager.prototype.saveSettings = function () {
     console.log("entering settings manager save");
@@ -134,7 +136,7 @@ SettingsManager.prototype.getScriptFolder = function(){   //name , cb ){
             }
         });
     }
-    scriptManager.folderIsReady(this.scriptFolder);
+    return this.scriptFolder; //? what if error
 }
 
 
@@ -199,3 +201,20 @@ SettingsManager.prototype.loadConfiguration = function(filename){
     return datas;
 }
 
+SettingsManager.prototype.copyScriptExamples = function(){
+    var dest = this.getScriptFolder()+"examples/";
+    console.log("**********exampletFolder:*************",dest)
+    if(!fs.existsSync(dest))
+        fs.mkdirSync( dest )
+
+    var sce = __appPath+'/scriptExamples/' //local examples
+    fs.readdirSync(sce).forEach(file => {
+        console.log('/scriptExamples/',sce+file ,dest+file);
+        //dont need to be sync ? should overwrite user ?
+        //fs.copyFile( sce+file,dest+file,fs.constants.COPYFILE_EXCL,(err)=>{
+        //    if(err) console.log("copyScriptExamples:",err);
+        //})
+        try{ fs.copyFileSync( sce+file,dest+file,fs.constants.COPYFILE_EXCL ) }
+        catch(err){}
+    })
+}

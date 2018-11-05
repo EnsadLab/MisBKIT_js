@@ -146,20 +146,32 @@ function showScript(){
 
 // SCript function
 $("#run-code").bind('click', function(){
-	console.log("#runcode:1",this);
+	/*
 	$(this).html('Running...');
 	$(this).addClass('active');
-	$(this).css('opacity', 0.5);	
+	$(this).css('opacity', 0.5);
+	*/
+	/*
+	$("#run-code").html('Running...');
+	$("#run-code").addClass('active');
+	$("#run-code").css('opacity', 0.5);
 	$("#stop-code").css('opacity', 1);
 	console.log("#runcode:2",this);
+	*/
 })
+function runcode(){
+	$("#run-code").html('Running...')
+		.addClass('active')
+		.css('opacity', 0.5)
+	$("#stop-code").css('opacity', 1);
+}
 
-$("#stop-code").bind('click', stopCode);
+
+//$("#stop-code").bind('click', stopCode);
 function stopCode(){
-	console.log("#stopcode");
-	$("#run-code").html('Run');
-	$("#run-code").removeClass('active');
-	$("#run-code").css('opacity', 1);
+	$("#run-code").html('Run')
+		.removeClass('active')
+		.css('opacity', 1);
 	//$(this).css('opacity', 0.5);  //called from elsewhere (eg stopped before load)
 	$("#stop-code").css('opacity', 0.5);
 	//$("#stop-code").unbind('click', stopCode); //??? why ???
@@ -168,7 +180,7 @@ function stopCode(){
 // FOR CODEMIROR (code editor in script mode)
 var value = "// minimal example\n\n"
 		  + "var a = 0\n\n"
-		  + "dxl.dxlMode(0,'joint')\n\n"
+		  + "dxl.setMode(0,'joint')\n\n"
 		  + "this.loop = function(){\n"
 		  + "  dxl.setAngle(0, Math.sin(a)*150 )\n"
 		  + "  a+=0.2\n"
@@ -381,8 +393,8 @@ function contextmenuBox(x, y, elemt){
         document.body.appendChild(div);
 
         $(".remove-sensor").bind("click", function(){
-            //var eltID = $("#sortable-sens .selected").attr('eltID');
-			//sensorManager.removeSensor(eltID);
+            var eltID = $("#sortable-sens .selected").attr('eltID');
+			sensorManager.removeSensor(eltID);
         });
 
 

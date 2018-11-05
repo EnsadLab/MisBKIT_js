@@ -18,11 +18,12 @@ MisGUI_anims.setPlayingTracks = function(eltID,tracks){
     var bts = $(".animManager").find("li[eltID='"+ eltID + "']").find("input[name='track']");
     for(var i=0;i<tracks.length;i++){
         var im = tracks[i].i; //!!! test nbm
-        console.log("DGBtracks:",tracks[i].f);
+        //console.log("DGBtracks:",tracks[i].f);
 
         if(tracks[i].f=="angle")$(bts[im]).prop("class","motor-angle");
         else if(tracks[i].f=="speed")$(bts[im]).prop("class","motor-speed");
-        $(bts[im]).prop("checked",true);
+        //$(bts[im]).prop("checked",true);
+        $(bts[im]).prop("checked",tracks[i].play);
     }
 }
 
@@ -108,7 +109,8 @@ MisGUI_anims.animCheck = function(eltID,v){
 
 MisGUI_anims.animProgress = function(eltID,v) {
     var div = $(".animManager").find("li[eltID='"+ eltID + "']");
-    div.find('[name="progress"]:first').val(v);
+    var progress_bar = div.find('[name="progress"]:first');
+    if(progress_bar.length > 0) progress_bar.val(v);
 }
 
 MisGUI_anims.setKeyCode = function(eltID,v) {

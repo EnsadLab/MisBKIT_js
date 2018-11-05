@@ -1,15 +1,135 @@
-/**
-* Created by Cecile on 05/08/17.
-*/
+//OSC Manager v2
 
-/**
- * note(Didier)
- * sensorSimulator            oscP5 8888 , remote 4444
- * animationTrigger           oscP5 6666 , remote 4444
- * motorTrigger               oscP5 6666,  remote 4444
- * multipleAnimationTrigger : oscP5 6666 , remote 4444
- */
+const oscmin  = require('osc-min');
+var oscjs     = require('osc');
 
+//TODO l'objet managers devrait être founit par MisBKIT.js
+var managers = {
+    dxl    :require("./DxlManager.js"),
+    anim   :require("./AnimManager.js"),
+    sensor :require("./SensorManager.js"),
+    midi   :require("./MidiPortManager.js"),
+    osc    :require("./OscManager.js"),
+    dmx    :require("./DmxManager"),
+    ui     :require("./MisGUI.js")
+}
+
+class OscUDP{
+    constructor(){
+        this.udpPort;
+        this.listener;
+        this.ready;
+        this.s = {
+            type:"UDP",
+            localPort:8001,
+            clientIP:"127.0.0.1",
+            clientPort:8000
+        }
+    }
+
+    getSettings(){
+        return this.s;
+    }
+
+    setListener(f){
+        this.listener = f;
+    }
+
+    setSettings( obj ){
+        this.close();
+        for(var p in obj ){
+            console.log("oscUDP.set:",p,obj[p])
+            if(this.s[p]!=undefined)
+                this.s[p]=obj[p];
+        }
+        console.log("oscUDP.s:",this.s)
+    }
+
+    setParam(param,val){
+        if(this.s[param]!=undefined)
+            this.s[param]=val
+    }
+
+    send(addr,args){
+        if(this.ready){
+            this.updPort.send({
+                address:addr,
+                args:args
+            });
+        }
+    }
+
+    sendStr(str){
+        if(!this.ready)
+            return;
+        console.log("SEND:",str);
+        var spl  = str.split(" ");
+        var a = [];
+        for(var i=1;i<spl.length;i++){
+            if(spl[i].length>0){ //espaces multiples
+                var v = +spl[i]; //meilleur que parseFloat
+                if(isNaN(v))
+                    a.push({type:'s',value:spl[i]});
+                else
+                    a.push({type:'f',value:v});
+            }
+        }
+        this.updPort.send({
+            address:spl[0],
+            args: a
+        });    
+    }
+
+    close(){
+        this.ready = false;
+        if(this.udpPort != undefined){
+            this.udpPort.close();
+            this.udpPort = undefined;
+            console.log("Osc.closing ...");
+        };
+    }
+    open(){
+        this.close();
+        var self = this;
+        this.ready = false;
+        var options={
+            localAddress:"0.0.0.0", //all ?
+            localPort: this.s.localPort,
+            remoteAddress: this.s.clientIP,
+            remotePort: this.s.clientPort,
+            broadcast: false,
+            metadata: false
+        };
+        this.udpPort=new oscjs.UDPPort(options);
+        //this.udpPort.on("message",function(msg){console.log("Osc.message:",msg)}
+        //this.udpPort.on("raw",function(msg){console.log("Osc.raw:",msg);});
+        //this.udpPort.on("bundle",function(bundle,timetag,info){console.log("Osc.bundle:",timetag,bundle,info);});
+        this.udpPort.on("osc",function(msg,info){
+            if(self.listener)
+                self.listener(msg.address,msg.args)
+        });
+        this.udpPort.on("ready",function(){ //before 'open'
+            self.ready = true;
+            console.log("Osc.ready:-------");
+        });
+        this.udpPort.on("open",function(){
+            console.log("------ Osc.open:-------");
+            self.ready = true;
+            //self.scanIPv4();
+        });
+        this.udpPort.on("error",function(msg){
+            self.ready = false;
+            console.log("Osc.error:",msg);
+            //TODO GUI
+        })
+        this.udpPort.on("close",function(){
+            self.ready = false;
+            console.log("OSC.closed:-------");
+            //TODO GUI
+        })
+        this.udpPort.open();
+    }
+}
 
 OscManager = function () {
     this.s = { //settings
@@ -18,73 +138,123 @@ OscManager = function () {
         oscLocalPort: 4444,
         oscRemotePort: 6666        
     };
-
-    this.oscUserReceiver = null; // reads values from user on port 4444
-    this.oscCm9Receiver = null; // reads commands from CM9 on port ? 5555
-    
-    //this.outportUser = 6666; // forward sensor values to user
-    this.udpUserSender = udp.createSocket("udp4");
-
-    this.outportCm9 = 7777; //TODO: à parler avec Didier....
+    this.ports={
+        OSC0:new OscUDP() //default one
+    }
 
 };
 var oscmng = new OscManager();
 module.exports = oscmng;
 
-
-OscManager.prototype.setSettings = function(set){
-    console.log("osc.setSettings",set);
-    this.close();
-    for (var p in set) {
-        console.log("osc."+p+" "+set[p]);
-        this.s[p]=set[p];
-    }
-    misGUI.showOSC(this.s);
+OscManager.prototype.init = function(){
+    console.log("============= oscManager ============")
+    misGUI.initManagerFunctions(this,"oscManager");
 }
 
-OscManager.prototype.changeParam = function(name,value){
+OscManager.prototype.cmd = function(func,id,val,param){
+    if(id==undefined)
+        id = "OSC0";
+    if(typeof(this[func])=='function')
+        this[func](id,val,param)
+}
+
+OscManager.prototype.setParam = function(id,val,param){
+     if(this.ports[id]!=undefined){
+        this.ports[id].setParam(param,val)
+        misGUI.showParams({class:"oscManager",func:"setParam",val:this.ports[id].getSettings()})
+    }
+}
+
+OscManager.prototype.getSettings = function(){
+    var stg = {};
+    for(var p in this.ports ){
+        stg[p]=this.ports[p].getSettings()
+    }
+    return stg;
+}
+
+//TODO : !!! mutiples calls ??? kill port
+OscManager.prototype.setSettings = function(obj){
+    console.log("========== osc setting ===========")
+    for(var id in obj ){
+        if(this.ports[id] == undefined)
+            this.addPort("UDP")
+        this.ports[id].setSettings(obj[id]);
+        this.ports[id].setListener(this.rcv.bind(this));
+        misGUI.showParams({class:"oscManager",id:id,func:"setParam",val:this.ports[id].getSettings()})
+    }
+}
+
+//TODO type = websocket
+OscManager.prototype.addPort = function(type){
+    this.idnum += 1; //OSC0 already exists
+    this.ports["OSC"+this.idnum]=new OscUDP();
+    //TODO misGUI
+    //return id ? port ? 
+}
+
+OscManager.prototype.rcv = function(addr,args){
+    console.log("OSC MANAGER rcv:",addr,args)
+    var route = addr.split('/')
+    //console.log("-osc  MBK",route[1])
+    //console.log("-osc mang",route[2])
+    //console.log("-osc func",route[3])
+    //console.log("-osc  id ",route[4])
+    //console.log("-osc args",args)
+    // /mbk/  facultatif? à voir aprés usage
+    if(route[1]=="mbk"){
+        var m = managers[route[2]];
+        if( m != undefined ){
+            //cmd( func , id ,val )
+            m.cmd(route[3],route[4],...args)
+        }
+    }
+
+}
+
+
+/* OscManager.prototype.changeParam = function(name,value){
     this.close();
     if(this.s[name]){
         this.s[name]=value;
     }
     else
         console.log("osc bad param:",name,val);
+}*/
 
-}
-
-OscManager.prototype.onOff = function(onoff){
-    if(onoff) this.open();
-    else this.close();
-}
-
-OscManager.prototype.open = function(){
-    console.log("OscManager.open:");
-
-    this.initUserReceiver();
-    //this.initCm9Receiver();
-}
-
-OscManager.prototype.close= function(){
-    if(this.oscUserReceiver){
-        this.oscUserReceiver.close();
-        this.oscUserReceiver = undefined;
+//TODO freeze ? onOff ALL
+OscManager.prototype.onOff = function(idelt,onoff){
+    if(onoff){
+        for(var id in this.ports )
+            this.open(id)
     }
-    if(this.oscCm9Receiver){
-        this.oscCm9Receiver.close()
-        this.oscCm9Receiver = undefined;
+    else{
+        for(var id in this.ports )
+            this.close(id)
     }
-    misGUI.enableOSC(false);
 }
 
-OscManager.prototype.initUserReceiver = function(){
+//TODO unfreeze ? 
+OscManager.prototype.open = function(id){
+    console.log("-----open:",id)
+    this.ports[id].open()
+    //TODO misGUI ...
+}
+
+OscManager.prototype.close= function(id){
+    this.ports[id].close()
+    //TODO misGUI ...
+}
+
+{/*OscManager.prototype.initUserReceiver = function(){
     console.log("OSC:initUserReceiver",this.s.oscLocalPort);
     //var inport = 4444;
     var inport = this.s.oscLocalPort; //4444;
     this.oscUserReceiver = udp.createSocket("udp4", function(msg, rinfo) {
         var error, error1;
-        //console.log("osc rcv");
+        console.log("osc rcv",msg);
         try {
-            var rcv = osc.fromBuffer(msg);
+            var rcv = oscmin.fromBuffer(msg);
             var adr = rcv.address;
             if(adr.startsWith("/mbk/anims")){
                 console.log("osc msg:",rcv.address,rcv.args[0].value);
@@ -109,7 +279,8 @@ OscManager.prototype.initUserReceiver = function(){
     console.log(this.oscUserReceiver);
 
 }
-
+*/
+}
 //... mobilizing ... in progress
 //TODO split
 OscManager.prototype.handleMessage = function(rcv,mobz_connexion){
@@ -126,10 +297,6 @@ OscManager.prototype.handleMessage = function(rcv,mobz_connexion){
         console.log("invalid OSC message: " + rcv);
     }
 }
-
-//OscManager.prototype.handleMessage2 = function(split,args){
-    
-//}    
 
 // mobilizing ... in progress
 OscManager.prototype.handleMotorMessage2 = function(rcv){
@@ -225,7 +392,6 @@ OscManager.prototype.handleAnimMessage = function(rcv){
             }
         }
     }
-
 }
 
 // handles motor messages coming from user app
@@ -316,7 +482,7 @@ OscManager.prototype.sendSensorMessage = function(sensorID,sensorVal){
     if(sensor == undefined) return;
 
     // /mbk/sensors sensorName sensorValue sensorMin sensorMax   
-    buf = osc.toBuffer({
+    buf = oscmin.toBuffer({
         address: "/mbk/sensor/"+sensor.s.name,
         args: [sensorVal] //,sensor.s.valMin,sensor.s.valMax] 
     });
@@ -361,3 +527,5 @@ OscManager.prototype.handleSensorMessage = function(rcv,mobz_connexion){
     }
     
 }
+
+

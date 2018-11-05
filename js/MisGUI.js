@@ -171,9 +171,12 @@ ex: html : <div class="myManager">
 */
 MisGUI.prototype.initManagerFunctions = function(manager,className){
     var parents = $("."+className);
+    console.log("GUI_MANAGER:",className,parents.length)
+
     parents.find("*").each(function(i) {
         var func = $(this).attr("func");
         $(this).data("manager",manager); //inutile ? keep manager ?
+        //console.log("GUI_MANAGER:",className,func)
         if(func){
             //console.log("INIT:",$(this).prop("tagName"),$(this).prop("type"));
 
@@ -194,13 +197,16 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                 case "select-one": //select
                     //console.log("***",$(this)); 
                     $(this).on("change",function(){
-                        console.log("INPUTCHANGE:",$(this).data("prevval"),$(this).val());
+                        //console.log("INPUTCHANGE:",$(this).data("prevval"),$(this).val());
                         //console.log("FUNCCHANGE:",$(this).attr("eltID"),$(this).attr("param"));
                         //$(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());                            
                         // CEC: !!!!! Prob avec prop("manager").. pas bien stocké dans la balise
-                        //$(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());                           
-                        manager.cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val(),$(this).attr("param"));
-                        //$(this).data("prevval",$(this).val());
+                        //$(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());
+                        var v = $(this).val();
+                        if( !isNaN(+v) ){v=+v} //OK: 127.0.0.1 -> NaN
+                        console.log("GUI onchange:",v)
+                        manager.cmd($(this).attr("func"),$(this).attr("eltID"),v,$(this).attr("param"));
+                        console.log("    onchange:",$(this).attr("func"),$(this).attr("eltID"),v,$(this).attr("param"));
 
                     });
                     //console.log($("function",this.val));
@@ -246,7 +252,7 @@ MisGUI.prototype.changeSettings = function(className,func,params,eltID){
 
 //opt: {class:classname,id:eltID,func:func,param:param,val:value}
 MisGUI.prototype.showValue=function(opt){
-    console.log("showValue:",opt);
+    //console.log("showValue:",opt);
     var sel = "."+opt.class+" ";
     if(opt.id!=undefined)sel+="[eltID="+opt.id+"]";
     if(opt.func!=undefined)sel+="[func="+opt.func+"]";
@@ -270,10 +276,10 @@ MisGUI.prototype.showParams=function(opt){
             if(e.length>0){
                 this.setElementValue(e,opt.val[p]);
             }
-            //else console.log("showParam:notfound",p);
+            else console.log("showParam:notfound",p);
         }
     }
-    //else console.log("*****GUIPARAMS NOT FOUND:",sel);
+    else console.log("*****GUIPARAMS NOT FOUND:",sel);
 }
 
 
@@ -302,7 +308,7 @@ MisGUI.prototype.setElementValue = function(elt,value){
                         e.val(value);
                     break;
                 case "checkbox":
-                    console.log("CHECKBOX",value);
+                    //console.log("CHECKBOX",value);
                     if(e.is(".onoff")) self.onoffState(e,value); //ON , OFF , ERROR
                     else e.prop("checked",value);    
                     break;
@@ -551,7 +557,7 @@ MisGUI.prototype.midiMode =function(index,value){
 }
 
 MisGUI.prototype.motorMode =function(index,value){
-    //console.log("************ MisGUI.mode:",index,value);
+    console.log("************ MisGUI.mode:",index,value);
     if(this.rotSpeeds[index]){
         switch(value){
             case false: case 0: case "J": case "joint":
@@ -599,7 +605,7 @@ MisGUI.prototype.setValue = function(index,name,val){
 }
 
 MisGUI.prototype.motorAngle = function(index,val){
-    //console.log("MisGUI.prototype.angle",index,val);
+    console.log("MisGUI.angle",index,val);
 
     //if(index<this.rotAngles.length){
     if(this.rotAngles[index]){
@@ -622,7 +628,6 @@ MisGUI.prototype.motorAngle = function(index,val){
 }
 
 MisGUI.prototype.motorSpeed = function(index,val){ //[-100,100]
-    //if(index<this.rotSpeeds.length){
     if(this.rotSpeeds[+index]){
         var v = this.rotSpeeds[+index].setValue(+val).value;
         $("#divMotors .num_rotary").filter("[eltID="+index+"]").val(v.toFixed(1));
@@ -637,7 +642,6 @@ MisGUI.prototype.needle = function(index,val){
 }
 
 MisGUI.prototype.getMotorUI = function(index){
-    //return $("#divMotors .single-motor").eq(index);
     return $("#divMotors .single-motor").filter("[eltID="+index+"]");
 }
 MisGUI.prototype.getMotorStg = function(index){
@@ -707,7 +711,7 @@ MisGUI.prototype.motorSettings = function(index,s){
     this.showParams({class:"dxlManager",id:index,val:s});
 
     $(".thermo [eltID="+index+"]").text("-°"); //wait info
-
+    //update rotaries
     this.angleMin(index,s.angleMin);
     this.angleMax(index,s.angleMax);
     this.speedMin(index,s.speedMin);
@@ -978,6 +982,7 @@ MisGUI.prototype.init =function(){
     });
     */
 
+    /* /* see animManager.uiLoad
     $("#loadAnim").on("click",function(){
         //TODO generic  loadUI , with folder
         dialog.showOpenDialog({properties:['openFile','multiSelections']},function(filenames) {
@@ -988,8 +993,10 @@ MisGUI.prototype.init =function(){
             }
         });
     });
+    */
 
     // ??? is it used??
+    // --> NO....
     $("#saveAnim").on("click",function(){
         if(dialog) {
             // / *versionHTML
@@ -1112,6 +1119,7 @@ MisGUI.prototype.init =function(){
     });
     */
 
+    /*
     divOsc = $("#divOSC");
     divOsc.find("#btOSC").click(function(){
         console.log("osc ON",this.checked);
@@ -1129,6 +1137,7 @@ MisGUI.prototype.init =function(){
         console.log("divOSC:mouseenter");
         misGUI.scanIPv4();
     });
+    */
 
 
     $("#addEmptySensor").on("click",function(){
@@ -1137,12 +1146,12 @@ MisGUI.prototype.init =function(){
     
     $(".midiPlug").bind("mouseenter", midiPanelOver);//mouseover
     function midiPanelOver(){
-        console.log("midi over");
+        //console.log("midi over");
         misGUI.scanMidiPorts();
     }
 
     //this.scanSerial();    /*Didier*/
-    this.scanMidiPorts();
+    //this.scanMidiPorts(); // done when loading the settings.. here the midimanager is not anymore created yet!
     this.scanIPv4(); //Didier
 
  
@@ -1229,11 +1238,12 @@ MisGUI.prototype.initMotorDiv = function(){
 }
 
 
-
+/*
 MisGUI.prototype.enableOSC = function(onoff){
     $("#divOSC").find("#btOSC").prop("checked",onoff);
 }
-
+*/
+/*
 MisGUI.prototype.showOSC = function(settings){
     console.log("==========showosc:",settings);
     var div = $("#divOSC");
@@ -1241,8 +1251,9 @@ MisGUI.prototype.showOSC = function(settings){
     div.find("[name=oscRemoteIP]").val(settings.oscRemoteIP);
     div.find("[name=oscRemotePort]").val(settings.oscRemotePort);    
 }
+*/
 
-MisGUI.prototype.openLoadDialog = function( title , path , callback ){
+MisGUI.prototype.openLoadDialog = function( title , path , callback , manager){
     dialog.showOpenDialog({
             title:title, //no effect ???
             message:title, //osX
@@ -1256,6 +1267,9 @@ MisGUI.prototype.openLoadDialog = function( title , path , callback ){
                         console.log("load:",filenames[i]);
                         callback(filenames[i]);
                     }
+                } else {
+                    console.log("---> no files ---> clicked on cancel");
+                    if(manager != undefined) manager.resetLoadDialog();
                 }
             }
             console.log("showOpenDialog:DONE")
@@ -1528,8 +1542,22 @@ MisGUI.prototype.setScript = function(code){
     editor.setValue(code); // cf ui.js
 }
 
-MisGUI.prototype.stopScript = function(){
-    stopCode(); // cf ui.js
+MisGUI.prototype.scriptOnOff = function(onoff){
+    console.log("====== scriptOnOff =====",onoff,$("#script-freeze").prop("checked"))
+    if(onoff){
+        $("#run-code").html('Running...')
+            .addClass('active')
+            .css('opacity', 0.5)
+        $("#stop-code").css('opacity', 1);
+        $("#script-freeze").prop("checked",false); //!!! freeze = ~OnOff
+    }
+    else{
+        $("#run-code").html('Run')
+    		.removeClass('active')
+    		.css('opacity', 1);
+    	$("#stop-code").css('opacity', 0.5);
+        $("#script-freeze").prop("checked",true); //!!! freeze = ~OnOff
+    }
 }
 
 
@@ -1660,26 +1688,14 @@ $("input.btnGlobalSensors").bind('click', function() {
 var clockForMidiBlink = setInterval(function(){ checkMidiBlink()}, 500);
 
 function checkMidiBlink(){
-    var elmt = $(".motors-settings .midi-chanel");
-    for (var i = 0; i < elmt.length; i++) {
-        
-        var settingTarget = $(".motors-settings .single-motor").eq(i);
-        var infoChanel = settingTarget.find('.midi-chanel option:selected' ).val();
-        var indexMapping = settingTarget.find('.midiMapping').val();
-        var infoMode;
-        if(settingTarget.find('.toggle-small').eq(1).find('input[type="checkbox"]:checked')[0]){
-            infoMode = "Note";
-        }else{
-            infoMode = "CC";
-        }
 
-        //console.log("midi infos: motor",i,infoChanel,indexMapping,infoMode);
-        if(motorMappingManager.isMappingActive(i)){
-            $('.allMotors').find('.single-motor').eq(i).find('.midi-blinker').css("display", "block");
+    $(".single-motor:visible").each(function(index){
+        if(motorMappingManager.isMappingActive(index)){
+            $(this).find('.midi-blinker').css("display", "block");
         }else{
-            $('.allMotors').find('.single-motor').eq(i).find('.midi-blinker').css("display", "none");
+            $(this).find('.midi-blinker').css("display", "none");
         }
-    }
+    });
     motorMappingManager.setAllMappingActive(false);
 
 }
@@ -1735,50 +1751,62 @@ $(".cm9Plug").on("mouseover",function(){
     cm9Com.checkConnection();
 })
 
+/* already done in the init() function
 $(".midiPlug").bind("mouseover", midiPanelOver);
 function midiPanelOver(){
-    console.log("midi over");
+    //console.log("midi over");
 }
+*/
 
 
 // NEW animation modale -- Alex changes
 $("#newAnim").bind('click', function(){
-    $(".modalNewAnim").css("display", "block");
-    $(".modalNewAnim button:first-of-type").prop("disabled",true);
+    $("#modalNewAnim").css("display", "block");
+    $("#modalNewAnim button:first-of-type").prop("disabled",true);
 
 });
 
 
 //cancel
-$(".modalNewAnim").find("#newAnimCancel").bind('click', function(){
-    $(".modalNewAnim").css("display", "none");    
+$("#modalNewAnim").find("#newAnimCancel").bind('click', function(){
+    $("#modalNewAnim").css("display", "none");    
 })
 
 //select
-$(".modalNewAnim").find("span").bind('click', function(){
+$("#modalNewAnim").find("span").bind('click', function(){
 
+    //console.log("yeeha!!!!!");
     if($(this).hasClass('selected')){
-        console.log("############");
+        //console.log("------> selected",this.id,"a",this.value);
+        /*
+        // TODO: removed because it comes twice in this bind... why?? Wasn't like this in my version.
         $(this).removeClass('selected');
-        $(".modalNewAnim span").removeClass('selected');
-        $(".modalNewAnim button:first-of-type").css("opacity", 0.3);
-        $(".modalNewAnim button:first-of-type").prop("disabled",true);
+        console.log($(this));
+        console.log("#modalNewAnim",$("#modalNewAnim"));
+        $("#modalNewAnim span").removeClass('selected');
+        $("#modalNewAnim button:first-of-type").css("opacity", 0.3);
+        $("#modalNewAnim button:first-of-type").prop("disabled",true);
+        */
 
     }else{
-        $(".modalNewAnim span").removeClass('selected');
+        console.log("------> NOT selected",this.id,"a",this.value);
+        $("#modalNewAnim span").removeClass('selected');
         $(this).addClass('selected');
-        $(".modalNewAnim button:first-of-type").css("opacity", 1);
-        $(".modalNewAnim button:first-of-type").prop("disabled",false);
+        $("#modalNewAnim button:first-of-type").css("opacity", 1);
+        $("#modalNewAnim button:first-of-type").prop("disabled",false);
     }
 
 })
 
 // load
-$(".modalNewAnim").find("#newAnimLoad").bind('click', function(){
+$("#modalNewAnim").find("#newAnimLoad").bind('click', function(){
+    // TODO BUG: pourquoi on rentre ici deux fois... un lien ac l'autre bug du select??
     var selectedType = $(".listAnimType .selected").attr("name");
     console.log("load anim "+ selectedType);
-    $(".modalNewAnim span").removeClass('selected');
-    $(".modalNewAnim").find("#newAnimLoad").css("opacity", 0.3);
-    $(".modalNewAnim").css("display", "none"); 
-    animManager.addAnim(selectedType);
+    if(selectedType != undefined){
+        $("#modalNewAnim span").removeClass('selected');
+        $("#modalNewAnim").find("#newAnimLoad").css("opacity", 0.3);
+        $("#modalNewAnim").css("display", "none"); 
+        animManager.addAnim(selectedType);
+    }
 })

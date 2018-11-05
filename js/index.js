@@ -24,7 +24,9 @@ detectSSid(function(error, ssidname) {
 
 const ipc = require('electron').ipcRenderer;
 var remote = require('electron').remote;
-var __appPath = remote.app.getAppPath();
+console.log("DIR PATH:",__dirname )
+//var __appPath = remote.app.getAppPath();
+var __appPath = __dirname; // global , ok not still inside ./js
 console.log("APP PATH:",__appPath )
 
 var dialog = remote.dialog;
@@ -32,7 +34,6 @@ const OS = require('os');
 var fs = require('fs');
 
 const udp  = require('dgram');
-const osc  = require('osc-min');
 const serialPort = require('serialport');
 
 
@@ -60,20 +61,22 @@ window.eval = global.eval = function () { //??? remove security warning ???
 //ipc.on('close) is called before onbeforeunload
 window.onbeforeunload=function(){
     ipc.send("message","onbeforeunload!");
+    MBK.terminate();
 }
 
 ipc.on("close",function(e,arg){
-        ipc.send("message","onclose");
-        dxlManager.stopAll();
-        var c = dxlManager.saveSettings();
-        ipc.send("message","savecount:"+c);
-        //alert("Quit MisBkit");
-        settingsManager.saveSettings();
-        motorMappingManager.saveMappingSettings();
-        sensorManager.saveSensorSettings();
-        oscMobilizing.close();
-        robusManager.stopAll();
-        cm9Com.close();
+    ipc.send("message","onclose");
+    dxlManager.stopAll();
+    var c = dxlManager.saveSettings();
+    ipc.send("message","savecount:"+c);
+    //alert("Quit MisBkit");
+    settingsManager.saveSettings();
+    motorMappingManager.saveMappingSettings();
+    sensorManager.saveSensorSettings();
+    oscMobilizing.close();
+    robusManager.stopAll();
+    cm9Com.close();
+    ipc.send("message","closed");
 });
 
 
@@ -184,8 +187,10 @@ window.onload = function() {
     //var toto = require("./js/AnimManager.js");
 
 
-    var MisBKit = require("./js/MisBKIT.js");
-    var MBK = new MisBKit();
+    //var MisBKit = require("./js/MisBKIT.js");
+    //MBK = new MisBKit();
+
+    MBK = require("./js/MisBKIT.js");
     MBK.init(); //needs misGUI initialized
 
     
@@ -215,7 +220,9 @@ window.onload = function() {
         if($(e.target).is('textarea'))
             return;
 
-        console.log("keyDown-KeyCode:", e.keyCode);
+        //console.log("keyDown-KeyCode:", e);
+        //console.log("keyDown-KeyCode:", e.keyCode);
+        scriptManager.call("onKey",e.key);
 
         if(e.metaKey || e.ctrlKey){
             console.log("keyDown-metaKC:",e.keyCode);
@@ -320,7 +327,6 @@ window.onload = function() {
                 animManager.onKeyCode(String.fromCharCode(event.keyCode));
                 motorMappingManager.onKeyCode(String.fromCharCode(event.keyCode));
                 sensorManager.onKeyCode(String.fromCharCode(event.keyCode));
-                scriptManager.call("onkey",event.key); //no arrows ...
             }return false;
         }
     });
