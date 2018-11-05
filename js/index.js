@@ -24,7 +24,9 @@ detectSSid(function(error, ssidname) {
 
 const ipc = require('electron').ipcRenderer;
 var remote = require('electron').remote;
-var __appPath = remote.app.getAppPath();
+console.log("DIR PATH:",__dirname )
+//var __appPath = remote.app.getAppPath();
+var __appPath = __dirname; // global , ok not still inside ./js
 console.log("APP PATH:",__appPath )
 
 var dialog = remote.dialog;

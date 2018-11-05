@@ -153,6 +153,9 @@ DxlManager.prototype.checkRec = function(eltID,val){
 DxlManager.prototype.setMode = function(eltID,val){
     this.dxlMode(eltID,val);
 }
+DxlManager.prototype.mode = function(eltID,val){
+    this.dxlMode(eltID,val);
+}
 DxlManager.prototype.wheelMode = function(eltID,val){ //LUOS style
     this.dxlMode(eltID,val);
 }
@@ -720,7 +723,9 @@ DxlManager.prototype.onControl = function(index,val){
 };
 
 
-
+DxlManager.prototype.angle = function(index,val){ //degrés
+    this.setAngle(index,val);
+}
 DxlManager.prototype.setAngle = function(index,val){ //degrés
     //console.log("DxlManager:setangle:",index,val);
     if(index<this.motors.length){

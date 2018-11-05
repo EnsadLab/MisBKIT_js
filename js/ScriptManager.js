@@ -53,9 +53,11 @@ class scriptManager {
                 try{
                     return this.script[func](arg)
                 }catch(err){
-                    if(err!="exit")
-                        misGUI.alert("Script Error in "+func+"\n"+err);
-                    this.stop();
+                    if(err!="goto"){
+                        if(err!="exit")
+                            misGUI.alert("Script Error in "+func+"\n"+err);
+                        this.stop();
+                    }
                 }
             }
         }
@@ -63,7 +65,15 @@ class scriptManager {
 
     folderIsReady(folder){
         this.folder = folder
-        this.loadSource(this.folder+this.scriptNames[this.current])
+        if(this.scriptNames[this.current]==undefined){ //settings vide
+            this.uiNew();
+        } 
+        else{
+            var fn = this.folder+this.scriptNames[this.current];
+            this.scriptNames[this.current]=undefined; //prevent saving default script to this name
+            console.log("********* FOLDER READY ******",this.folder,this.scriptNames[this.current])
+            this.loadSource(fn)
+        }
     }    
     
     setName(name){
@@ -86,9 +96,11 @@ class scriptManager {
         if(obj){
             this.current = obj.current;
             this.scriptNames = obj.scripts;
-            //!!! folder is not ready
+            //!!! folder is not ready !!!
             //this.loadSource(this.folder+this.scriptNames[this.current]);
         }
+
+        console.log("********* SETTINGS ******",this.folder,this.scriptNames[this.current])
     }
 
     uiNew(){
@@ -106,16 +118,22 @@ class scriptManager {
     loadSource( filePath ){
         console.log("LoadSource:",filePath)
         this.stop();
-        this.saveSource( this.folder+this.scriptNames[0] )
+        //save current script
+        if(this.scriptNames[0]) //-> undefined -> dont save
+            this.saveSource( this.folder+this.scriptNames[0] )
 
-        var i = filePath.lastIndexOf('/')+1;
-        if(i>1){
-            this.scriptNames[0] = filePath.slice(i);
-            this.folder = filePath.slice(0,i); //back to settingsManager ?
-            //save folder in settings ?
+        if( filePath.startsWith(this.folder) ){
+            //this.scriptNames[0] = filePath.slice(i);
+            this.scriptNames[0] = filePath.substr(this.folder.length);
         }
-        //else ... what !?
-
+        else { //another user directory ?
+            var i = filePath.lastIndexOf('/')+1;
+            if(i>1){
+                this.scriptNames[0] = filePath.slice(i);
+                //this.folder = filePath.slice(0,i); //back to settingsManager ?
+                //save folder in settings ?
+            }//else ... what !?
+        }
         var code = fs.readFileSync( filePath , 'utf8');
         if(code != undefined){
             misGUI.showValue({class:this.className,func:"setName",val:this.scriptNames[0]});
@@ -159,6 +177,7 @@ class scriptManager {
             +" script._xTimeout = 0;"
             +" script._nextDuration = d;"
             +" script._nextTask = name;}"
+            +"function goto(task,d){next(task,d);throw('goto')}"
             +"function exit(){throw('exit')}"
                     
         try{
@@ -172,7 +191,7 @@ class scriptManager {
             this.script._xTimeout = undefined;
 
             this.script.nextTask = function(){
-                console.log("----NEXT TASK----",this._currTask,this._nextDuration)
+                //console.log("----NEXT TASK----",this._currTask,this._nextDuration)
                 // next duration if set with next() or timeout()
                 this._xTimeout=this._nextDuration
                 this._nextDuration=undefined
@@ -209,9 +228,7 @@ class scriptManager {
                     this.nextTask();
                 }
                 else{
-                    if( (this._xTimeout-dt)<45 ) //mmmm
-                        this.last = true;
-
+                    this.last = ((this._xTimeout-dt)<45); //mmm 45 < ~50
                     var r = self.call(this._currTask,dt);
                     this.last = false;
                 }
