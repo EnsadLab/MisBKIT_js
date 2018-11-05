@@ -128,7 +128,7 @@ DxlManager.prototype.midiMapping =function(eltID,val,param){
 
 DxlManager.prototype.dxlParam = function(eltID,val,param){
     //clockwise angleMin angleMax speedMin speedMax
-    console.log("dxlManager:dxlParam:",eltID,val,param);    
+    console.log("dxlManager:dxlParam:",eltID,val,param);
     if(this.motors[eltID]){
         this.motors[eltID].m[param]=val;
         misGUI.motorSettings(eltID,this.motors[eltID].m);
@@ -153,7 +153,13 @@ DxlManager.prototype.checkRec = function(eltID,val){
 DxlManager.prototype.setMode = function(eltID,val){
     this.dxlMode(eltID,val);
 }
-//TODO change name to setMode 
+DxlManager.prototype.mode = function(eltID,val){
+    this.dxlMode(eltID,val);
+}
+DxlManager.prototype.wheelMode = function(eltID,val){ //LUOS style
+    this.dxlMode(eltID,val);
+}
+
 DxlManager.prototype.dxlMode = function(eltID,val){ //true=wheel false=joint
     if(this.motors[eltID]){
         var m = false;
@@ -168,12 +174,12 @@ DxlManager.prototype.dxlMode = function(eltID,val){ //true=wheel false=joint
             //TODO multitour ... GUI   
         }
         misGUI.showValue({class:"dxlManager",func:"dxlMode",id:eltID,val:m})
+        misGUI.motorMode(eltID,val);
     }
-    //misGUI.motorMode(eltID,val);
 }
 
 
-
+//TODO move to SettingsManager , and add DxlManager.getSettings
 DxlManager.prototype.saveSettings = function () {
     var s = {}; //settings
     s.savecount = ++this.savecount;
@@ -186,6 +192,7 @@ DxlManager.prototype.saveSettings = function () {
     s.midiEnabled = midiPortManager.enabled;
     
     s.midiPorts = [];
+    s.javascripts = scriptManager.getSettings();
     s.python = pythonManager.getSettings();
     s.anims = [];
     s.sensors = [];
@@ -232,6 +239,7 @@ DxlManager.prototype.saveSettings = function () {
     return this.savecount;
 }
 
+//TODO move to SettingsManager , and add DxlManager.setSettings
 DxlManager.prototype.loadSettings = function () {
     console.log("loading dxl manager settings:");
     //var json = fs.readFileSync(__appPath + "/settings.json", 'utf8');
@@ -281,8 +289,7 @@ DxlManager.prototype.loadSettings = function () {
 
         misGUI.midiPortManager(this.midiPort); //TODO: what does it do?
 
-        //misGUI.openSerial(this.serialPort); /*Didier*>
-
+        scriptManager.setSettings(s.javascripts);
     }
 }
 
@@ -715,8 +722,9 @@ DxlManager.prototype.onControl = function(index,val){
     }
 };
 
-
-
+DxlManager.prototype.angle = function(index,val){ //degrés
+    this.setAngle(index,val);
+}
 DxlManager.prototype.setAngle = function(index,val){ //degrés
     //console.log("DxlManager:setangle:",index,val);
     if(index<this.motors.length){

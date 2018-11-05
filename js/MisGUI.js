@@ -197,14 +197,16 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                 case "select-one": //select
                     //console.log("***",$(this)); 
                     $(this).on("change",function(){
-                        console.log("INPUTCHANGE:",manager);
                         //console.log("INPUTCHANGE:",$(this).data("prevval"),$(this).val());
                         //console.log("FUNCCHANGE:",$(this).attr("eltID"),$(this).attr("param"));
                         //$(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());                            
                         // CEC: !!!!! Prob avec prop("manager").. pas bien stocké dans la balise
-                        //$(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());                           
-                        manager.cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val(),$(this).attr("param"));
-                        //$(this).data("prevval",$(this).val());
+                        //$(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());
+                        var v = $(this).val();
+                        if( !isNaN(+v) ){v=+v} //OK: 127.0.0.1 -> NaN
+                        console.log("GUI onchange:",v)
+                        manager.cmd($(this).attr("func"),$(this).attr("eltID"),v,$(this).attr("param"));
+                        console.log("    onchange:",$(this).attr("func"),$(this).attr("eltID"),v,$(this).attr("param"));
 
                     });
                     //console.log($("function",this.val));
@@ -555,7 +557,7 @@ MisGUI.prototype.midiMode =function(index,value){
 }
 
 MisGUI.prototype.motorMode =function(index,value){
-    //console.log("************ MisGUI.mode:",index,value);
+    console.log("************ MisGUI.mode:",index,value);
     if(this.rotSpeeds[index]){
         switch(value){
             case false: case 0: case "J": case "joint":
@@ -603,7 +605,7 @@ MisGUI.prototype.setValue = function(index,name,val){
 }
 
 MisGUI.prototype.motorAngle = function(index,val){
-    //console.log("MisGUI.prototype.angle",index,val);
+    console.log("MisGUI.angle",index,val);
 
     //if(index<this.rotAngles.length){
     if(this.rotAngles[index]){
@@ -709,7 +711,7 @@ MisGUI.prototype.motorSettings = function(index,s){
     this.showParams({class:"dxlManager",id:index,val:s});
 
     $(".thermo [eltID="+index+"]").text("-°"); //wait info
-
+    //update rotaries
     this.angleMin(index,s.angleMin);
     this.angleMax(index,s.angleMax);
     this.speedMin(index,s.speedMin);
@@ -1541,18 +1543,20 @@ MisGUI.prototype.setScript = function(code){
 }
 
 MisGUI.prototype.scriptOnOff = function(onoff){
-    console.log("====== scriptOnOff =====",onoff)
+    console.log("====== scriptOnOff =====",onoff,$("#script-freeze").prop("checked"))
     if(onoff){
         $("#run-code").html('Running...')
             .addClass('active')
             .css('opacity', 0.5)
         $("#stop-code").css('opacity', 1);
+        $("#script-freeze").prop("checked",false); //!!! freeze = ~OnOff
     }
     else{
         $("#run-code").html('Run')
     		.removeClass('active')
     		.css('opacity', 1);
     	$("#stop-code").css('opacity', 0.5);
+        $("#script-freeze").prop("checked",true); //!!! freeze = ~OnOff
     }
 }
 

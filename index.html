@@ -221,8 +221,8 @@
 						<h2 id="sens">Sensors </h2> <input type="checkbox" class="small btnGlobalSensors" id="sensor-freeze" name ="enable"title="enable/disable">
 					</div>
  
-					<div class="tab" id="script">
-						<h2 id="script">Script </h2> <input type="checkbox" class="small btnGlobalSensors" id="sensor-freeze" name ="enable"title="enable/disable">
+					<div class="tab scriptManager" id="script">
+						<h2 id="script">Script </h2> <input func="freeze" type="checkbox" class="small btnGlobalSensors" id="script-freeze" name ="enable"title="enable/disable">
 					</div>
 				
 			
@@ -1106,12 +1106,16 @@
 
 			<div class="script-panel scriptManager">
 				<div class="ctrl-row">
+					<button func="uiNew" id="load-code" class="float-left">New</button>
 					<button func="uiLoad" id="load-code" class="float-left">Load</button>
-					<input  func="setName" type="text" class="float-left medium" placeholder="Script_name" size="58">
+					<input  func="setName" type="text" class="float-left medium" placeholder="Script_name" size="40">
 					<button func="stop" id="stop-code" class="float-right stop">Stop</button>
 					<button func="run"  id="run-code" class="float-right valid">Run</button>
-					
 				</div>
+				<font color='lightgreen'>
+					<span func="log">Script info</span>
+				</font>
+
 				<div class="input-code">
 					
 				</div>

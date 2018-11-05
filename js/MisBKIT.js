@@ -56,19 +56,27 @@ class MisBKIT{
         
         //oscMobilizing = new OscMobilizing();        
 
+        console.log("======================== init: sensorManager");
         sensorManager.init();
+        console.log("======================== init: animManager");
         animManager.init();
+        console.log("======================== init: dxlManager");
         dxlManager.init(); //before loadSettings
+        console.log("======================== init: robusManager");
         robusManager.init();
+        console.log("======================== init: scriptManager");
         scriptManager.init();
+        console.log("======================== init: oscManager");
         oscManager.init();
+        console.log("======================== init: pythonManager");
         pythonManager.init();
+        console.log("======================== init: settingsManager");
 
         settingsManager.loadSettings();
 
         this.updateTimer = setInterval(this.update.bind(this),45); //~50ms
 
-        this.stringFunc( "dxl.setAngle(0,90,val1,123.456.789,val3,234,5.678)")
+        //Test: this.stringFunc( "dxl.setAngle(0,90,val1,123.456.789,val3,234,5.678)")
     }
 
     // "manager.function(param1,param2 ...)"
@@ -92,14 +100,15 @@ class MisBKIT{
         }
     }
 
-    stop(){
-        clearInterval(this.updateTimer);
-        scriptManager.stop();
-    }
-
     update(){ //"Mainloop"
         scriptManager.update(); //may command anim,motors ...
         animManager.update();
+    }
+
+    terminate(){
+        clearInterval(this.updateTimer);
+        scriptManager.stop();
+        scriptManager.saveSource();
     }
 
 }

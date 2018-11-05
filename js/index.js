@@ -24,7 +24,9 @@ detectSSid(function(error, ssidname) {
 
 const ipc = require('electron').ipcRenderer;
 var remote = require('electron').remote;
-var __appPath = remote.app.getAppPath();
+console.log("DIR PATH:",__dirname )
+//var __appPath = remote.app.getAppPath();
+var __appPath = __dirname; // global , ok not still inside ./js
 console.log("APP PATH:",__appPath )
 
 var dialog = remote.dialog;
@@ -59,20 +61,22 @@ window.eval = global.eval = function () { //??? remove security warning ???
 //ipc.on('close) is called before onbeforeunload
 window.onbeforeunload=function(){
     ipc.send("message","onbeforeunload!");
+    MBK.terminate();
 }
 
 ipc.on("close",function(e,arg){
-        ipc.send("message","onclose");
-        dxlManager.stopAll();
-        var c = dxlManager.saveSettings();
-        ipc.send("message","savecount:"+c);
-        //alert("Quit MisBkit");
-        settingsManager.saveSettings();
-        motorMappingManager.saveMappingSettings();
-        sensorManager.saveSensorSettings();
-        oscMobilizing.close();
-        robusManager.stopAll();
-        cm9Com.close();
+    ipc.send("message","onclose");
+    dxlManager.stopAll();
+    var c = dxlManager.saveSettings();
+    ipc.send("message","savecount:"+c);
+    //alert("Quit MisBkit");
+    settingsManager.saveSettings();
+    motorMappingManager.saveMappingSettings();
+    sensorManager.saveSensorSettings();
+    oscMobilizing.close();
+    robusManager.stopAll();
+    cm9Com.close();
+    ipc.send("message","closed");
 });
 
 
