@@ -135,9 +135,12 @@ class scriptManager {
                 this.currName = filePath.slice(i);
                 //this.folder = filePath.slice(0,i); //back to settingsManager ?
                 //save folder in settings ?
+                //keep user folder --> will be saved there
             }//else ... what !?
         }
-        var src = fs.readFileSync( filePath , 'utf8');
+        var src = undefined;
+        try{ src = fs.readFileSync( filePath , 'utf8'); }
+        catch(err){} //file doesnt exist ( first MisKit launch )
         if(src != undefined){
             misGUI.showValue({class:this.className,func:"setName",val:this.currName});
             misGUI.setScript(src);

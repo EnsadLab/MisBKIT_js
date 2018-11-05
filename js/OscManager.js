@@ -50,7 +50,7 @@ class OscUDP{
             this.s[param]=val
     }
 
-    send(addr,args){
+    send(addr,args){ //args must be an array
         if(this.ready){
             this.updPort.send({
                 address:addr,
@@ -195,6 +195,9 @@ OscManager.prototype.addPort = function(type){
 
 OscManager.prototype.rcv = function(addr,args){
     console.log("OSC MANAGER rcv:",addr,args)
+
+    scriptManager.call("onOSC",addr,args);
+
     var route = addr.split('/')
     //console.log("-osc  MBK",route[1])
     //console.log("-osc mang",route[2])
