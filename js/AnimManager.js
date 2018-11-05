@@ -12,8 +12,7 @@ class AnimManager {
         this.animations = [];
         this.animFolder  = "";
         this.animPlaying = [];
-        this.animationFolder = "";
-
+        this.loading = false;
     }
 
     // attention avec les loadSettings.. et l'animation ID qui s'incrémente côté dynamixel..
@@ -25,7 +24,7 @@ class AnimManager {
     }
 
     cmd(func,eltID,val,param) {
-        console.log("SensorCmd:",func,eltID,val,param);
+        console.log("AnimManagerCmd:",func,eltID,val,param);
         if(this[func]){
             if(eltID!=undefined)this[func](eltID,val,param);
             else this[func](val,param);
@@ -102,6 +101,9 @@ class AnimManager {
                 id: id,
                 val: params, 
             });
+
+            // update the animations list in the sensor animation trigger output
+            MisGUI_sensors.setSensorAnims();
         
         }
 
@@ -268,23 +270,52 @@ class AnimManager {
         anim.recordingGUI = false;
         anim.stopRec();
     }
+
+    resetLoadDialog(){
+        this.loading = false;
+    }
+
+    uiLoad(){ //Becoz folder
+        console.log("AnimManager::uiLoad",this.loading,this.animFolder);
+        if(!this.loading){ //prevent multiclicks 
+            this.loading = true
+            misGUI.openLoadDialog("Load animation:",this.animFolder,this.loadAnim.bind(this),this)
+        }
+    }
     
 
     loadAnim(fullPath) {
         console.log("AnimManager::loadAnim");
         console.log("LOADANIM()---------",this.animationID);
-
+        this.loading = false;
         var name  = fullPath;
         var slash = fullPath.lastIndexOf('/')+1;
         if(slash>1){
             this.animFolder = fullPath.substr(0,slash);
             name = fullPath.substr(slash);
         }
-        var id = "A"+this.animationID;
-        this.animationID++;
-        console.log("loadAnim:",this.animFolder," ",name);
-        var anim = new Animation(id,this.animFolder,name);
-        anim.load(name,true);
+        if(!this.isAnimAlreadLoaded(name)){
+            var id = "A"+this.animationID;
+            this.animationID++;
+            console.log("loadAnim:",this.animFolder," ",name);
+            var anim = new Animation(id,this.animFolder,name);
+            anim.load(name,true);
+        } else {
+            alert("Animation " + name + " already loaded");
+        }
+    }
+
+    isAnimAlreadLoaded(name) {
+        if(name.endsWith(".json")){
+            name = name.substring(0,name.length-5);
+        }
+        for (var k in this.animations) {
+            //console.log("TEST",this.animations[k].fileName ,name);
+            if(this.animations[k].fileName == name){
+                return true;
+            }
+        }
+        return false;
     }
 
     saveAnim() {
@@ -298,6 +329,8 @@ class AnimManager {
         this.animations[id]=anim;
         misGUI.cloneElement("#anim-" + anim.s.type,id);
         MisGUI_anims.stopRec(id);
+        // update the animations list in the sensor animation trigger output
+        MisGUI_sensors.setSensorAnims();
         //MisGUI_anims.setRecordTracks(id,anim.recordchannels);
         //misGUI.addAnim(id,anim.fileName,anim.s.keyCode);
         //misGUI.animTracks(id,anim.channels);
@@ -306,11 +339,20 @@ class AnimManager {
 
     renameAnim(eltID,val) {
         console.log("AnimManager::renameAnim",eltID,val);
+        
         var anim=this.animations[eltID];
         if(anim){
-            //console.log(" oldname:",anim.fileName);
-            anim.save(val);
+            if(!this.isAnimAlreadLoaded(val)){
+                //console.log(" oldname:",anim.fileName);
+                anim.save(val);
+                // update the animations list in the sensor animation trigger output
+                MisGUI_sensors.setSensorAnims();
+            } else {
+                MisGUI_anims.setAnimName(anim.id,anim.fileName);
+                alert("Animation " + val + " already loaded");
+            }
         }
+
     }
 
     removeAnim(eltID) {
@@ -321,6 +363,8 @@ class AnimManager {
             anim.discard();
             delete this.animPlaying[eltID];
             delete this.animations[eltID];
+            // update the animations list in the sensor animation trigger output
+            MisGUI_sensors.setSensorAnims();
         }
     }
 

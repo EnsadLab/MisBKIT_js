@@ -6,6 +6,9 @@ var MIDI = null;
 
 MidiPortManager = function () {
 
+    //this.MIDI = require('midi');
+
+    
     if(MIDI==null) {
         MIDI = require('midi');
     }
@@ -66,6 +69,7 @@ MidiPortManager.prototype.open = function (p) {
 MidiPortManager.prototype.openMidiAtStart = function(enabled){
     
     this.enabled = true;
+    misGUI.scanMidiPorts();
     misGUI.simSelectMidiPorts(enabled);
    /* if(this.isValidMidiPort(portName)){
         misGUI.simSelectPort(portName);
@@ -113,6 +117,7 @@ MidiPortManager.prototype.addMidiPort = function(portName, portID){
 MidiPortManager.prototype.sendMidi = function(portName, cmd, index, val){
     for(var i=0; i<this.midiPorts.length; i++){
         if(this.midiPorts[i].portName == portName){
+            //console.log("---> sending Midi",portName,cmd,index,val);
             this.midiPorts[i].sendMidi(cmd,index,val);
         }
     }

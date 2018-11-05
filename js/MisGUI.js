@@ -982,6 +982,7 @@ MisGUI.prototype.init =function(){
     });
     */
 
+    /* /* see animManager.uiLoad
     $("#loadAnim").on("click",function(){
         //TODO generic  loadUI , with folder
         dialog.showOpenDialog({properties:['openFile','multiSelections']},function(filenames) {
@@ -992,6 +993,7 @@ MisGUI.prototype.init =function(){
             }
         });
     });
+    */
 
     // ??? is it used??
     // --> NO....
@@ -1149,7 +1151,7 @@ MisGUI.prototype.init =function(){
     }
 
     //this.scanSerial();    /*Didier*/
-    this.scanMidiPorts();
+    //this.scanMidiPorts(); // done when loading the settings.. here the midimanager is not anymore created yet!
     this.scanIPv4(); //Didier
 
  
@@ -1251,7 +1253,7 @@ MisGUI.prototype.showOSC = function(settings){
 }
 */
 
-MisGUI.prototype.openLoadDialog = function( title , path , callback ){
+MisGUI.prototype.openLoadDialog = function( title , path , callback , manager){
     dialog.showOpenDialog({
             title:title, //no effect ???
             message:title, //osX
@@ -1265,6 +1267,9 @@ MisGUI.prototype.openLoadDialog = function( title , path , callback ){
                         console.log("load:",filenames[i]);
                         callback(filenames[i]);
                     }
+                } else {
+                    console.log("---> no files ---> clicked on cancel");
+                    if(manager != undefined) manager.resetLoadDialog();
                 }
             }
             console.log("showOpenDialog:DONE")
@@ -1683,26 +1688,14 @@ $("input.btnGlobalSensors").bind('click', function() {
 var clockForMidiBlink = setInterval(function(){ checkMidiBlink()}, 500);
 
 function checkMidiBlink(){
-    var elmt = $(".motors-settings .midi-chanel");
-    for (var i = 0; i < elmt.length; i++) {
-        
-        var settingTarget = $(".motors-settings .single-motor").eq(i);
-        var infoChanel = settingTarget.find('.midi-chanel option:selected' ).val();
-        var indexMapping = settingTarget.find('.midiMapping').val();
-        var infoMode;
-        if(settingTarget.find('.toggle-small').eq(1).find('input[type="checkbox"]:checked')[0]){
-            infoMode = "Note";
-        }else{
-            infoMode = "CC";
-        }
 
-        //console.log("midi infos: motor",i,infoChanel,indexMapping,infoMode);
-        if(motorMappingManager.isMappingActive(i)){
-            $('.allMotors').find('.single-motor').eq(i).find('.midi-blinker').css("display", "block");
+    $(".single-motor:visible").each(function(index){
+        if(motorMappingManager.isMappingActive(index)){
+            $(this).find('.midi-blinker').css("display", "block");
         }else{
-            $('.allMotors').find('.single-motor').eq(i).find('.midi-blinker').css("display", "none");
+            $(this).find('.midi-blinker').css("display", "none");
         }
-    }
+    });
     motorMappingManager.setAllMappingActive(false);
 
 }

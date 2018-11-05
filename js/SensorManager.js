@@ -162,13 +162,15 @@ class SensorManager{
     }
 
     uiLoad(){ //Becoz folder
+        console.log("SensorManager::uiLoad",this.loading);
         if(!this.loading){ //prevent multiclicks 
             this.loading = true
-            misGUI.openLoadDialog("Load sensor:",this.sensorFolder,this.loadSensorFromGUI.bind(this))
+            misGUI.openLoadDialog("Load sensor:",this.sensorFolder,this.loadSensorFromGUI.bind(this),this)
         }
     }
 
     loadSensorFromGUI(filename){
+        console.log("SensorManager::loadSensorFromGUI");
         var sensorID = this.loadSensorFromJson(filename);
         if(sensorID != undefined){
             misGUI.cloneElement(".single-sensor",sensorID); 
@@ -177,6 +179,10 @@ class SensorManager{
             MisGUI_sensors.selectSensor(sensorID);
         }
         this.loading = false
+    }
+
+    resetLoadDialog(){
+        this.loading = false;
     }
 
     loadSensors(){
@@ -608,12 +614,7 @@ class SensorManager{
             var mapped_arg = value;
             if(minValue != undefined && maxValue != undefined){
                 mapped_arg = Math.round((value-minValue)*(sensor.s.valMax-sensor.s.valMin)/(maxValue-minValue) + parseInt(sensor.s.valMin));
-                //mappped_arg = Math.round((value -minValue)*(maxValue-minValue));
             }else{
-                //console.log("value",value);
-                //console.log("(sensor.s.valMax-sensor.s.valMin) ",(sensor.s.valMax-sensor.s.valMin) );
-                //console.log("value*(sensor.s.valMax-sensor.s.valMin) ",value*(sensor.s.valMax-sensor.s.valMin) );
-                //console.log("value*(sensor.s.valMax-sensor.s.valMin)+valMin ",value*(sensor.s.valMax-sensor.s.valMin)+sensor.s.valMin );
                 mapped_arg = Math.round(value*(sensor.s.valMax-sensor.s.valMin) + parseInt(sensor.s.valMin));
                 //console.log("mapped_arg",mapped_arg);
             }
