@@ -722,7 +722,6 @@ DxlManager.prototype.onControl = function(index,val){
     }
 };
 
-
 DxlManager.prototype.angle = function(index,val){ //degrés
     this.setAngle(index,val);
 }

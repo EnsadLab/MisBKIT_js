@@ -61,20 +61,22 @@ window.eval = global.eval = function () { //??? remove security warning ???
 //ipc.on('close) is called before onbeforeunload
 window.onbeforeunload=function(){
     ipc.send("message","onbeforeunload!");
+    MBK.terminate();
 }
 
 ipc.on("close",function(e,arg){
-        ipc.send("message","onclose");
-        dxlManager.stopAll();
-        var c = dxlManager.saveSettings();
-        ipc.send("message","savecount:"+c);
-        //alert("Quit MisBkit");
-        settingsManager.saveSettings();
-        motorMappingManager.saveMappingSettings();
-        sensorManager.saveSensorSettings();
-        oscMobilizing.close();
-        robusManager.stopAll();
-        cm9Com.close();
+    ipc.send("message","onclose");
+    dxlManager.stopAll();
+    var c = dxlManager.saveSettings();
+    ipc.send("message","savecount:"+c);
+    //alert("Quit MisBkit");
+    settingsManager.saveSettings();
+    motorMappingManager.saveMappingSettings();
+    sensorManager.saveSensorSettings();
+    oscMobilizing.close();
+    robusManager.stopAll();
+    cm9Com.close();
+    ipc.send("message","closed");
 });
 
 

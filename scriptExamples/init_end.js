@@ -1,5 +1,8 @@
-//init_end.js
-
+/*
+*  init_end.js
+*
+*  see also first_last.js
+*/
 var a = 0
 dxl.mode(0,"joint")
 
@@ -16,6 +19,7 @@ this.loop = function(){
   	this.log( a )
 }
 
+/* called once at timeout */
 this.loop_end = function(){
   next("task1")
 }
@@ -34,7 +38,7 @@ this.task1 = function( t ){
   	a += 0.05
 }
 
-/* called once when t reached timeout  */
+/* called once at timeout */
 this.task1_end = function( t ){
 	next("loop")
 }

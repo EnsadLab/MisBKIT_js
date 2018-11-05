@@ -100,14 +100,15 @@ class MisBKIT{
         }
     }
 
-    stop(){
-        clearInterval(this.updateTimer);
-        scriptManager.stop();
-    }
-
     update(){ //"Mainloop"
         scriptManager.update(); //may command anim,motors ...
         animManager.update();
+    }
+
+    terminate(){
+        clearInterval(this.updateTimer);
+        scriptManager.stop();
+        scriptManager.saveSource();
     }
 
 }

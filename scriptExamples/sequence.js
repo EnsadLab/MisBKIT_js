@@ -10,12 +10,10 @@ this.loop = function( t ){
   switch(step){
     case 1:
       motor = 0
-      //next() takes effect only when t has reached timeout
-      next("sinus",2000) 
+      next("sinus",2000) //next() takes effect only when t has reached timeout
       break
     case 2:
-      //goto() takes effect imediatelly
-      goto("pause",1000) //
+      goto("pause",1000) //goto() takes effect imediatelly
     case 3:
       motor = 1
       goto("sinus",1000)
