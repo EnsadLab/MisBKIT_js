@@ -127,7 +127,8 @@ class PythonManager{
 
     close(){ // connection syntax
         if(this.pyshell){
-            this.pyshell.send("bye"); //should wait a little ?
+            try{ this.pyshell.send("bye"); }//should wait a little ? error at the end -> dont close
+            catch(err){console.log("Python error before closing:",err)}
             this.pyshell.end(function (err,code,signal) {
                 if(err){
                     console.log("pyshell end error:",err)
