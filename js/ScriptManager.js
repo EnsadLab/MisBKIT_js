@@ -47,12 +47,12 @@ class scriptManager {
         }
     }
 
-    call(func,arg){
-        //console.log("sriptManager:",func,arg)
+    call(func,...args){ //rest operator -> Array
+        //console.log("sriptManager:",func,args)
         if(this.script._running){
             if(typeof(this.script[func])=='function'){
                 try{
-                    return this.script[func](arg)
+                    return this.script[func](...args) //spread operator
                 }catch(err){
                     if(err!="goto"){
                         if(err!="exit")
@@ -75,6 +75,7 @@ class scriptManager {
             console.log("***** SCRIPT FOLDER READY *****",this.folder,this.currName)
             this.loadSource(fn)
         }
+        osc.send("glop?")
     }    
     
     setName(name){ //TODO multi
@@ -135,9 +136,12 @@ class scriptManager {
                 this.currName = filePath.slice(i);
                 //this.folder = filePath.slice(0,i); //back to settingsManager ?
                 //save folder in settings ?
+                //keep user folder --> will be saved there
             }//else ... what !?
         }
-        var src = fs.readFileSync( filePath , 'utf8');
+        var src = undefined;
+        try{ src = fs.readFileSync( filePath , 'utf8'); }
+        catch(err){} //file doesnt exist ( first MisKit launch )
         if(src != undefined){
             misGUI.showValue({class:this.className,func:"setName",val:this.currName});
             misGUI.setScript(src);

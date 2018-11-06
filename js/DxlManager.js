@@ -742,6 +742,10 @@ DxlManager.prototype.setAngleN = function(index,val){
     }
 };
 
+DxlManager.prototype.speed = function(index,val){
+    this.setSpeed(index,val)
+}
+
 DxlManager.prototype.setSpeed = function(index,val){
     if(index<this.motors.length){
         var v=this.motors[index].speed(val);
