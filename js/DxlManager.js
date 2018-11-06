@@ -508,6 +508,7 @@ var n = array.length-1;
             misGUI.needle(i,a);
         }
     }
+    pythonManager.onDxlpos(array);
 }
 
 //DELETED DxlManager.prototype.cm9Id=function(array) { //stringCmd

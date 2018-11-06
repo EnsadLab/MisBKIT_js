@@ -43,7 +43,11 @@ MidiPort = function () {
     this.midiIn.on('message', function (dt, msg) {
         if(self.enabled) {
 
-            scriptManager.call("onMidi",{port:self.portID,midi:msg});
+            var midiMsg = {port:self.portID,midi:msg}; //should be {channel,cmd,data1,data2} ?
+                                                       //or a string+value ex CC01 , note48
+            scriptManager.call("onMidi",midiMsg);
+            pythonManager.onMidi(midiMsg);
+ 
             /*
             www.computermusicresource.com/MIDI.Commands.html
             m[0] : status (128-255) -> (128-159):notes, (176-191): CC (176=CC chanel 1, 177=CC chanel 2...), ...

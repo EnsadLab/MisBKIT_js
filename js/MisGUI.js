@@ -202,18 +202,20 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                         //$(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());                            
                         // CEC: !!!!! Prob avec prop("manager").. pas bien stocké dans la balise
                         //$(this).prop("manager").cmd($(this).attr("func"),$(this).attr("eltID"),$(this).val());
+                        
                         var v = $(this).val();
-                        if( !isNaN(+v) ){v=+v} //OK: 127.0.0.1 -> NaN
-                        console.log("GUI onchange:",v)
+                        if( (v!="")&&( !isNaN(+v)) ) // +"" -> 0 !
+                            v=+v;                    //OK: 127.0.0.1 -> NaN
+                        console.log("GUI onchange:",$(this).attr("func"),typeof($(this).val()),v)
                         manager.cmd($(this).attr("func"),$(this).attr("eltID"),v,$(this).attr("param"));
-                        console.log("    onchange:",$(this).attr("func"),$(this).attr("eltID"),v,$(this).attr("param"));
+                        //console.log("  ->onchange:",$(this).attr("func"),$(this).attr("eltID"),v,$(this).attr("param"));
 
                     });
                     //console.log($("function",this.val));
                     break;
                 case "checkbox":
                     $(this).on("change",function(){
-                        console.log("========manager:chk:", $(this).attr("false"),$(this).attr("true"));
+                        //console.log("========manager:chk:", $(this).attr("false"),$(this).attr("true"));
                         //DB: TODO attr ou data  ["joint","wheel"] or something like ...
                         manager.cmd($(this).attr("func"),$(this).attr("eltID"),$(this).prop("checked"),$(this).attr("param"));
                     });

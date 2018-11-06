@@ -14,7 +14,7 @@ var managers = {
     ui     :require("./MisGUI.js")
 }
 
-class OscUDP{
+class OscUDP{  //Port or client ? ... auto client at reception
     constructor(){
         this.udpPort;
         this.listener;
@@ -52,7 +52,7 @@ class OscUDP{
 
     send(addr,args){ //args must be an Array
         if(this.ready){
-            console.log("OscUDP:",typeof(this.udpPort.send))
+            //console.log("OscUDP:",typeof(this.udpPort.send))
             this.udpPort.send({
                 address:addr,
                 args:args
@@ -200,6 +200,7 @@ OscManager.prototype.rcv = function(addr,args){
     console.log("OSC MANAGER rcv:",addr,args)
 
     scriptManager.call("onOSC",addr,args);
+    pythonManager.onOsc(addr,args);
 
     var route = addr.split('/')
     //console.log("-osc  MBK",route[1])

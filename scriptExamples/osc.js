@@ -15,7 +15,7 @@ this.onOSC = function(addr,args){
 
 this.onKey = function(key){ //
   this.log("Key:",key)
-  if(key=="o"){									//toggle osc on/off
+  if(key=="o"){					//toggle osc on/off
     oscEnabled = !oscEnabled
     this.log("osc:",oscEnabled	)
 		osc.onOff("OSC0",oscEnabled) //
