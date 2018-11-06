@@ -50,9 +50,10 @@ class OscUDP{
             this.s[param]=val
     }
 
-    send(addr,args){ //args must be an array
+    send(addr,args){ //args must be an Array
         if(this.ready){
-            this.updPort.send({
+            console.log("OscUDP:",typeof(this.udpPort.send))
+            this.udpPort.send({
                 address:addr,
                 args:args
             });
@@ -68,10 +69,8 @@ class OscUDP{
         for(var i=1;i<spl.length;i++){
             if(spl[i].length>0){ //espaces multiples
                 var v = +spl[i]; //meilleur que parseFloat
-                if(isNaN(v))
-                    a.push({type:'s',value:spl[i]});
-                else
-                    a.push({type:'f',value:v});
+                if(isNaN(v)) a.push({type:'s',value:spl[i]});
+                else a.push({type:'f',value:v});
             }
         }
         this.updPort.send({
@@ -143,8 +142,7 @@ OscManager = function () {
     }
 
 };
-var oscmng = new OscManager();
-module.exports = oscmng;
+module.exports = new OscManager();
 
 OscManager.prototype.init = function(){
     console.log("============= oscManager ============")
@@ -193,6 +191,11 @@ OscManager.prototype.addPort = function(type){
     //return id ? port ? 
 }
 
+OscManager.prototype.send = function(addr,args){ //args = Array
+    console.log("***************send:",typeof(this.ports["OSC0"].send));
+    this.ports["OSC0"].send(addr,args)
+}
+
 OscManager.prototype.rcv = function(addr,args){
     console.log("OSC MANAGER rcv:",addr,args)
 
@@ -225,8 +228,9 @@ OscManager.prototype.rcv = function(addr,args){
         console.log("osc bad param:",name,val);
 }*/
 
-//TODO freeze ? onOff ALL
+//TODO freeze ? onOff ALL : doesnt manage id now ... GUI
 OscManager.prototype.onOff = function(idelt,onoff){
+    console.log("OscManager onOff",onoff)
     if(onoff){
         for(var id in this.ports )
             this.open(id)
@@ -235,6 +239,7 @@ OscManager.prototype.onOff = function(idelt,onoff){
         for(var id in this.ports )
             this.close(id)
     }
+    misGUI.showValue({class:"oscManager",func:"onOff",val:onoff})
 }
 
 //TODO unfreeze ? 

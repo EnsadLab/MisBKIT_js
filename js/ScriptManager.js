@@ -47,12 +47,12 @@ class scriptManager {
         }
     }
 
-    call(func,arg){
-        //console.log("sriptManager:",func,arg)
+    call(func,...args){ //rest operator -> Array
+        //console.log("sriptManager:",func,args)
         if(this.script._running){
             if(typeof(this.script[func])=='function'){
                 try{
-                    return this.script[func](arg)
+                    return this.script[func](...args) //spread operator
                 }catch(err){
                     if(err!="goto"){
                         if(err!="exit")
@@ -75,6 +75,7 @@ class scriptManager {
             console.log("***** SCRIPT FOLDER READY *****",this.folder,this.currName)
             this.loadSource(fn)
         }
+        osc.send("glop?")
     }    
     
     setName(name){ //TODO multi
