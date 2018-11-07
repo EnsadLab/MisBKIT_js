@@ -241,7 +241,8 @@ MisGUI_sensors.setSensorValue = function(eltID, sensorValue, percent, fsensorVal
     if(fpercent > 100) fpercent = 100;
     // TODO ALEX: pourquoi le point gris ne se met pas à jour...
     // percent sera entre 0 et 100.. là, un exemple avec 40
-    div.find("#live-value-ui-grey").css("left", 40+"%"); // gray circle
+    div.find(".grey").css("left", 40+"%"); // gray circle
+    //alex : tu utilisais une id, qui est du coup dupliquées dans tous les panneaux, il vaut mieux utiliser la classe "grey", je ne peux malheureusement pas tester...
     //div.find("#live-value-ui-grey").css("left", percent+"%"); // gray circle
     if(percent < 0 ) percent = 0;
     if(percent > 100) percent = 100;

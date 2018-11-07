@@ -3,7 +3,7 @@
 .CodeMirror {
   /* Set height, width, borders, and global font properties here */
   font-family: monospace;
-  height: 80vH;
+  height: 75vH;
   color: black;
   direction: ltr;
 }
@@ -349,5 +349,5 @@ span.CodeMirror-selectedtext { background: none; }
 
 
 /*CUSTOM ALEX*/
-.CodeMirror {line-height: 1.3; height: 80vH}
+.CodeMirror {line-height: 1.3; height: 75vH}
 .CodeMirror-linenumbers { padding: 0 8px; }
