@@ -13,8 +13,11 @@ class PythonManager{
     constructor(){
         this.className = "pythonManager"
         this.scriptFile;
-        this.pyshell;
+        this.arguments = "";
+        this.forwards = ""; //Array ? object ?
         this.pyVersion = 'python' //{pythonPath:'python3'}
+        this.pyshell;
+        this._args = [];
     }
 
     init(){
@@ -33,18 +36,29 @@ class PythonManager{
         console.log("python.getSettings:")
         return {
             python:this.pyVersion,
-            scriptFile:this.scriptFile
+            scriptFile:this.scriptFile,
+            arguments:this.arguments,
+            forwards:this.forwards
         };
     }
+
     setSettings( obj ){
         this.close()
-        if(obj.python != undefined)
-            this.pyVersion = obj.python
-        if(obj.scriptFile != undefined)
-            this.scriptFile = obj.scriptFile
-        console.log("python settings:",this)
+        if(obj.python != undefined) this.pyVersion = obj.python;
+        if(obj.scriptFile != undefined) this.scriptFile = obj.scriptFile;
+        if(obj.arguments != undefined) this.arguments = obj.arguments;
+        if(obj.forwards != undefined) this.forwards = obj.forwards; //NO GUI?
         misGUI.showValue({class:this.className,func:"setPyVersion",val:this.pyVersion})
         misGUI.showValue({class:this.className,func:"scriptPath",val:this.scriptFile})
+        this.argLine(obj.arguments) //split the text
+    }
+
+    argLine( str ){
+        this.arguments = str
+        if( (typeof(str)=='string')&&(str!="") )this._args = str.split(" ");
+        else if(typeof(str)=='number')this._args = [str];
+        else this._args = [];
+        misGUI.showValue({class:this.className,func:"argLine",val:str})
     }
 
     uiLoad(){
@@ -56,6 +70,7 @@ class PythonManager{
         this.close()
         console.log("python:script:",fullpath)
         this.scriptFile = fullpath;
+        misGUI.showValue({class:this.className,func:"scriptPath",val:this.scriptFile})
     }
 
     setPyVersion(str){
@@ -84,7 +99,8 @@ class PythonManager{
             console.log("new PythonShell")
             this.pyshell = new PythonShell(this.scriptFile,{
                 pythonPath:this.pyVersion,
-                pythonOptions: ['-u'], // get print results in real-time    
+                pythonOptions: ['-u'], // get print results in real-time 
+                args: this._args 
             },function(){
                 console.log("python new callback ?")
             });
@@ -96,10 +112,10 @@ class PythonManager{
             })
             this.pyshell.on('message',function (msg) {
                 //EXEC message :
-                var rep = MBK.stringFunc(msg);
-                if(rep != undefined)
-                    self.send(""+rep)
-                console.log("python msg:",msg,rep);
+                var rep = MBK.stringCmd(msg);
+                //if(rep != undefined)
+                //    self.send(""+rep)
+                console.log("python msg:",msg);
             });
             misGUI.showValue({class:this.className,func:"onOff",val:true})
         }catch(err){
@@ -111,7 +127,8 @@ class PythonManager{
 
     close(){ // connection syntax
         if(this.pyshell){
-            this.pyshell.send("bye bye"); //should wait a little
+            try{ this.pyshell.send("bye"); }//should wait a little ? error at the end -> dont close
+            catch(err){console.log("Python error before closing:",err)}
             this.pyshell.end(function (err,code,signal) {
                 if(err){
                     console.log("pyshell end error:",err)
@@ -126,7 +143,37 @@ class PythonManager{
         misGUI.showValue({class:this.className,func:"onOff",val:false})
     } 
 
+    //??? more simple than xxx.addlistener ???
+    setForwards( str ){ //"dxlpos,sensors,midi,osc"
+        this.forwards = str;
+    }
 
+    onDxlpos(arr){  //array ["dxlpos" + motor positions ]
+        if(this.forwards.indexOf("dxlpos")>=0){
+            this.send(arr.join(' '));
+        }
+    }
+
+    onMidi(obj){ //{port:portID,midi:msg}
+        if(this.forwards.indexOf("midi")>=0){
+            this.send("midi "+obj.port+" "+msg[0]+" "+msg[1]+" "+msg[2]);
+        }
+    }
+
+    //we could add a sensor output "Python" , with a custom name
+    onSensor(name,val){  //array of motor positions
+        if(this.forwards.indexOf("sensor")>=0){ //fit with 'sensors
+            this.send("sensor "+name+" "+val);
+        }
+    }
+
+    onOsc(addr,args){//addr string , args Array
+        if(this.forwards.indexOf("osc")>=0){
+            this.send("osc "+addr+" "+args.joint(' '));
+        }
+    }
+
+    //need anim ?
 
 }
 module.exports = new PythonManager()

@@ -66,6 +66,7 @@ window.onbeforeunload=function(){
 
 ipc.on("close",function(e,arg){
     ipc.send("message","onclose");
+    //TODO --> MBK.terminate()
     dxlManager.stopAll();
     var c = dxlManager.saveSettings();
     ipc.send("message","savecount:"+c);
