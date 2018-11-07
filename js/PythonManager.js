@@ -110,12 +110,16 @@ class PythonManager{
                 misGUI.showValue({class:self.className,func:"onOff",val:"ERROR"})
                 misGUI.alert("Python Error:\n"+err);
             })
+            this.pyshell.on("close",function(){
+                console.log("PYSHELL on close")
+                misGUI.showValue({class:self.className,func:"onOff",val:false})
+            })
             this.pyshell.on('message',function (msg) {
                 //EXEC message :
                 var rep = MBK.stringCmd(msg);
-                //if(rep != undefined)
-                //    self.send(""+rep)
-                console.log("python msg:",msg);
+                if(rep != undefined)
+                    self.send(""+rep)
+                console.log("python msg:<"+msg+">rep:",rep);
             });
             misGUI.showValue({class:this.className,func:"onOff",val:true})
         }catch(err){
@@ -127,12 +131,16 @@ class PythonManager{
 
     close(){ // connection syntax
         if(this.pyshell){
-            try{ this.pyshell.send("bye"); }//should wait a little ? error at the end -> dont close
+            var self = this;
+            try{ this.pyshell.send("bye\n"); }//should wait a little ? error at the end -> dont close
             catch(err){console.log("Python error before closing:",err)}
             this.pyshell.end(function (err,code,signal) {
                 if(err){
                     console.log("pyshell end error:",err)
                     misGUI.alert("Python Error :\n"+err);
+                    //self.pyshell.terminate(function(){
+                    //    console.log("PYSHELL TERMINATED")
+                    //})
                 }
                 console.log('python end code  :' + code);
                 console.log('python end signal:' + signal);
@@ -149,8 +157,9 @@ class PythonManager{
     }
 
     onDxlpos(arr){  //array ["dxlpos" + motor positions ]
+        //from python you can use dxl.position(index) to get a motor's current position 
         if(this.forwards.indexOf("dxlpos")>=0){
-            this.send(arr.join(' '));
+            this.send("dxlpos "+arr.join(' '));
         }
     }
 
@@ -170,6 +179,12 @@ class PythonManager{
     onOsc(addr,args){//addr string , args Array
         if(this.forwards.indexOf("osc")>=0){
             this.send("osc "+addr+" "+args.joint(' '));
+        }
+    }
+
+    onKey( key ){
+        if(this.forwards.indexOf("key")>=0){
+            this.send("key "+key);
         }
     }
 
