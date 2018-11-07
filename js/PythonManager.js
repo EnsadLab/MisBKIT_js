@@ -163,9 +163,9 @@ class PythonManager{
         }
     }
 
-    onMidi(obj){ //{port:portID,midi:msg}
+    onMidi(id,channel,type,d1,d2){ //{port:portID,midi:msg}
         if(this.forwards.indexOf("midi")>=0){
-            this.send("midi "+obj.port+" "+msg[0]+" "+msg[1]+" "+msg[2]);
+            this.send("midi "+id+" "+channel+" "+type+" "+d1+" "+d2);
         }
     }
 

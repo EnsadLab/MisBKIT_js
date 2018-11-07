@@ -51,7 +51,7 @@ MidiPort = function () {
             //var midiMsg = {port:self.portID,midi:msg}; //should be {channel,type,data1,data2} ?
             var midiMsg = {port:self.portID,ch:channel,type:type,d1:data1,d2:data2};
             scriptManager.call("onMidi",midiMsg);
-            pythonManager.onMidi(midiMsg);
+            pythonManager.onMidi(self.portID,channel,type,data1,);
  
             /*
             www.computermusicresource.com/MIDI.Commands.html
