@@ -43,6 +43,7 @@ function DxlManager(){
     this.savecount = 0; //debugg
 
     this.motors = [];
+    this.positions = [];
 
     this.updateTimer = undefined;
   
@@ -495,8 +496,12 @@ DxlManager.prototype.startReadDxl = function(dxlId) {
 //DELETED DxlManager.prototype.onStringCmd=function(str){
 //DELETED DxlManager.prototype.onCm9Strings=function(args){
 
+DxlManager.prototype.position =function(index){
+    return this.positions[index];
+}
+
 DxlManager.prototype.dxlPos=function(array) {  //array[0]="dxlpos"
-var n = array.length-1; 
+    var n = array.length-1; 
     if(n>this.motors.length)
         n=this.motors.length;
     for(var i=0;i<n;i++){
@@ -504,7 +509,8 @@ var n = array.length-1;
         if(v>=0){
             var m = this.motors[i];
             var a = m.currPos(v).toFixed(1);
-            sensorManager.handleDxlPos(i,m.angleToNorm(a));
+            this.positions[i]=a;    //store if other managers want an array
+            sensorManager.handleDxlPos(i,m.angleToNorm(a)); //use min & max
             misGUI.needle(i,a);
         }
     }
@@ -724,7 +730,11 @@ DxlManager.prototype.onControl = function(index,val){
 };
 
 DxlManager.prototype.angle = function(index,val){ //degrés
-    this.setAngle(index,val);
+    if(val!=undefined)
+        this.setAngle(index,val);
+    else if(index<this.motors.length){ //return current wanted angle
+        return this.motors[index].wantedAngle;    
+    }
 }
 DxlManager.prototype.setAngle = function(index,val){ //degrés
     //console.log("DxlManager:setangle:",index,val);

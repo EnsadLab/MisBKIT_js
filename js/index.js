@@ -61,22 +61,23 @@ window.eval = global.eval = function () { //??? remove security warning ???
 //ipc.on('close) is called before onbeforeunload
 window.onbeforeunload=function(){
     ipc.send("message","onbeforeunload!");
-    MBK.terminate();
 }
 
 ipc.on("close",function(e,arg){
     ipc.send("message","onclose");
+    MBK.terminate();
     //TODO --> MBK.terminate()
     dxlManager.stopAll();
+    oscMobilizing.close();
+    robusManager.stopAll();
+    cm9Com.close();
+
     var c = dxlManager.saveSettings();
     ipc.send("message","savecount:"+c);
     //alert("Quit MisBkit");
     settingsManager.saveSettings();
     motorMappingManager.saveMappingSettings();
     sensorManager.saveSensorSettings();
-    oscMobilizing.close();
-    robusManager.stopAll();
-    cm9Com.close();
     ipc.send("message","closed");
 });
 
@@ -224,6 +225,7 @@ window.onload = function() {
         //console.log("keyDown-KeyCode:", e);
         //console.log("keyDown-KeyCode:", e.keyCode);
         scriptManager.call("onKey",e.key);
+        pythonManager.onKey(e.key);
 
         if(e.metaKey || e.ctrlKey){
             console.log("keyDown-metaKC:",e.keyCode);

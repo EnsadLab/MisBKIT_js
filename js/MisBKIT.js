@@ -82,7 +82,7 @@ class MisBKIT{
     // "manager.function(param1,param2 ...)"
     stringFunc( str ){ 
         //TODO throw errors ?
-        console.log("MBK:stringFunc:",str);
+        //console.log("MBK:stringFunc:",str);
         var spl = str.split(/[()]/);
         var mf  = spl[0].split('.');
         var m = managers[mf[0]];
@@ -109,10 +109,8 @@ class MisBKIT{
 
         if(m!=undefined){
             var f= mf[1];
-            //console.log("stringcmdA:",m,f)
             if( typeof(m[f])=='function' ){
                 var args = spl.slice(1);
-                console.log("stringcmdB:",spl[1],args)
                 for(var i=0;i<args.length;i++){
                     var a = +args[i]
                     if(!isNaN(a)) //127.0.0.1 -> NaN !!! "" -> 0
@@ -122,8 +120,6 @@ class MisBKIT{
             }
         }
     }
-
-
 
     update(){ //"Mainloop"
         scriptManager.update(); //may command anim,motors ...

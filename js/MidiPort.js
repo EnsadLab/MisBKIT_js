@@ -43,10 +43,15 @@ MidiPort = function () {
     this.midiIn.on('message', function (dt, msg) {
         if(self.enabled) {
 
-            var midiMsg = {port:self.portID,midi:msg}; //should be {channel,cmd,data1,data2} ?
-                                                       //or a string+value ex CC01 , note48
+            var channel = msg[1] & 0xF;
+            var type    = ( msg[1] & 0x70 )>>4; //0:noteOff, 1:noteOn, 3:CC, 2:afterTouch, 4:programChange ...
+            var data1     = msg[2]  //for noteOn=note      , CC=num 
+            var data2     = msg[3]  //for noteOn=velocity  , CC=value
+
+            //var midiMsg = {port:self.portID,midi:msg}; //should be {channel,type,data1,data2} ?
+            var midiMsg = {port:self.portID,ch:channel,type:type,d1:data1,d2:data2};
             scriptManager.call("onMidi",midiMsg);
-            pythonManager.onMidi(midiMsg);
+            pythonManager.onMidi(self.portID,channel,type,data1,);
  
             /*
             www.computermusicresource.com/MIDI.Commands.html
