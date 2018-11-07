@@ -318,6 +318,11 @@ Animation.prototype.startPlay = function() {
     if(this.s.type == "sinus") {
         this.sinusTimer = 0;
         this.playing = true;
+    } else if(this.s.type == "random"){
+        var int_min = +this.s.params["param1"];
+        var int_max = +this.s.params["param3"];
+        var t = Math.random()*(int_max-int_min)+int_min;
+        this.inputTimer = setTimeout(this.updateRandom.bind(this),t*1000);
     } else if(this.s.type == "record") {
         if(this.datas==null){
             this.playing  = false;
@@ -364,12 +369,10 @@ Animation.prototype.getPercent = function() {
  * returns % progress
  */
 Animation.prototype.playKey = function() {
-    //console.log("playKey",this.s.type);
     if(this.s.type == "sinus"){
         this.updateSinus();
         return 0;
     } else if(this.s.type == "random"){
-        this.updateRandom();
         return 0;
     } else if(this.s.type == "record"){
         if((this.playing==false)||(this.datas==null))
@@ -415,28 +418,42 @@ Animation.prototype.stopPlay = function() {
             }
         }
     }
+    if(this.s.type == "random"){
+        clearTimeout(this.inputTimer);
+    }
     
 }
 
 // sinus: param[0]: offset, param[1]: Frequency, param[2]: amplitude[0.0,1.0]
 Animation.prototype.updateSinus = function() {
-
     this.sinusTimer += 0.2;
     var a = this.sinusTimer;
-    //console.log("offset",this.s.params["param0"]);
     var v = this.s.params["param2"]*Math.sin(a*this.s.params["param1"]) + this.s.params["param0"];
     var nv = v*0.5 + 0.5;
-    for(var c=0;c<this.nbChannels;c++){
+    for(var c=0;c<this.channels.length;c++){
         if(this.channels[c].play) {
-            //console.log("channel",c,"sinus val:",v,nv);
             //dxlManager.playKey(this.channels[c].f,this.channels[c].i,value);
             dxlManager.onNormControl(this.channels[c].i,nv);
         }
     }
 }
 
+// sinus: param0: min value, param1: Interval min, param2: max value, param3: interval max
 Animation.prototype.updateRandom = function() {
-
+    var int_min = +this.s.params["param1"];
+    var int_max = +this.s.params["param3"];
+    var val_min = +this.s.params["param0"];
+    var val_max = +this.s.params["param2"];
+    var value = Math.random()*(val_max-val_min)+val_min;
+    for(var c=0;c<this.channels.length;c++){
+        if(this.channels[c].play) {
+            // TODO DIDIER: quelle fonction dois-je appeler?
+            console.log("updateRandom",this.channels[c].i,value);
+            //dxlManager.onNormControl(this.channels[c].i,nv);
+        }
+    }
+    var t = Math.random()*(int_max-int_min)+int_min;
+    this.inputTimer = setTimeout(this.updateRandom.bind(this),t*1000);
 }
 
 

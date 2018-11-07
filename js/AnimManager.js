@@ -72,6 +72,7 @@ class AnimManager {
         this.animationID++;
 
         misGUI.cloneElement("#anim-" + selectedType,id);
+        console.log("anim.channels.length",anim.channels.length);
 
         if(selectedType == "record"){
             MisGUI_anims.setRecordTracks(id,anim.recordchannels);
@@ -82,12 +83,15 @@ class AnimManager {
             // I didn't want to explicit every parameter in the settings of the animation... 
             // more generic this way for future generators
             var params = {};
-            anim.s.nbparams = 3; // fake nb param values for now......
+            if(selectedType == "sinus") anim.s.nbparams = 3; // fake nb param values for now......
+            else if(selectedType == "random") anim.s.nbparams = 4;
+            else anim.s.nbparams = 0;
             for(var i=0; i<anim.s.nbparams; i++){
                 var k = "param" + i;
                 if(selectedType == "sinus"){ if(i==0) params[k]=0;else if(i==1)params[k]=1.0;else if(i==2)params[k]=1.0; }
-                else if(selectedType == "random"){
-                    params[k] = i*10; // fake values for now.......
+                if(selectedType == "random"){ if(i==0) params[k]=0;else if(i==1)params[k]=3.0;else if(i==2)params[k]=100.0; else if(i==3)params[k]=5.0;}
+                else {
+                    params[k] = i*10; // fake values for an unknown type
                 }
                 
             }
@@ -294,15 +298,15 @@ class AnimManager {
             this.animFolder = fullPath.substr(0,slash);
             name = fullPath.substr(slash);
         }
-        if(!this.isAnimAlreadLoaded(name)){
+        //if(!this.isAnimAlreadLoaded(name)){
             var id = "A"+this.animationID;
             this.animationID++;
             console.log("loadAnim:",this.animFolder," ",name);
             var anim = new Animation(id,this.animFolder,name);
             anim.load(name,true);
-        } else {
+        /*} else {
             alert("Animation " + name + " already loaded");
-        }
+        }*/
     }
 
     isAnimAlreadLoaded(name) {
@@ -342,15 +346,15 @@ class AnimManager {
         
         var anim=this.animations[eltID];
         if(anim){
-            if(!this.isAnimAlreadLoaded(val)){
+            //if(!this.isAnimAlreadLoaded(val)){
                 //console.log(" oldname:",anim.fileName);
                 anim.save(val);
                 // update the animations list in the sensor animation trigger output
                 MisGUI_sensors.setSensorAnims();
-            } else {
+            /*} else {
                 MisGUI_anims.setAnimName(anim.id,anim.fileName);
                 alert("Animation " + val + " already loaded");
-            }
+            }*/
         }
 
     }
@@ -374,7 +378,8 @@ class AnimManager {
     animChannel(id,num,onoff) {
         var anim=this.animations[id];
         if(anim){
-            console.log("animChannel anim true");
+            console.log("animChannel anim",id,num,onoff);
+            console.log("with eltID",anim.id);
             anim.channelEnable(num,onoff);
         }
     }

@@ -42,12 +42,17 @@ MotorMappingManager.prototype.loadMappingSettings = function () {
         }
 
         // create new motorMappings from json file
-        for(var i=0;i<s.motorMappings.length;i++){
-            this.motorMappings.push( new MotorMapping() );
-        }
+        if(s.motorMappings.length == 0){
+            // should not happen... but means that the file is empty!!!
+            this.loadDefaultValue();
 
-        for (var i = 0; i < s.motorMappings.length; i++) {
-            this.motorMappings[i].copySettings(s.motorMappings[i]);
+        } else {
+            for(var i=0;i<s.motorMappings.length;i++){
+                this.motorMappings.push( new MotorMapping() );
+            }
+            for (var i = 0; i < s.motorMappings.length; i++) {
+                this.motorMappings[i].copySettings(s.motorMappings[i]);
+            }
         }
 
         // check whether some motor mappings had been erased. If yes, udpate to gui to "?"
@@ -66,14 +71,24 @@ MotorMappingManager.prototype.loadMappingSettings = function () {
         }*/
         //settingsManager.copyPasteFromUserFolder("midiMotorMapping.json"); // TODO: to check!
 
-        // set to default value when entries are empty
-        this.checkEmptyEntry(); 
-
         this.updateGUI();
     }
 
 }
 
+MotorMappingManager.prototype.loadDefaultValue = function() {
+    var portName = "";
+    if(midiPortManager.getNbMidiPortsOnGUI() == 1){
+        portName = midiPortManager.getFirstMidiPortOnGUI();
+    }
+    for(var i=0; i<dxlManager.motors.length; i++){
+        var motorMapping = new MotorMapping();
+        motorMapping.m = {enabled:true,motorIndex:parseInt(i),port:portName,cmd:"CC",nbID:parseInt(i)};
+        this.motorMappings.push(motorMapping);
+    }
+}
+
+// huh??? was useless since motorMappings.length == 0 ....
 MotorMappingManager.prototype.checkEmptyEntry = function(){
 
     for(var i=0; i<this.motorMappings.length; i++){
@@ -204,6 +219,7 @@ MotorMappingManager.prototype.setMidiMotorMappingPort = function(motorIndex,port
 
 MotorMappingManager.prototype.updateGUI = function () {
     //console.log("MotorMappingManager.updateGUI");
+    console.log("UPDATE GUI",this.motorMappings);
     for(var i=0; i<this.motorMappings.length; i++){
         //if(this.motorMappings[i].m.enabled)
         misGUI.midiMotorSettings(this.motorMappings[i].m,midiPortManager.midiPorts);
