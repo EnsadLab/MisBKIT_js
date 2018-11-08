@@ -18,7 +18,7 @@ Sensor = function () {
         valMax: 100,
         anim1: "none", //TODO: change later in an array or not?
         anim2: "none",
-        filter: "Select Filter",
+        filter: "default",
         oscEnabledInput: false,
         oscAdressInput: "",
         oscAdressOutput: "",
@@ -52,7 +52,8 @@ Sensor = function () {
         //inputParams: TODO ?
         ID_gui: -1,
         input_entry: "",
-        output_entries:[]
+        output_entries:[],
+        alpha: 1.0,
     };
 
     //Suggestion:
@@ -73,6 +74,7 @@ Sensor = function () {
     this.inputInterval = undefined;
     this.inputTimer = undefined;
     this.inputTime  = 0;
+    this.oldVal = 0;
 };
 module.exports = Sensor;
 
@@ -125,9 +127,16 @@ Sensor.prototype.onValue = function(val){
             midiPortManager.sendMidi(this.s.midiPortOutput,this.s.midiCmdOutput,this.s.midiMappingOutput,nv);
         }
     }
+    
     // here we update the value in the gui. We need the value, the filtered value and the percentage
-    // TODO DIDIER2: send the filtered value as well...
-    var fval = val; 
+    var fval = val;
+    if(this.s.filter == "lowpass"){
+        fval = this.lowPassFilter(val); 
+    } 
+    
+    // TODO DIDIER2: si tu veux implémenter un autre filtre!! -> index.html ligne 947 ("anotherfilter")
+    
+    //console.log("val",val,"fval",fval);
     var fnv = (fval-this.s.valMin)/(this.s.valMax-this.s.valMin);
     MisGUI_sensors.setSensorValue(this.ID,val,nv*100.0,fval,fnv*100.0);    
 }
@@ -310,4 +319,14 @@ Sensor.prototype.updateRandom = function(){ //randomEnabledInput enabled when sw
     }
 }
 */
+
+Sensor.prototype.lowPassFilter = function(v) {
+    this.s.alpha = +this.s.alpha; // faudrait le faire ailleurs........
+    if(this.s.alpha < 0) this.s.alpha = 0.0;
+    else if(this.s.alpha > 1.0) this.s.alpha = 1.0;
+    //console.log("----> lowpass filter, alpha: ",this.s.alpha, " oldVal:",this.oldVal,"v:",v);
+    var newVal = this.oldVal + this.s.alpha * (v-this.oldVal);
+    this.oldVal = newVal;
+    return newVal;
+}
 

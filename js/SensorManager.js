@@ -124,6 +124,7 @@ class SensorManager{
         
         MisGUI_sensors.changeSinusRandomParams(sensor.ID,sensor.s.sinusParams);
         MisGUI_sensors.changeSinusRandomParams(sensor.ID,sensor.s.randomParams);
+        MisGUI_sensors.selectFilter(sensor.ID,sensor.s.filter);
 
         // select input entry
         sensorManager.onSelectInput(sensor.ID,sensor.s.input_entry);
@@ -466,6 +467,15 @@ class SensorManager{
             this.updateTextDescription(eltID);
             this.saveSensorSettings();
         }
+    }
+
+    onSelectFilter(eltID, filter){
+        console.log("SensorManager::onSelectFilter",eltID,filter);
+        var sensor = this.getSensorWithID(eltID);
+        if(sensor){
+            sensor.s.filter = filter;
+        }
+
     }
 
     updateTextDescription(id){

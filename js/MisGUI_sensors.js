@@ -34,6 +34,11 @@ MisGUI_sensors.selectEntry = function(eltID,entryName){
     $(".sensor-setting-more .input-wrapper").filter("[eltID="+ eltID + "]").find("section[name="+entryName+"]").show();
 }
 
+MisGUI_sensors.selectFilter = function(eltID,filter){
+    var sel = $(".sensor-setting-more").filter("[eltID="+ eltID + "]").find("[name='inputFilter']");
+    sel.val(filter);
+}
+
 MisGUI_sensors.hideAllOutputEntries = function(eltID,entryName){
     //$(".sensor-setting-more").find("[id=sortable-sens-output]").filter("[eltID="+ eltID + "]").find("li").hide();
     $(".sensor-setting-more #sortable-sens-output").filter("[eltID="+ eltID + "]").find("section").hide();

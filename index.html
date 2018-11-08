@@ -941,14 +941,14 @@
 					<!-- FILTERS -->
 
 					<div class="filters">
-						<select name="inputFilter" func="" id="" class="medium ">
+						<select name="inputFilter" func="onSelectFilter" id="" class="medium ">
 							<option value="default">Select Filter</option>
-							<option value="...">...</option>
-							<option value="...">...</option>
+							<option value="lowpass">low-pass filter</option>
+							<option value="anotherfilter">another filter</option>
 						</select>
 						<div class="info medium text-right float-right">
 							<p class="text-left">value :</p>
-							<input type="number" func="" name="filter-value" class="medium tiny" value="100">
+							<input type="number" name="filter-value" func="changeSettingsVariable" param="alpha" class="medium tiny" value="1.0">
 						</div>
 
 					</div>
