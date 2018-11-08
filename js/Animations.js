@@ -428,7 +428,7 @@ Animation.prototype.stopPlay = function() {
 Animation.prototype.updateSinus = function() {
     this.sinusTimer += 0.2;
     var a = this.sinusTimer;
-    var v = this.s.params["param2"]*Math.sin(a*this.s.params["param1"]) + this.s.params["param0"];
+    var v = this.s.params["param2"]*Math.sin(Math.PI*2.0*a*this.s.params["param1"]) + this.s.params["param0"];
     var nv = v*0.5 + 0.5;
     for(var c=0;c<this.channels.length;c++){
         if(this.channels[c].play) {
@@ -438,7 +438,7 @@ Animation.prototype.updateSinus = function() {
     }
 }
 
-// sinus: param0: min value, param1: Interval min, param2: max value, param3: interval max
+// random: param0: min value, param1: Interval min, param2: max value, param3: interval max
 Animation.prototype.updateRandom = function() {
     var int_min = +this.s.params["param1"];
     var int_max = +this.s.params["param3"];
@@ -447,7 +447,7 @@ Animation.prototype.updateRandom = function() {
     var value = Math.random()*(val_max-val_min)+val_min;
     for(var c=0;c<this.channels.length;c++){
         if(this.channels[c].play) {
-            // TODO DIDIER: quelle fonction dois-je appeler?
+            // TODO DIDIER2: quelle fonction dois-je appeler?
             console.log("updateRandom",this.channels[c].i,value);
             //dxlManager.onNormControl(this.channels[c].i,nv);
         }

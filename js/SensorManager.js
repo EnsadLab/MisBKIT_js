@@ -122,6 +122,10 @@ class SensorManager{
         //misGUI.setManagerValue("sensorManager","onChangeAnim",sensor.s.anim1,sensor.ID,"anim1"); // not working.. done now in setSensorAnims method
         //misGUI.setManagerValue("sensorManager","onChangeAnim",sensor.s.anim2,sensor.ID,"anim2"); // not working.. done now in setSensorAnims method
         
+        MisGUI_sensors.changeSinusRandomParams(sensor.ID,sensor.s.sinusParams);
+        MisGUI_sensors.changeSinusRandomParams(sensor.ID,sensor.s.randomParams);
+        MisGUI_sensors.selectFilter(sensor.ID,sensor.s.filter);
+
         // select input entry
         sensorManager.onSelectInput(sensor.ID,sensor.s.input_entry);
 
@@ -285,12 +289,20 @@ class SensorManager{
     }
 
     addEmptySensor (){
-        //console.log("SensorManager.addEmptySensor");
+        console.log("SensorManager.addEmptySensor");
         var id = "S"+this.sensorID; 
         var sensor = new Sensor();
         sensor.ID = id;
         sensor.s.name = "Sensor_name"; // (+ this.sensorID;) to confusing when a previous sensor is there with same id
         sensor.s.ID_gui = this.sensors.length + 1;
+        // TODO DIDIER2: solution provisoire... on peut mettre l'adresse par défaut ici....
+        sensor.s.oscAdressInput = "mbk/test1";
+        sensor.s.oscAdressOutput = "mbk/test2";
+        ////////////////////////////////////////////////////////////////////////////////
+        // IF WE WANT TO CHANGE THE DEFAULT SINUS AND RANDOM VALUES
+        sensor.s.sinusParams = {amplitude:1.0,offset:0.0,period:1.0,current:0};
+        sensor.s.randomParams = {valmin:0,valmax:100,intmin:2,intmax:5};
+        ////////////////////////////////////////////////////////////////////////////////
         this.sensors.push(sensor);
         misGUI.cloneElement(".single-sensor",sensor.ID); 
         misGUI.cloneElement(".sensor-setting-more",sensor.ID);  
@@ -303,6 +315,9 @@ class SensorManager{
         MisGUI_sensors.setSensorAnims();
         MisGUI_sensors.hideAllOutputEntries(sensor.ID);
         MisGUI_sensors.selectSensor(sensor.ID);
+        MisGUI_sensors.changeOscAdress(sensor.ID,sensor.s.oscAdressInput,sensor.s.oscAdressOutput);
+        MisGUI_sensors.changeSinusRandomParams(sensor.ID,sensor.s.sinusParams);
+        MisGUI_sensors.changeSinusRandomParams(sensor.ID,sensor.s.randomParams);
         misGUI.setManagerValue("sensorManager","onNameText",sensor.s.name,sensor.ID);
         sensor.s.enabled = true;
         misGUI.setManagerValue("sensorManager","enable",true,sensor.ID);
@@ -354,10 +369,25 @@ class SensorManager{
            }
            */
 
-
-
-            sensor.s[name]=value;
-                        //tester if sensor.s[name] exists ???
+            
+            // SOLUTION provisoire......
+            // je suis fatiguée... y'a sûrement une meilleure manière......
+            if(name=="valmin" || name=="valmax" || name=="intmin" || name=="intmax"){
+                sensor.s.randomParams[name] = value;
+            } else if(name =="offset" || name=="period" || name=="amplitude"){
+                sensor.s.sinusParams[name] = value;
+            } else if(name == "oscAdressInput"){
+                // TODO DIDIER2:
+                // envoyer la nouvelle adresse OSC à l'OSCMANAGER: value
+            } else if(name == "oscAdressOutput"){
+                // TODO DIDIER2:
+                // envoyer la nouvelle adresse OSC à l'OSCMANAGER: value
+            } else {
+                sensor.s[name]=value;
+            }
+            
+            
+            //tester if sensor.s[name] exists ???
             /*TODO TODO: old version..
             switch(name){
                     case "valMin":
@@ -437,6 +467,15 @@ class SensorManager{
             this.updateTextDescription(eltID);
             this.saveSensorSettings();
         }
+    }
+
+    onSelectFilter(eltID, filter){
+        console.log("SensorManager::onSelectFilter",eltID,filter);
+        var sensor = this.getSensorWithID(eltID);
+        if(sensor){
+            sensor.s.filter = filter;
+        }
+
     }
 
     updateTextDescription(id){

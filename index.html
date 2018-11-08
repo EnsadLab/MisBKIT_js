@@ -800,7 +800,7 @@
 							</div>
 							
 							<div class="medium float-left text-right">
-								<input type="text" class="large tiny" placeholder="osc adress" name="">
+								<input type="text" func="changeSettingsVariable" class="large tiny" placeholder="osc adress" param="oscAdressInput">
 							</div>
 							
 						</section>
@@ -898,20 +898,54 @@
 								<input func="inputOnOff" type="checkbox" class="small cmdOnOff" title="enable/disable">
 								<h4>Sinus</h4>
 							</div>
-							<div class="medium float-left text-left">
-								<button class="gear tiny float-left" func="setPopupValues" data-id="sinusPopup"><img src="assets/settings.png"></button>
+							<div class="large float-left text-right">
+								<div class="info small">
+									<p class="text-left">Offset :</p>
+									<input title ="[-1.0,1.0]" type="number" class="small tiny" func="changeSettingsVariable"  value="34" step="0.1" param="offset">
+								</div>
+								<div class="info small">
+									<p class="text-left">Frequency :</p>
+									<input title="0.1(slow), 2.0(quick)" type="number" class="small tiny" func="changeSettingsVariable"  value="34" step="0.1" param="period">
+								</div>
+								<div class="info small">
+									<p class="text-left">Amplitude :</p>
+									<input title="[0.0,1.0]" type="number" class="small tiny"  func="changeSettingsVariable" value="34" step="0.1" param="amplitude">
+								</div>
 							</div>
-							Period(seconds):<input func="inputParam" param="period" type="number" class="medium tiny float-right" placeholder="1" param="">
+
+
+								<!-- <button class="gear tiny float-left" func="setPopupValues" data-id="sinusPopup"><img src="assets/settings.png"></button>
+							</div>
+							Period(seconds):<input func="inputParam" param="period" type="number" class="medium tiny float-right" placeholder="1" param=""> -->
 
 						</section>
 
-						<section class="randomInput" name="random"> <!-- pour test-->
+						<section class="hight randomInput" name="random"> <!-- pour test-->
 							<div class="medium float-left">
 								<input func="inputOnOff" type="checkbox" class="small cmdOnOff" title="enable/disable">
 								<h4>Random</h4>
 							</div>
-							<div class="medium float-right text-right">
-								<button class="gear tiny" func="setPopupValues" data-id="randomPopup"><img src="assets/settings.png"></button>
+							<div class="large float-right text-right">
+								<div class="info small">
+									<p class="text-left">min value :</p>
+									<input type="number" class="small tiny" value="34" func="changeSettingsVariable" param="valmin">
+								</div>
+								<div class="info small">
+									<p class="text-left">interval min :</p>
+									<input type="number" class="small tiny" value="34" func="changeSettingsVariable" param="intmin">
+								</div>
+							</div>
+							<div class="large float-right text-right">
+								<div class="info small">
+									<p class="text-left">max value:</p>
+									<input type="number" class="small tiny" value="34" func="changeSettingsVariable" param="valmax">
+								</div>
+								
+								<div class="info small">
+									<p class="text-left">interval max :</p>
+									<input type="number" class="small tiny" value="34" func="changeSettingsVariable" param="intmax">
+								</div>
+								<!-- <button class="gear tiny" func="setPopupValues" data-id="randomPopup"><img src="assets/settings.png"></button> -->
 							</div>
 						</section>
 
@@ -921,14 +955,14 @@
 					<!-- FILTERS -->
 
 					<div class="filters">
-						<select name="inputFilter" func="" id="" class="medium ">
+						<select name="inputFilter" func="onSelectFilter" id="" class="medium ">
 							<option value="default">Select Filter</option>
-							<option value="...">...</option>
-							<option value="...">...</option>
+							<option value="lowpass">low-pass filter</option>
+							<option value="anotherfilter">another filter</option>
 						</select>
 						<div class="info medium text-right float-right">
 							<p class="text-left">value :</p>
-							<input type="number" func="" name="filter-value" class="medium tiny" value="100">
+							<input type="number" name="filter-value" func="changeSettingsVariable" param="alpha" class="medium tiny" value="1.0">
 						</div>
 
 					</div>
@@ -1042,7 +1076,7 @@
 										<!-- TODO ALEX -->
 									</div>
 									<div class="medium float-right text-right">
-										<input type="text" func="changeSettingsVariable" class="large tiny " placeholder="osc adress" param="oscAdress">
+										<input type="text" func="changeSettingsVariable" class="large tiny " placeholder="osc adress" param="oscAdressOutput">
 									</div>
 										
 									
@@ -1141,7 +1175,7 @@
 					<!--input  func="setName" type="text" class="float-left small" placeholder="Script_name" size="40"-->
 					<button func="uiSave"  class="float-right">Save as</button>
 					<!--div class='info'@Alex: trop petit et invisible-->
-					<font color='lightgreen'><!--@Alex même vert que celui de l'editeur?-->
+					<font color='#00FF99'><!--@Alex même vert que celui de l'editeur?-->
 						<span func="log">Script info</span>
 					</font-->
 					<!--/div-->
@@ -1160,7 +1194,7 @@
 			<button class="close-modale"><img src="assets/close.png" alt=""></button>
 			Sinus(just for testing): ><span func="sinusName"></span>
 			<hr>
-			<font color='lightgreen'>
+			<font color='#00FF99'>
 			<label class="label100">Period : </label><input func="inputParam" param="period" type="text" size="4">
 			</font>
 			<br>

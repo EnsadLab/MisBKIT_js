@@ -34,6 +34,11 @@ MisGUI_sensors.selectEntry = function(eltID,entryName){
     $(".sensor-setting-more .input-wrapper").filter("[eltID="+ eltID + "]").find("section[name="+entryName+"]").show();
 }
 
+MisGUI_sensors.selectFilter = function(eltID,filter){
+    var sel = $(".sensor-setting-more").filter("[eltID="+ eltID + "]").find("[name='inputFilter']");
+    sel.val(filter);
+}
+
 MisGUI_sensors.hideAllOutputEntries = function(eltID,entryName){
     //$(".sensor-setting-more").find("[id=sortable-sens-output]").filter("[eltID="+ eltID + "]").find("li").hide();
     $(".sensor-setting-more #sortable-sens-output").filter("[eltID="+ eltID + "]").find("section").hide();
@@ -81,6 +86,18 @@ MisGUI_sensors.initMidiOutput = function(eltID){
 MisGUI_sensors.updateTextDescription = function(eltID,txt){
     $(".single-sensor").filter("[eltID="+ eltID + "]").find("[func=textDescription]").text(txt);
     //console.log("<p> type ??? ",$(".single-sensor").filter("[eltID="+ eltID + "]").find("[func=textDescription]").attr("type"));
+}
+
+MisGUI_sensors.changeOscAdress = function(eltID,adressInput, adressOutput){
+    $(".sensor-setting-more").filter("[eltID="+ eltID + "]").find("input[param=oscAdressInput]").val(adressInput);
+    $(".sensor-setting-more").filter("[eltID="+ eltID + "]").find("input[param=oscAdressOutput]").val(adressOutput);
+}
+
+MisGUI_sensors.changeSinusRandomParams = function(eltID,s){
+    for(var k in s){
+        //console.log("????",k,"a",s,"b",s[k]);
+        $(".sensor-setting-more").filter("[eltID="+ eltID + "]").find("input[param=" + k+"]").val(s[k]);
+    }
 }
 
 
