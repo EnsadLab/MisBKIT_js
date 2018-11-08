@@ -24,7 +24,6 @@ class PythonManager{
         misGUI.initManagerFunctions(this,this.className);
     }
 
-    //dont need id for now 
     cmd(func,id,val,param){
         console.log("pythonManager cmd:",func,id,val,param);
         if(this[func]!=undefined){

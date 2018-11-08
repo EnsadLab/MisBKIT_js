@@ -10,7 +10,7 @@ var managers = {
     sensor :require("./SensorManager.js"),
     midi   :require("./MidiPortManager.js"),
     osc    :require("./OscManager.js"),
-    dmx    :require("./DmxManager"),
+    //dmx    :require("./DmxManager"),
     ui     :require("./MisGUI.js")
 }
 

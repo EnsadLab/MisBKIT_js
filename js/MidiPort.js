@@ -38,7 +38,6 @@ MidiPort = function () {
     this.portName = "";
     this.portID = 0;
     var self = this;
-
     
     this.midiIn.on('message', function (dt, msg) {
         if(self.enabled) {

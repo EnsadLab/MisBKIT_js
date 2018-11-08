@@ -191,9 +191,23 @@
 						<input func="argLine" type="text" class="small tiny" style="width:80%;">
 
 					</div>
-
 				</div>
 
+				<div class="plug dmxManager">
+					<p>
+						DMX  <span func="spanText" class="status"></span>
+						<input func="onOff" type="checkbox" class="small onoff" title="on / off">
+					</p>
+					<div class="content">
+						 <br>
+						 <font color='lightblue' size="3">
+						<span func="portName">ENTTEC DETECTION</span>
+						<br>
+						<span func="serialNumber">serial number</span>
+						</font>
+						<br>
+					</div>
+				</div>
 
 			</div>
 			<!-- END CONNEXIONS -->
@@ -1122,8 +1136,8 @@
 					<!-- <button func="stop" id="stop-code" class="float-left stop">Stop</button>
 					<button func="run"  id="run-code" class="float-left valid">Run</button> -->
 
-					<!--input func="runStop" type="checkbox" class="power float-left" title="enable/disable"-->
-					<input func="runStop" type="checkbox" class="small cmdOnOff" title="run/stop">
+					<input func="runStop" type="checkbox" class="power float-left" title="run/stop">
+					<!--input func="runStop" type="checkbox" class="small cmdOnOff" title="run/stop"-->
 					<!--input  func="setName" type="text" class="float-left small" placeholder="Script_name" size="40"-->
 					<button func="uiSave"  class="float-right">Save as</button>
 					<!--div class='info'@Alex: trop petit et invisible-->

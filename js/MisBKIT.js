@@ -14,6 +14,7 @@ oscMobilizing = require("./OscMobilizing.js");
 scriptManager = require("./ScriptManager.js");
 animManager   = require("./AnimManager.js");
 pythonManager = require("./PythonManager.js");
+dmxManager    = require("./DmxManager.js");;
 
 //acces them by little name
 var managers = {
@@ -22,9 +23,9 @@ var managers = {
     sensor :require("./SensorManager.js"),
     midi   :require("./MidiPortManager.js"),
     osc    :require("./OscManager.js"),
-    dmx    :require("./DmxManager.js"),
     python :require("./PythonManager.js"),
-    ui     :require("./MisGUI.js")
+    ui     :require("./MisGUI.js"),
+    dmx    :require("./DmxManager.js")
 }
 
 //module.exports = class MisBKIT{
@@ -70,8 +71,10 @@ class MisBKIT{
         oscManager.init();
         console.log("======================== init: pythonManager");
         pythonManager.init();
-        console.log("======================== init: settingsManager");
+        console.log("======================== init: dmxManager");
+        dmxManager.init();
 
+        console.log("======================== init: settingsManager");
         settingsManager.loadSettings();
 
         this.updateTimer = setInterval(this.update.bind(this),45); //~50ms
@@ -129,8 +132,9 @@ class MisBKIT{
     terminate(){
         clearInterval(this.updateTimer);
         pythonManager.close(); //! important ! 
-        scriptManager.stop(); //! important ! 
+        scriptManager.stop();  //! important ! 
         scriptManager.saveSource();
+        dmxManager.close();
     }
 
 }

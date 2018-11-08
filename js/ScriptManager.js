@@ -6,6 +6,7 @@ anim   = require("./AnimManager.js");
 sensor = require("./SensorManager.js");
 midi   = require("./MidiPortManager.js")
 osc    = require("./OscManager.js") //tochange osc global
+dmx    = require("./DmxManager.js")
 ui     = require("./MisGUI.js");
 
 

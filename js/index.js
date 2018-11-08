@@ -49,6 +49,7 @@ var oscManager = null; //cf OscManager.js
 var cm9Com     = null;
 var robusManager = null;
 var oscMobilizing = null;
+var dmxManager = null;
 
 //=============== security :
 //https://electronjs.org/docs/tutorial/security#7-override-and-disable-eval
