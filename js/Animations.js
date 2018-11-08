@@ -447,7 +447,7 @@ Animation.prototype.updateRandom = function() {
     var value = Math.random()*(val_max-val_min)+val_min;
     for(var c=0;c<this.channels.length;c++){
         if(this.channels[c].play) {
-            // TODO DIDIER: quelle fonction dois-je appeler?
+            // TODO DIDIER2: quelle fonction dois-je appeler?
             console.log("updateRandom",this.channels[c].i,value);
             //dxlManager.onNormControl(this.channels[c].i,nv);
         }

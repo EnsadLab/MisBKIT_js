@@ -83,6 +83,11 @@ MisGUI_sensors.updateTextDescription = function(eltID,txt){
     //console.log("<p> type ??? ",$(".single-sensor").filter("[eltID="+ eltID + "]").find("[func=textDescription]").attr("type"));
 }
 
+MisGUI_sensors.changeOscAdress = function(eltID,adressInput, adressOutput){
+    $(".sensor-setting-more").filter("[eltID="+ eltID + "]").find("input[param=oscAdressInput]").val(adressInput);
+    $(".sensor-setting-more").filter("[eltID="+ eltID + "]").find("input[param=oscAdressOutput]").val(adressOutput);
+}
+
 
 MisGUI_sensors.changeMin = function(eltID,minValue){
     var sel = $(".sensor-setting-more").filter("[eltID="+ eltID + "]").find(".slider-range");

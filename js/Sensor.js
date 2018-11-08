@@ -18,9 +18,10 @@ Sensor = function () {
         valMax: 100,
         anim1: "none", //TODO: change later in an array or not?
         anim2: "none",
+        filter: "Select Filter",
         oscEnabledInput: false,
-        oscAdressInput: "", // TODO DIDIER: a default osc adress ???
-        oscAdressOutput: "", // TODO DIDIER: a default osc adress ???
+        oscAdressInput: "",
+        oscAdressOutput: "",
         oscEnabledOutput: false,
         mobilizingEnabledInput: false,
         mobilizingEnabledOutput: false,
@@ -103,7 +104,7 @@ Sensor.prototype.onValue = function(val){
         //TODO anims
         if(this.s.animationsEnabledOutput) sensorManager.handleSensorValueForAnims(this.ID,val); 
         if(this.s.oscEnabledOutput) {
-            //TODO DIDIER: envoyer OSC...
+            //TODO DIDIER2: envoyer OSC...
             //console.log("send osc from sensor",this.ID,nv);
             //oscManager.sendSensorMessage(this.ID,nv);
         }
@@ -123,7 +124,7 @@ Sensor.prototype.onValue = function(val){
         }
     }
     // here we update the value in the gui. We need the value, the filtered value and the percentage
-    // TODO DIDIER: send the filtered value as well...
+    // TODO DIDIER2: send the filtered value as well...
     var fval = val; 
     var fnv = (fval-this.s.valMin)/(this.s.valMax-this.s.valMin);
     MisGUI_sensors.setSensorValue(this.ID,val,nv*100.0,fval,fnv*100.0);    

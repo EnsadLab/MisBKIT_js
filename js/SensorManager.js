@@ -285,12 +285,16 @@ class SensorManager{
     }
 
     addEmptySensor (){
-        //console.log("SensorManager.addEmptySensor");
+        console.log("SensorManager.addEmptySensor");
         var id = "S"+this.sensorID; 
         var sensor = new Sensor();
         sensor.ID = id;
         sensor.s.name = "Sensor_name"; // (+ this.sensorID;) to confusing when a previous sensor is there with same id
         sensor.s.ID_gui = this.sensors.length + 1;
+        // TODO DIDIER2: solution provisoire... on peut mettre l'adresse par défaut ici....
+        sensor.s.oscAdressInput = "mbk/test1";
+        sensor.s.oscAdressOutput = "mbk/test2";
+        ////////////////////////////////////////////////////////////////////////////////
         this.sensors.push(sensor);
         misGUI.cloneElement(".single-sensor",sensor.ID); 
         misGUI.cloneElement(".sensor-setting-more",sensor.ID);  
@@ -303,6 +307,7 @@ class SensorManager{
         MisGUI_sensors.setSensorAnims();
         MisGUI_sensors.hideAllOutputEntries(sensor.ID);
         MisGUI_sensors.selectSensor(sensor.ID);
+        MisGUI_sensors.changeOscAdress(sensor.ID,sensor.s.oscAdressInput,sensor.s.oscAdressOutput);
         misGUI.setManagerValue("sensorManager","onNameText",sensor.s.name,sensor.ID);
         sensor.s.enabled = true;
         misGUI.setManagerValue("sensorManager","enable",true,sensor.ID);
@@ -359,7 +364,14 @@ class SensorManager{
             sensor.s[name]=value;
             // SOLUTION provisoire......
             switch(name){
-
+                case "oscAdressInput":
+                    // TODO DIDIER2:
+                    // envoyer la nouvelle adresse OSC à l'OSCMANAGER
+                break;
+                case "oscAdressOutput":
+                    // TODO DIDIER2:
+                    // envoyer la nouvelle adresse OSC à l'OSCMANAGER
+                break;
             }
                         //tester if sensor.s[name] exists ???
             /*TODO TODO: old version..
