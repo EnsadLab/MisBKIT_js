@@ -887,15 +887,15 @@
 							<div class="large float-left text-right">
 								<div class="info small">
 									<p class="text-left">Offset :</p>
-									<input title ="[-1.0,1.0]" type="number" class="small tiny" value="34" step="0.1">
+									<input title ="[-1.0,1.0]" type="number" class="small tiny" func="changeSettingsVariable"  value="34" step="0.1" param="offset">
 								</div>
 								<div class="info small">
 									<p class="text-left">Frequency :</p>
-									<input title="0.1(slow), 2.0(quick)" type="number" class="small tiny" value="34" step="0.1">
+									<input title="0.1(slow), 2.0(quick)" type="number" class="small tiny" func="changeSettingsVariable"  value="34" step="0.1" param="period">
 								</div>
 								<div class="info small">
 									<p class="text-left">Amplitude :</p>
-									<input title="[0.0,1.0]" type="number" class="small tiny" value="34" step="0.1">
+									<input title="[0.0,1.0]" type="number" class="small tiny"  func="changeSettingsVariable" value="34" step="0.1" param="amplitude">
 								</div>
 							</div>
 
@@ -914,22 +914,22 @@
 							<div class="large float-right text-right">
 								<div class="info small">
 									<p class="text-left">min value :</p>
-									<input type="number" class="small tiny" value="34" func="changeParam" param="param0">
+									<input type="number" class="small tiny" value="34" func="changeSettingsVariable" param="valmin">
 								</div>
 								<div class="info small">
-									<p class="text-left">max value:</p>
-									<input type="number" class="small tiny" value="34" func="changeParam" param="param2">
+									<p class="text-left">interval min :</p>
+									<input type="number" class="small tiny" value="34" func="changeSettingsVariable" param="intmin">
 								</div>
 							</div>
 							<div class="large float-right text-right">
 								<div class="info small">
-									<p class="text-left">interval min :</p>
-									<input type="number" class="small tiny" value="34" func="changeParam" param="param1">
+									<p class="text-left">max value:</p>
+									<input type="number" class="small tiny" value="34" func="changeSettingsVariable" param="valmax">
 								</div>
 								
 								<div class="info small">
 									<p class="text-left">interval max :</p>
-									<input type="number" class="small tiny" value="34" func="changeParam" param="param3">
+									<input type="number" class="small tiny" value="34" func="changeSettingsVariable" param="intmax">
 								</div>
 								<!-- <button class="gear tiny" func="setPopupValues" data-id="randomPopup"><img src="assets/settings.png"></button> -->
 							</div>

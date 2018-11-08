@@ -43,9 +43,11 @@ Sensor = function () {
         robusEnabledInput: false,
         robusInputParams: {gate:"gate",module:"",pin:""},
         sinusEnabledInput: false,
-        sinusParams: {period:5,offset:0,current:0},
+        //sinusParams: {period:5,offset:0,current:0},
+        sinusParams: {amplitude:1.0,offset:0.0,period:1.0,current:0},
         randomEnabledInput: false,
-        randomParams: {type:"simple",step:0,periodMin:1,periodMax:5,v1min:0,v1max:100,v2min:0,v2max:100},
+        //randomParams: {type:"simple",step:0,periodMin:1,periodMax:5,v1min:0,v1max:100,v2min:0,v2max:100},
+        randomParams: {valmin:0,valmax:100,intmin:2,intmax:5},
         inputEnabled: false, //TODO?
         //inputParams: TODO ?
         ID_gui: -1,
@@ -214,7 +216,10 @@ Sensor.prototype.inputOnOff = function(onoff){ //Didier
             if(onoff){
                 var p = this.s.sinusParams;
                 p.period = +p.period;
-                p.offset = p.current; //starts where it stopped
+                p.offset = +p.offset;
+                p.amplitude = +p.amplitude;
+                //p.offset = p.current; //starts where it stopped //CEC: huh?
+                p.current = +p.current;
                 this.inputTime = Date.now();
                 this.inputInterval = setInterval(this.sinusUpdate.bind(this),50);
             }
@@ -224,13 +229,19 @@ Sensor.prototype.inputOnOff = function(onoff){ //Didier
             if(onoff){
                 var p = this.s.randomParams;
                 //string to num
-                p.periodMin = +p.periodMin; p.periodMax = +p.periodMax;
-                p.v1min = +p.v1min; p.v1max = +p.v1max;
-                p.v2min = +p.v2min; p.v2max = +p.v2max;
-                p.step = 0;
+                //p.periodMin = +p.periodMin; p.periodMax = +p.periodMax;
+                //p.v1min = +p.v1min; p.v1max = +p.v1max;
+                //p.v2min = +p.v2min; p.v2max = +p.v2max;
+                //p.step = 0;
+                p.valmin = +p.valmin;
+                p.valmax = +p.valmax;
+                p.intmin = +p.intmin;
+                p.intmax = +p.intmax;
                 this.inputTime = Date.now();
-                this.inputTimer = setTimeout(this.updateRandom.bind(this),p.periodMin*1000);
-                console.log("RANDOM STARTED:",this.s.randomParams.periodMin*1000);
+                //this.inputTimer = setTimeout(this.updateRandom.bind(this),p.periodMin*1000);
+                this.inputTimer = setTimeout(this.updateRandom.bind(this),p.intmin*1000);
+                //console.log("RANDOM STARTED:",this.s.randomParams.periodMin*1000);
+                console.log("RANDOM STARTED:",this.s.randomParams.intmin*1000);
             }
             else
             console.log("RANDOM STOPPED:",this.s.randomParams.periodMin*1000);
@@ -239,6 +250,20 @@ Sensor.prototype.inputOnOff = function(onoff){ //Didier
     }
 }
 
+// sinus: param[0]: offset, param[1]: Frequency, param[2]: amplitude[0.0,1.0]
+Sensor.prototype.sinusUpdate = function(){
+    var p = this.s.sinusParams;
+    var dt = (Date.now()-this.inputTime)*0.001;
+
+    this.sinusTimer += 0.2;
+    //var a = this.sinusTimer;
+    var v = p.amplitude*Math.sin(Math.PI*2.0*dt*p.period) + p.offset; // melange entre periode et fréquence... dernière minute... pour que cela que c'est une * et non une division
+    var nv = v*0.5 + 0.5;
+    this.onNormValue(nv);
+}
+
+
+/* previous version from Didier
 Sensor.prototype.sinusUpdate = function(){
     //if(this.s.sinusEnabledInput){ //TOTHINK
         var p = this.s.sinusParams;
@@ -249,7 +274,7 @@ Sensor.prototype.sinusUpdate = function(){
         this.onNormValue(v);
         //console.log("val:",v);
     //}    
-}
+}*/
 
 
 /*
@@ -259,6 +284,15 @@ Sensor.prototype.interpole = function(){
 }
 */
 
+Sensor.prototype.updateRandom = function(){
+    var p = this.s.randomParams;  
+    var v = Math.random()*(p.valmax-p.valmin)+p.valmin;
+    var t = Math.random()*(p.intmax-p.intmin)+p.intmin;
+    this.onValue(v);
+    this.inputTimer = setTimeout(this.updateRandom.bind(this),t*1000);
+}
+
+/* previous version from Didier
 Sensor.prototype.updateRandom = function(){ //randomEnabledInput enabled when switched to CM9 !
     //console.log("RANDOM updateRandom:",this.s.input_entry,this.s.randomEnabledInput);
     if((this.s.randomEnabledInput)&&(this.s.input_entry=="random")){
@@ -275,4 +309,5 @@ Sensor.prototype.updateRandom = function(){ //randomEnabledInput enabled when sw
         p.step ^= 1;
     }
 }
+*/
 

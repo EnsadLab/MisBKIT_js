@@ -88,6 +88,13 @@ MisGUI_sensors.changeOscAdress = function(eltID,adressInput, adressOutput){
     $(".sensor-setting-more").filter("[eltID="+ eltID + "]").find("input[param=oscAdressOutput]").val(adressOutput);
 }
 
+MisGUI_sensors.changeSinusRandomParams = function(eltID,s){
+    for(var k in s){
+        //console.log("????",k,"a",s,"b",s[k]);
+        $(".sensor-setting-more").filter("[eltID="+ eltID + "]").find("input[param=" + k+"]").val(s[k]);
+    }
+}
+
 
 MisGUI_sensors.changeMin = function(eltID,minValue){
     var sel = $(".sensor-setting-more").filter("[eltID="+ eltID + "]").find(".slider-range");
