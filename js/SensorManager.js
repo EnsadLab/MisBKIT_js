@@ -357,6 +357,10 @@ class SensorManager{
 
 
             sensor.s[name]=value;
+            // SOLUTION provisoire......
+            switch(name){
+
+            }
                         //tester if sensor.s[name] exists ???
             /*TODO TODO: old version..
             switch(name){

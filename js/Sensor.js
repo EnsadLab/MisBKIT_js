@@ -19,7 +19,8 @@ Sensor = function () {
         anim1: "none", //TODO: change later in an array or not?
         anim2: "none",
         oscEnabledInput: false,
-        oscAdress: "", // TODO DIDIER: a default osc adress ???
+        oscAdressInput: "", // TODO DIDIER: a default osc adress ???
+        oscAdressOutput: "", // TODO DIDIER: a default osc adress ???
         oscEnabledOutput: false,
         mobilizingEnabledInput: false,
         mobilizingEnabledOutput: false,
