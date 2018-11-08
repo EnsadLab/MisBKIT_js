@@ -128,8 +128,8 @@ class MisBKIT{
 
     terminate(){
         clearInterval(this.updateTimer);
-        pythonManager.stop(); //! important ! 
-        scriptManager.stop();
+        pythonManager.close(); //! important ! 
+        scriptManager.stop(); //! important ! 
         scriptManager.saveSource();
     }
 

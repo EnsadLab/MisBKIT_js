@@ -91,7 +91,7 @@ DxlManager.prototype.cmdOld = function(cmd,index,arg){
 //dxlID clockwise angleMin angleMax speedMin speedMax
 //joint wheel recCheck enable angle velocity
 DxlManager.prototype.cmd = function(func,eltID,val,param){
-    console.log("dxlManager:cmd:",func,eltID,val,param);
+    //console.log("dxlManager:cmd:",func,eltID,val,param);
     if(this[func]){
         this[func](+eltID,val,param); //eltID=index
     }
@@ -223,7 +223,7 @@ DxlManager.prototype.saveSettings = function () {
     for(var index in sensorManager.sensors){
         s.sensors.push({name: sensorManager.sensors[index].s.name});
     }
-    console.log("setLoadedSensors:",s.sensors);
+    //console.log("setLoadedSensors:",s.sensors);
 
 
     var nbm = this.motors.length;
@@ -235,23 +235,23 @@ DxlManager.prototype.saveSettings = function () {
     //fs.writeFileSync(__dirname + "/settings.json", json);
     //fs.writeFileSync(__appPath + "/settings.json", json);
     settingsManager.saveToConfigurationFolder("settings.json",json);
-    console.log(json);
+    //console.log(json);
 
     return this.savecount;
 }
 
 //TODO move to SettingsManager , and add DxlManager.setSettings
 DxlManager.prototype.loadSettings = function () {
-    console.log("loading dxl manager settings:");
+    console.log("********* loading dxl manager settings:*********");
     //var json = fs.readFileSync(__appPath + "/settings.json", 'utf8');
     var json = settingsManager.loadConfiguration("settings.json");
+    //console.log(json)
     if (json) {
         var s = JSON.parse(json);
         //this.serialPort = s.serialPort;
         //cm9Com.serialName = s.serialPort;
 
-        if(s.savecount)
-            this.savecount = s.savecount; //DEBUG
+        if(s.savecount) this.savecount = s.savecount; //DEBUG
 
         if(s.cm9Num){
             cm9Com.changeCm9(+s.cm9Num);
@@ -814,7 +814,7 @@ DxlManager.prototype.onMetaKey=function(char){
     if(char=='s'){
         console.log("Saving all files");
         this.saveSettings();
-        settingsManager.saveSettings();
+        settingsManager.saveSettings(); //
     }
 }
 

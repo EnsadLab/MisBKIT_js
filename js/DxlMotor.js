@@ -160,7 +160,8 @@ Dxl.prototype.copySettings = function(dxl){
     }
     if(this.m.id==0)this.m.id=this.m.dxlID; //m.id deprecated
     else if(this.m.dxlID==0)this.m.dxlID=this.m.id;
-    //console.log("***copySettings:",this.m);
+    if(this.m.dxlID==undefined)this.m.dxlID=0; //gasp
+    console.log("***copySettings:",this.m);
 }
 
 Dxl.prototype.getSettings=function(){

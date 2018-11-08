@@ -164,8 +164,14 @@ class scriptManager {
     }
 
     update(){ //called by MisBKIT.js
-        if(this.script._running)
+        if(this.script._running){
             this.script._update();
+        }
+    }
+
+    runStop(run){
+        if(run)this.run();
+        else this.stop();        
     }
 
     run(){ //todo: gui unfreeze ?

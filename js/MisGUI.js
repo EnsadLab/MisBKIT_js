@@ -233,7 +233,7 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                     });
                     break;
                 default:
-                    console.log("initManagerFunctions: UNHANDLED:",$(this).prop("tagName"),$(this).prop("type"),func);    
+                    //console.log("initManagerFunctions: UNHANDLED:",$(this).prop("tagName"),$(this).prop("type"),func);    
                 break   
             }
         }
@@ -278,7 +278,7 @@ MisGUI.prototype.showParams=function(opt){
             if(e.length>0){
                 this.setElementValue(e,opt.val[p]);
             }
-            else console.log("showParam:notfound",p);
+            //else console.log("showParam:notfound",p);
         }
     }
     else console.log("*****GUIPARAMS NOT FOUND:",sel);
@@ -559,7 +559,7 @@ MisGUI.prototype.midiMode =function(index,value){
 }
 
 MisGUI.prototype.motorMode =function(index,value){
-    console.log("************ MisGUI.mode:",index,value);
+    //console.log("************ MisGUI.mode:",index,value);
     if(this.rotSpeeds[index]){
         switch(value){
             case false: case 0: case "J": case "joint":

@@ -64,20 +64,36 @@ window.onbeforeunload=function(){
 }
 
 ipc.on("close",function(e,arg){
-    ipc.send("message","onclose");
+    try{
+    var step = 0;
+    ipc.send("message","onclose"+step);step+=1;
     MBK.terminate();
+    ipc.send("message","onclose"+step);step+=1;
+
     //TODO --> MBK.terminate()
     dxlManager.stopAll();
+    ipc.send("message","onclose"+step);step+=1;
     oscMobilizing.close();
-    robusManager.stopAll();
+    ipc.send("message","onclose"+step);step+=1;
+    //robusManager.stopAll();
+    //ipc.send("message","onclose"+step);step+=1;
     cm9Com.close();
+    ipc.send("message","onclose"+step);step+=1;
 
-    var c = dxlManager.saveSettings();
+    var c=dxlManager.saveSettings();
+    ipc.send("message","onclose"+step);step+=1;
     ipc.send("message","savecount:"+c);
     //alert("Quit MisBkit");
     settingsManager.saveSettings();
+    ipc.send("message","onclose"+step);step+=1;
     motorMappingManager.saveMappingSettings();
+    ipc.send("message","onclose"+step);step+=1;
     sensorManager.saveSensorSettings();
+    ipc.send("message","onclose"+step);step+=1;
+    }
+    catch(err){
+        ipc.send("message","ERR:"+err);
+    }
     ipc.send("message","closed");
 });
 

@@ -16,6 +16,7 @@ module.exports = stgmng;
 SettingsManager.prototype.loadSettings = function(){
     console.log("DIR NAME " + __appPath + "" + "/pathSettings.json");
     var json = fs.readFileSync(__appPath + "/pathSettings.json", 'utf8');
+    console.log("SETTINGS",json)
     if (json) {
         var s = JSON.parse(json);
 
@@ -29,7 +30,7 @@ SettingsManager.prototype.loadSettings = function(){
         
     }
     this.copyScriptExamples();
-
+    console.log("SETTINGS scriptFolder",this.scriptFolder)
     scriptManager.folderIsReady(this.scriptFolder);//in any case , no?
 };
 SettingsManager.prototype.saveSettings = function () {
@@ -183,6 +184,7 @@ SettingsManager.prototype.copyPasteFromUserFolder = function(filename){
 }
 
 SettingsManager.prototype.saveToConfigurationFolder = function(filename,data){
+    console.log("SAVE SETTINGS:",this.configurationFolder)
     fs.writeFileSync(this.configurationFolder + filename, data );    
 }
 

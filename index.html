@@ -290,7 +290,6 @@
 							  <div class="slider round"></div>
 							</label>
 						</div>
-						<!--Didier: ajout d'un input number-->
 						<input func="onControl" type="number" class="num_rotary" placeholder="angle/speed">
 					</div>
 
@@ -1115,19 +1114,23 @@
 			<div class="script-panel scriptManager">
 				<div class="ctrl-row">
 					<button func="uiNew" id="load-code" class="float-left">New</button>
+					<!--@Alex je prefere à cet endroit , didier-->
+					<input  func="setName" type="text" class="float-left small" size="80">
 					<button func="uiLoad" id="load-code" class="float-right">Load</button>
 				</div>
 				<div class="ctrl-row">
 					<!-- <button func="stop" id="stop-code" class="float-left stop">Stop</button>
 					<button func="run"  id="run-code" class="float-left valid">Run</button> -->
 
-					<input type="checkbox" func="enable" class="power float-left cmdTog" name ="" title="enable/disable">
-
-					<input  func="setName" type="text" class="float-left small" placeholder="Script_name" size="40">
-					<button func=""  class="float-right">Save</button>
-					<div class='info'>
+					<!--input func="runStop" type="checkbox" class="power float-left" title="enable/disable"-->
+					<input func="runStop" type="checkbox" class="small cmdOnOff" title="run/stop">
+					<!--input  func="setName" type="text" class="float-left small" placeholder="Script_name" size="40"-->
+					<button func="uiSave"  class="float-right">Save as</button>
+					<!--div class='info'@Alex: trop petit et invisible-->
+					<font color='lightgreen'><!--@Alex même vert que celui de l'editeur?-->
 						<span func="log">Script info</span>
-					</div>
+					</font-->
+					<!--/div-->
 				</div>
 				
 
