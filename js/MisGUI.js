@@ -94,7 +94,7 @@ MisGUI.prototype.radioHide = function(selector,eltid){
   @param eltID: the parameter eltID of the new cloned element
   @param afterID: when given, the new cloned element will be inserted after the element with the given afterID
  */
-MisGUI.prototype.cloneElement = function(selector,eltID,afterID){ //eltID may be a string
+MisGUI.prototype.cloneElement = function(selector,eltID,afterID,afterSelector){ //eltID may be a string
     var model = $(selector).first();      //model MUST be first ---> insertAfter
     if(model.length>0){
         //console.log("CLONE:manager:",model.data("manager"));
@@ -111,15 +111,31 @@ MisGUI.prototype.cloneElement = function(selector,eltID,afterID){ //eltID may be
             clone.find("*").attr("eltID",eltID);
         }
         if(afterID != undefined){
-            var after = $(selector).filter("[eltID="+afterID+"]");
-            //console.log("clone after:",after);
-            if(after.length>0)
-                clone.insertAfter(after);
-            else
-                clone.insertAfter(model);            
+            if(afterSelector != undefined){
+                var after = $(afterSelector).filter("[eltID="+afterID+"]");
+                //console.log("clone after:",after);
+                if(after.length>0)
+                    clone.insertAfter(after);
+                else
+                    clone.insertAfter(model);  
+            }
+            else{
+                var after = $(selector).filter("[eltID="+afterID+"]");
+                //console.log("clone after:",after);
+                if(after.length>0)
+                    clone.insertAfter(after);
+                else
+                    clone.insertAfter(model);  
+            }          
         }
-        else
-            clone.insertAfter(model);
+        else {
+            if(afterSelector != undefined){
+                var aftermodel = $(selector).first(); 
+                clone.insertAfter(aftermodel);
+            } else {
+                clone.insertAfter(model);
+            }
+        }
         clone.show();
         return clone;
     }
@@ -1343,7 +1359,7 @@ MisGUI.prototype.scanMidiPorts = function(){
     var self = this;
     var sel = $("#midi-available");
     
-    console.log("----------------> Scanning midi ports");
+    console.log("##################################----------------> Scanning midi ports");
 
     sel.empty();
 

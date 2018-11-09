@@ -270,10 +270,15 @@ DxlManager.prototype.loadSettings = function () {
         this.webSocket = s.webSocket;
 
         // scan has already been called by misgui when we enter here.
+        console.log("#######################################");
+        midiPortManager.portNameAtStart = s.midiPorts;
+        console.log(midiPortManager.portNameAtStart);
+        console.log("#######################################");
+        /*
         for(var i=0; i<s.midiPorts.length; i++){
             console.log("opening midi port ", s.midiPorts[i]);
             midiPortManager.open(s.midiPorts[i]);
-        }
+        }*/
 
         var nbm = s.motors.length;
         if(nbm>MAX_SERVOS){console.log("TO MUCH MOTORS!",nbm);nbm=6;}

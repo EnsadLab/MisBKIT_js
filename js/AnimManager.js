@@ -71,7 +71,7 @@ class AnimManager {
         this.animations[id] = anim; 
         this.animationID++;
 
-        misGUI.cloneElement("#anim-" + selectedType,id);
+        misGUI.cloneElement("#anim-" + selectedType,id,"example","#anim-record");
         console.log("anim.channels.length",anim.channels.length);
 
         if(selectedType == "record"){
