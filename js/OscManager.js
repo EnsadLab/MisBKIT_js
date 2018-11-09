@@ -38,11 +38,10 @@ class OscUDP{  //Port or client ? ... auto client at reception
     setSettings( obj ){
         this.close();
         for(var p in obj ){
-            console.log("oscUDP.set:",p,obj[p])
             if(this.s[p]!=undefined)
                 this.s[p]=obj[p];
         }
-        console.log("oscUDP.s:",this.s)
+        //console.log("oscUDP.s:",this.s)
     }
 
     setParam(param,val){
@@ -52,7 +51,6 @@ class OscUDP{  //Port or client ? ... auto client at reception
 
     send(addr,args){ //args must be an Array
         if(this.ready){
-            //console.log("OscUDP:",typeof(this.udpPort.send))
             this.udpPort.send({
                 address:addr,
                 args:args
@@ -63,7 +61,6 @@ class OscUDP{  //Port or client ? ... auto client at reception
     sendStr(str){
         if(!this.ready)
             return;
-        console.log("SEND:",str);
         var spl  = str.split(" ");
         var a = [];
         for(var i=1;i<spl.length;i++){
@@ -103,7 +100,7 @@ class OscUDP{  //Port or client ? ... auto client at reception
         //this.udpPort.on("message",function(msg){console.log("Osc.message:",msg)}
         //this.udpPort.on("raw",function(msg){console.log("Osc.raw:",msg);});
         //this.udpPort.on("bundle",function(bundle,timetag,info){console.log("Osc.bundle:",timetag,bundle,info);});
-        this.udpPort.on("osc",function(msg,info){
+        this.udpPort.on("osc",function(msg,info){ //info = sender
             if(self.listener)
                 self.listener(msg.address,msg.args)
         });
@@ -192,7 +189,7 @@ OscManager.prototype.addPort = function(type){
 }
 
 OscManager.prototype.send = function(addr,args){ //args = Array
-    console.log("***************send:",typeof(this.ports["OSC0"].send));
+    //console.log("***************send:",typeof(this.ports["OSC0"].send));
     this.ports["OSC0"].send(addr,args)
 }
 
@@ -200,7 +197,8 @@ OscManager.prototype.rcv = function(addr,args){
     console.log("OSC MANAGER rcv:",addr,args)
 
     scriptManager.call("onOSC",addr,args);
-    pythonManager.onOsc(addr,args);
+    pythonManager.onOSC(addr,args);
+    sensorManager.onOSC(addr,args);
 
     var route = addr.split('/')
     //console.log("-osc  MBK",route[1])
@@ -220,15 +218,6 @@ OscManager.prototype.rcv = function(addr,args){
 }
 
 
-/* OscManager.prototype.changeParam = function(name,value){
-    this.close();
-    if(this.s[name]){
-        this.s[name]=value;
-    }
-    else
-        console.log("osc bad param:",name,val);
-}*/
-
 //TODO freeze ? onOff ALL : doesnt manage id now ... GUI
 OscManager.prototype.onOff = function(idelt,onoff){
     console.log("OscManager onOff",onoff)
@@ -240,73 +229,24 @@ OscManager.prototype.onOff = function(idelt,onoff){
         for(var id in this.ports )
             this.close(id)
     }
-    misGUI.showValue({class:"oscManager",func:"onOff",val:onoff})
+    //inutile misGUI.showValue({class:"oscManager",func:"onOff",val:onoff})
 }
 
 //TODO unfreeze ? 
 OscManager.prototype.open = function(id){
     console.log("-----open:",id)
     this.ports[id].open()
-    //TODO misGUI ...
+    misGUI.showValue({class:"oscManager",func:"onOff",val:true})
 }
 
 OscManager.prototype.close= function(id){
     this.ports[id].close()
-    //TODO misGUI ...
+    misGUI.showValue({class:"oscManager",func:"onOff",val:false})
 }
 
-{/*OscManager.prototype.initUserReceiver = function(){
-    console.log("OSC:initUserReceiver",this.s.oscLocalPort);
-    //var inport = 4444;
-    var inport = this.s.oscLocalPort; //4444;
-    this.oscUserReceiver = udp.createSocket("udp4", function(msg, rinfo) {
-        var error, error1;
-        console.log("osc rcv",msg);
-        try {
-            var rcv = oscmin.fromBuffer(msg);
-            var adr = rcv.address;
-            if(adr.startsWith("/mbk/anims")){
-                console.log("osc msg:",rcv.address,rcv.args[0].value);
-                oscManager.handleAnimMessage(rcv); //le self. ne marchait pas!!!
-            }else if(rcv.address.startsWith("/mbk/motors")){
-                console.log("osc msg:",rcv.address);
-                oscManager.handleMotorMessage(rcv);
-            }else if(rcv.address.startsWith("/mbk/sensors")){
-                console.log("osc msg:",rcv.address);
-                oscManager.handleSensorMessage(rcv);
-            }else{
-                console.log("invalid OSC message: " + rcv);
-            }
-            return rcv;
-            } catch (error1) {
-                error = error1;
-                return console.log("invalid OSC packet " + error);
-            }
-    });
-    
-    this.oscUserReceiver.bind(inport);
-    console.log(this.oscUserReceiver);
 
-}
-*/
-}
-//... mobilizing ... in progress
-//TODO split
-OscManager.prototype.handleMessage = function(rcv,mobz_connexion){
-    var adr = rcv.address;
-    if(adr.startsWith("/mbk/anims")){
-        //console.log("mbz msg:",rcv.address,rcv.args[0].value);
-        oscManager.handleAnimMessage(rcv);
-    }else if(rcv.address.startsWith("/mbk/motors")){
-        console.log("OSC.handleMessage:",rcv.address);
-        oscManager.handleMotorMessage2(rcv);
-    }else if(rcv.address.startsWith("/mbk/sensors")){
-        oscManager.handleSensorMessage(rcv,mobz_connexion);
-    }else{
-        console.log("invalid OSC message: " + rcv);
-    }
-}
 
+/* keep for info
 // mobilizing ... in progress
 OscManager.prototype.handleMotorMessage2 = function(rcv){
     var adds = rcv.address.split("/");
@@ -314,12 +254,6 @@ OscManager.prototype.handleMotorMessage2 = function(rcv){
     var vals  = oscManager.getValsInAdress(4,adds,rcv.args);
     //vals[0]=indexMotor 
     console.log("osc motors:",adds[3],vals);
-    /* 
-    if( typeof dxlManager[adds[3]]==='function' ){
-        //console.log("DXLMANAGER has ",dxlManager[adds[3]]);
-        dxlManager[adds[3]](args);
-    }
-    ok ça marche ... on verra plus tard */
 
     switch(adds[3]){ //cmd
         case "posN":
@@ -355,23 +289,9 @@ OscManager.prototype.handleMotorMessage2 = function(rcv){
 
     }
 }
+*/
 
-//transferre les derniers item de address dans vals
-OscManager.prototype.getValsInAdress = function(index,splt,args){
-    vals = [];
-    for(var i=index;i<splt.length;i++){
-        if(isNaN(splt[i]))
-            vals.push(splt[i]);
-        else
-            vals.push(+splt[i]);
-    }
-    for(var i=0;i<args.length;i++){
-        vals.push(args[i].value);
-    }
-    return vals;
-}
-
-
+/*keep for info
 // handles animation messages coming from user app
 OscManager.prototype.handleAnimMessage = function(rcv){
 
@@ -402,7 +322,9 @@ OscManager.prototype.handleAnimMessage = function(rcv){
         }
     }
 }
+*/
 
+/*
 // handles motor messages coming from user app
 OscManager.prototype.handleMotorMessage = function(rcv){
 
@@ -455,36 +377,33 @@ OscManager.prototype.handleMotorMessage = function(rcv){
         dxlManager.stopAllMotors();
     }else if(adr.startsWith(cmp = "/mbk/motors/stop")){ // only stops motor
         dxlManager.stopMotor(arg);
-        /*
-        var divMotor = misGUI.getMotorUI(arg);
-        if(divMotor.find("[name=mode]").prop('checked')) misGUI.speed(arg,0);
-        else misGUI.angle(arg,0);
-        */
     }
 
 }
+*/
 
-
+/*
 OscManager.prototype.setMode = function(motorIndex, mode){
     var divMotor = misGUI.getMotorUI(motorIndex);
     if((mode == 0 && !divMotor.find("[name=mode]").prop('checked')) ||
         (mode == 1 && divMotor.find("[name=mode]").prop('checked')) )
             divMotor.find("[name=mode]").click();
 }
+*/
 
-
+/*
 OscManager.prototype.getArgInAdress = function(adrSrc,adrCmp){
     console.log("getArgInAdress",adrSrc,adrCmp);
     return parseInt(adrSrc.substring(adrCmp.length));
 }
-
-
+*/
+/*
 OscManager.prototype.getStringInAdress = function(adrSrc,adrCmp){
     console.log("getArgInAdress",adrSrc,adrCmp);
     return adrSrc.substring(adrCmp.length);
 }
-
-
+*/
+/*
 OscManager.prototype.sendSensorMessage = function(sensorID,sensorVal){
 
     var sensor = sensorManager.getSensorWithID(sensorID);//sensorManager.sensors[sensorID];
@@ -509,7 +428,9 @@ OscManager.prototype.sendSensorMessage = function(sensorID,sensorVal){
  
     this.udpUserSender.send(buf, 0, buf.length, this.s.oscRemotePort, this.s.oscRemoteIP );
 }
+*/
 
+/*
 OscManager.prototype.handleSensorMessage = function(rcv,mobz_connexion){
 
     var adr = rcv.address;
@@ -536,5 +457,6 @@ OscManager.prototype.handleSensorMessage = function(rcv,mobz_connexion){
     }
     
 }
+*/
 
 

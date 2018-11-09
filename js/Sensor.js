@@ -96,7 +96,11 @@ Sensor.prototype.onNormValue = function(nval){ //[0 1]
 
 Sensor.prototype.onValue = function(val){
     //console.log("sensor:",this.s.name,val);
+
+    //CECILE2:  le filtre au début : on veut une valeur filtrée !
+
     var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin);
+ 
     this.currValue = val;
     this.normValue = nv;
     if(this.s.enabled){
@@ -109,8 +113,8 @@ Sensor.prototype.onValue = function(val){
         if(this.s.animationsEnabledOutput) sensorManager.handleSensorValueForAnims(this.ID,val); 
         if(this.s.oscEnabledOutput) {
             //TODO DIDIER2: envoyer OSC...
-            //console.log("send osc from sensor",this.ID,nv);
-            //oscManager.sendSensorMessage(this.ID,nv);
+            //DONE: je choisi d'envoyer la valeur normalisée ... GUI?
+            oscManager.send(this.s.oscAdressOutput,[nv])
         }
         if(this.s.mobilizingEnabledOutput){
             //console.log("send sensor:",this.s.name,nv);
@@ -129,15 +133,20 @@ Sensor.prototype.onValue = function(val){
     }
     
     // here we update the value in the gui. We need the value, the filtered value and the percentage
+    //DIDIER: moved on top : 
+    /*
     var fval = val;
     if(this.s.filter == "lowpass"){
         fval = this.lowPassFilter(val); 
     } 
-    
+
+
     // TODO DIDIER2: si tu veux implémenter un autre filtre!! -> index.html ligne 947 ("anotherfilter")
     
     //console.log("val",val,"fval",fval);
     var fnv = (fval-this.s.valMin)/(this.s.valMax-this.s.valMin);
+    */
+
     MisGUI_sensors.setSensorValue(this.ID,val,nv*100.0,fval,fnv*100.0);    
 }
 

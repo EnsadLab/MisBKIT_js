@@ -157,32 +157,32 @@ class PythonManager{
 
     onDxlpos(arr){  //array ["dxlpos" + motor positions ]
         //from python you can use dxl.position(index) to get a motor's current position 
-        if(this.forwards.indexOf("dxlpos")>=0){
+        if( (this.pyshell) && (this.forwards.indexOf("dxlpos")>=0)){
             this.send("dxlpos "+arr.join(' '));
         }
     }
 
     onMidi(id,channel,type,d1,d2){ //{port:portID,midi:msg}
-        if(this.forwards.indexOf("midi")>=0){
+        if((this.pyshell) && (this.forwards.indexOf("midi")>=0)){
             this.send("midi "+id+" "+channel+" "+type+" "+d1+" "+d2);
         }
     }
 
     //we could add a sensor output "Python" , with a custom name
     onSensor(name,val){  //array of motor positions
-        if(this.forwards.indexOf("sensor")>=0){ //fit with 'sensors
+        if( (this.pyshell) && (this.forwards.indexOf("sensor")>=0)){ //fit with 'sensors
             this.send("sensor "+name+" "+val);
         }
     }
 
-    onOsc(addr,args){//addr string , args Array
-        if(this.forwards.indexOf("osc")>=0){
-            this.send("osc "+addr+" "+args.joint(' '));
+    onOSC(addr,args){//addr string , args Array
+        if((this.pyshell) && (this.forwards.indexOf("osc")>=0)){
+            this.send("osc "+addr+" "+args.join(' '));
         }
     }
 
     onKey( key ){
-        if(this.forwards.indexOf("key")>=0){
+        if( (this.pyshell)&&(this.forwards.indexOf("key")>=0)){
             this.send("key "+key);
         }
     }

@@ -296,8 +296,8 @@ class SensorManager{
         sensor.s.name = "Sensor_name"; // (+ this.sensorID;) to confusing when a previous sensor is there with same id
         sensor.s.ID_gui = this.sensors.length + 1;
         // TODO DIDIER2: solution provisoire... on peut mettre l'adresse par défaut ici....
-        sensor.s.oscAdressInput = "mbk/test1";
-        sensor.s.oscAdressOutput = "mbk/test2";
+        sensor.s.oscAdressInput = "/mbk/sensor"+this.sensorID;  //Didier: avec ID
+        sensor.s.oscAdressOutput = "/mbk/sensor"+this.sensorID; // ... name ?
         ////////////////////////////////////////////////////////////////////////////////
         // IF WE WANT TO CHANGE THE DEFAULT SINUS AND RANDOM VALUES
         sensor.s.sinusParams = {amplitude:1.0,offset:0.0,period:1.0,current:0};
@@ -377,11 +377,13 @@ class SensorManager{
             } else if(name =="offset" || name=="period" || name=="amplitude"){
                 sensor.s.sinusParams[name] = value;
             } else if(name == "oscAdressInput"){
-                // TODO DIDIER2:
-                // envoyer la nouvelle adresse OSC à l'OSCMANAGER: value
+                // TODO DIDIER2:// envoyer la nouvelle adresse OSC à l'OSCMANAGER: value
+                //DONE: kind of listener later  
+                sensor.s.oscAdressInput = value;
             } else if(name == "oscAdressOutput"){
-                // TODO DIDIER2:
-                // envoyer la nouvelle adresse OSC à l'OSCMANAGER: value
+                // TODO DIDIER2: // envoyer la nouvelle adresse OSC à l'OSCMANAGER: value
+                //DONE
+                sensor.s.oscAdressOutput = value;
             } else {
                 sensor.s[name]=value;
             }
@@ -646,6 +648,7 @@ class SensorManager{
         return false;
     }
 
+    /* TO DELETE ?
     onOscMessage(sensor_name,value,mobilizing,minValue,maxValue){
         console.log("onOscMessage",sensor_name,value,minValue,maxValue);
         var sensor = this.getSensorWithName(sensor_name);
@@ -661,7 +664,15 @@ class SensorManager{
                 sensor.onValue(mapped_arg);
             }
         }
+    }*/
+
+    onOSC(addr,args){
+        for(var i=0; i<this.sensors.length;i++){
+            if(this.sensors[i].s.oscAdressInput == addr)
+                this.sensors[i].onValue(args[0]);
+        }
     }
+
     
     getSensorIds(type,port,cmd,nbID){
         var sensorIDs = new Array();
