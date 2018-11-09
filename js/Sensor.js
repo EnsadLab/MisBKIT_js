@@ -112,14 +112,14 @@ Sensor.prototype.onValue = function(val){
         if( this.s.motorEnabledOutput ){
             //var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin)
             //console.log("to motor:",this.s.toMotorIndex,nv);
-            dxlManager.onNormControl(this.s.toMotorIndex,nv);
+            dxlManager.onNormControl(this.s.toMotorIndex,fnv);
         }
         //TODO anims
-        if(this.s.animationsEnabledOutput) sensorManager.handleSensorValueForAnims(this.ID,val); 
+        if(this.s.animationsEnabledOutput) sensorManager.handleSensorValueForAnims(this.ID,fval); 
         if(this.s.oscEnabledOutput) {
             //TODO DIDIER2: envoyer OSC...
             //DONE: je choisi d'envoyer la valeur normalisée ... GUI?
-            oscManager.send(this.s.oscAdressOutput,[nv])
+            oscManager.send(this.s.oscAdressOutput,[fnv])
         }
         if(this.s.mobilizingEnabledOutput){
             //console.log("send sensor:",this.s.name,nv);
@@ -127,7 +127,7 @@ Sensor.prototype.onValue = function(val){
                 address:"/mbk/sensor",
                 args:[
                     {type:'s',value:this.s.name},
-                    {type:'f',value:nv}
+                    {type:'f',value:fnv}
                 ]
             });
         }
