@@ -303,6 +303,7 @@ class SensorManager{
         sensor.s.sinusParams = {amplitude:1.0,offset:0.0,period:1.0,current:0};
         sensor.s.randomParams = {valmin:0,valmax:100,intmin:2,intmax:5};
         ////////////////////////////////////////////////////////////////////////////////
+        sensor.s.alpha = 0.5;
         this.sensors.push(sensor);
         misGUI.cloneElement(".single-sensor",sensor.ID); 
         misGUI.cloneElement(".sensor-setting-more",sensor.ID);  

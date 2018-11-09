@@ -53,7 +53,7 @@ Sensor = function () {
         ID_gui: -1,
         input_entry: "",
         output_entries:[],
-        alpha: 1.0,
+        alpha: 0.5,
     };
 
     //Suggestion:
@@ -98,11 +98,16 @@ Sensor.prototype.onValue = function(val){
     //console.log("sensor:",this.s.name,val);
 
     //CECILE2:  le filtre au début : on veut une valeur filtrée !
-
+    // oui, juste!! fallait juste le rajouter...
     var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin);
+    var fval = val;
+    if(this.s.filter == "lowpass"){
+        fval = this.lowPassFilter(val); 
+    } 
+    var fnv = (fval-this.s.valMin)/(this.s.valMax-this.s.valMin);
  
-    this.currValue = val;
-    this.normValue = nv;
+    this.currValue = fval; // utiliser fval plutôt que val
+    this.normValue = fnv; // utiliser fnv plutôt que nv
     if(this.s.enabled){
         if( this.s.motorEnabledOutput ){
             //var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin)
@@ -146,7 +151,7 @@ Sensor.prototype.onValue = function(val){
     //console.log("val",val,"fval",fval);
     var fnv = (fval-this.s.valMin)/(this.s.valMax-this.s.valMin);
     */
-
+    //console.log("val",val,"fval",fval);
     MisGUI_sensors.setSensorValue(this.ID,val,nv*100.0,fval,fnv*100.0);    
 }
 
