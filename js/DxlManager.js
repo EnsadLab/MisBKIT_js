@@ -107,8 +107,6 @@ DxlManager.prototype.cmd = function(func,eltID,val,param){
     }
 }
 
-
-
 DxlManager.prototype.midiMapping =function(eltID,val,param){
     console.log("DxlManager:midiMapping:",eltID,param,val);
     switch(param){

@@ -1561,6 +1561,18 @@ MisGUI.prototype.setScript = function(code){
 }
 
 MisGUI.prototype.scriptOnOff = function(onoff){
+    misGUI.showValue({class:"scriptManager",func:"runStop",val:onoff});
+    if(onoff){
+        $("#script-freeze").prop("checked",false); //!!! freeze = ~OnOff
+    }
+    else{
+
+        $("#script-freeze").prop("checked",true); //!!! freeze = ~OnOff
+    }
+}
+
+/* boutons run/stop
+MisGUI.prototype.scriptOnOff = function(onoff){
     console.log("====== scriptOnOff =====",onoff,$("#script-freeze").prop("checked"))
     if(onoff){
         $("#run-code").html('Running...')
@@ -1577,7 +1589,7 @@ MisGUI.prototype.scriptOnOff = function(onoff){
         $("#script-freeze").prop("checked",true); //!!! freeze = ~OnOff
     }
 }
-
+*/
 
 // updateSlider(
 //     $("#sortable-sens-output .animation .minval").val(), 

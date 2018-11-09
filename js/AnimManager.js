@@ -408,6 +408,10 @@ class AnimManager {
             if( keyCode==undefined){
                 keyCode = "";
             }
+            else if(typeof(keyCode)=='number') //becoz autotype
+                keyCode = ""+keyCode; //ascii 48 ='0' 
+            console.log("setkeycode:",typeof(keyCode))
+
             keyCode = keyCode.replace(/\u0000/g,'');
             keyCode = keyCode.replace(/ /g,'');
 
