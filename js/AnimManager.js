@@ -257,8 +257,13 @@ class AnimManager {
                 //misGUI.recOff();
                 // TODO: put the startRecording to StopRecording!!!!
                 console.log("in here c");
-                resetRecording(anim.id);
+                //resetRecording(anim.id);
+                //this.stopRec(anim) //BAD: -> anim recorded
                 anim.recordingGUI = false;
+                MisGUI_anims.stopRec(anim.id); //FIX?
+                anim.recordingGUI = false;
+                //TODO disable [recording] but donot switch to gui recorded
+
             }
         }
         else{ //open dialogBox ... select anim folder.. should actually not happen.

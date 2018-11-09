@@ -123,6 +123,7 @@ Sensor.prototype.onValue = function(val){
         }
         if(this.s.mobilizingEnabledOutput){
             //console.log("send sensor:",this.s.name,nv);
+            /* TODO (TO REDO)
             oscMobilizing.sendOSC({
                 address:"/mbk/sensor",
                 args:[
@@ -130,6 +131,7 @@ Sensor.prototype.onValue = function(val){
                     {type:'f',value:fnv}
                 ]
             });
+            */
         }
         if(this.s.midiEnabledOutput) {
             //console.log("midiEnabledOutput",this.s.midiMappingOutput);

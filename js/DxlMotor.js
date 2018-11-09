@@ -410,7 +410,7 @@ Dxl.prototype.onNormValue =function(val){ //angle  ou  speed normalisé
 }
 
 Dxl.prototype.angle = function(a){
-    console.log("Dxl.angle:",a)
+    //console.log("Dxl.angle:",a)
     if(a!=undefined) {
         if (a > this.m.angleMax) a = this.m.angleMax;
         else if (a < this.m.angleMin) a = this.m.angleMin;
@@ -425,11 +425,11 @@ Dxl.prototype.angle = function(a){
 
 // [0 n 1]
 Dxl.prototype.nAngle = function( n) {
-    console.log("nangle:",n," min:",this.m.angleMin," max:",this.m.angleMax);
+    //console.log("nangle:",n," min:",this.m.angleMin," max:",this.m.angleMax);
     if(n<0)n=0;
     else if(n>1)n=1.0;
     //console.log("nangle:",this.m.angleMin + n*(this.m.angleMax - this.m.angleMin));
-    console.log("nangle:",((this.m.angleMax - this.m.angleMin)*n + this.m.angleMin) );
+    //console.log("nangle:",((this.m.angleMax - this.m.angleMin)*n + this.m.angleMin) );
     return this.angle( (this.m.angleMax - this.m.angleMin)*n + this.m.angleMin );
 };
 

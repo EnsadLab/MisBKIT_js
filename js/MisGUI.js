@@ -623,7 +623,7 @@ MisGUI.prototype.setValue = function(index,name,val){
 }
 
 MisGUI.prototype.motorAngle = function(index,val){
-    console.log("MisGUI.angle",index,val);
+    //console.log("MisGUI.angle",index,val);
 
     //if(index<this.rotAngles.length){
     if(this.rotAngles[index]){
