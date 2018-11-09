@@ -433,7 +433,8 @@ Animation.prototype.updateSinus = function() {
     for(var c=0;c<this.channels.length;c++){
         if(this.channels[c].play) {
             //dxlManager.playKey(this.channels[c].f,this.channels[c].i,value);
-            dxlManager.onNormControl(this.channels[c].i,nv);
+            dxlManager.playKey(this.channels[c].f,this.channels[c].i,v);
+           // dxlManager.onNormControl(this.channels[c].i,nv);
         }
     }
 }
@@ -448,7 +449,8 @@ Animation.prototype.updateRandom = function() {
     for(var c=0;c<this.channels.length;c++){
         if(this.channels[c].play) {
             // TODO DIDIER2: quelle fonction dois-je appeler?
-            console.log("updateRandom",this.channels[c].i,value);
+            //console.log("updateRandom",this.channels[c].i,value);
+            dxlManager.playKey(this.channels[c].f,this.channels[c].i,value);
             //dxlManager.onNormControl(this.channels[c].i,nv);
         }
     }
