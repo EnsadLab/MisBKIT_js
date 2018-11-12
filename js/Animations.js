@@ -46,6 +46,7 @@ function Animation(id,folder,name){
     this.keySize  = 0;
     this.keyIndex = 0;
     this.sinusTimer = 0;
+    this.oldTime = 0;
 };
 module.exports = Animation;
 
@@ -317,6 +318,7 @@ Animation.prototype.startPlay = function() {
     //console.log("startPlay:");
     if(this.s.type == "sinus") {
         this.sinusTimer = 0;
+        this.oldTime = performance.now();
         this.playing = true;
     } else if(this.s.type == "random"){
         var int_min = +this.s.params["param1"];
@@ -426,9 +428,16 @@ Animation.prototype.stopPlay = function() {
 
 // sinus: param[0]: offset, param[1]: Frequency, param[2]: amplitude[0.0,1.0]
 Animation.prototype.updateSinus = function() {
+    //console.log("time",performance.now());
+    var curr_time = performance.now();
+    var t0 = curr_time-this.oldTime;
+    this.oldTime = curr_time;
+    //console.log("time",t0);
     this.sinusTimer += 0.2;
+    this.sinusTimer += 6.0;
     var a = this.sinusTimer;
     var v = this.s.params["param2"]*Math.sin(Math.PI*2.0*a*this.s.params["param1"]) + this.s.params["param0"];
+    //var v = this.s.params["param2"]*Math.sin(Math.PI*2.0*a) + this.s.params["param0"];
     var nv = v*0.5 + 0.5;
     for(var c=0;c<this.channels.length;c++){
         if(this.channels[c].play) {

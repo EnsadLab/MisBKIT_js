@@ -1849,7 +1849,7 @@ $("#modalNewAnim").find("span").bind('click', function(){
 
     //console.log("yeeha!!!!!");
     if($(this).hasClass('selected')){
-        //console.log("------> selected",this.id,"a",this.value);
+        console.log("???????? ------> selected",this.id,"a",this.value);
         /*
         // TODO: removed because it comes twice in this bind... why?? Wasn't like this in my version.
         $(this).removeClass('selected');
@@ -1861,16 +1861,28 @@ $("#modalNewAnim").find("span").bind('click', function(){
         */
 
     }else{
-        console.log("------> NOT selected",this.id,"a",this.value);
+        console.log("!!!!!!!! ------> selected",this.id,"a",this.value);
+        // TODO ALEX: pourquoi on rentre deux fois par ici quand on clicke sur record/sinus/random ?
         $("#modalNewAnim span").removeClass('selected');
         $(this).addClass('selected');
         $("#modalNewAnim button:first-of-type").css("opacity", 1);
         $("#modalNewAnim button:first-of-type").prop("disabled",false);
+
+        // rajouter par Cécile 
+        var selectedType = $(".listAnimType .selected").attr("name");
+        console.log("load anim "+ selectedType);
+        if(selectedType != undefined){
+            $("#modalNewAnim span").removeClass('selected');
+            $("#modalNewAnim").find("#newAnimLoad").css("opacity", 0.3);
+            $("#modalNewAnim").css("display", "none"); 
+            animManager.addAnim(selectedType);
+        }
     }
 
 })
 
 // load
+/* enlevé par Cécile
 $("#modalNewAnim").find("#newAnimLoad").bind('click', function(){
     // TODO BUG: pourquoi on rentre ici deux fois... un lien ac l'autre bug du select??
     var selectedType = $(".listAnimType .selected").attr("name");
@@ -1882,3 +1894,4 @@ $("#modalNewAnim").find("#newAnimLoad").bind('click', function(){
         animManager.addAnim(selectedType);
     }
 })
+*/

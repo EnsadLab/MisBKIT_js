@@ -9,7 +9,8 @@ MisGUI_anims.setRecordTracks = function(eltID,tracks){
 
         if(tracks[i].f=="angle")$(bts[im]).prop("class","motor-angle");
         else if(tracks[i].f=="speed")$(bts[im]).prop("class","motor-speed");
-        $(bts[im]).prop("checked",false);
+        $(bts[im]).prop("checked",tracks[i].record);
+        //$(bts[im]).prop("checked",false);
     }
 }
 
