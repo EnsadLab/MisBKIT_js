@@ -103,12 +103,12 @@ Dxl.prototype.sendGoalSpeed = function(){
 
 Dxl.prototype.pos2angle=function(p){
     var a = ((p/this.limitCCW)-0.5)*this.angleRef;
-    if (this.m.clockwise) return -a;
+    if ( !this.m.clockwise) return -a;  //inversé !
     return a;
 }
 
 Dxl.prototype.angle2pos=function(a){
-    if(this.m.clockwise) a=-a;
+    if(!this.m.clockwise) a=-a; //inversé !
     //default: AX12
     if( (this.m.model==12)||(this.m.model==-1) )
         return (512 +(a * 511.5 / 150))|0; //AX12 or unknown
@@ -440,7 +440,7 @@ Dxl.prototype.speed = function(s){
         this.wantedSpeed = s; 
 
         var v = (s*1023/100)|0;
-        if(this.m.clockwise) v=-v;
+        if(!this.m.clockwise) v=-v; //inversé
         //if(v<0) v = 1024-v; //!!! SUR LE CM9 !!!
         this.dxlSpeed = v;    
         return s;
@@ -459,9 +459,16 @@ Dxl.prototype.nSpeed = function(s) {
 };
 
 Dxl.prototype.clockwise = function(val){
-    this.m.clockwise = val; //0:CW 1:CCW
-    console.log("Dxl.clockwise:",this.m.clockwise);
-    return this;
+    if(typeof(val)=='string')val=(val=="CCW");
+    if(typeof(val)=='number')val=(val!=0);
+
+    if( val != this.m.clockwise ){ //mmm , do it more sure
+        this.wantedAngle = -this.wantedAngle;
+        misGUI.motorAngle(this.index,this.wantedAngle); //updated by currPos
+    }
+
+    console.log("DXL.clockwise:",this.m.clockwise, val);
+    this.m.clockwise = val; //0:CW 1:CCW , inversion GUI-dxl
 }
 
 Dxl.prototype.angleMin = function(val){
