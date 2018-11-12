@@ -22,6 +22,8 @@ detectSSid(function(error, ssidname) {
 });
 */
 
+
+
 const ipc = require('electron').ipcRenderer;
 var remote = require('electron').remote;
 console.log("DIR PATH:",__dirname )
@@ -108,9 +110,7 @@ $( "#dialog" ).dialog({
 $( "#dialog" ).dialog('close');
 */
 
-function hideParent(){
- $(this).parent().hide();
-}
+//DELETED function hideParent(){$(this).parent().hide();}
 
 /*
 function toggleButton(){ //toggleButton($(this))
@@ -146,46 +146,24 @@ function toggleButton(){ //click on .toggleBt
 }
 */
 
-function btShowHide(){
-    var target = $(this).data("target");
-    $(target).each(function(i) {
-        if (this.style.display == "none")
-            $(this).show();
-        else
-            $(this).hide();
-    });
-}
-
-function toggleShow(){
-    var t = setToggleBt.call(this,(this.value|0)+1);
-    var target = $(this).data("target");
-    $(target).each(function(i) {
-        if(t)
-            $(this).show();
-        else
-            $(this).hide();
-    });
-}
-
-
-
-function showConfig(show){
-  if(show){
-     //$("#MotorSliders").hide(); //.style.display = 'none';
-     $("#dxlConfig").show(); //style.display = 'inline-block';
-     // $(".fixed").show();
-  }
-  else{
-     $("#dxlConfig")[0].style.display = 'none';
-     //$("#MotorSliders")[0].style.display = 'inline-block';
-     // $(".fixed").hide();
-  }
-};
+//DELETED function btShowHide(){
+//DELETED function toggleShow(){
+//DELETED function showConfig(show){
 
 
 
 //$(function() {
 window.onload = function() {
+
+    //allow cut,paste,... on release app
+    window.addEventListener('keydown', function (e) {
+        if( e.metaKey || e.ctrlKey ){
+            console.log("window_keydown:",e)
+            if (e.keyCode === 88 ) { document.execCommand('cut');}
+            else if (e.keyCode === 67 ){ document.execCommand('copy');}
+            else if (e.keyCode === 86 ){ document.execCommand('paste');}
+        }
+    });
 
     misGUI     = new MisGUI();
     misGUI.init();
@@ -232,13 +210,14 @@ window.onload = function() {
 
     //dxlManager.update(); //start //>>>>>> MISBKIT.js
 
-
     $('body').keydown(function(e) {
         if($(e.target).is('input'))
             return;
-        if($(e.target).is('textarea'))
+        if($(e.target).is('textarea')){
+            //console.log("KEYDOWN TEXTAREA:",e)
             return;
-
+        }
+    
         //console.log("keyDown-KeyCode:", e);
         //console.log("keyDown-KeyCode:", e.keyCode);
         scriptManager.call("onKey",e.key);
@@ -279,6 +258,11 @@ window.onload = function() {
                     ipc.send('devTools');
                     break;
                    
+                case 86: //ctrl espace: open devtools
+                    console.log("CTRL V:",e);
+                    break;
+                
+
                 default: // <ctl q><ctl tab> .... 
                     console.log("< default >");
                     return; //default behavior
@@ -328,8 +312,10 @@ window.onload = function() {
         //console.log("DBG-keypress:", e.keyCode);
         if($(e.target).is('input'))
             return;
-        if($(e.target).is('textarea'))
+        if($(e.target).is('textarea')){
+            //console.log("KEYPRESS TEXTAREA:",e)
             return;
+        }
 
         //console.log("event:",e);
         //console.log("witch:",e.which);
@@ -339,7 +325,7 @@ window.onload = function() {
         if(e.keyCode!=0) {
             //console.log("char:", String.fromCharCode(e.keyCode));
             if(e.metaKey){
-                console.log("char:", String.fromCharCode(e.keyCode));
+                console.log("press,meta :", String.fromCharCode(e.keyCode));
                 dxlManager.onMetaKey(String.fromCharCode(event.keyCode));
                 motorMappingManager.onMetaKey(String.fromCharCode(event.keyCode));
             }else{
@@ -359,7 +345,6 @@ window.onload = function() {
     //ipc.send('devTools','on');
 
     //$('body').openDevTools();
-
 
 
 };

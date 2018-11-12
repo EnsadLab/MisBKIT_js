@@ -184,7 +184,7 @@ SettingsManager.prototype.copyPasteFromUserFolder = function(filename){
 }
 
 SettingsManager.prototype.saveToConfigurationFolder = function(filename,data){
-    console.log("SAVE SETTINGS:",this.configurationFolder)
+    console.log("SAVE SETTINGS:",this.configurationFolder,filename)
     fs.writeFileSync(this.configurationFolder + filename, data );    
 }
 

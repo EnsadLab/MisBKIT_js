@@ -222,7 +222,7 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                         var v = $(this).val();
                         if( (v!="")&&( !isNaN(+v)) ) // +"" -> 0 !
                             v=+v;                    //OK: 127.0.0.1 -> NaN
-                        console.log("GUI onchange:",$(this).attr("func"),typeof($(this).val()),v)
+                        console.log("GUI SELECTonchange:",$(this).attr("func"),typeof($(this).val()),v)
                         manager.cmd($(this).attr("func"),$(this).attr("eltID"),v,$(this).attr("param"));
                         //console.log("  ->onchange:",$(this).attr("func"),$(this).attr("eltID"),v,$(this).attr("param"));
 
@@ -284,6 +284,7 @@ MisGUI.prototype.showValue=function(opt){
 
 //opt: {class:classname,id:eltID,func:func,val:settings}
 MisGUI.prototype.showParams=function(opt){
+    console.log("MisGUI.showParams:",opt)
     var sel = "."+opt.class+" ";
     if(opt.id!=undefined)sel+="[eltID="+opt.id+"]";
     if(opt.func!=undefined)sel+="[func="+opt.func+"]";
@@ -565,7 +566,7 @@ MisGUI.prototype.speedMax =function(index,val){
 
 // >>>> dxlManager.midiMapping(EltID,value,"mode")
 MisGUI.prototype.midiMode =function(index,value){
-    console.log("SETMIDIMODE:",index," val",value);
+    console.log("TODELETE? MisGUI.midiMode",index," val",value);
     /*
     switch(+value){
         case 0:motorMappingManager.setMidiMotorMappingCmd(index,"CC");break;
@@ -678,10 +679,10 @@ MisGUI.prototype.alert = function(msg){
     });
 }
 
-
+//TO DELETE ? : never called ? 
 MisGUI.prototype.toggleAdvanced = function(onoff){ //true='normal' false='advanced'
-    console.log("******************** MisGUI.prototype.toggleAdvanced",onoff);
-    //DB: should stop or freeze motors anims sensors ???
+    console.log("********************* MisGUI.prototype.toggleAdvanced",onoff);
+    console.log("????? TO DELETE ????? MisGUI.prototype.toggleAdvanced",onoff);
 }
 
 MisGUI.prototype.addMotor = function(index,settings){
@@ -728,7 +729,7 @@ MisGUI.prototype.motorSettings = function(index,s){
     }
     this.showParams({class:"dxlManager",id:index,val:s});
 
-    $(".thermo [eltID="+index+"]").text("-°"); //wait info
+    $(".thermo [eltID="+index+"]").text("-°"); //wait info from cm9
     //update rotaries
     this.angleMin(index,s.angleMin);
     this.angleMax(index,s.angleMax);
@@ -767,7 +768,7 @@ MisGUI.prototype.midiMotorSettings = function(midiMappingSettings,midiPorts){
         class:"dxlManager"
         ,func:"midiMapping"
         ,id:idx
-        ,val:{ mode:mod , num:num } //, port:["none","test 1","test 2"]}
+        ,val:{ midiMode:mod , num:num } //, port:["none","test 1","test 2"]}
         });
 
     this.updateMidiMotorSelection(idx,midiMappingSettings.port,midiPorts);
@@ -1551,6 +1552,45 @@ MisGUI.prototype.showDxlReg = function(id,addr,val){ //showValue ?
 }
 
 //------------------ editor ------------------------------
+/* essai de cut / paste in App
+var clipEdit = "";
+//editor.on("keypress",function(e){console.log("editor:keypress",e)})
+//editor.on("keyup",function(e){console.log("editor:keyup",e)})
+//editor.on("keydown",function(e,k){
+editor.on("keyup",function(e,k){
+    if( k.metaKey || k.ctrlKey ){  //MAC / Windows
+        console.log("editor:key",k)
+        if(k.key == 'c'){
+            clipEdit = e.getSelection();
+            console.log("editor:C copy:",clipEdit)  
+        }
+        else if(k.key == 'v'){
+            var curs = e.getCursor();
+            e.replaceRange(clipEdit,curs)
+            console.log("editor:V paste:",curs)  
+        }
+        else if(k.key == 'x'){
+            console.log("editor:X cut:",curs)  
+            clipEdit = e.getSelection();
+            e.replaceSelection("")
+        }
+    }
+});
+*/
+// handled by window keydown , to be efective in App (see index.js)
+editor.setOption("extraKeys",{ //prevent to be called twice
+    "Cmd-C":function(cm){console.log("Cmd-C")},
+    "Cmd-X":function(cm){console.log("Cmd-X")},
+    "Cmd-V":function(cm){console.log("Cmd-V")}
+});
+editor.on("cut",function(e){console.log("editor:cut")})
+editor.on("copy",function(e){console.log("editor:copy")})
+editor.on("paste",function(e){console.log("editor:paste")})
+
+editor.on("keyHandled",function(ed,str,ev){
+    console.log("ed:keyHandled:",str,ev)
+});
+//TODO modified ?
 
 MisGUI.prototype.getScript = function(){
     return editor.getValue(); // cf ui.js
@@ -1590,6 +1630,8 @@ MisGUI.prototype.scriptOnOff = function(onoff){
     }
 }
 */
+
+//------------------ animations ------------------------------
 
 // updateSlider(
 //     $("#sortable-sens-output .animation .minval").val(), 

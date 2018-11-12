@@ -91,7 +91,7 @@ DxlManager.prototype.cmdOld = function(cmd,index,arg){
 //dxlID clockwise angleMin angleMax speedMin speedMax
 //joint wheel recCheck enable angle velocity
 DxlManager.prototype.cmd = function(func,eltID,val,param){
-    //console.log("dxlManager:cmd:",func,eltID,val,param);
+    console.log("dxlManager:cmd:",func,eltID,val,param);
     if(this[func]){
         this[func](+eltID,val,param); //eltID=index
     }
@@ -113,7 +113,7 @@ DxlManager.prototype.midiMapping =function(eltID,val,param){
         case "port":
             motorMappingManager.setMidiMotorMappingPort(+eltID,val);
             break;
-        case "mode"://falsse:CC true:note 
+        case "midiMode"://falsse:CC true:note 
             switch(val){
                 case false:motorMappingManager.setMidiMotorMappingCmd(+eltID,"CC");break;
                 case true:motorMappingManager.setMidiMotorMappingCmd(+eltID,"note");break;
@@ -475,14 +475,14 @@ DxlManager.prototype.stopMotor = function(index){
 }
 
 DxlManager.prototype.freezeAllMotors = function(){
-    console.log("**** freezing");
+    console.log("********* FREEZING *********");
     for (var i = 0; i < this.motors.length; i++) {
         this.motors[i].freezeMotor();
     }
 }
 
 DxlManager.prototype.unfreezeAllMotors = function(){
-    console.log("**** unfreezing");
+    console.log("********* UN-FREEZING *********");
     for (var i = 0; i < this.motors.length; i++) {
         this.motors[i].unfreezeMotor();
     }

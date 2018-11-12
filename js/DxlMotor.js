@@ -42,22 +42,22 @@ class Dxl{
             //id:0,     //TODO: remove
             dxlID:0,  //same id param in html/misGUI 
             enabled: false,
-            model:-1, //AX12 par defaut
-            clockwise:true,
-            mode:DXL_OFF, //0:joint 1:wheel //default=wheel
+            model:-1,         //AX12 par defaut
+            clockwise:false,  //par defaut
+            mode:DXL_OFF,     //0:joint 1:wheel //default=wheel -> no jump at srart
             jointSpeed: 0, //[-100 100] !!! 0 = speedMax !!!
             angleMin: -150,
             angleMax: 150,
             speedMin: -100,
             speedMax: 100,
             torqueMax: 1023,
-            midi:{port:"",msg:"CC:0"}
+            midi:{port:"",msg:"CC:0"} //TODO ? type:"CC" num:0  ? channel:0 ?
         };
 
         this.index   = index;
         this.enabled = false;
         this.rec = false;
-        this.timeOfRequest = 0;
+        //this.timeOfRequest = 0;
         this._currPos = NaN;
         this._curAngle = 0; 
         this.dxlGoal = 512;
@@ -309,7 +309,7 @@ Dxl.prototype.stopMotor = function(){
 }
 
 Dxl.prototype.freezeMotor = function(){
-    //console.log("freeeeeeeeeze:",this.index);
+    console.log("freeeeeeeeeze:",this.index);
     if(this.enabled){
         this.freeze = true;
         this.enable(false);

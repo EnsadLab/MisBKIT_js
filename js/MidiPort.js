@@ -42,7 +42,7 @@ MidiPort = function () {
     this.midiIn.on('message', function (dt, msg) {
         if(self.enabled) {
 
-            console.log("midi1:",msg)
+            //console.log("midi1:",msg)
             var chan = msg[0] & 0xF;
             var type = ( msg[0] & 0x70 )>>4; //0:noteOff, 1:noteOn, 3:CC, 2:afterTouch, 4:programChange ...
             var d1   = msg[1]  //for noteOn=note      , CC=num 
@@ -130,8 +130,6 @@ MidiPort = function () {
                 self.callback(msg[1], msg[2] / 127);
         }
     });
-    
-
 };
 
 MidiPort.prototype.sendMidi = function(cmd,index,val){
@@ -148,6 +146,15 @@ MidiPort.prototype.sendMidi = function(cmd,index,val){
 }
 
 MidiPort.prototype.close = function(n) {
+    console.log("CLOSING MIDIPORT",this.midiIn)
+    /* Didier -> Cecile : à retester ce qui suit :
+    if(this.enabled){
+        this.midiIn.closePort(this.portID); // Didier -> Cecile : à retester 
+        this.midiIn = undefined;            //    then this.midiIn = undefined;
+         // and open: new MIDI.input()  ; on('message' ... ) ; openPort
+        //this.midiOut.closePort(this.portID); ---> plantage ????
+    }
+    */
     this.enabled = false;
 }
 

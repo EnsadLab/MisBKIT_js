@@ -26,7 +26,7 @@ Sensor = function () {
         mobilizingEnabledInput: false,
         mobilizingEnabledOutput: false,
         midiEnabledInput: false,
-        midiPortInput: "",
+        midiPortInput: "???",
         midiCmdInput: false, //true:note, false:CC
         midiMappingInput: 0,
         midiEnabledOutput: false,

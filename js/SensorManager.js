@@ -613,6 +613,7 @@ class SensorManager{
     // called after scanning new midi ports
     updateMidiPorts(){
         $.each(this.sensors, function(i, sensor){
+            console.log("SENSORS updateMidiPorts:",sensor.s.midiPortInput+">")
             MisGUI_sensors.initMidiInput(sensor.ID);
             MisGUI_sensors.initMidiOutput(sensor.ID);
             misGUI.setManagerValue("sensorManager","onMidiInput",sensor.s.midiPortInput,sensor.ID);
@@ -630,6 +631,7 @@ class SensorManager{
     }
 
     onMidi(id,type,arg){
+        console.log("SensorManager.onMidi:",id,type,arg)
         var sensor = this.getSensorWithID(id);
         if(sensor != undefined){
             var mappped_arg = Math.round(arg*(sensor.s.valMax-sensor.s.valMin)/127 + sensor.s.valMin);
@@ -638,11 +640,18 @@ class SensorManager{
     }
 
     isMapped(type,port,cmd,nbID){
+        console.log("SensorManager.isMapped:",type,port,cmd,nbID)
         for(var i=0; i<this.sensors.length;i++){
             var s = this.sensors[i].s;
             var cmd_bool = false;
             if(cmd == "note") cmd_bool = true;
+            console.log("    .midiPortInput:",s.midiPortInput,port)
+            console.log("     .midiCmdInput:",s.midiCmdInput,cmd_bool)
+            console.log(" .midiMappingInput:",s.midiMappingInput,nbID)
+            console.log(" .midiEnabledInput:",s.midiEnabledInput)
+
             if(s.midiPortInput == port && s.midiCmdInput == cmd_bool && s.midiMappingInput == nbID && s.midiEnabledInput){
+                console.log("MAPPED")
                 return true;
             }
         }

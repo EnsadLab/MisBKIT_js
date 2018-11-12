@@ -34,6 +34,10 @@ app.on('window-all-closed', function() {
 });
 
 app.on('ready', function() {
+
+  //console.log("process.env.NODE_ENV:",process.env.NODE_ENV )
+  //console.log("process.env.DEBUG_PROD",process.env.DEBUG_PROD )
+
   console.log("versions:",process.versions); //v5.10.0
   //console.log("version electron:",process.versions['electron']); //v5.10.0
   //console.log("version chrome:",process.versions['chrome']); //v5.10.0

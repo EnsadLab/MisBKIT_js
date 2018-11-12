@@ -62,6 +62,8 @@ class scriptManager {
         }
     }
 
+
+
     folderIsReady(folder){
         this.folder = folder
         if(this.currName == undefined){ //settings vide

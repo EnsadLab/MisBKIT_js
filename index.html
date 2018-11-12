@@ -165,7 +165,7 @@
 				<div id="arduino" class="plug arduinoManager">
 					<p>
 						ARDUINO  <span func="spanText" class="status"></span>
-						<input func="freeze" id="arduinoOnOff" type="checkbox" class="small onoff" title="enable/disable">
+						<input func="onOff" id="arduinoOnOff" type="checkbox" class="small onoff" title="enable/disable">
 					</p>
 				</div>
 
@@ -258,7 +258,7 @@
 						<button class="float-left" id="newMotor"> New</button>
 
 						<div class="float-right medium">
-							<div class="gear tiny" id="opener" data-id="dynamixel-ctrl"><img src="assets/settings.png"></div>
+							<!--div class="gear tiny" id="opener" data-id="dynamixel-ctrl"><img src="assets/settings.png"></div-->
 							<button class="tiny small" id="btScan" name="startScan">Scan</button>
 							<meter id="scanProgress" class="medium" value="0" max="254"></meter>
 						</div>
@@ -404,7 +404,7 @@
 								</select>
 
 								<label class="toggle-small">
-							  		<input func="midiMapping" param="mode" type="checkbox"> <!--class="cmdTog" name="midiMode"-->
+							  		<input func="midiMapping" param="midiMode" type="checkbox"> <!--class="cmdTog" name="midiMode"-->
 							  		<div class="slider midi round"></div>
 								</label>
 							</div>
