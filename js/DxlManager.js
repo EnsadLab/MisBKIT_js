@@ -344,7 +344,7 @@ DxlManager.prototype.cm9OnOff= function(onoff){
         //this.stopAll();
         this.freezeAllMotors();
         //this.stopAllAnims();
-        animManager.stopAllAnims();
+        animManager.stopAll();
         cm9Com.pushMessage("dxlStop\n");    
     }
 }
@@ -491,7 +491,7 @@ DxlManager.prototype.unfreezeAllMotors = function(){
 
 DxlManager.prototype.startReadDxl = function(dxlId) {
     //this.stopAllAnims();
-    animManager.stopAllAnims();
+    animManager.stopAll();
     this.refreshID = dxlId;
     this.refreshAddr = 0;
 }
