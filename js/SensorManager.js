@@ -510,14 +510,14 @@ class SensorManager{
         console.log("sensorManager.onMinValue",eltID,value);
         var sensor = this.getSensorWithID(eltID);
         if(sensor != undefined){
-            if(value < sensor.s.valMax){
+            //if(value < sensor.s.valMax){
                 sensor.s.valMin = parseInt(value);
                 MisGUI_sensors.changeMin(eltID,value);  
-                this.saveSensorSettings();
-            }else{ // restore previous value
-                misGUI.setManagerValue("sensorManager","onMinValue",sensor.s.valMin,sensor.ID);
-                MisGUI_sensors.changeMin(eltID,sensor.s.valMin);
-            }
+            //    this.saveSensorSettings();
+            //}else{ // restore previous value
+            //    misGUI.setManagerValue("sensorManager","onMinValue",sensor.s.valMin,sensor.ID);
+            //    MisGUI_sensors.changeMin(eltID,sensor.s.valMin);
+            //}
             this.checkThreshold(eltID);
         }
          
@@ -527,14 +527,14 @@ class SensorManager{
         console.log("sensorManager.onMaxValue",eltID,value);
         var sensor = this.getSensorWithID(eltID);
         if(sensor!= undefined){
-            if(value > sensor.s.valMin ){
+            //if(value > sensor.s.valMin ){
                 sensor.s.valMax = parseInt(value);
                 MisGUI_sensors.changeMax(eltID,value);
-                this.saveSensorSettings();
-            }else{ // restore previous value
-                misGUI.setManagerValue("sensorManager","onMaxValue",sensor.s.valMax,sensor.ID);
-                MisGUI_sensors.changeMax(eltID,sensor.s.valMax);
-            }
+            //    this.saveSensorSettings();
+            //}else{ // restore previous value
+            //    misGUI.setManagerValue("sensorManager","onMaxValue",sensor.s.valMax,sensor.ID);
+            //    MisGUI_sensors.changeMax(eltID,sensor.s.valMax);
+            //}
             this.checkThreshold(eltID);
         }
         MisGUI_sensors.changeMax(eltID,value); 
@@ -634,8 +634,10 @@ class SensorManager{
         console.log("SensorManager.onMidi:",id,type,arg)
         var sensor = this.getSensorWithID(id);
         if(sensor != undefined){
-            var mappped_arg = Math.round(arg*(sensor.s.valMax-sensor.s.valMin)/127 + sensor.s.valMin);
-            sensor.onValue(mappped_arg);
+            //pourquoi round ? no floats ??? ???
+            //var mappped_arg = Math.round(arg*(sensor.s.valMax-sensor.s.valMin)/127 + sensor.s.valMin);
+            //sensor.onValue(mappped_arg);
+            
         }
     }
 
