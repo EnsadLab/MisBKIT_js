@@ -523,7 +523,12 @@ MisGUI.prototype.dxlID =function(index,val) {
 //DELETED MisGUI.prototype.clockwise =function(index,val)
 
 MisGUI.prototype.angleMin =function(index,val){
-    //dxlManager.cmdOld("angleMin",index,+val);
+    val = +val
+    //Didier:[-150,150] à contre coeur (Mx28 et autres)
+    //       mais je cede à la demande
+    if(val<-150){val = -150;this.showParams({class:"dxlManager",id:index,val:{angleMin:val}})} //GRRR
+    if(val>150) {val =  150;this.showParams({class:"dxlManager",id:index,val:{angleMin:val}})}
+
     if(this.rotAngles[index]){
     this.rotAngles[index]
         .setDomain(+val)
@@ -532,7 +537,12 @@ MisGUI.prototype.angleMin =function(index,val){
     }
 }
 MisGUI.prototype.angleMax =function(index,val){
-    //dxlManager.cmdOld("angleMax",index,val);
+    val = +val
+    //Didier:[-150,150] à contre coeur (Mx28 et autres)
+    //       mais je cede à la demande
+    if(val<-150){val = -150;this.showParams({class:"dxlManager",id:index,val:{angleMax:val}})} //GRRR
+    if(val>150) {val =  150;this.showParams({class:"dxlManager",id:index,val:{angleMax:val}})}
+
     if(this.rotAngles[index]){
         this.rotAngles[index]
         .setDomain(undefined,+val)
@@ -542,6 +552,10 @@ MisGUI.prototype.angleMax =function(index,val){
 }
 MisGUI.prototype.speedMin =function(index,val){
     val=+val;
+    console.log("SPEEDMIN:",val)
+    // min & max in html doesnt work with manual input
+    if(val<-100){val = -100;this.showParams({class:"dxlManager",id:index,val:{speedMin:val}})} //GRRR
+    if(val>100) {val =  100;this.showParams({class:"dxlManager",id:index,val:{speedMin:val}})}
     dxlManager.cmd("speedMin",index,val);
     if(this.rotSpeeds[index]){
         this.rotSpeeds[index]
@@ -554,6 +568,8 @@ MisGUI.prototype.speedMin =function(index,val){
 MisGUI.prototype.speedMax =function(index,val){
     //console.log("GUI.speedMax",val);
     val=+val;
+    if(val<-100){val = -100;this.showParams({class:"dxlManager",id:index,val:{speedMax:val}})} //GRRR
+    if(val>100) {val =  100;this.showParams({class:"dxlManager",id:index,val:{speedMax:val}})}
     dxlManager.cmd("speedMax",index,val);
     if(this.rotSpeeds[index]){
         this.rotSpeeds[index]

@@ -762,7 +762,7 @@ class SensorManager{
     handleDxlPos(index,nval){
         //console.log("handleDxlPos:",index,nval);
         $.each(this.sensors,function(i,sensor) {
-            //console.log("handleDxlPos:",i,sensor.s.motorEnabledInput);
+            console.log("handleDxlPos:",i,sensor.s.motorEnabledInput);
             if(sensor.s.motorEnabledInput){
                 if(+sensor.s.fromMotorIndex == index){
                     sensor.onNormValue(nval);
