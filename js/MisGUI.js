@@ -1,6 +1,9 @@
 
-
 function MisGUI(){
+    console.log("##############################")
+    console.log("#          MISGUI            #")
+    console.log("##############################")
+
     var self = this;
     this.rotAngles = {};
     this.rotSpeeds = {};
@@ -238,7 +241,7 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                     break;
                 case "submit":  //button
                     $(this).on("click",function(){
-                        console.log("button",$(this).attr("func"),manager);
+                        console.log("******* CLICK ******",$(this));
                         // TEST pour le startRecord ds les anims.. j'ai rajouté l'attribut value
                         var v = $(this).attr("value"); // "true","false" --- ou plutôt 0,1 ?? .. et ptet pas utiliser l'arg value...
                         var vstring = "true";
@@ -1189,6 +1192,8 @@ MisGUI.prototype.init =function(){
     //this.scanMidiPorts(); // done when loading the settings.. here the midimanager is not anymore created yet!
     this.scanIPv4(); //Didier
 
+    this.initScriptEditor();
+
  
 }//init
 
@@ -1568,44 +1573,46 @@ MisGUI.prototype.showDxlReg = function(id,addr,val){ //showValue ?
 }
 
 //------------------ editor ------------------------------
-/* essai de cut / paste in App
-var clipEdit = "";
-//editor.on("keypress",function(e){console.log("editor:keypress",e)})
-//editor.on("keyup",function(e){console.log("editor:keyup",e)})
-//editor.on("keydown",function(e,k){
-editor.on("keyup",function(e,k){
-    if( k.metaKey || k.ctrlKey ){  //MAC / Windows
-        console.log("editor:key",k)
-        if(k.key == 'c'){
-            clipEdit = e.getSelection();
-            console.log("editor:C copy:",clipEdit)  
+MisGUI.prototype.initScriptEditor(){
+    /* essai de cut / paste in App
+    var clipEdit = "";
+    //editor.on("keypress",function(e){console.log("editor:keypress",e)})
+    //editor.on("keyup",function(e){console.log("editor:keyup",e)})
+    //editor.on("keydown",function(e,k){
+    editor.on("keyup",function(e,k){
+        if( k.metaKey || k.ctrlKey ){  //MAC / Windows
+            console.log("editor:key",k)
+            if(k.key == 'c'){
+                clipEdit = e.getSelection();
+                console.log("editor:C copy:",clipEdit)  
+            }
+            else if(k.key == 'v'){
+                var curs = e.getCursor();
+                e.replaceRange(clipEdit,curs)
+                console.log("editor:V paste:",curs)  
+            }
+            else if(k.key == 'x'){
+                console.log("editor:X cut:",curs)  
+                clipEdit = e.getSelection();
+                e.replaceSelection("")
+            }
         }
-        else if(k.key == 'v'){
-            var curs = e.getCursor();
-            e.replaceRange(clipEdit,curs)
-            console.log("editor:V paste:",curs)  
-        }
-        else if(k.key == 'x'){
-            console.log("editor:X cut:",curs)  
-            clipEdit = e.getSelection();
-            e.replaceSelection("")
-        }
-    }
-});
-*/
-// handled by window keydown , to be efective in App (see index.js)
-editor.setOption("extraKeys",{ //prevent to be called twice
-    "Cmd-C":function(cm){console.log("Cmd-C")},
-    "Cmd-X":function(cm){console.log("Cmd-X")},
-    "Cmd-V":function(cm){console.log("Cmd-V")}
-});
-editor.on("cut",function(e){console.log("editor:cut")})
-editor.on("copy",function(e){console.log("editor:copy")})
-editor.on("paste",function(e){console.log("editor:paste")})
+    });
+    */
+    // handled by window keydown , to be efective in App (see index.js)
+    editor.setOption("extraKeys",{ //prevent to be called twice
+        "Cmd-C":function(cm){console.log("Cmd-C")},
+        "Cmd-X":function(cm){console.log("Cmd-X")},
+        "Cmd-V":function(cm){console.log("Cmd-V")}
+    });
+    editor.on("cut",function(e){console.log("editor:cut")})
+    editor.on("copy",function(e){console.log("editor:copy")})
+    editor.on("paste",function(e){console.log("editor:paste")})
 
-editor.on("keyHandled",function(ed,str,ev){
-    console.log("ed:keyHandled:",str,ev)
-});
+    //editor.on("keyHandled",function(ed,str,ev){
+    //    console.log("ed:keyHandled:",str,ev)
+    //});
+}
 //TODO modified ?
 
 MisGUI.prototype.getScript = function(){
