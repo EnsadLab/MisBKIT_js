@@ -96,6 +96,12 @@ class SensorManager{
     //MisGUI.prototype.showValue=function(opt){
 
 
+    update(){ //filtre
+        $.each(this.sensors, function(i,sensor){
+            sensor.update();
+        });
+    }
+
     initSensor(eltID){
 
         var sensor = this.getSensorWithID(eltID);
@@ -244,6 +250,7 @@ class SensorManager{
                 var sensor = new Sensor();
                 sensor.ID = "S"+this.sensorID++;
                 sensor.copySettings(s.sensors[i]);
+                //sensor.s.enabled = false;
                 this.sensors.push(sensor);
             }
             this.init();    
@@ -506,13 +513,19 @@ class SensorManager{
         }
     }
 
+    //cannot min > max  becoz anim switcher
     onMinValue(eltID, value){
         console.log("sensorManager.onMinValue",eltID,value);
         var sensor = this.getSensorWithID(eltID);
         if(sensor != undefined){
-            //if(value < sensor.s.valMax){
-                sensor.s.valMin = parseInt(value);
-                MisGUI_sensors.changeMin(eltID,value);  
+            var val = +value;
+            sensor.s.valMin = val; //parseInt(value); why ???
+            MisGUI_sensors.changeMin(eltID,val);  
+            if(val > sensor.s.valMax){
+                sensor.s.valMax = val
+                misGUI.setManagerValue("sensorManager","onMaxValue",val,sensor.ID);
+                MisGUI_sensors.changeMax(eltID,val);
+            }
             //    this.saveSensorSettings();
             //}else{ // restore previous value
             //    misGUI.setManagerValue("sensorManager","onMinValue",sensor.s.valMin,sensor.ID);
@@ -527,9 +540,17 @@ class SensorManager{
         console.log("sensorManager.onMaxValue",eltID,value);
         var sensor = this.getSensorWithID(eltID);
         if(sensor!= undefined){
+            var val = +value;
+            sensor.s.valMax = val; //parseInt(value); why ???
+            MisGUI_sensors.changeMax(eltID,val);  
+            if(val < sensor.s.valMin){
+                sensor.s.valMin = val
+                misGUI.setManagerValue("sensorManager","onMinValue",val,sensor.ID);
+                MisGUI_sensors.changeMin(eltID,val);
+            } 
             //if(value > sensor.s.valMin ){
-                sensor.s.valMax = parseInt(value);
-                MisGUI_sensors.changeMax(eltID,value);
+            //    sensor.s.valMax = parseInt(value);
+            //    MisGUI_sensors.changeMax(eltID,value);
             //    this.saveSensorSettings();
             //}else{ // restore previous value
             //    misGUI.setManagerValue("sensorManager","onMaxValue",sensor.s.valMax,sensor.ID);
@@ -537,14 +558,13 @@ class SensorManager{
             //}
             this.checkThreshold(eltID);
         }
-        MisGUI_sensors.changeMax(eltID,value); 
-        
+        //MisGUI_sensors.changeMax(eltID,value);  
     }
 
     onTolerance(eltID, value){
         console.log("sensorManager.onTolerance",eltID,value);
         if(this.getSensorWithID(eltID) != undefined){
-            this.getSensorWithID(eltID).s.tolerance = parseInt(value);
+            this.getSensorWithID(eltID).s.tolerance = +value;
             this.saveSensorSettings();
         }
         MisGUI_sensors.changeTolerence(eltID,value);
@@ -552,7 +572,7 @@ class SensorManager{
 
     onThreshold(eltID, value){
         if(this.getSensorWithID(eltID) != undefined){
-            this.getSensorWithID(eltID).s.threshold = parseInt(value);
+            this.getSensorWithID(eltID).s.threshold = +value; //parseInt ???????
             this.saveSensorSettings();
         }
         MisGUI_sensors.changeThreshold(eltID,value);
@@ -636,7 +656,7 @@ class SensorManager{
         if(sensor != undefined){
             //pourquoi round ? no floats ??? ???
             //var mappped_arg = Math.round(arg*(sensor.s.valMax-sensor.s.valMin)/127 + sensor.s.valMin);
-            //sensor.onValue(mappped_arg);
+            sensor.onValue(mappped_arg);
             
         }
     }
@@ -647,11 +667,6 @@ class SensorManager{
             var s = this.sensors[i].s;
             var cmd_bool = false;
             if(cmd == "note") cmd_bool = true;
-            console.log("    .midiPortInput:",s.midiPortInput,port)
-            console.log("     .midiCmdInput:",s.midiCmdInput,cmd_bool)
-            console.log(" .midiMappingInput:",s.midiMappingInput,nbID)
-            console.log(" .midiEnabledInput:",s.midiEnabledInput)
-
             if(s.midiPortInput == port && s.midiCmdInput == cmd_bool && s.midiMappingInput == nbID && s.midiEnabledInput){
                 console.log("MAPPED")
                 return true;
@@ -659,6 +674,27 @@ class SensorManager{
         }
         return false;
     }
+
+    //Didier: replacement of    isMapped() + getSensorIds() + onMidi()
+    // should use channel !
+    onMidiDatas(port,ch,type,d1,d2){ //TODO ? build a string 'midiID'
+        var num = d1; //Berk CC par default
+        var val = d2;
+        var cmdbool = false; //Berk
+        if(type==1){ //noteOn (noteOff will be thrown)
+            cmdbool = false; //others ?
+            val = d1; //note , num should be channel
+        }
+        console.log("onMidiDatas:",port,cmdbool,num,val)
+        $.each(this.sensors, function(i,sensor){
+            var s = sensor.s;
+            console.log("     sr:",s.midiPortInput,s.midiCmdInput,s.midiMappingInput)
+            if(s.midiEnabledInput && s.midiPortInput == port && s.midiCmdInput == cmdbool && s.midiMappingInput == num )
+                //sensor.onNormValue(val/127);
+                sensor.onValue(val)
+        })
+    }
+
 
     /* TO DELETE ?
     onOscMessage(sensor_name,value,mobilizing,minValue,maxValue){
@@ -704,7 +740,7 @@ class SensorManager{
         var sensor = this.getSensorWithID(sensorID);
         //TODO TODO: check when tolerance is entered as a string type..
         //console.log(sensor.s.threshold,sensor.s.tolerance,sensor.s.valMin,sensor.s.valMax);
-        if(sensor != undefined && sensorValue >= sensor.s.valMin && sensorValue < (sensor.s.threshold-parseInt(sensor.s.tolerance))){ 
+        if(sensor != undefined && sensorValue >= sensor.s.valMin && sensorValue < (sensor.s.threshold-sensor.s.tolerance)){ 
             sensor.area = 0;
             //console.log("sensor area 0");
             if(sensor.oldArea != sensor.area){
@@ -713,7 +749,7 @@ class SensorManager{
                 MisGUI_sensors.highlightAnim(sensorID,"listAnims-1");
                 this.startAnim(sensor.s.anim1, sensor.s.anim2);
             }
-        }else if(sensor != undefined && sensorValue >= (sensor.s.threshold + parseInt(sensor.s.tolerance))){
+        }else if(sensor != undefined && sensorValue >= (sensor.s.threshold + sensor.s.tolerance)){
             sensor.area = 1;
             //console.log("sensor area 1");
             if(sensor.oldArea != sensor.area){
@@ -784,6 +820,13 @@ class SensorManager{
             }
         });    
         return result;
+    }
+
+    disableAll(){ //MisBKIT terminate
+        $.each(this.sensors, function(i,sensor) {
+            sensor.s.enabled = false;
+        //TODO GUI 
+        });
     }
 
     freezeAllSensors(){

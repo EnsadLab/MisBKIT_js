@@ -125,6 +125,7 @@ class MisBKIT{
     }
 
     update(){ //"Mainloop"
+        sensorManager.update();
         scriptManager.update(); //may command anim,motors ...
         animManager.update();
     }
@@ -134,6 +135,7 @@ class MisBKIT{
         pythonManager.close(); //! important ! 
         scriptManager.stop();  //! important ! 
         scriptManager.saveSource();
+        sensorManager.disableAll();
         dmxManager.close();
     }
 

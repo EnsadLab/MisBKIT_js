@@ -48,12 +48,14 @@ MidiPort = function () {
             var d1   = msg[1]  //for noteOn=note      , CC=num 
             var d2   = msg[2]  //for noteOn=velocity  , CC=value
 
-            //var midiMsg = {port:self.portID,midi:msg}; //should be {channel,type,data1,data2} ?
-            //var midiMsg = {port:self.portID,ch:channel,type:type,d1:data1,d2:data2};
-            //var midiStr = ""+self.portID+" "+chan+" "+type+" "+d1+" "+d2
-            scriptManager.call("onMidi",self.portID,chan,type,d1,d2);
-            pythonManager.onMidi(self.portID,chan,type,d1,d2);
- 
+            if(midiPortManager.enabled){
+                sensorManager.onMidiDatas(self.portName,chan,type,d1,d2);
+                //var midiMsg = {port:self.portID,midi:msg}; //should be {channel,type,data1,data2} ?
+                //var midiMsg = {port:self.portID,ch:channel,type:type,d1:data1,d2:data2};
+                //var midiStr = ""+self.portID+" "+chan+" "+type+" "+d1+" "+d2            
+                scriptManager.call("onMidi",self.portID,chan,type,d1,d2);
+                pythonManager.onMidi(self.portID,chan,type,d1,d2);
+            } 
             /*
             www.computermusicresource.com/MIDI.Commands.html
             m[0] : status (128-255) -> (128-159):notes, (176-191): CC (176=CC chanel 1, 177=CC chanel 2...), ...
@@ -97,6 +99,7 @@ MidiPort = function () {
                     }else if(msg[1] == 42) {// BIG STOP BUTTON
                         dxlManager.stopAllMotors();
                     }
+                    /*
                     if(sensorManager.isMapped("sensor",self.portName,cmd,msg[1])){     
                         var mappedSensors = sensorManager.getSensorIds("sensor",self.portName,cmd,msg[1]);
                         for(var i=0; i<mappedSensors.length; i++){
@@ -104,6 +107,7 @@ MidiPort = function () {
                             sensorManager.onMidi(mappedSensors[i],"sensor",msg[2]);
                         }
                     }
+                    */
                 }else if(cmd == "note"){ // if it is note, we take the channel value (-> no controller value)
                     var channel;
                     if(msg[0] <= 143) channel = msg[0] - 128;// + 1; // notes OFF
@@ -116,6 +120,7 @@ MidiPort = function () {
                             dxlManager.onMidi(motorIDs[i], "midi", msg[2]); //quick n dirty
                         }
                     }
+                    /*
                     if(sensorManager.isMapped("sensor",self.portName,cmd,channel)){
                         var mappedSensors = sensorManager.getSensorIds("sensor",self.portName,cmd,channel);
                         for(var i=0; i<mappedSensors.length; i++){
@@ -123,6 +128,7 @@ MidiPort = function () {
                             sensorManager.onMidi(mappedSensors[i],"sensor",msg[2]);
                         }
                     }
+                    */
                 }
             }
 
