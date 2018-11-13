@@ -16,6 +16,7 @@
 
 //cecile path: /Users/Cecile ?
 //didier path: /Users/Didier/Documents/
+var ctrlStopAll = 0;
 
 const electron = require('electron');
 var fs = require('fs');
@@ -26,6 +27,8 @@ var ipc = require("electron").ipcMain;
 
 var mainWindow   = null;
 var appPath = "";
+
+
 
 app.on('window-all-closed', function() {
   //if (process.platform != 'darwin') {
