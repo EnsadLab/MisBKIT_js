@@ -1707,13 +1707,21 @@ function indexMotor(){
 //Motors
 
 $("input.btnGlobalMotor").bind('click', function() {
-    
-    if($(".allMotors").css("pointer-events")=="none"){
+
+
+    if($(".allMotors").hasClass('freezed')){
         $(".allMotors").css("opacity", 1);
         $(".allMotors").css("pointer-events", "auto");
+        $(".allMotors").removeClass('freezed');
+        console.log("normal mode");
+
     }else{
+
         $(".allMotors").css("opacity", 0.3);
         $(".allMotors").css("pointer-events", "none");
+        $(".allMotors").addClass('freezed');
+        console.log("freeze mode");
+
     }
     
 });
@@ -1841,8 +1849,10 @@ $("#newAnim").bind('click', function(){
 
 //cancel
 $("#modalNewAnim").find("#newAnimCancel").bind('click', function(){
-    $("#modalNewAnim").css("display", "none");    
+    $("#modalNewAnim").css("display", "none"); 
+    console.log("close");   
 })
+
 
 //select
 $(".modalNewAnim").find("span").bind('click', loadAnimmModal);
@@ -1857,7 +1867,7 @@ function loadAnimmModal(){
 
     //console.log("yeeha!!!!!");
     if($(this).hasClass('selected')){
-        console.log("???????? ------> selected",this.id,"a", this.value);
+        console.log("???????? ------> selected",this.id,"a");
         
         // TODO: removed because it comes twice in this bind... why?? Wasn't like this in my version.
         // $(this).removeClass('selected');
@@ -1878,7 +1888,7 @@ function loadAnimmModal(){
         
 
     }else{
-        console.log("!!!!!!!! ------> selected",this.id,"a",this.value);
+        console.log("!!!!!!!! ------> selected",this.id,"a");
         // TODO ALEX: pourquoi on rentre deux fois par ici quand on clicke sur record/sinus/random ?
         
 

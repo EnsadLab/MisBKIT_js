@@ -38,6 +38,9 @@ body{
 	cursor: not-allowed;
 }
 
+.disabled *, .disabled:hover *{
+	cursor: not-allowed;
+}
 
 
 .close, button.close{
