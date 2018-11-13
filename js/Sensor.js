@@ -56,12 +56,13 @@ Sensor = function () {
         alpha: 0.5,
     };
 
-    //Suggestion:
+    //Suggestion: an object by input ...
     //   cm9:{ enabled:false , val:7 },
 
-
-    this.currValue = -1;
-    this.normValue = 0;
+    this._tmpValue   = undefined;  
+    this.currValue   = 0;
+    this.normValue   = 0;
+    this.filteredVal = 0
     this.ID = -1;
     this.area = -1; // -1:nowhere, 0:before the threshold, 1:after the threshold
     this.oldArea = -1;
@@ -89,16 +90,30 @@ Sensor.prototype.getSettings = function(){
     return this.s;
 }
 
+
 Sensor.prototype.onNormValue = function(nval){ //[0 1]
     var val = nval*((this.s.valMax-this.s.valMin)) + this.s.valMin;
-    this.onValue(val); //TODO onValue() -> onNormValue()
+    //this.onValue(val);
+    this.currValue = val;
 }
 
 Sensor.prototype.onValue = function(val){
-    //console.log("sensor:",this.s.name,val);
+    this.currValue = val;
+}
+
+//Sensor.prototype.onValue = function(val){
+//TODO : sinus & random may use update
+Sensor.prototype.update = function(){
+    if(!this.s.enabled)
+        return;
+
+    var val = this.currValue;
+        //console.log("sensor:",this.s.name,val);
 
     //CECILE2:  le filtre au début : on veut une valeur filtrée !
     // oui, juste!! fallait juste le rajouter...
+
+
     var nv = (val-this.s.valMin)/(this.s.valMax-this.s.valMin);
     var fval = val;
     if(this.s.filter == "lowpass"){
@@ -106,7 +121,7 @@ Sensor.prototype.onValue = function(val){
     } 
     var fnv = (fval-this.s.valMin)/(this.s.valMax-this.s.valMin);
  
-    this.currValue = fval; // utiliser fval plutôt que val
+    //this.currValue = fval; // utiliser fval plutôt que val
     this.normValue = fnv; // utiliser fnv plutôt que nv
     if(this.s.enabled){
         if( this.s.motorEnabledOutput ){

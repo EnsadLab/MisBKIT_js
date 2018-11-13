@@ -58,13 +58,18 @@ MisGUI_anims.startRec = function(eltID) {
 MisGUI_anims.stopRec = function(eltID) {
     console.log("MisGUI_anims::stopRecord");
     var div = $(".animManager").find("li[eltID='"+ eltID + "']");
+    //var divButton = div.find("button.start-rec");
     var divButton = div.find("button.start-rec");
+    //divButton.addClass("disabled");
+    
+    
     divButton.html("start recording")
 	divButton.css({ 'animation-duration': '0s' });
 	$(".switch").css({ 'opacity': '1' });
 	$(".switch input").attr("disabled", false);
     div.find(".recordSettings").css("display", "none");
     div.find(".anim-motors").css("display", "block");
+    
 }
 
 
@@ -121,8 +126,10 @@ MisGUI_anims.setKeyCode = function(eltID,v) {
 }
 
 
-MisGUI_anims.removeAnimation = function() {   
-    var eltID = $("#sortable-anim .selected").attr('eltID');
+MisGUI_anims.removeAnimation = function(eltID) { 
+    if(eltID == undefined){  
+        eltID = $("#sortable-anim .selected").attr('eltID');
+    }
     console.log("REMOVE ANIMATION",eltID);
     var div = $(".animManager").find("li[eltID='"+ eltID + "']");
     if(div.length > 0) div.remove();

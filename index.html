@@ -379,17 +379,25 @@
 						</div>
 						<div class="advanced">
 							<ul>
+								<!--- Didier, c'est à toi.. et t'as changé qqch, juste? y'avait un conflit
+									Oui, c'est à moi! , Au fait min/max ne limite pas les entrées au clavier faut le faire pas js -->
+								<li><input func="dxlParam" param="angleMin" type="number" class="small"  min="-150" max="150" placeholder="0"><label for="">Angle Min </label></li>
+								<li><input func="dxlParam" param="angleMax" type="number" class="small"  min="-150" max="150" placeholder="0"><label for="">Angle Max </label></li>
+								<li><input func="dxlParam" param="speedMin" type="number" class="small"  min="-100" max="100" ><label for="">Speed Min </label></li>
+								<li><input func="dxlParam" param="speedMax" type="number" class="small"  min="-100" max="100" placeholder="0"><label for="">Speed Max </label></li>
+								<!--
 								<li><input func="dxlParam" param="angleMin" type="number" class="small"  title="Angle Min"><label for="">Angle Min </label></li>
 								<li><input func="dxlParam" param="angleMax" type="number" class="small"  title="Angle Max"><label for="">Angle Max </label></li>
 								<li><input func="dxlParam" param="speedMin" type="number" class="small"  title="Speed Min"><label for="">Speed Min </label></li>
 								<li><input func="dxlParam" param="speedMax" type="number" class="small"  title="Speed Max"><label for="">Speed Max </label></li>
+								-->
 							</ul>
 							
 						</div>
 						
 						<div class="properties float-left small">
 							<label class="toggle-small">
-							  <input func="dxlParam" param="clockwise" data-tog="joint,wheel" type="checkbox"> <!--class="cmdTog" name="clockwise"-->
+							  <input func="clockwise" param="clockwise" data-tog="joint,wheel" type="checkbox"> <!--class="cmdTog" name="clockwise"-->
 							  <div class="slider clock round"></div>
 							</label>
 						</div>
@@ -564,7 +572,7 @@
 						
 						<!-- Record anim -->
 						<li class="single-anim record-anim ui-state-default closable" id="anim-record" eltID="example">
-							<div class="close"><img src="assets/close.png" alt=""></div>
+							<button class="close" func="closeAnim"><img src="assets/close.png" alt=""></button>
 							<h3>RECORD</h3>
 							<input type="text" class="name" placeholder="animation's name" func="renameAnim" name="animName" size="40">
 							<div class="recordSettings">
@@ -605,7 +613,7 @@
 						
 						<!-- Sinus Anim -->
 						<li class="single-anim sinus-anim ui-state-default closable" id="anim-sinus" eltID="example" title="right click to remove">
-							<div class="close" ><img src="assets/close.png" alt=""></div>
+							<button class="close" func="closeAnim"><img src="assets/close.png" alt=""></button>
 							<h3>SINUS</h3>
 							<input type="text" class="name" placeholder="animation's name" func="renameAnim" name="animName" size="40">
 							<div class="anim-motors">
@@ -647,7 +655,7 @@
 
 						<!-- Random Anim -->
 						<li class="single-anim random-anim ui-state-default closable" id="anim-random" eltID="example" title="right click to remove">
-							<div class="close" ><img src="assets/close.png" alt=""></div>
+							<button class="close" func="closeAnim" ><img src="assets/close.png"  alt=""></button>
 							<h3>RANDOM</h3>
 							<input type="text" class="name" placeholder="animation's name" func="renameAnim" name="animName" size="40">
 							<div class="anim-motors">

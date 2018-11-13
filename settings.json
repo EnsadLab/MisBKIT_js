@@ -1,10 +1,28 @@
 {
   "savecount": 1,
   "cm9Num": 0,
-  "oscPorts": {},
+  "oscPorts": {
+    "OSC0": {
+      "type": "UDP",
+      "localPort": 8001,
+      "clientIP": "127.0.0.1",
+      "clientPort": 8000
+    }
+  },
   "webSocket": "none",
   "midiEnabled": false,
   "midiPorts": [],
+  "javascripts": {
+    "current": 0,
+    "scripts": [
+      "example.js"
+    ]
+  },
+  "python": {
+    "python": "python",
+    "arguments": "",
+    "forwards": ""
+  },
   "anims": [],
   "sensors": [],
   "motors": []

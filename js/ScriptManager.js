@@ -154,7 +154,7 @@ class scriptManager {
     saveSource( pathfile ){
         if(pathfile==undefined){ //save currnet editing
             if( (this.folder==undefined)||(this.currName==undefined) ){
-                console.log("scriptManager not saving");
+                //console.log("scriptManager not saving");
                 return; //dont save
             }else
                 pathfile = this.folder+this.currName;

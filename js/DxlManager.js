@@ -98,8 +98,8 @@ DxlManager.prototype.cmd = function(func,eltID,val,param){
     else{
         if( this.motors[+eltID] ){
             if( this.motors[+eltID][func] ){
+                console.log("dxlManager>>>>dxl:",func,eltID,val,param);
                 this.motors[+eltID][func](val,param);
-                //clockwise
             }
             else console.log("DxlManager.cmd:BAD FUNC:",func,eltID);
         }
@@ -122,6 +122,14 @@ DxlManager.prototype.midiMapping =function(eltID,val,param){
         case "num":
             motorMappingManager.setMidiMotorMappingIndex(+eltID,+val); // Gui only treats CC midi mappings for now
             break;
+    }
+}
+
+//for script , osc , python ...
+DxlManager.prototype.clockwise = function(index,val){
+    if(this.motors[index]){
+        this.motors[index].clockwise(val);
+        misGUI.showValue({class:"dxlManager",func:"clockwise",id:index,val:val})
     }
 }
 
@@ -344,7 +352,7 @@ DxlManager.prototype.cm9OnOff= function(onoff){
         //this.stopAll();
         this.freezeAllMotors();
         //this.stopAllAnims();
-        animManager.stopAllAnims();
+        animManager.stopAll();
         cm9Com.pushMessage("dxlStop\n");    
     }
 }
@@ -491,7 +499,7 @@ DxlManager.prototype.unfreezeAllMotors = function(){
 
 DxlManager.prototype.startReadDxl = function(dxlId) {
     //this.stopAllAnims();
-    animManager.stopAllAnims();
+    animManager.stopAll();
     this.refreshID = dxlId;
     this.refreshAddr = 0;
 }
