@@ -434,6 +434,18 @@ function removeContext(){
 }
 
 
+// // close btn
+// $(".closable").bind("mouseenter", function(event){
+// 	$(this).find(".close").css('opacity', 1);
+// })
+
+// $(".closable").bind("mouseleave", function(event){
+// 	$(this).find(".close").css('opacity', 0);
+// })
+
+
+
+
 /*
 //clone.find("[name=animKey]")
 $(single-motor).find("[name=mapping]")

@@ -255,7 +255,7 @@
 			<!-- MOTORS -->
 			<div class="motors" >
 					<div class="ctrl-row">
-						<button class="float-left" id="newMotor"> New</button>
+						<button class="float-left disabled" id="newMotor"> New</button>
 
 						<div class="float-right medium">
 							<!--div class="gear tiny" id="opener" data-id="dynamixel-ctrl"><img src="assets/settings.png"></div-->
@@ -282,14 +282,12 @@
 					<!-- SINGLE MOTOR -->
 						<div class="single-motor" style="display: none;"> <!--block!important;"-->
 						<div class="midi-blinker" title="midi chanel - note/cc">•</div>
+						<div class="record-blinker" title="record">•</div>
 						<div class="left-col">
-							<div func="dxlIndex" param="index" class="motor-index">0</div>
-							<div func="dxlParam" param="dxlID" class="identity">42</div>
 							<input func="dxlEnable" param="enabled" type="checkbox" class="power" 
 								   title="enable/disable">
-							<button func="dxlZero" type="checkbox" class="reset"
-								   title="reset to 0">init</button>
-							
+							<div func="dxlIndex" param="index" class="motor-index">0</div>
+							<div func="dxlParam" param="dxlID" class="identity">42</div>
 						</div>
 						<div class="circle">
 							<svg class="rotAngle" ></svg>
@@ -300,10 +298,14 @@
 							<img src="assets/thermometer.png" class="ico-thermo" alt="">
 							<div class="thermo">_</div>
 							<label class="switch">
-							  <input func="dxlMode" param="mode" value="joint,wheel" type="checkbox">
-							  <div class="slider round"></div>
+							  	<input func="dxlMode" param="mode" value="joint,wheel" type="checkbox">
+							  	<div class="slider round"></div>
 							</label>
 						</div>
+						<button func="dxlZero" type="checkbox" class="reset"
+								   title="reset to init"><img src="assets/init.png"></button>
+						<button func="" type="checkbox" class="set"
+								   title="set init value"><img src="assets/pin.png"></button>
 						<input func="onControl" type="number" class="num_rotary" placeholder="angle/speed">
 					</div>
 
@@ -377,21 +379,27 @@
 						</div>
 						<div class="advanced">
 							<ul>
+								<!--- Didier, c'est à toi.. et t'as changé qqch, juste? y'avait un conflit
 								<li><input func="dxlParam" param="angleMin" type="number" class="small"  min="-150" max="150" placeholder="0"><label for="">Angle Min </label></li>
 								<li><input func="dxlParam" param="angleMax" type="number" class="small"  min="-150" max="150" placeholder="0"><label for="">Angle Max </label></li>
 								<li><input func="dxlParam" param="speedMin" type="number" class="small"  min="-100" max="100" ><label for="">Speed Min </label></li>
 								<li><input func="dxlParam" param="speedMax" type="number" class="small"  min="-100" max="100" placeholder="0"><label for="">Speed Max </label></li>
+								-->
+								<li><input func="dxlParam" param="angleMin" type="number" class="small"  title="Angle Min"><label for="">Angle Min </label></li>
+								<li><input func="dxlParam" param="angleMax" type="number" class="small"  title="Angle Max"><label for="">Angle Max </label></li>
+								<li><input func="dxlParam" param="speedMin" type="number" class="small"  title="Speed Min"><label for="">Speed Min </label></li>
+								<li><input func="dxlParam" param="speedMax" type="number" class="small"  title="Speed Max"><label for="">Speed Max </label></li>
 							</ul>
 							
 						</div>
-						<div class="properties">
+						
+						<div class="properties float-left small">
 							<label class="toggle-small">
 							  <input func="clockwise" param="clockwise" data-tog="joint,wheel" type="checkbox"> <!--class="cmdTog" name="clockwise"-->
 							  <div class="slider clock round"></div>
 							</label>
 						</div>
 						
-						<div class="large">
 
 							<div class="medium float-left">
 								<label class="">midi : </label>
@@ -403,18 +411,13 @@
 										<option value="midi 4">midi 4</option>
 								</select>
 
-								<label class="toggle-small">
+								<label class="toggle-small ">
 							  		<input func="midiMapping" param="midiMode" type="checkbox"> <!--class="cmdTog" name="midiMode"-->
 							  		<div class="slider midi round"></div>
 								</label>
-							</div>
 
-							<div class="medium text-right float-right">
-								<label class="">mapping : </label>
-								<input func="midiMapping" param="num" type="number" class="small midiMapping" placeholder="num"> <!--name="mapping"-->
-
+								<input func="midiMapping" param="num" type="number" class="tiny midiMapping" title="number">
 							</div>
-						</div>
 					</div>
 					<!-- END ADVENCED SINGLE -->
 
@@ -566,30 +569,31 @@
 						</li>-->
 						
 						<!-- Record anim -->
-						<li class="single-anim record-anim ui-state-default" id="anim-record" eltID="example" title="right click to remove">
+						<li class="single-anim record-anim ui-state-default closable" id="anim-record" eltID="example">
+							<div class="close"><img src="assets/close.png" alt=""></div>
 							<h3>RECORD</h3>
 							<input type="text" class="name" placeholder="animation's name" func="renameAnim" name="animName" size="40">
 							<div class="recordSettings">
-								<input type="text" class="shorcut" placeholder="" func="onKeyShortcutRec" name="animKey" readonly>
+								<input type="text" class="shorcut" placeholder="" func="onKeyShortcutRec" name="animKey" readonly title="keyboard trigger">
 								
-								<input type="checkbox" class="motor-none" name="recTrack" func="selectTrackForRecord" param="0">
-								<input type="checkbox" class="motor-none" name="recTrack" func="selectTrackForRecord" param="1">
-								<input type="checkbox" class="motor-none" name="recTrack" func="selectTrackForRecord" param="2">
-								<input type="checkbox" class="motor-none" name="recTrack" func="selectTrackForRecord" param="3">
-								<input type="checkbox" class="motor-none" name="recTrack" func="selectTrackForRecord" param="4">
-								<input type="checkbox" class="motor-none" name="recTrack" func="selectTrackForRecord" param="5">
+								<input type="checkbox" class="motor-none" name="recTrack" func="selectTrackForRecord" param="0" title="0">
+								<input type="checkbox" class="motor-none" name="recTrack" func="selectTrackForRecord" param="1" title="1">
+								<input type="checkbox" class="motor-none" name="recTrack" func="selectTrackForRecord" param="2" title="2">
+								<input type="checkbox" class="motor-none" name="recTrack" func="selectTrackForRecord" param="3" title="3">
+								<input type="checkbox" class="motor-none" name="recTrack" func="selectTrackForRecord" param="4" title="4">
+								<input type="checkbox" class="motor-none" name="recTrack" func="selectTrackForRecord" param="5" title="5">
 
 								<button class="start-rec float-right" func="onRecord">Start RECording</button>
 							</div>
 							<div class="anim-motors">
-								<input type="text" class="shorcut" placeholder="_" func="onKeyShortcut" name="animKey">
+								<input type="text" class="shorcut" placeholder="_" func="onKeyShortcut" name="animKey" title="keyboard trigger">
 								
-								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="0">
-								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="1">
-								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="2">
-								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="3">
-								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="4">
-								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="5">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="0" title="0">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="1" title="1">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="2" title="2">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="3" title="3">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="4" title="4">
+								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="5" title="5">
 
 								<div class="controls">
 									<button class="play" func="startAnim" name="play"><img src="assets/play.png" alt="" name="play"></button>
@@ -606,11 +610,12 @@
 						<!-- end record anim -->
 						
 						<!-- Sinus Anim -->
-						<li class="single-anim sinus-anim ui-state-default" id="anim-sinus" eltID="example" title="right click to remove">
+						<li class="single-anim sinus-anim ui-state-default closable" id="anim-sinus" eltID="example" title="right click to remove">
+							<div class="close" ><img src="assets/close.png" alt=""></div>
 							<h3>SINUS</h3>
 							<input type="text" class="name" placeholder="animation's name" func="renameAnim" name="animName" size="40">
 							<div class="anim-motors">
-								<input type="text" class="shorcut" placeholder="_" func="onKeyShortcut" name="animKey">
+								<input type="text" class="shorcut" placeholder="_" func="onKeyShortcut" name="animKey" title="keyboard trigger">
 								
 								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="0">
 								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="1">
@@ -647,11 +652,12 @@
 						<!-- End Sinus Anim -->
 
 						<!-- Random Anim -->
-						<li class="single-anim random-anim ui-state-default" id="anim-random" eltID="example" title="right click to remove">
+						<li class="single-anim random-anim ui-state-default closable" id="anim-random" eltID="example" title="right click to remove">
+							<div class="close" ><img src="assets/close.png" alt=""></div>
 							<h3>RANDOM</h3>
 							<input type="text" class="name" placeholder="animation's name" func="renameAnim" name="animName" size="40">
 							<div class="anim-motors">
-								<input type="text" class="shorcut" placeholder="_" func="onKeyShortcut" name="animKey">
+								<input type="text" class="shorcut" placeholder="_" func="onKeyShortcut" name="animKey" title="keyboard trigger">
 								
 								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="0">
 								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="1">
@@ -696,7 +702,7 @@
 							<h3>TRIGGER</h3>
 							<input type="text" class="name" placeholder="animation's name" func="renameAnim" name="animName" size="40">
 							<div class="anim-motors">
-								<input type="text" class="shorcut" placeholder="_" func="onKeyShortcut" name="animKey">
+								<input type="text" class="shorcut" placeholder="_" func="onKeyShortcut" name="animKey" title="keyboard trigger">
 								
 								<input type="checkbox" class="motor-none" name="track"  func="selectTrackForPlay" param="0">
 								<input type="checkbox" class="motor-none" name="track" func="selectTrackForPlay" param="1">
@@ -749,11 +755,16 @@
 				<ul id="sortable-sens" name="listSensors" >
 
 				<!-- SIngle Sensors -->
-					<li class="single-sensor ui-state-default activ" func="selectSensor" type="submit" title="right click to remove">
+					<li class="single-sensor ui-state-default activ closable" func="selectSensor" type="submit" title="right click to remove">
+						
+						<button class="close" func="removeSensor"><img src="assets/close.png" alt=""></button>
+
 						<input type="checkbox" func="enable" class="power float-left cmdTog" name ="sensorOnOff" title="enable/disable">
 
 						<input type="text" func="onNameText" class="float-left medium" placeholder="Sensor name" name="sensorName" size="58">
-						<button func="removeSensor" class="small20 float-right">x</button>
+						<!-- <button func="removeSensor" class="small20 float-right">x</button> -->
+
+
 						<p class="info medium-75 float-left" func="textDescription" type="text">CM9 to OSC aaaaaaaaaabbbbbbbbbb</p>
 						<div class="sensor-setting">
 							<div class="live-value-ui">•</div>
@@ -962,7 +973,7 @@
 						</select>
 						<div class="info medium text-right float-right">
 							<p class="text-left">value :</p>
-							<input type="number" name="filter-value" func="changeSettingsVariable" param="alpha" class="medium tiny" value="1.0">
+							<input type="number" name="filter-value" func="changeSettingsVariable" param="alpha" class="medium tiny" step="0.1" value="1.0">
 						</div>
 
 					</div>
@@ -1005,9 +1016,11 @@
 						<!-- OUTPUT -->
 
 							<!-- À refaire -->
-							<li class="ui-state-default" name="animations" title="right click to remove">
+							<li class="ui-state-default" name="animations">
 
-								<section class="animation" id="animation-switcher" name="animations">
+								<section class="animation closable" id="animation-switcher" name="animations">
+									<button class="close" ><img src="assets/close.png" alt=""></button>
+
 									<div class="large float-left ">
 										<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="animationsEnabledOutput" title="enable/disable">
 										<h4>Animations switcher</h4>
@@ -1068,8 +1081,10 @@
 							</li>
 
 
-							<li class="ui-state-default" name="osc" title="right click to remove">
+							<li class="ui-state-default closable" name="osc" title="right click to remove">
 								<section name="osc">
+									<button class="close"><img src="assets/close.png" alt=""></button>
+
 									<div class="medium float-left ">
 										<input type="checkbox"  func="changeSettingsVariable" class="small cmdOnOff" param ="oscEnabledOutput" title="enable/disable">
 										<h4>OSC</h4>
@@ -1091,23 +1106,27 @@
 							</li>
 							
 
-							<li class="ui-state-default" name="motor" title="right click to remove">
+							<li class="ui-state-default closable" name="motor" title="right click to remove">
 								<section name="motor">
+									<button class="close" ><img src="assets/close.png" alt=""></button>
+
 									<div class="medium float-left">
 										<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="motorEnabledOutput" title="enable/disable">	
 										<h4>Motor Mapping</h4>
 									</div>
 
-									<div class="medium float-right text-right">
+									<div class="medium float-left text-right">
 
-										<input type="number" func="changeSettingsVariable" class="medium tiny float-right" placeholder="index" param="toMotorIndex">
+										<input type="number" func="changeSettingsVariable" class="medium tiny float-left" placeholder="index" param="toMotorIndex">
 									</div>
 
 								</section>
 							</li>
 							
-							<li class="ui-state-default" name="midi" title="right click to remove">
+							<li class="ui-state-default closable" name="midi" title="right click to remove">
 								<section class="hight" name="midi">
+									<button class="close" ><img src="assets/close.png" alt=""></button>
+
 									<div class="large float-left">
 										<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="midiEnabledOutput" title="enable/disable">
 										<h4>Midi</h4>
@@ -1137,8 +1156,10 @@
 								</section>
 							</li>
 							
-							<li class="ui-state-default" name="mobilizing" title="right click to remove">
+							<li class="ui-state-default closable" name="mobilizing" title="right click to remove">
 								<section name="mobilizing">
+									<button class="close" ><img src="assets/close.png" alt=""></button>
+
 									<div class="medium float-left ">
 										<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="mobilizingEnabledOutput" title="enable/disable">
 										<h4>Mobilizing</h4>
@@ -1282,7 +1303,8 @@
 		</div>
 
 
-		<div class="modalNewAnim draggable" id="modalNewAnim">
+		<div class="modalNewAnim draggable closable" id="modalNewAnim">
+			<div class="close" id="newAnimCancel"><img src="assets/close.png" alt=""></div>
 			<h2>New Animation</h2>
 			<hr>
 			<div class="listAnimType">
@@ -1292,11 +1314,12 @@
 				<!--<span name="trigger">Trigger</span>-->
 			</div>
 			<!--<button id="newAnimLoad" class="large">Load</button>-->
-			<button id="newAnimCancel" class="large">Cancel</button>
+			<!-- <button id="newAnimCancel" class="large">Cancel</button> -->
 		</div>
 
 
-		<div class="modalNewMotor draggable">
+		<div class="modalNewMotor draggable closable">
+			<div class="close" id=""><img src="assets/close.png" alt=""></div>
 			<h2>New Motor</h2>
 			<hr>
 			<div class="listMotorType">

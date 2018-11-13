@@ -33,6 +33,41 @@ body{
 *:focus {outline:0;}
 
 
+.disabled, .disabled:hover{
+	opacity: 0.2;
+	cursor: not-allowed;
+}
+
+
+
+.close, button.close{
+	border:0px;
+	padding:0px;
+	position: relative;
+	right: -3px;
+	float:right;
+	text-align: center;
+	top:-3px;
+	background-color: rgba(0,0,0,0.3);
+	border-radius: 100%;
+	width:20px;
+	height:20px;
+	opacity: 0;
+	transition: all 100ms linear;
+	cursor: pointer;
+	margin-bottom:-20px;
+	transform:scale(0);
+}
+
+.close img{
+	width: 10px;
+}
+
+
+.closable:hover .close, .closable:hover button.close{
+	opacity: 1;
+	transform:scale(1);
+}
 
 h2{
 	font-size:20px;
@@ -317,6 +352,7 @@ input[type="number"]{
     height: 35px;
     color: white;
     margin-right: 1%;
+    margin-top: -10px;
     vertical-align: -webkit-baseline-middle;
     transition:background 800ms ease-out;
 }
@@ -340,6 +376,7 @@ input[type="number"].small{
 input[type="number"].tiny{
     font-size: 10px;
     height: 20px;
+    margin-top: 0px;
 }
 
 
@@ -437,10 +474,32 @@ input:checked.power:before{
 }
 
 button.reset{
-	width: 40px;
+	width: 35px;
+    height: 35px;
     position: relative;
     left: 0%;
     top: 0%;
+    border-radius: 100%;
+    margin-bottom: -35px;
+    border:0px;
+}
+
+
+
+button.set{
+	width: 35px;
+    height: 35px;
+    position: relative;
+    left: calc(27% - 55px);
+    top: 0%;
+    border-radius: 100%;
+    margin-bottom: -35px;
+    border:0px;
+}
+
+button.reset img, button.set img{
+	width:16px;
+	padding-top:1px;
 }
 
 input.rec{
@@ -492,9 +551,6 @@ input:checked.rec:before{
 	color:#FF1862;
 	opacity: 0.5;
 }
-
-
-
 
 
 ::-webkit-input-placeholder {
@@ -850,11 +906,16 @@ button:hover{
 	width:28.6%;
 }
 
+.single-motor .left-col input[type="checkbox"]{
+	float:left;
+}
+
 
 .identity{
-	font-size:32pt;
-    margin-left: 2%;
-	font-weight: 100;
+	font-size: 22px;
+    margin-left: 5%;
+    margin-top: 15px;
+    opacity: 0.5;
 }
 
 .identity .set-value{
@@ -990,6 +1051,8 @@ button:hover{
 	float:left;
 	font-size: 16px;
 	width:100%;
+	margin:0px;
+	opacity: 1;
 }
 
 .motors-settings label{
@@ -1000,9 +1063,9 @@ button:hover{
 
 
 .motors-settings .advanced{
-	width:60%;
+	width:80%;
 	float:left;
-	margin-bottom: 2%;
+	margin-bottom: 15px;
 }
 
 
@@ -1047,8 +1110,7 @@ button:hover{
 
 
 .motors-settings .properties{
-	float: right;
-    margin-right: 2%;
+    margin-right: 10%;
 }
 
 
@@ -1247,12 +1309,14 @@ button.load{
     letter-spacing: 1px;
     font-weight: 700;
     display: table;
-    padding: 1%;
+    padding: 6px 0px 3px 0px;
     margin: 0 3% 1% 0;
     float:left;
     border-radius: 6px;
-	background:rgba(255, 255, 255, 0.3);
+	background:rgba(255, 255, 255, 0);
     text-transform: uppercase;
+    border-radius: 0px;
+    border-bottom: 2px solid;
 }
 
 .single-anim .ctrl-row{
@@ -1260,7 +1324,7 @@ button.load{
 	height: 30px;
 	width: 35%;
 	float:right;
-	margin-top:-70px;
+	margin-top:-60px;
 }
 /*
 .sinus-anim .ctrl-row{
@@ -1577,9 +1641,9 @@ button.load{
 
 .select-anim-1 .listAnims-1{
 	background:rgba(61, 188, 255, 0.5);
-	background:rgba(61, 30, 255, 0.2);
+	background:rgba(83, 84, 255, 0.2);
 	width:100%;
-	border: 2px rgba(61, 30, 255, 1) solid;
+	border: 2px rgba(83, 84, 255, 1.00) solid;
 	border-radius: 25px 0px 0px 25px ;
 	border-right: white 1px solid;
 	padding-left:10px;
@@ -1588,9 +1652,9 @@ button.load{
 
 .select-anim-2 .listAnims-2{
 	background:rgba(61, 188, 255, 0.5);
-	background:rgba(61, 30, 255, 0.2);
+	background:rgba(83, 84, 255, 0.2);
 	width:100%;
-	border: 2px rgba(61, 30, 255, 1) solid;
+	border: 2px rgba(83, 84, 255, 1.00) solid;
 	border-radius: 0px 25px 25px 0px ;
 	border-left: white 1px solid;
 	padding-right:10px;
@@ -1600,7 +1664,7 @@ button.load{
 
 .select-anim-1 .active, .select-anim-2 .active{
 	background:rgba(61, 188, 255, 1);
-	background:rgba(61, 30, 255, 1.00);
+	background:rgba(83, 84, 255, 1.00);
 
 }
 
@@ -1706,20 +1770,21 @@ input.range-txt{
 
 .motor-index{
 	display: block;
-    font-size: 10px;
-    color: black;
-    font-size: 108px;
+    font-size: 40px;
+    color: white;
     font-weight: 700;
-    position: relative;
+    margin-top:-5px;
+    opacity: 0.6;
+    /*position: relative;
     top: -10px;
     opacity: 0.05;
     left: 70%;
     height: 0px;
-    width: 0px;
+    width: 0px;*/
 }
 
 .midi-blinker{
-	color:#3D1EFF;
+	color:#5354FF;
 	-webkit-animation: blinker infinite cubic-bezier(1.0,0,0,1.0) 300ms;
 	position:relative;
 	left: -3px;
@@ -1728,6 +1793,22 @@ input.range-txt{
     width: 0px;
     font-size: 30px;
     cursor:pointer;
+}
+
+.record-blinker{
+	color:#ED1B60;
+	position:relative;
+	left:97%;
+    top: -20px;
+    height: 0px;
+    width: 0px;
+    font-size: 30px;
+    cursor:pointer;
+}
+
+/*Add during recording*/
+.recording-dot{
+	-webkit-animation: blinker infinite cubic-bezier(1.0,0,0,1.0) 300ms;
 }
 
 
