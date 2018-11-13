@@ -685,13 +685,13 @@ class SensorManager{
             cmdbool = false; //others ?
             val = d1; //note , num should be channel
         }
-        console.log("onMidiDatas:",port,cmdbool,num,val)
+        //console.log("onMidiDatas:",port,cmdbool,num,val)
         $.each(this.sensors, function(i,sensor){
             var s = sensor.s;
-            console.log("     sr:",s.midiPortInput,s.midiCmdInput,s.midiMappingInput)
+            //console.log("     sr:",s.midiPortInput,s.midiCmdInput,s.midiMappingInput)
             if(s.midiEnabledInput && s.midiPortInput == port && s.midiCmdInput == cmdbool && s.midiMappingInput == num )
-                //sensor.onNormValue(val/127);
-                sensor.onValue(val)
+                sensor.onNormValue(val/127); // min/max ne servent plus
+                //sensor.onValue(val)        // à discuter
         })
     }
 
