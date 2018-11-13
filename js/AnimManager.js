@@ -13,10 +13,18 @@ class AnimManager {
         this.animFolder  = "";
         this.animPlaying = [];
         this.loading = false;
+
+        /// fake values..... fakeManager didnt work
+        this.ctrlMotorStopAll = -111;
+        this.ctrlAnimStopAll = -111;
+        this.ctrlSensorStopAll = -111;
+        this.ctrlScriptStopAll = -111;
+        this.ctrlModalAnim = -111;
     }
 
     // attention avec les loadSettings.. et l'animation ID qui s'incrémente côté dynamixel..
     init() {
+        this.ctrlStopAll = 0;
         console.log("--> init AnimManager");
         // hide examples anims
         $("#sortable-anim").find("[eltID='example']").hide();
@@ -336,7 +344,7 @@ class AnimManager {
         var id = anim.id;
         console.log("ANIMLOADED---------(",id,")",this.animationID);
         this.animations[id]=anim;
-        misGUI.cloneElement("#anim-" + anim.s.type,id);
+        misGUI.cloneElement("#anim-" + anim.s.type,id,"example","#anim-record");
         MisGUI_anims.stopRec(id);
         // update the animations list in the sensor animation trigger output
         MisGUI_sensors.setSensorAnims();
@@ -362,6 +370,13 @@ class AnimManager {
             }*/
         }
 
+    }
+
+    // ok.. not so intuitive...
+    // faudrait faire autrement maintenant que c'est une croix.. bref, je laisse comme ça pour l'instant
+    closeAnim(eltID) {
+        console.log("AnimManager::closeAnim",eltID);
+        MisGUI_anims.removeAnimation(eltID);
     }
 
     removeAnim(eltID) {

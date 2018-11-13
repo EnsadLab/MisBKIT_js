@@ -15,6 +15,10 @@ scriptManager = require("./ScriptManager.js");
 animManager   = require("./AnimManager.js");
 pythonManager = require("./PythonManager.js");
 dmxManager    = require("./DmxManager.js");;
+fakeManager    = require("./fakeManager.js");;
+
+
+
 
 //acces them by little name
 var managers = {
@@ -25,7 +29,8 @@ var managers = {
     osc    :require("./OscManager.js"),
     python :require("./PythonManager.js"),
     ui     :require("./MisGUI.js"),
-    dmx    :require("./DmxManager.js")
+    dmx    :require("./DmxManager.js"),
+    fake   :require("./fakeManager.js")
 }
 
 //module.exports = class MisBKIT{
@@ -33,6 +38,8 @@ class MisBKIT{
     constructor(){
        this.name = "MisBKIT";
        this.updateTimer;
+
+       this.ctrlStopAll = 0;
     }
 
     init(){
@@ -56,7 +63,8 @@ class MisBKIT{
         try{ midiPortManager = new MidiPortManager(); }catch(e){console.log(e);}
         
         //oscMobilizing = new OscMobilizing();        
-
+        console.log("======================== init: fakeManager");
+        //fakeManager.init();
         console.log("======================== init: sensorManager");
         sensorManager.init();
         console.log("======================== init: animManager");

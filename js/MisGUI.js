@@ -868,6 +868,9 @@ MisGUI.prototype.init =function(){
     console.log("----- INIT GUI -----");
     var self = this;
     
+    // work around
+    this.ctrlStopAll = 0;
+
     this.initMotorDiv();
 
     /* >>> this.initMotorDiv(); + this.addMotor
@@ -1208,12 +1211,13 @@ MisGUI.prototype.initMotorDiv = function(){
     $(".rotAngle").on("mousewheel",function(e){e.preventDefault();}); //<<<index.js
     $(".rotSpeed").on("mousewheel",function(e){e.preventDefault();}); //<<<index.js
        
+    /* PUT BACK
     $("#motor-freeze").on('click',function(){
         if($('#motor-freeze').is(":checked"))
             dxlManager.freezeAllMotors();
         else
             dxlManager.unfreezeAllMotors();
-    });
+    });*/
 
     //---- dxlDialog ----
     $(".single-motor").contextmenu(function() { 
@@ -1728,22 +1732,68 @@ function indexMotor(){
 
 // STOP ALL
 //Motors
-
+/*
 $("input.btnGlobalMotor").bind('click', function() {
-    
-    if($(".allMotors").css("pointer-events")=="none"){
+
+
+    if($(".allMotors").hasClass('freezed')){
+    //if($(".allMotors").css("pointer-events")=="none"){
         $(".allMotors").css("opacity", 1);
         $(".allMotors").css("pointer-events", "auto");
+        $(".allMotors").removeClass('freezed');
+        console.log("normal mode");
+
     }else{
+
         $(".allMotors").css("opacity", 0.3);
         $(".allMotors").css("pointer-events", "none");
+        $(".allMotors").addClass('freezed');
+        console.log("freeze mode");
+
     }
     
+});*/
+
+// work around.......
+//var ctrlStopAll = 0;
+$("input.btnGlobalMotor").bind('click', function() {
+
+    console.log("--------motor",animManager.ctrlMotorStopAll);
+    
+    if($(".allMotors").hasClass('freezed')){
+        //console.log("a",animManager.ctrlMotorStopAll);
+        if(animManager.ctrlMotorStopAll<=0){
+            //console.log("b",animManager.ctrlMotorStopAll);
+            $(".allMotors").css("opacity", 1);
+            $(".allMotors").css("pointer-events", "auto");
+            $(".allMotors").removeClass('freezed');
+            //console.log("normal mode");     
+            animManager.ctrlMotorStopAll = 1;   
+        } else {
+            //console.log("d",animManager.ctrlMotorStopAll);
+            animManager.ctrlMotorStopAll = 0;
+            //console.log("dd",animManager.ctrlMotorStopAll);
+        }
+        //console.log("aa",animManager.ctrlMotorStopAll);
+    }else{
+        //console.log("c",animManager.ctrlMotorStopAll);
+        if(animManager.ctrlMotorStopAll<=0){
+            $(".allMotors").css("opacity", 0.3);
+            $(".allMotors").css("pointer-events", "none");
+            $(".allMotors").addClass('freezed');
+            console.log("freeze mode");
+            animManager.ctrlMotorStopAll = 1;
+        } else {
+            animManager.ctrlMotorStopAll = 0;
+        }
+        //console.log("cc",animManager.ctrlStopAll); 
+    }
+     
 });
 
 
 //Animations
-
+/*
 $("input.btnGlobalAnim").bind('click', function() {
 
     if($(".animations").css("pointer-events")=="none"){
@@ -1755,9 +1805,34 @@ $("input.btnGlobalAnim").bind('click', function() {
     }
 
 });
+*/
+$("input.btnGlobalAnim").bind('click', function() {
+    if($(".animations").hasClass('freezed')){
+        if(animManager.ctrlAnimStopAll<=0){
+            $(".animations").css("opacity", 1);
+            $(".animations").css("pointer-events", "auto");
+            $(".animations").removeClass('freezed');
+            //console.log("normal mode");     
+            animManager.ctrlAnimStopAll = 1;   
+        } else {
+            animManager.ctrlAnimStopAll = 0;
+        }
+    }else{
+        if(animManager.ctrlAnimStopAll<=0){
+            $(".animations").css("opacity", 0.3);
+            $(".animations").css("pointer-events", "none");
+            $(".animations").addClass('freezed');
+            console.log("freeze mode");
+            animManager.ctrlAnimStopAll = 1;
+        } else {
+            animManager.ctrlAnimStopAll = 0;
+        }
+    }
+});
 
 
 // Sensors
+/*
 $("input.btnGlobalSensors").bind('click', function() {
 
     if($(".sensors").css("pointer-events")=="none"){
@@ -1769,7 +1844,57 @@ $("input.btnGlobalSensors").bind('click', function() {
     }
 
 });
+*/
 
+$("input.btnGlobalSensors").bind('click', function() {
+    if($(".sensors").hasClass('freezed')){
+        if(animManager.ctrlSensorStopAll<=0){
+            $(".sensors").css("opacity", 1);
+            $(".sensors").css("pointer-events", "auto");
+            $(".sensors").removeClass('freezed');
+            //console.log("normal mode");     
+            animManager.ctrlSensorStopAll = 1;   
+        } else {
+            animManager.ctrlSensorStopAll = 0;
+        }
+    }else{
+        if(animManager.ctrlSensorStopAll<=0){
+            $(".sensors").css("opacity", 0.3);
+            $(".sensors").css("pointer-events", "none");
+            $(".sensors").addClass('freezed');
+            console.log("freeze mode");
+            animManager.ctrlSensorStopAll = 1;
+        } else {
+            animManager.ctrlSensorStopAll = 0;
+        }
+    }
+});
+
+
+//$("input.btnGlobalSensors").bind('click', function() {
+$("#script-freeze").bind('click', function() {
+    if($(".scripts").hasClass('freezed')){
+        if(animManager.ctrlScriptStopAll<=0){
+            $(".scripts").css("opacity", 1);
+            $(".scripts").css("pointer-events", "auto");
+            $(".scripts").removeClass('freezed');
+            //console.log("normal mode");     
+            animManager.ctrlScriptStopAll = 1;   
+        } else {
+            animManager.ctrlScriptStopAll = 0;
+        }
+    }else{
+        if(animManager.ctrlScriptStopAll<=0){
+            $(".scripts").css("opacity", 0.3);
+            $(".scripts").css("pointer-events", "none");
+            $(".scripts").addClass('freezed');
+            console.log("freeze mode");
+            animManager.ctrlScriptStopAll = 1;
+        } else {
+            animManager.ctrlScriptStopAll = 0;
+        }
+    }
+});
 
 
 // Temperature motors
@@ -1864,10 +1989,13 @@ $("#newAnim").bind('click', function(){
 
 //cancel
 $("#modalNewAnim").find("#newAnimCancel").bind('click', function(){
-    $("#modalNewAnim").css("display", "none");    
+    $("#modalNewAnim").css("display", "none"); 
+    console.log("close");   
 })
 
+
 //select
+/*
 $(".modalNewAnim").find("span").bind('click', loadAnimmModal);
 
 
@@ -1880,7 +2008,7 @@ function loadAnimmModal(){
 
     //console.log("yeeha!!!!!");
     if($(this).hasClass('selected')){
-        console.log("???????? ------> selected",this.id,"a", this.value);
+        console.log("???????? ------> selected",this.id,"a");
         
         // TODO: removed because it comes twice in this bind... why?? Wasn't like this in my version.
         // $(this).removeClass('selected');
@@ -1901,7 +2029,7 @@ function loadAnimmModal(){
         
 
     }else{
-        console.log("!!!!!!!! ------> selected",this.id,"a",this.value);
+        console.log("!!!!!!!! ------> selected",this.id,"a");
         // TODO ALEX: pourquoi on rentre deux fois par ici quand on clicke sur record/sinus/random ?
         
 
@@ -1912,7 +2040,171 @@ function loadAnimmModal(){
         
     }
 
+}*/
+
+//ctrlModalAnim
+$(".modalNewAnim").find("span").bind('click', loadAnimmModal);
+
+$("#script-freeze").bind('click', function() {
+    if($(".scripts").hasClass('freezed')){
+        if(animManager.ctrlScriptStopAll<=0){
+            $(".scripts").css("opacity", 1);
+            $(".scripts").css("pointer-events", "auto");
+            $(".scripts").removeClass('freezed');
+            //console.log("normal mode");     
+            animManager.ctrlScriptStopAll = 1;   
+        } else {
+            animManager.ctrlScriptStopAll = 0;
+        }
+    }else{
+        if(animManager.ctrlScriptStopAll<=0){
+            $(".scripts").css("opacity", 0.3);
+            $(".scripts").css("pointer-events", "none");
+            $(".scripts").addClass('freezed');
+            console.log("freeze mode");
+            animManager.ctrlScriptStopAll = 1;
+        } else {
+            animManager.ctrlScriptStopAll = 0;
+        }
+    }
+});
+
+
+function loadAnimmModal(){
+    
+    //$(".modalNewAnim span").removeClass('selected');
+    //$(this).addClass('selected');
+    console.log("start",animManager.ctrlModalAnim);
+    //console.log("yeeha!!!!!");
+    if($(this).hasClass('selected')){
+        console.log("a",animManager.ctrlModalAnim);
+        //console.log("???????? ------> selected",this.id,"a");
+        //console.log("start",animManager.ctrlModalAnim);
+        if(animManager.ctrlModalAnim<=0){
+            console.log("b",animManager.ctrlModalAnim);
+            var selectedType = $(".listAnimType .selected").attr("name");
+            console.log("load anim "+ selectedType);
+            if(selectedType != undefined){
+                console.log("c",animManager.ctrlModalAnim);
+                $("#modalNewAnim span").removeClass('selected');
+                $("#modalNewAnim").find("#newAnimLoad").css("opacity", 0.3);
+                $("#modalNewAnim").css("display", "none"); 
+                animManager.addAnim(selectedType);
+                animManager.ctrlModalAnim = 1;
+                console.log("cc",animManager.ctrlModalAnim);
+            }
+        } else {
+            animManager.ctrlModalAnim = 0;
+            console.log("dd",animManager.ctrlModalAnim);
+        }
+    } else {
+        if(animManager.ctrlModalAnim<=0){
+            console.log("e",animManager.ctrlModalAnim);
+            $(this).addClass('selected');
+            $("#modalNewAnim button:first-of-type").css("opacity", 1);
+            $("#modalNewAnim button:first-of-type").prop("disabled",false);
+            animManager.ctrlModalAnim = 1;
+            console.log("ee",animManager.ctrlModalAnim);
+        } else {
+            animManager.ctrlModalAnim = 0;
+            console.log("ff",animManager.ctrlModalAnim);
+        }
+    }
 }
+        
+        // TODO: removed because it comes twice in this bind... why?? Wasn't like this in my version.
+        // $(this).removeClass('selected');
+        // console.log($(this));
+        // console.log("#modalNewAnim",$("#modalNewAnim"));
+        // $("#modalNewAnim span").removeClass('selected');
+        // $("#modalNewAnim button:first-of-type").css("opacity", 0.3);
+        // $("#modalNewAnim button:first-of-type").prop("disabled",true);
+        /*
+        var selectedType = $(".listAnimType .selected").attr("name");
+        console.log("load anim "+ selectedType);
+        if(selectedType != undefined){
+            $("#modalNewAnim span").removeClass('selected');
+            $("#modalNewAnim").find("#newAnimLoad").css("opacity", 0.3);
+            $("#modalNewAnim").css("display", "none"); 
+            animManager.addAnim(selectedType);
+        }*/
+        
+
+ /*   }else{
+        console.log("!!!!!!!! ------> selected",this.id,"a",this.value);
+        
+        // $("#modalNewAnim button:first-of-type").css("opacity", 1);
+        // $("#modalNewAnim button:first-of-type").prop("disabled",false);
+
+        
+    }
+}*/
+
+
+var ctrlLoadAnim = 0;
+$(".modalNewAnim").find("span").bind('click', loadAnimmModal);
+
+
+/*
+function loadAnimmModal(){
+    
+    $(".modalNewAnim span").removeClass('selected');
+    
+    $(this).addClass('selected');
+
+
+    //console.log("yeeha!!!!!");
+    if($(this).hasClass('selected')){
+        console.log("???????? ------> selected",this.id,"a");
+        console.log("--????????------ctrlLoadAnim" + ctrlLoadAnim);
+
+        
+        // TODO: removed because it comes twice in this bind... why?? Wasn't like this in my version.
+        // $(this).removeClass('selected');
+        // console.log($(this));
+        // console.log("#modalNewAnim",$("#modalNewAnim"));
+        // $("#modalNewAnim span").removeClass('selected');
+        // $("#modalNewAnim button:first-of-type").css("opacity", 0.3);
+        // $("#modalNewAnim button:first-of-type").prop("disabled",true);
+
+        var selectedType = $(".listAnimType .selected").attr("name");
+        console.log("load anim "+ selectedType);
+        
+        if(selectedType != undefined && ctrlLoadAnim<=0){
+            
+            ctrlLoadAnim ++;   
+
+            console.log("-------------------ctrlLoadAnim" + ctrlLoadAnim);
+            $("#modalNewAnim span").removeClass('selected');
+            $("#modalNewAnim").find("#newAnimLoad").css("opacity", 0.3);
+            $("#modalNewAnim").css("display", "none"); 
+            
+
+
+            animManager.addAnim(selectedType);
+            
+            
+
+        }else{
+            console.log("--------ELSE-----------ctrlLoadAnim" + ctrlLoadAnim);
+
+            ctrlLoadAnim=0;    
+
+
+        }
+        
+
+    }else{
+        console.log("!!!!!!!! ------> selected",this.id,"a");
+        // TODO ALEX: pourquoi on rentre deux fois par ici quand on clicke sur record/sinus/random ?
+        
+
+        // $("#modalNewAnim button:first-of-type").css("opacity", 1);
+        // $("#modalNewAnim button:first-of-type").prop("disabled",false);
+
+        // rajouter par Cécile 
+    }
+}*/
 
 // load
 /* enlevé par Cécile
