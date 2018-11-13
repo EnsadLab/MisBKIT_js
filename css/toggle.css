@@ -59,7 +59,7 @@
 }
 
 .toggle-small input:checked + .slider:after {
-  color: #3D1EFF;
+  color: #5354FF;
 }
 
 .toggle-small input:checked + .slider {
@@ -73,7 +73,7 @@
 
 .toggle-small input:checked + .slider:before {
   transform: translateX(45px);
-  background-color: #3D1EFF;
+  background-color: #5354FF;
 }
 
 .toggle-small input:checked + .slider:after{
