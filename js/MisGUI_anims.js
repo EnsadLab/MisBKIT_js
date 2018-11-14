@@ -19,12 +19,19 @@ MisGUI_anims.setPlayingTracks = function(eltID,tracks){
     var bts = $(".animManager").find("li[eltID='"+ eltID + "']").find("input[name='track']");
     for(var i=0;i<tracks.length;i++){
         var im = tracks[i].i; //!!! test nbm
-        //console.log("DGBtracks:",tracks[i].f);
+        console.log("DGBtracks:",tracks[i].f);
 
         if(tracks[i].f=="angle")$(bts[im]).prop("class","motor-angle");
         else if(tracks[i].f=="speed")$(bts[im]).prop("class","motor-speed");
-        //$(bts[im]).prop("checked",true);
+
+        ///TODO CECILE:
+        ///Il faut utilisé ça sur les moteur selectionné pour les rendre inactif, mais j'arrive pas à comprendre comment les cibler.
+        ///.attr("disabled", true);
+        
+        // $(bts[im]).prop("checked",true);
         $(bts[im]).prop("checked",tracks[i].play);
+
+
     }
 }
 
