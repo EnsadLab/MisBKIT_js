@@ -51,6 +51,7 @@ class Dxl{
             speedMin: -100,
             speedMax: 100,
             torqueMax: 1023,
+            stillAngle: 0,
             midi:{port:"",msg:"CC:0"} //TODO ? type:"CC" num:0  ? channel:0 ?
         };
 
@@ -72,7 +73,7 @@ class Dxl{
         this.limitCCW = 1023; //AX12
         this.angleRef  = 300; //AX12
         this.temperature = 0;
-        this.freeze = false;
+        this.frozen = false;
     }
 }
 module.exports = Dxl;
@@ -311,14 +312,14 @@ Dxl.prototype.stopMotor = function(){
 Dxl.prototype.freezeMotor = function(){
     console.log("freeeeeeeeeze:",this.index);
     if(this.enabled){
-        this.freeze = true;
+        this.frozen = true;
         this.enable(false);
     }
 }
 
 Dxl.prototype.unfreezeMotor = function(){
-    if(this.freeze){
-        this.freeze = false;
+    if(this.frozen){
+        this.frozen = false;
         this.enable(true);
     }
 }
@@ -496,4 +497,26 @@ Dxl.prototype.speedMax = function(val){
         this.speed(val);
     return this;
 };
+
+Dxl.prototype.goStill = function(){
+    if(this.m.mode == DXL_JOINT){
+        this.angle(this.m.stillAngle)
+        console.log("stillAngle:",this.m.stillAngle)
+        misGUI.motorAngle(this.index,this.m.stillAngle );
+    }
+    else{
+        console.log("stillAngle:",0)
+        this.speed(0);
+        misGUI.motorSpeed(this.index,0 );
+    }
+}
+
+Dxl.prototype.setStillAngle = function(val){
+    if(typeof(val)=='number')
+        this.m.stillAngle = val;
+    else
+        this.m.stillAngle = this.wantedAngle;
+    console.log("setStillAngle:",this.m.stillAngle)
+}
+
 

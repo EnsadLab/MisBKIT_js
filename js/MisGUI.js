@@ -8,8 +8,7 @@ function MisGUI(){
     this.rotAngles = {};
     this.rotSpeeds = {};
     this.recording = false;
-
-    this.dxlEditId = 0;
+    //this.dxlEditId = 0;
 
     $( "#dialog" ).dialog( "close" );
 
@@ -43,6 +42,12 @@ function MisGUI(){
         var v = cm9Com.changeCm9(+this.value);
         this.value=v;
     });
+
+    $(".cm9Plug").on("mouseover",function(){
+        //console.log("cm9Plug mouseover");
+        cm9Com.checkConnection();
+    })
+    
 
     /* TODELETE
     var inputs = $("#divDxlReg :input");
@@ -1381,6 +1386,7 @@ MisGUI.prototype.divAnim = function(animId){
 }
 
 
+//TODO: devrait faire partie de MidiManager , ici on ne fait qu'afficher
 MisGUI.prototype.scanMidiPorts = function(){
     var self = this;
     var sel = $("#midi-available");
@@ -1446,6 +1452,7 @@ MisGUI.prototype.simSelectMidiPorts = function(midiEnabled){
         }
     ); 
 }
+
 
 MisGUI.prototype.scanIPv4 = function(){
     var self = this;
@@ -1577,7 +1584,8 @@ MisGUI.prototype.showDxlReg = function(id,addr,val){ //showValue ?
 }
 
 //------------------ editor ------------------------------
-MisGUI.prototype.initScriptEditor(){
+MisGUI.prototype.initScriptEditor = function(){
+    var editor = scriptEditor; //in ui.js
     /* essai de cut / paste in App
     var clipEdit = "";
     //editor.on("keypress",function(e){console.log("editor:keypress",e)})
@@ -1620,11 +1628,11 @@ MisGUI.prototype.initScriptEditor(){
 //TODO modified ?
 
 MisGUI.prototype.getScript = function(){
-    return editor.getValue(); // cf ui.js
+    return scriptEditor.getValue(); // cf ui.js
 }
 
 MisGUI.prototype.setScript = function(code){
-    editor.setValue(code); // cf ui.js
+    scriptEditor.setValue(code); // cf ui.js
 }
 
 MisGUI.prototype.scriptOnOff = function(onoff){
@@ -1965,12 +1973,12 @@ MisGUI.prototype.showCm9Num = function(onoff){
     else($("#numCm9").hide());
 }
 */
-
+/*
 $(".cm9Plug").on("mouseover",function(){
     //console.log("cm9Plug mouseover");
     cm9Com.checkConnection();
 })
-
+*/
 /* already done in the init() function
 $(".midiPlug").bind("mouseover", midiPanelOver);
 function midiPanelOver(){
