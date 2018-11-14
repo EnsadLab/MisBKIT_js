@@ -397,7 +397,7 @@ button:disabled {
 	border:2px solid white;
 }
 
-input[type="checkbox"].btnGlobalMotor, input[type="checkbox"].btnGlobalAnim, input[type="checkbox"].btnGlobalSensors{
+input[type="checkbox"].btnGlobalMotor, input[type="checkbox"].btnGlobalAnim, input[type="checkbox"].btnGlobalSensors, input[type="checkbox"].btnGlobalScript{
 	/*border: 1px solid #FF1862;*/
 	color:#FFF;
     width: 70px;
@@ -410,11 +410,11 @@ input[type="checkbox"].btnGlobalMotor, input[type="checkbox"].btnGlobalAnim, inp
     /*background:none;*/
 }
 
-input[type="checkbox"].btnGlobalMotor:hover, input[type="checkbox"].btnGlobalAnim:hover, input[type="checkbox"].btnGlobalSensors:hover{
+input[type="checkbox"].btnGlobalMotor:hover, input[type="checkbox"].btnGlobalAnim:hover, input[type="checkbox"].btnGlobalSensors:hover, input[type="checkbox"].btnGlobalScript:hover{
 	background:#FF1862;
 }
 
-input:checked.btnGlobalMotor:hover, input:checked.btnGlobalAnim:hover, input:checked.btnGlobalSensors:hover{
+input:checked.btnGlobalMotor:hover, input:checked.btnGlobalAnim:hover, input:checked.btnGlobalSensors:hover, input:checked.btnGlobalScript:hover{
 	background:#FFF;
 }
 
@@ -422,7 +422,13 @@ input[type="checkbox"].btnGlobalMotor:before, input[type="checkbox"].btnGlobalAn
 	content:"STOP ALL";
 }
 
-input:checked.btnGlobalMotor, input:checked.btnGlobalAnim, input:checked.btnGlobalSensors{
+
+input[type="checkbox"].btnGlobalScript:before{
+	content:"STOPPED";
+}
+
+
+input:checked.btnGlobalMotor, input:checked.btnGlobalAnim, input:checked.btnGlobalSensors, input:checked.btnGlobalScript{
 	border: 0px solid #FF1862;
 }
 
@@ -431,8 +437,15 @@ input:checked.btnGlobalMotor:before, input:checked.btnGlobalAnim:before, input:c
 	content:"ACTIVE ALL";
 	color: #333647;
 	border: 0px solid #FF1862;
-
 }
+
+input:checked.btnGlobalScript:before{
+	content:"RUNNING";
+	color: #333647;
+	border: 0px solid #FF1862;
+}
+
+
 
 
 input.power:before, input.osc-btn:before, input.midi-btn:before, input.CM9-btn:before{
@@ -913,6 +926,14 @@ button:hover{
 	float:left;
 }
 
+
+.single-motor .left-col .identity{
+	clear:both;
+}
+
+.single-motor .left-col .motor-index{
+	float:left;
+}
 
 .identity{
 	font-size: 22px;
