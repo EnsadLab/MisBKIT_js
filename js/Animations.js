@@ -305,6 +305,7 @@ Animation.prototype.load = function(fname, addToGui){ //sync
             MisGUI_anims.setPlayingTracks(this.id,this.channels);
             MisGUI_anims.setAnimName(this.id,this.fileName);
             MisGUI_anims.setKeyCode(this.id,this.s.keyCode);
+            MisGUI_anims.desactivateChannels(this.id,this.channels);
             //this.startPlay();
         }
         else{

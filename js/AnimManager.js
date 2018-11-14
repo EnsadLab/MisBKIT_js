@@ -269,7 +269,7 @@ class AnimManager {
                 anim.startRec();
                 anim.recordingGUI = true;
             }
-            else { //NO MOTOR TO REC
+            else { //NO MOTOR TO REC.. should not happen anymore since button is disabled now
                 //misGUI.recOff();
                 // TODO: put the startRecording to StopRecording!!!!
                 console.log("in here c");
@@ -285,7 +285,7 @@ class AnimManager {
         else{ //open dialogBox ... select anim folder.. should actually not happen.
             // misGUI.recOff();
             // TODO: put the startRecording to StopRecording!!!!
-            resetRecording(anim.id);
+            //resetRecording(anim.id);
             anim.recordingGUI = false;
         }
     }

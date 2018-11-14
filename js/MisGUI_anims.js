@@ -14,7 +14,7 @@ MisGUI_anims.setRecordTracks = function(eltID,tracks){
     }
 }
 
-MisGUI_anims.setPlayingTracks = function(eltID,tracks){
+MisGUI_anims.setPlayingTracks = function(eltID,tracks,record){
     console.log("setPlayingTracks",tracks);
     var bts = $(".animManager").find("li[eltID='"+ eltID + "']").find("input[name='track']");
     for(var i=0;i<tracks.length;i++){
@@ -32,6 +32,21 @@ MisGUI_anims.setPlayingTracks = function(eltID,tracks){
         $(bts[im]).prop("checked",tracks[i].play);
 
 
+    }
+}
+
+
+
+MisGUI_anims.desactivateChannels = function(eltID,channels){
+    var bts = $(".animManager").find("li[eltID='"+ eltID + "']").find("input[name='track']");
+    bts.attr("disabled", true);
+    for(var i=0;i<channels.length;i++){
+        var im = channels[i].i; //!!! test nbm
+        //console.log("DGBtracks:",recordChannels[i].f);
+        if(channels[i].play){
+            $(bts[im]).attr("disabled", false);
+        }
+        //console.log("DGBtracks:",channels[i].play);
     }
 }
 
