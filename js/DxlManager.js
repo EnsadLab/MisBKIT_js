@@ -94,6 +94,8 @@ DxlManager.prototype.cmdOld = function(cmd,index,arg){
 //joint wheel recCheck enable angle velocity
 DxlManager.prototype.cmd = function(func,eltID,val,param){
     console.log("dxlManager:cmd:",func,eltID,val,param);
+    console.log("     settings",this.motors[0].m);
+
     if(this[func]){
         this[func](+eltID,val,param); //eltID=index
     }
@@ -140,7 +142,9 @@ DxlManager.prototype.dxlParam = function(eltID,val,param){
     console.log("dxlManager:dxlParam:",eltID,val,param);
     if(this.motors[eltID]){
         this.motors[eltID].m[param]=val;
+        console.log(" dxlParam1",this.motors[eltID].m);
         misGUI.motorSettings(eltID,this.motors[eltID].m);
+        console.log(" dxlParam2",this.motors[eltID].m);
     }
 }
 DxlManager.prototype.dxlEnable = function(eltID,val){
@@ -347,20 +351,23 @@ DxlManager.prototype.cm9OnOff= function(onoff){
     console.log("DxlManager.cm9OnOff:",onoff);
     var self = this;
     if(onoff){
-        /*
+        this.stopAllMotors(); // clear speeds      
+        this.freezeAllMotors(); //A REVOIR
         for (var i = 0; i < self.motors.length; i++) {
-            self.motors[i].cm9Init();
+            console.log(" cm9on:",self.motors[i].m )
+            //self.motors[i].cm9Init();
         }
-        */
+        
        this.unfreezeAllMotors();
        //this.senDxlIds();
     }
     else{
         //misGUI.cm9State("OFF");
-        //this.stopAll();
-        this.freezeAllMotors();
+        //this.stopMotors();
+        //this.freezeAllMotors(); //A REVOIR
         //this.stopAllAnims();
-        animManager.stopAll();
+        animManager.stopAll();  //
+        this.stopAllMotors();
         cm9Com.pushMessage("dxlStop\n");    
     }
 }

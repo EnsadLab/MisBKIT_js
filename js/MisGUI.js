@@ -560,7 +560,6 @@ MisGUI.prototype.angleMax =function(index,val){
 }
 MisGUI.prototype.speedMin =function(index,val){
     val=+val;
-    console.log("SPEEDMIN:",val)
     // min & max in html doesnt work with manual input
     if(val<-100){val = -100;this.showParams({class:"dxlManager",id:index,val:{speedMin:val}})} //GRRR
     if(val>100) {val =  100;this.showParams({class:"dxlManager",id:index,val:{speedMin:val}})}
@@ -607,13 +606,14 @@ MisGUI.prototype.motorMode =function(index,value){
                 //this.joint(index);
                 this.rotSpeeds[index].show(false);
                 this.rotAngles[index].show(true);
+                //value updated ?
                 break;
             case true: case 1: case "W": case "wheel": case -1://off mode
                 //this.wheel(index);
                 this.rotAngles[index].show(false);
                 this.rotSpeeds[index].show(true);
                 this.rotSpeeds[index].setValue(0);
-                this.motorSpeed(index,0);            
+                this.motorSpeed(index,0); //set Rotary & input         
                 break;
         }
     }
@@ -744,12 +744,6 @@ MisGUI.prototype.addMotor = function(index,settings){
     this.showValue({class:"dxlManager",id:index,param:"index",val:index});
     if(settings)
         this.motorSettings(index,settings);
-
-    //console.log("PASGLOP:",$("[name='pasglop']").length);
-    cl1.find("[name='pasglop']").on("click",function(){
-        console.log("GLOOOOOOOOOOOOOP!")
-    })
-    console.log("PASGLOP:",cl1.find("[name='pasglop']"));
     
 }
 
@@ -766,6 +760,7 @@ MisGUI.prototype.motorSettings = function(index,s){
     this.angleMax(index,s.angleMax);
     this.speedMin(index,s.speedMin);
     this.speedMax(index,s.speedMax);
+    //update mode
     this.motorMode(index,s.mode); // show/hide rotary , speed at 0
 }
 

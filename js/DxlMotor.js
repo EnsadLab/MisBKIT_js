@@ -56,7 +56,6 @@ class Dxl{
         };
 
         this.index   = index;
-        this.enabled = false;
         this.rec = false;
         //this.timeOfRequest = 0;
         this._currPos = NaN;
@@ -82,12 +81,13 @@ Dxl.prototype.sendGoalSpeed = function(){
     if(this.m.dxlID>0){
         var mod = DXL_OFF; //relax par default
         var s = 0;
-        if(this.enabled){
+        if(this.m.enabled){
             if(this.temperature>65)
                 this.onoff(false);
             mod=this.m.mode;
             s = this.dxlSpeed;
-        }
+            //console.log("sendGoalSpeed:",mod)
+        } 
         cm9Com.pushMessage(
            "dxlMotor"+this.index+" "+this.m.dxlID
           +","+mod+","+s+","+this.dxlGoal+"\n"
@@ -191,7 +191,7 @@ Dxl.prototype.cm9Init = function() {
     if(this.m.dxlID<1)
         return;
     
-    if(this.enabled)
+    if(this.m.enabled)
         this.enable(true);
 }
 
@@ -251,16 +251,16 @@ Dxl.prototype.model=function(val){
 Dxl.prototype.enable = function(onoff){
     console.log("-------- Dxl.Enable(): -------",this.m.dxlID,onoff);
     if(this.m.dxlID<1){
-        this.enabled = false;
+        this.m.enabled = false;
         misGUI.dxlEnabled(this.index,false);
         return false;
     }
 
     //AREVOIR MODE
     if(onoff){
-        if(this.temperature>67){
+        if(this.temperature>66){
             console.log("***** TO HOT ****",this.index);
-            this.enabled = false;
+            this.m.enabled = false;
         }
         else{
             //console.log("-------- Dxl.Enable: -------",this.m.dxlID,onoff," model:",this.m.model);
@@ -268,7 +268,7 @@ Dxl.prototype.enable = function(onoff){
                 console.log("-----------askForModel:",this.m.dxlID);
                 cm9Com.pushMessage("dxlModel "+this.m.dxlID+"\n");
             }
-            this.enabled = true;
+            this.m.enabled = true;
             if(this.m.mode==DXL_JOINT)
                 this.joint();
             else if(this.m.mode==DXL_WHEEL)
@@ -277,7 +277,7 @@ Dxl.prototype.enable = function(onoff){
     }
     else{ //mode wheel pour "relax" AX12 ... torque ... //A REVOIR!!! MX28...
         //console.log("----- Dxl.disable: -----",this.m.dxlID);
-        this.enabled = false;
+        this.m.enabled = false;
         this.dxlSpeed = 0;
         this.wantedSpeed = 0;
         misGUI.motorSpeed(this.index,0);
@@ -288,7 +288,7 @@ Dxl.prototype.enable = function(onoff){
 
 Dxl.prototype.stopMotor = function(){
     console.log("NEW STOP MOTOR");
-    if(this.enabled){
+    if(this.m.enabled){
         this.enable(false); //STOP
         this.enable(true);  //REENABLE
     }
@@ -296,7 +296,7 @@ Dxl.prototype.stopMotor = function(){
 
 Dxl.prototype.freezeMotor = function(){
     console.log("freeeeeeeeeze:",this.index);
-    if(this.enabled){
+    if(this.m.enabled){
         this.frozen = true;
         this.enable(false);
     }
@@ -318,9 +318,13 @@ Dxl.prototype.angleRange = function(min,max){
 Dxl.prototype.joint = function(){
     this.m.mode = DXL_JOINT;
     this.m.jointSpeed = this.m.speedMax; //OK: good solution
+    if(this._currPos != NaN)
+        this.wantedAngle = this._curAngle
+
     this.speed(this.m.jointSpeed);
     misGUI.motorAngle(this.index,this.wantedAngle); //updated by currPos
     console.log("----- Dxl.joint: ----",this.index,this.m.mode,this._curAngle);
+    console.log("     _currpos:",this._currPos,this._curAngle,this.wantedAngle)
     // let the animations know about the change so that the label can be changed
     animManager.setTrackForRecord(this.index,this.m.mode);
     if(this.m.dxlID>0){
@@ -329,7 +333,7 @@ Dxl.prototype.joint = function(){
             cm9Com.pushMessage("dxlModel "+this.m.dxlID+"\n");
         }
         if(this.m.model==12){
-            cm9Com.pushMessage(
+            cm9Com.pushMessage( //compliance max
                 "dxlWrite "+this.m.dxlID+","+ADDR_SLOPE_CW+",128\n"
                 +"dxlWrite "+this.m.dxlID+","+ADDR_SLOPE_CCW+",128\n"); //smooth
         }
@@ -361,7 +365,7 @@ Dxl.prototype.currPos = function(p){
             this.wantedAngle = a;
             this.dxlGoal = p;
         }
-        else if(!this.enabled){
+        else if(!this.m.enabled){
             this.wantedAngle = a; 
             this.dxlGoal = p;
             misGUI.motorAngle(this.index,a);
