@@ -155,7 +155,7 @@ function toggleButton(){ //click on .toggleBt
 //$(function() {
 window.onload = function() {
 
-    //allow cut,paste,... on release app
+    //allow cut,copy,paste in scripteditor in release app
     window.addEventListener('keydown', function (e) {
         if( e.metaKey || e.ctrlKey ){
             console.log("window_keydown:",e)
@@ -165,27 +165,8 @@ window.onload = function() {
         }
     });
 
-    misGUI     = new MisGUI();
+    misGUI = new MisGUI();
     misGUI.init();
-
-    // TODO: ordering had to be changed -> @Didier: is it a problem how it is now? No
-    //settingsManager = new SettingsManager(); >>>>>> MISBKIT.js
-
-    //cm9Com = new Cm9TCPclient(); >>>>>> MISBKIT.js
-
-    //robusManager = new RobusManager(); >>>>>> MISBKIT.js
-
-    //motorMappingManager = new MotorMappingManager(); >>>>>> MISBKIT.js
-
-    //oscManager = new OscManager(); >>>>>> MISBKIT.js
-    //dxlManager = new DxlManager(); >>>>>> MISBKIT.js
-    //sensorManager = new SensorManager(); >>>>>> MISBKIT.js
-
-    //var toto = require("./js/AnimManager.js");
-
-
-    //var MisBKit = require("./js/MisBKIT.js");
-    //MBK = new MisBKit();
 
     MBK = require("./js/MisBKIT.js");
     MBK.init(); //needs misGUI initialized

@@ -239,14 +239,14 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                     break;
                 case "checkbox":
                     $(this).on("change",function(){
-                        //console.log("========manager:chk:", $(this).attr("false"),$(this).attr("true"));
+                        console.log("========manager:chk:", $(this).attr("false"),$(this).attr("true"));
                         //DB: TODO attr ou data  ["joint","wheel"] or something like ...
                         manager.cmd($(this).attr("func"),$(this).attr("eltID"),$(this).prop("checked"),$(this).attr("param"));
                     });
                     break;
                 case "submit":  //button
                     $(this).on("click",function(){
-                        console.log("******* CLICK ******",$(this));
+                        console.log("******* BUTTON ******",$(this));
                         // TEST pour le startRecord ds les anims.. j'ai rajouté l'attribut value
                         var v = $(this).attr("value"); // "true","false" --- ou plutôt 0,1 ?? .. et ptet pas utiliser l'arg value...
                         var vstring = "true";
@@ -744,6 +744,13 @@ MisGUI.prototype.addMotor = function(index,settings){
     this.showValue({class:"dxlManager",id:index,param:"index",val:index});
     if(settings)
         this.motorSettings(index,settings);
+
+    //console.log("PASGLOP:",$("[name='pasglop']").length);
+    cl1.find("[name='pasglop']").on("click",function(){
+        console.log("GLOOOOOOOOOOOOOP!")
+    })
+    console.log("PASGLOP:",cl1.find("[name='pasglop']"));
+    
 }
 
 
@@ -871,6 +878,8 @@ MisGUI.prototype.selectMidiMappingPort = function(motorID, name){
 
 MisGUI.prototype.init =function(){
     console.log("----- INIT GUI -----");
+
+
     var self = this;
     
     // work around

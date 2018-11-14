@@ -76,6 +76,7 @@ DxlManager.prototype.init =function(){
     //DEBUG
 }
 
+/* TODELETE
 DxlManager.prototype.cmdOld = function(cmd,index,arg){
     console.log("DEPRECATED dxl cmdOLD: ",index," cmd:",cmd," arg:",arg);
     if(this[cmd]){
@@ -86,6 +87,7 @@ DxlManager.prototype.cmdOld = function(cmd,index,arg){
             this.motors[index][cmd](arg);
     }
 };
+*/
 
 //GUI cmd 
 //dxlID clockwise angleMin angleMax speedMin speedMax
@@ -142,6 +144,7 @@ DxlManager.prototype.dxlParam = function(eltID,val,param){
     }
 }
 DxlManager.prototype.dxlEnable = function(eltID,val){
+    console.log("dxlEnable",eltID,val)
     if(this.motors[+eltID])
         this.motors[+eltID].enable(val);
 }
@@ -153,7 +156,7 @@ DxlManager.prototype.setStillAngle = function(index,val){
 
 DxlManager.prototype.goStill = function(index){
     if(this.motors[+index])
-        this.motors[+index].still()
+        this.motors[+index].goStill()
 }
 
 DxlManager.prototype.checkRec = function(eltID,val){

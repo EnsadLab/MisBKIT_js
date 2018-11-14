@@ -292,21 +292,6 @@ Dxl.prototype.stopMotor = function(){
         this.enable(false); //STOP
         this.enable(true);  //REENABLE
     }
-    /*
-    switch(this.m.mode){
-        case DXL_OFF:
-        case DXL_WHEEL:
-            this.speed(0);
-            break;
-        case DXL_JOINT:
-        this._curAngle = a;
-            this.wantedAngle = this._curAngle;
-            this.dxlGoal = this._currPos; 
-            break;    
-    }
-    misGUI.speed(this.index,0);
-    misGUI.angle(this.index,this.wantedAngle);
-    */
 }
 
 Dxl.prototype.freezeMotor = function(){
