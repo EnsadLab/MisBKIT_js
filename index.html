@@ -240,7 +240,7 @@
 					</div>
  
 					<div class="tab scriptManager" id="script">
-						<h2 id="script">Script </h2> <input func="freeze" type="checkbox" class="small btnGlobalSensors" id="script-freeze" name ="enable"title="enable/disable">
+						<h2 id="script">Script </h2> <input func="freeze" type="checkbox" class="small btnGlobalSensors script-freeze" id="script-freeze" name ="enable"title="enable/disable">
 					</div>
 				
 			
@@ -302,9 +302,9 @@
 							  	<div class="slider round"></div>
 							</label>
 						</div>
-						<button func="goStill" type="checkbox" class="reset"
+						<button func="dxlZero" type="checkbox" class="reset"
 								   title="reset to init"><img src="assets/init.png"></button>
-						<button func="setStillAngle" type="checkbox" class="set"
+						<button func="" type="checkbox" class="set"
 								   title="set init value"><img src="assets/pin.png"></button>
 						<input func="onControl" type="number" class="num_rotary" placeholder="angle/speed">
 					</div>
@@ -380,17 +380,15 @@
 						<div class="advanced">
 							<ul>
 								<!--- Didier, c'est à toi.. et t'as changé qqch, juste? y'avait un conflit
-									Oui, c'est à moi! , Au fait min/max ne limite pas les entrées au clavier faut le faire pas js -->
 								<li><input func="dxlParam" param="angleMin" type="number" class="small"  min="-150" max="150" placeholder="0"><label for="">Angle Min </label></li>
 								<li><input func="dxlParam" param="angleMax" type="number" class="small"  min="-150" max="150" placeholder="0"><label for="">Angle Max </label></li>
 								<li><input func="dxlParam" param="speedMin" type="number" class="small"  min="-100" max="100" ><label for="">Speed Min </label></li>
 								<li><input func="dxlParam" param="speedMax" type="number" class="small"  min="-100" max="100" placeholder="0"><label for="">Speed Max </label></li>
-								<!--
+								-->
 								<li><input func="dxlParam" param="angleMin" type="number" class="small"  title="Angle Min"><label for="">Angle Min </label></li>
 								<li><input func="dxlParam" param="angleMax" type="number" class="small"  title="Angle Max"><label for="">Angle Max </label></li>
 								<li><input func="dxlParam" param="speedMin" type="number" class="small"  title="Speed Min"><label for="">Speed Min </label></li>
 								<li><input func="dxlParam" param="speedMax" type="number" class="small"  title="Speed Max"><label for="">Speed Max </label></li>
-								-->
 							</ul>
 							
 						</div>
@@ -1021,7 +1019,7 @@
 							<li class="ui-state-default" name="animations">
 
 								<section class="animation closable" id="animation-switcher" name="animations">
-									<button class="close" ><img src="assets/close.png" alt=""></button>
+									<button class="close" func="removeSensorOutput" param="animations"><img src="assets/close.png" alt=""></button>
 
 									<div class="large float-left ">
 										<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="animationsEnabledOutput" title="enable/disable">
@@ -1085,7 +1083,7 @@
 
 							<li class="ui-state-default closable" name="osc" title="right click to remove">
 								<section name="osc">
-									<button class="close"><img src="assets/close.png" alt=""></button>
+									<button class="close" func="removeSensorOutput" param="osc"><img src="assets/close.png" alt=""></button>
 
 									<div class="medium float-left ">
 										<input type="checkbox"  func="changeSettingsVariable" class="small cmdOnOff" param ="oscEnabledOutput" title="enable/disable">
@@ -1110,7 +1108,7 @@
 
 							<li class="ui-state-default closable" name="motor" title="right click to remove">
 								<section name="motor">
-									<button class="close" ><img src="assets/close.png" alt=""></button>
+									<button class="close" func="removeSensorOutput" param="motor"><img src="assets/close.png" alt=""></button>
 
 									<div class="medium float-left">
 										<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="motorEnabledOutput" title="enable/disable">	
@@ -1127,7 +1125,7 @@
 							
 							<li class="ui-state-default closable" name="midi" title="right click to remove">
 								<section class="hight" name="midi">
-									<button class="close" ><img src="assets/close.png" alt=""></button>
+									<button class="close" func="removeSensorOutput" param="midi"><img src="assets/close.png" alt=""></button>
 
 									<div class="large float-left">
 										<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="midiEnabledOutput" title="enable/disable">
@@ -1160,7 +1158,7 @@
 							
 							<li class="ui-state-default closable" name="mobilizing" title="right click to remove">
 								<section name="mobilizing">
-									<button class="close" ><img src="assets/close.png" alt=""></button>
+									<button class="close" func="removeSensorOutput" param="mobilizing"><img src="assets/close.png" alt=""></button>
 
 									<div class="medium float-left ">
 										<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="mobilizingEnabledOutput" title="enable/disable">

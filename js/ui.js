@@ -353,7 +353,7 @@ function contextmenuBox(x, y, elemt){
         document.body.appendChild(div);
 
 		// TODO: check if it is still working
-        $(".remove-output").bind("click", removeSensorOutput);
+        $(".remove-output").bind("click", misguiremoveSensorOutput);
     
     }
 
