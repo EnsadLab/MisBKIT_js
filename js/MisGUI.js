@@ -1,12 +1,14 @@
 
-
 function MisGUI(){
+    console.log("##############################")
+    console.log("#          MISGUI            #")
+    console.log("##############################")
+
     var self = this;
     this.rotAngles = {};
     this.rotSpeeds = {};
     this.recording = false;
-
-    this.dxlEditId = 0;
+    //this.dxlEditId = 0;
 
     $( "#dialog" ).dialog( "close" );
 
@@ -40,6 +42,12 @@ function MisGUI(){
         var v = cm9Com.changeCm9(+this.value);
         this.value=v;
     });
+
+    $(".cm9Plug").on("mouseover",function(){
+        //console.log("cm9Plug mouseover");
+        cm9Com.checkConnection();
+    })
+    
 
     /* TODELETE
     var inputs = $("#divDxlReg :input");
@@ -238,7 +246,7 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                     break;
                 case "submit":  //button
                     $(this).on("click",function(){
-                        console.log("button",$(this).attr("func"),manager);
+                        console.log("******* CLICK ******",$(this));
                         // TEST pour le startRecord ds les anims.. j'ai rajouté l'attribut value
                         var v = $(this).attr("value"); // "true","false" --- ou plutôt 0,1 ?? .. et ptet pas utiliser l'arg value...
                         var vstring = "true";
@@ -1192,6 +1200,8 @@ MisGUI.prototype.init =function(){
     //this.scanMidiPorts(); // done when loading the settings.. here the midimanager is not anymore created yet!
     this.scanIPv4(); //Didier
 
+    this.initScriptEditor();
+
  
 }//init
 
@@ -1376,6 +1386,7 @@ MisGUI.prototype.divAnim = function(animId){
 }
 
 
+//TODO: devrait faire partie de MidiManager , ici on ne fait qu'afficher
 MisGUI.prototype.scanMidiPorts = function(){
     var self = this;
     var sel = $("#midi-available");
@@ -1441,6 +1452,7 @@ MisGUI.prototype.simSelectMidiPorts = function(midiEnabled){
         }
     ); 
 }
+
 
 MisGUI.prototype.scanIPv4 = function(){
     var self = this;
@@ -1572,52 +1584,55 @@ MisGUI.prototype.showDxlReg = function(id,addr,val){ //showValue ?
 }
 
 //------------------ editor ------------------------------
-/* essai de cut / paste in App
-var clipEdit = "";
-//editor.on("keypress",function(e){console.log("editor:keypress",e)})
-//editor.on("keyup",function(e){console.log("editor:keyup",e)})
-//editor.on("keydown",function(e,k){
-editor.on("keyup",function(e,k){
-    if( k.metaKey || k.ctrlKey ){  //MAC / Windows
-        console.log("editor:key",k)
-        if(k.key == 'c'){
-            clipEdit = e.getSelection();
-            console.log("editor:C copy:",clipEdit)  
+MisGUI.prototype.initScriptEditor = function(){
+    var editor = scriptEditor; //in ui.js
+    /* essai de cut / paste in App
+    var clipEdit = "";
+    //editor.on("keypress",function(e){console.log("editor:keypress",e)})
+    //editor.on("keyup",function(e){console.log("editor:keyup",e)})
+    //editor.on("keydown",function(e,k){
+    editor.on("keyup",function(e,k){
+        if( k.metaKey || k.ctrlKey ){  //MAC / Windows
+            console.log("editor:key",k)
+            if(k.key == 'c'){
+                clipEdit = e.getSelection();
+                console.log("editor:C copy:",clipEdit)  
+            }
+            else if(k.key == 'v'){
+                var curs = e.getCursor();
+                e.replaceRange(clipEdit,curs)
+                console.log("editor:V paste:",curs)  
+            }
+            else if(k.key == 'x'){
+                console.log("editor:X cut:",curs)  
+                clipEdit = e.getSelection();
+                e.replaceSelection("")
+            }
         }
-        else if(k.key == 'v'){
-            var curs = e.getCursor();
-            e.replaceRange(clipEdit,curs)
-            console.log("editor:V paste:",curs)  
-        }
-        else if(k.key == 'x'){
-            console.log("editor:X cut:",curs)  
-            clipEdit = e.getSelection();
-            e.replaceSelection("")
-        }
-    }
-});
-*/
-// handled by window keydown , to be efective in App (see index.js)
-editor.setOption("extraKeys",{ //prevent to be called twice
-    "Cmd-C":function(cm){console.log("Cmd-C")},
-    "Cmd-X":function(cm){console.log("Cmd-X")},
-    "Cmd-V":function(cm){console.log("Cmd-V")}
-});
-editor.on("cut",function(e){console.log("editor:cut")})
-editor.on("copy",function(e){console.log("editor:copy")})
-editor.on("paste",function(e){console.log("editor:paste")})
+    });
+    */
+    // handled by window keydown , to be efective in App (see index.js)
+    editor.setOption("extraKeys",{ //prevent to be called twice
+        "Cmd-C":function(cm){console.log("Cmd-C")},
+        "Cmd-X":function(cm){console.log("Cmd-X")},
+        "Cmd-V":function(cm){console.log("Cmd-V")}
+    });
+    editor.on("cut",function(e){console.log("editor:cut")})
+    editor.on("copy",function(e){console.log("editor:copy")})
+    editor.on("paste",function(e){console.log("editor:paste")})
 
-editor.on("keyHandled",function(ed,str,ev){
-    console.log("ed:keyHandled:",str,ev)
-});
+    //editor.on("keyHandled",function(ed,str,ev){
+    //    console.log("ed:keyHandled:",str,ev)
+    //});
+}
 //TODO modified ?
 
 MisGUI.prototype.getScript = function(){
-    return editor.getValue(); // cf ui.js
+    return scriptEditor.getValue(); // cf ui.js
 }
 
 MisGUI.prototype.setScript = function(code){
-    editor.setValue(code); // cf ui.js
+    scriptEditor.setValue(code); // cf ui.js
 }
 
 MisGUI.prototype.scriptOnOff = function(onoff){
@@ -1958,12 +1973,12 @@ MisGUI.prototype.showCm9Num = function(onoff){
     else($("#numCm9").hide());
 }
 */
-
+/*
 $(".cm9Plug").on("mouseover",function(){
     //console.log("cm9Plug mouseover");
     cm9Com.checkConnection();
 })
-
+*/
 /* already done in the init() function
 $(".midiPlug").bind("mouseover", midiPanelOver);
 function midiPanelOver(){

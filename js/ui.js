@@ -126,6 +126,7 @@ function showAnimations(){
 
 }
 
+
 function showScript(){
 
 	$(".script-panel ").css("z-index", 1);
@@ -140,7 +141,7 @@ function showScript(){
 	$("#sens").css("opacity", 0.3);
 	$("#anims").css("opacity", 0.3);
 
-	editor.refresh();
+	scriptEditor.refresh();
 }
 
 
@@ -175,7 +176,7 @@ function stopCode(){
 */
 
 // FOR CODEMIROR (code editor in script mode)
-var editor = CodeMirror(document.body.getElementsByClassName("input-code")[0], {
+var scriptEditor = CodeMirror(document.body.getElementsByClassName("input-code")[0], {
 	value: "",
 	lineNumbers: true,
 	mode: "javascript",

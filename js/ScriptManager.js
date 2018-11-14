@@ -72,10 +72,9 @@ class scriptManager {
         else{
             var fn = this.folder+this.currName;
             this.currName=undefined; //prevent saving default script to this name
-            console.log("***** SCRIPT FOLDER READY *****",this.folder,this.currName)
             this.loadSource(fn)
         }
-        osc.send("glop?")
+        console.log("***** SCRIPT FOLDER READY *****",this.folder,this.currName)
     }    
     
     setName(name){ //TODO multi

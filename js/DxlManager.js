@@ -146,9 +146,14 @@ DxlManager.prototype.dxlEnable = function(eltID,val){
         this.motors[+eltID].enable(val);
 }
 
-DxlManager.prototype.dxlZero = function(eltID,val){
-    if(this.motors[+eltID])
-    this.motors[+eltID].onValue(0); 
+DxlManager.prototype.setStillAngle = function(index,val){
+    if(this.motors[+index])
+        this.motors[+index].setStillAngle(val);
+}
+
+DxlManager.prototype.goStill = function(index){
+    if(this.motors[+index])
+        this.motors[+index].still()
 }
 
 DxlManager.prototype.checkRec = function(eltID,val){

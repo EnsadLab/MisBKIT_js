@@ -14,6 +14,7 @@ module.exports = stgmng;
 
 
 SettingsManager.prototype.loadSettings = function(){
+    console.log("********* SettingsManager loadSettings *********");
     console.log("DIR NAME " + __appPath + "" + "/pathSettings.json");
     var json = fs.readFileSync(__appPath + "/pathSettings.json", 'utf8');
     console.log("SETTINGS",json)
