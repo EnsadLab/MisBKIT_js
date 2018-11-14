@@ -84,6 +84,7 @@ class AnimManager {
 
         if(selectedType == "record"){
             MisGUI_anims.setRecordTracks(id,anim.recordchannels);
+            MisGUI_anims.disableStartRec(id,true);
         } else {
             MisGUI_anims.setPlayingTracks(id,anim.channels);
             MisGUI_anims.setAnimName(id,anim.fileName);
@@ -142,7 +143,14 @@ class AnimManager {
         var anim=this.animations[eltID];
         if(anim){
             anim.setRecordChannel(param,val);
+            // check the number of chanels that needs recording
+            if(anim.getRecordChannelsOn() > 0){
+                MisGUI_anims.disableStartRec(eltID,false);
+            } else {
+                MisGUI_anims.disableStartRec(eltID,true);
+            }
         }
+       
     }
 
     // called from the dxlManager.. not the best name for sinus and so on, but I don't want to change dxlmanager

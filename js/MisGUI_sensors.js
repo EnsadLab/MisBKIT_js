@@ -309,6 +309,8 @@ MisGUI_sensors.initRobusSelect = function(gate,modules){
 }
 
 
+
+
 // END MisGUI_sensors NAMESPACE simulation
 
 

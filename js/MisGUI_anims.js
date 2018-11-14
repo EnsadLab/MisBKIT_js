@@ -79,6 +79,12 @@ MisGUI_anims.stopRec = function(eltID) {
     
 }
 
+MisGUI_anims.disableStartRec = function(eltID,disable){
+    console.log("------------------> setStartRec",disable);
+    var div = $(".animManager").find("li[eltID='"+ eltID + "']")
+    div.find(".start-rec").attr("disabled",disable);
+}
+
 
 MisGUI_anims.playAnim = function(eltID) {
     var div = $(".animManager").find("li[eltID='"+ eltID + "']").find("button[name='play']");
