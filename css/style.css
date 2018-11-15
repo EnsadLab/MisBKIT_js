@@ -740,7 +740,7 @@ button:hover{
 }
 
 /*REC BUTTONS*/
-.start-rec{
+.start-rec, .start-rec:disabled{
 	padding: 0px 15px;
 	text-transform: uppercase;
 	color:#FF1862;

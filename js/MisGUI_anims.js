@@ -39,15 +39,54 @@ MisGUI_anims.setPlayingTracks = function(eltID,tracks,record){
 
 MisGUI_anims.desactivateChannels = function(eltID,channels){
     var bts = $(".animManager").find("li[eltID='"+ eltID + "']").find("input[name='track']");
+    var div = $(".animManager").find("li[eltID='"+ eltID + "']");
+    var divButton = div.find("button.start-rec");
+    console.log();
     bts.attr("disabled", true);
+    var nb=0;
     for(var i=0;i<channels.length;i++){
         var im = channels[i].i; //!!! test nbm
         //console.log("DGBtracks:",recordChannels[i].f);
         if(channels[i].play){
             $(bts[im]).attr("disabled", false);
+            nb++;
         }
         //console.log("DGBtracks:",channels[i].play);
     }
+    if(nb > 0){
+        divButton.removeClass("disabled");
+    }
+    
+}
+
+MisGUI_anims.setRecordingDot = function(recordChannels) {
+    console.log("################### setRecordingDot");
+    var bts = $(".allMotors .record-blinker");
+    console.log("bts",bts);
+    bts.css("display","none");
+    bts.removeClass("recording-dot");
+    
+    for(var i=0;i<recordChannels.length;i++){
+        var im = recordChannels[i].i; 
+        console.log("record",recordChannels[i].record);
+        console.log("motor ID",im);
+        if(recordChannels[i].record){
+            var children = bts.parent().find("[eltID='"+ im + "']");
+            // last minute... perhaps better way.. but didn't want to use index of motors for later use
+            for(var k=0; k< children.length;k++){
+                if(children.eq(k).hasClass("record-blinker")){
+                    children.eq(k).css("display","block");
+                    //children.eq(k).addClass("recording-dot");
+                }
+            }
+        }
+    }
+    /*
+    dot.css("display","none");
+    dot.css("diplay","block");
+    dot.addClass("recording-dot");
+    dot.removeClass("reocrding-dot");
+    */
 }
 
 MisGUI_anims.setAnimName = function(eltID, name) {
@@ -57,7 +96,7 @@ MisGUI_anims.setAnimName = function(eltID, name) {
 }
 
 
-MisGUI_anims.startRec = function(eltID) {
+MisGUI_anims.startRec = function(eltID,recordingChannels) {
 
     console.log("MisGUI_anims::startrec");
     
@@ -73,8 +112,33 @@ MisGUI_anims.startRec = function(eltID) {
 	$(".switch input").attr("disabled", true);
 
 	//cf MisGUI $("button.start-rec").unbind("click", UIstartRec);
-	//cf MisGUI $("button.start-rec").bind("click", UIstoprecording);
+    //cf MisGUI $("button.start-rec").bind("click", UIstoprecording);
+    MisGUI_anims.setBlinkingDot(recordingChannels);
 
+}
+
+MisGUI_anims.setBlinkingDot = function(recordChannels) {
+    //console.log("################### setRecordingDot");
+    var bts = $(".allMotors .record-blinker");
+    //console.log("bts",bts);
+    bts.css("display","none");
+    bts.removeClass("recording-dot");
+    
+    for(var i=0;i<recordChannels.length;i++){
+        var im = recordChannels[i].i; 
+        //console.log("record",recordChannels[i].record);
+        //console.log("motor ID",im);
+        if(recordChannels[i].record){
+            var children = bts.parent().find("[eltID='"+ im + "']");
+            // last minute... perhaps better way.. but didn't want to use index of motors for later use
+            for(var k=0; k< children.length;k++){
+                if(children.eq(k).hasClass("record-blinker")){
+                    children.eq(k).css("display","block");
+                    children.eq(k).addClass("recording-dot");
+                }
+            }
+        }
+    }
 }
 
 MisGUI_anims.stopRec = function(eltID) {
@@ -91,13 +155,24 @@ MisGUI_anims.stopRec = function(eltID) {
 	$(".switch input").attr("disabled", false);
     div.find(".recordSettings").css("display", "none");
     div.find(".anim-motors").css("display", "block");
+
+    var bts = $(".allMotors .record-blinker");
+    console.log("bts",bts);
+    bts.css("display","none");
+    bts.removeClass("recording-dot");
     
 }
 
 MisGUI_anims.disableStartRec = function(eltID,disable){
-    console.log("------------------> setStartRec",disable);
-    var div = $(".animManager").find("li[eltID='"+ eltID + "']")
-    div.find(".start-rec").attr("disabled",disable);
+    //console.log("------------------> setStartRec",disable);
+    var div = $(".animManager").find("li[eltID='"+ eltID + "']");
+    var divButton = div.find("button.start-rec");
+    divButton.attr("disabled",disable);
+    if(disable){
+        divButton.addClass("disabled");  
+    } else {
+        divButton.removeClass("disabled");
+    }
 }
 
 
@@ -162,29 +237,6 @@ MisGUI_anims.removeAnimation = function(eltID) {
     var div = $(".animManager").find("li[eltID='"+ eltID + "']");
     if(div.length > 0) div.remove();
     animManager.removeAnim(eltID);
-}
-
-// TODO
-MisGUI_anims.resetRecording = function(eltID) {
-
-    var button = $(".animManager").find("li[eltID='"+ eltID + "']").find(".start-rec");
-    console.log("in here button",button);
-    var self = button.parent().parent();
-    //UIstoprecording();
-    button.html("start recording");
-    
-    button.css({
-		'animation-duration': '0s'
-    });
-    $(".switch").css({
-		'opacity': '1'
-    });
-    
-    $(".switch input").attr("disabled", false);
-    
-    toggleRecord = false;
-    //self.find(".recordSettings").css("display", "none");
-    //self.find(".anim-motors").css("display", "block");
 }
 
 

@@ -84,6 +84,7 @@ class AnimManager {
 
         if(selectedType == "record"){
             MisGUI_anims.setRecordTracks(id,anim.recordchannels);
+            MisGUI_anims.setRecordingDot(anim.recordchannels);
             MisGUI_anims.disableStartRec(id,true);
         } else {
             MisGUI_anims.setPlayingTracks(id,anim.channels);
@@ -149,6 +150,7 @@ class AnimManager {
             } else {
                 MisGUI_anims.disableStartRec(eltID,true);
             }
+            MisGUI_anims.setRecordingDot(anim.recordchannels);
         }
        
     }
@@ -164,6 +166,7 @@ class AnimManager {
                         if(mode==0) anim.recordchannels[index].f = "angle";
                         else anim.recordchannels[index].f = "speed";
                         MisGUI_anims.setRecordTracks(anim.id,anim.recordchannels);
+                        MisGUI_anims.setRecordingDot(anim.recordchannels);
                     }
                 } else {
                     if(mode==0) anim.channels[index].f = "angle";
@@ -200,7 +203,7 @@ class AnimManager {
                 MisGUI_anims.stopRec(eltID);
             } else {
                 this.startRec(anim);
-                MisGUI_anims.startRec(eltID);
+                MisGUI_anims.startRec(eltID,anim.recordchannels);
             }
         }
     }
@@ -270,22 +273,10 @@ class AnimManager {
                 anim.recordingGUI = true;
             }
             else { //NO MOTOR TO REC.. should not happen anymore since button is disabled now
-                //misGUI.recOff();
-                // TODO: put the startRecording to StopRecording!!!!
-                console.log("in here c");
-                //resetRecording(anim.id);
-                //this.stopRec(anim) //BAD: -> anim recorded
                 anim.recordingGUI = false;
-                MisGUI_anims.stopRec(anim.id); //FIX?
-                anim.recordingGUI = false;
-                //TODO disable [recording] but donot switch to gui recorded
-
             }
         }
         else{ //open dialogBox ... select anim folder.. should actually not happen.
-            // misGUI.recOff();
-            // TODO: put the startRecording to StopRecording!!!!
-            //resetRecording(anim.id);
             anim.recordingGUI = false;
         }
     }

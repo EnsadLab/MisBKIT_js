@@ -63,7 +63,7 @@ Animation.prototype.setRecordChannel = function(index,value){
             c.record = value;
         }
     }
-    console.log("recordchanels",this.recordchannels);
+    //console.log("recordchanels",this.recordchannels);
 }
 
 Animation.prototype.getRecordChannelsOn = function(){
@@ -73,7 +73,7 @@ Animation.prototype.getRecordChannelsOn = function(){
             nb++
         }
     }
-    console.log("recordchannels lenght",this.recordchannels,"nb",nb);
+    //console.log("recordchannels lenght",this.recordchannels,"nb",nb);
     return nb;
 }
 
@@ -85,7 +85,7 @@ Animation.prototype.startRec = function(fname){
     if(fs==null)//versionHTML
         return;
 
-    console.log("startRec a ",this.fileName);
+    //console.log("startRec a ",this.fileName);
     if(fname) this.fileName = fname;
     else {
         if(this.fileName == undefined || this.fileName.length == 0){ // if there is no name yet
@@ -99,7 +99,7 @@ Animation.prototype.startRec = function(fname){
             this.fileName= y+"-"+m+"-"+d+"-"+h+"h"+mn+"-"+s;
         }
     }
-    console.log("startRec b ",this.fileName);
+    //console.log("startRec b ",this.fileName);
     MisGUI_anims.setAnimName(this.id,this.fileName);
 
     this.recIndices = [];
@@ -433,7 +433,7 @@ Animation.prototype.updateSinus = function() {
     var curr_time = performance.now();
     var t0 = curr_time-this.oldTime;
     this.oldTime = curr_time;
-    //console.log("time",t0);
+    console.log("time",t0);
     this.sinusTimer += 0.2;
     this.sinusTimer += 6.0;
     var a = this.sinusTimer;
