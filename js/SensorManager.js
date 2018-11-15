@@ -599,6 +599,12 @@ class SensorManager{
         }
     }
 
+
+    removeSensorOutput(eltID,value,param){
+        //console.log("SensorManager::removeSensorOutput");
+        misguiremoveSensorOutput(undefined,eltID,param);
+    }
+
     // method called from MisGUI_sensors and not directly from the html code
     removeOutput(eltID, output){
         if(this.getSensorWithID(eltID) != undefined && output != undefined){

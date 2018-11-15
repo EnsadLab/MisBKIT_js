@@ -61,8 +61,10 @@ SettingsManager.prototype.chooseMisBKITFolder = function() {
     if(!fs.existsSync(this.misBKITFolder)){
         //if(ELECTRON==true) { //needs remote.dialog //didier removed ELECTRON
         var self = this;
+        var title = "Create or choose MisBKIT data folder"; 
         dialog.showOpenDialog({
-            title: "First Choose MisBKIT Folder",
+            title: title,
+            message:title, //osX
             properties: ['openDirectory', 'createDirectory']
         }, function (folder) {
             if (folder) {

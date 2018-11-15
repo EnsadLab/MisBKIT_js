@@ -309,6 +309,8 @@ MisGUI_sensors.initRobusSelect = function(gate,modules){
 }
 
 
+
+
 // END MisGUI_sensors NAMESPACE simulation
 
 
@@ -364,13 +366,21 @@ function removeContext(){
 }
 */
 
-function removeSensorOutput(){
-    var eltID = $("#sortable-sens-output .selected").attr('eltID');
-    var name = $("#sortable-sens-output .selected").attr('name');
+// bad name I know... no time
+// de la programmation de grosse grosse merde je sais... j'en ai just marre de me prendre la tete sur cette petite croix de m****
+// ca marche...
+function misguiremoveSensorOutput(nothing,eltID, name){
+    //console.log("misguiremoveSensorOutput",eltID,name);
+    if(eltID == undefined && name == undefined){
+        eltID = $("#sortable-sens-output .selected").attr('eltID');
+        name = $("#sortable-sens-output .selected").attr('name');
+    } else {
+        $("#sortable-sens-output section").filter("[eltID="+ eltID + "]").filter("[name=" + name + "]").addClass('selected');
+    }
 
     console.log("REMOVE OUTPUT ENTRY",eltID,name);
 
-    $(".sensor-setting-more #sortable-sens-output .selected").filter("[eltID="+ eltID + "]").hide();
+    $(".sensor-setting-more #sortable-sens-output .selected").filter("[eltID="+ eltID + "]").hide();  
     $("#sortable-sens-output section").filter("[eltID="+ eltID + "]").removeClass('selected');  
     
     /// Update removed output.

@@ -139,13 +139,16 @@ class scriptManager {
             }//else ... what !?
         }
         var src = undefined;
-        try{ src = fs.readFileSync( filePath , 'utf8'); }
-        catch(err){} //file doesnt exist ( first MisKit launch )
-        if(this.currName.startsWith("examples/"))
-            this.currName = this.currName.substr(9) //--> dont save in examples
-        if(src != undefined){
-            misGUI.showValue({class:this.className,func:"setName",val:this.currName});
-            misGUI.setScript(src);
+        try{
+             src = fs.readFileSync( filePath , 'utf8');
+             console.log("script loaded ",src.length)
+             if(this.currName.startsWith("examples/"))
+                 this.currName = this.currName.substr(9) //--> dont save in examples
+             misGUI.showValue({class:this.className,func:"setName",val:this.currName});
+             misGUI.setScript(src);
+        }
+        catch(err){
+            console.log(" script load error:",err)
         }
     }
 
@@ -153,15 +156,17 @@ class scriptManager {
         misGUI.openSaveDialog("Save script",this.folder+this.currName,this.saveSource.bind(this));
     }
     saveSource( pathfile ){
-        if(pathfile==undefined){ //save currnet editing
+        var src = misGUI.getScript();
+        console.log("scriptManager saving",pathfile,src.length);
+        if(src.length<4) //empty
+            return;
+        if(pathfile==undefined){ //->save currnet editing
             if( (this.folder==undefined)||(this.currName==undefined) ){
-                //console.log("scriptManager not saving");
                 return; //dont save
             }else
                 pathfile = this.folder+this.currName;
         }
-        console.log("scriptManager saving",pathfile);
-        fs.writeFileSync( pathfile , misGUI.getScript() ); 
+        fs.writeFileSync( pathfile , src ); 
     }
 
     update(){ //called by MisBKIT.js
