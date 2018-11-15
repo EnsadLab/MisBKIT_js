@@ -113,9 +113,8 @@ SettingsManager.prototype.chooseMisBKITFolder = function() {
                         sensorManager.folderIsReady(self.sensorFolder);
                     }
                 });
+
                 self.getScriptFolder();
-                self.copyScriptExamples();
-                scriptManager.folderIsReady(self.scriptFolder);
             }
         });
     } else { // if directories have already been created!
@@ -123,6 +122,7 @@ SettingsManager.prototype.chooseMisBKITFolder = function() {
        // this.synchroniseFiles();
         motorMappingManager.folderIsReady(this.configurationFolder);
         sensorManager.folderIsReady(this.sensorFolder);
+        console.log("SCR READY1:",this.scriptFolder)
         scriptManager.folderIsReady(this.scriptFolder);
     }
 };
@@ -130,6 +130,7 @@ SettingsManager.prototype.chooseMisBKITFolder = function() {
 // Didier: TODO generic getUserFolder( name , callback )
 //    eg /Scripts is not created if misBKITFolder allready exists 
 SettingsManager.prototype.getScriptFolder = function(){   //name , cb ){
+    var self = this;
     this.scriptFolder = this.misBKITFolder + "Scripts/";
     if(!fs.existsSync(this.scriptFolder)){
         console.log("FOLDER! script " + this.scriptFolder);
@@ -138,9 +139,17 @@ SettingsManager.prototype.getScriptFolder = function(){   //name , cb ){
                 console.log('failed to create Scripts directory', err);
             } else {
                 console.log('created Scripts directory');
+                self.copyScriptExamples();
+                console.log("SCR READY2:",self.scriptFolder)
+                scriptManager.folderIsReady(self.scriptFolder);
             }
         });
     }
+    else{
+        console.log("SCR READY3:",this.scriptFolder)
+        scriptManager.folderIsReady(this.scriptFolder);
+    }
+
     return this.scriptFolder; //? what if error
 }
 
@@ -208,7 +217,7 @@ SettingsManager.prototype.loadConfiguration = function(filename){
 }
 
 SettingsManager.prototype.copyScriptExamples = function(){
-    var dest = this.getScriptFolder()+"examples/";
+    var dest = this.scriptFolder+"examples/";
     console.log("**********exampletFolder:*************",dest)
     if(!fs.existsSync(dest))
         fs.mkdirSync( dest )

@@ -20,7 +20,7 @@ class scriptManager {
     constructor(){
         this.className = "scriptManager";
         this.folder = undefined;
-        this.currName = "example.js";
+        this.currName = undefined;
         this.script = {}; //current script
 
         this.current = 0;      //future multiscripts
@@ -65,6 +65,10 @@ class scriptManager {
 
 
     folderIsReady(folder){
+        console.log("***** SCRIPT FOLDER READY *****",folder,this.currName)
+        if(folder==undefined)
+            return;
+
         this.folder = folder
         if(this.currName == undefined){ //settings vide
             this.uiNew();
@@ -74,7 +78,6 @@ class scriptManager {
             this.currName=undefined; //prevent saving default script to this name
             this.loadSource(fn)
         }
-        console.log("***** SCRIPT FOLDER READY *****",this.folder,this.currName)
     }    
     
     setName(name){ //TODO multi
