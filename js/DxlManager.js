@@ -347,18 +347,29 @@ DxlManager.prototype.folderIsReady = function(animationFolder){
 //DELETED DxlManager.prototype.timedSerial= function(){
 //DELETED DxlManager.prototype.serialOnOff= function(onoff,name){
 
+var pauseCM9 = false; //cm9 envoie on plusieurs fois ... à revoir
 DxlManager.prototype.cm9OnOff= function(onoff){
-    console.log("DxlManager.cm9OnOff:",onoff);
+    console.log("DxlManager.cm9OnOff:",onoff,pauseCM9);
+    if(pauseCM9)return;
+    pauseCM9 = true;
+
     var self = this;
     if(onoff){
-        this.stopAllMotors(); // clear speeds      
-        this.freezeAllMotors(); //A REVOIR
+        self.freezeAllMotors();
+        misGUI.showFreeze(true);
+        //this.stopAllMotors(); // clear speeds      
         for (var i = 0; i < self.motors.length; i++) {
             console.log(" cm9on:",self.motors[i].m )
             //self.motors[i].cm9Init();
         }
+        setTimeout(function(){
+            self.unfreezeAllMotors();
+            misGUI.showFreeze(false);
+            pauseCM9 = false;
+            console.log(" pauseCM9:",pauseCM9);
+        },500)
         
-       this.unfreezeAllMotors();
+       //this.unfreezeAllMotors();
        //this.senDxlIds();
     }
     else{
@@ -369,6 +380,7 @@ DxlManager.prototype.cm9OnOff= function(onoff){
         animManager.stopAll();  //
         this.stopAllMotors();
         cm9Com.pushMessage("dxlStop\n");    
+        pauseCM9 = false;
     }
 }
 
@@ -495,6 +507,15 @@ DxlManager.prototype.stopMotor = function(index){
         this.motors[index].stopMotor();
         misGUI.motorSpeed(index,0);
     }
+}
+
+DxlManager.prototype.uiFreeze = function(onoff){
+    if(onoff){
+        this.freezeAllMotors();
+    }else{
+        this.unfreezeAllMotors();
+    }
+
 }
 
 DxlManager.prototype.freezeAllMotors = function(){

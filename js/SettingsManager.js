@@ -30,9 +30,10 @@ SettingsManager.prototype.loadSettings = function(){
         this.chooseMisBKITFolder();
         
     }
-    this.copyScriptExamples();
-    console.log("SETTINGS scriptFolder",this.scriptFolder)
-    scriptManager.folderIsReady(this.scriptFolder);//in any case , no?
+    //else ???
+    //this.copyScriptExamples();
+    //console.log("SETTINGS scriptFolder",this.scriptFolder)
+    //scriptManager.folderIsReady(this.scriptFolder);//in any case , no?
 };
 SettingsManager.prototype.saveSettings = function () {
     console.log("entering settings manager save");
@@ -108,12 +109,11 @@ SettingsManager.prototype.chooseMisBKITFolder = function() {
                         console.log('created Sensors directory');
                         self.copyFiles();
                         sensorManager.folderIsReady(self.sensorFolder);
-
                     }
                 });
-
                 self.getScriptFolder();
-
+                self.copyScriptExamples();
+                scriptManager.folderIsReady(self.scriptFolder);
             }
         });
     } else { // if directories have already been created!
@@ -121,6 +121,7 @@ SettingsManager.prototype.chooseMisBKITFolder = function() {
        // this.synchroniseFiles();
         motorMappingManager.folderIsReady(this.configurationFolder);
         sensorManager.folderIsReady(this.sensorFolder);
+        scriptManager.folderIsReady(this.scriptFolder);
     }
 };
 

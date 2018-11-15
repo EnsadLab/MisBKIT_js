@@ -141,6 +141,8 @@ class scriptManager {
         var src = undefined;
         try{ src = fs.readFileSync( filePath , 'utf8'); }
         catch(err){} //file doesnt exist ( first MisKit launch )
+        if(this.currName.startsWith("examples/"))
+            this.currName = this.currName.substr(9) //--> dont save in examples
         if(src != undefined){
             misGUI.showValue({class:this.className,func:"setName",val:this.currName});
             misGUI.setScript(src);

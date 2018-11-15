@@ -239,7 +239,7 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                     break;
                 case "checkbox":
                     $(this).on("change",function(){
-                        console.log("========manager:chk:", $(this).attr("false"),$(this).attr("true"));
+                        //console.log("========manager:chk:", $(this).attr("false"),$(this).attr("true"));
                         //DB: TODO attr ou data  ["joint","wheel"] or something like ...
                         manager.cmd($(this).attr("func"),$(this).attr("eltID"),$(this).prop("checked"),$(this).attr("param"));
                     });
@@ -1206,8 +1206,38 @@ MisGUI.prototype.init =function(){
 
     this.initScriptEditor();
 
- 
+    //FREEZE MOTORS
+    $("input.btnGlobalMotor").bind('click', function() {
+        if($(".allMotors").hasClass('freezed')){
+            $(".allMotors").css("opacity", 1);
+            $(".allMotors").css("pointer-events", "auto");
+            $(".allMotors").removeClass('freezed');
+            dxlManager.uiFreeze(false);
+        }else{
+            $(".allMotors").css("opacity", 0.3);
+            $(".allMotors").css("pointer-events", "none");
+            $(".allMotors").addClass('freezed');
+            dxlManager.uiFreeze(true);
+        }
+         
+    });
+    
 }//init
+
+MisGUI.prototype.showFreeze = function(onoff){
+    if(onoff){
+        $(".allMotors")
+            .css("opacity", 0.3)
+            .css("pointer-events", "none")
+            .addClass('freezed');
+    }else{
+        $(".allMotors")
+            .css("opacity", 1)
+            .css("pointer-events", "auto")
+            .removeClass('freezed');
+    }
+}
+
 
 MisGUI.prototype.initMotorDiv = function(){
     //before addMotor
@@ -1641,13 +1671,15 @@ MisGUI.prototype.setScript = function(code){
 
 MisGUI.prototype.scriptOnOff = function(onoff){
     misGUI.showValue({class:"scriptManager",func:"runStop",val:onoff});
+    /*
     if(onoff){
-        $("#script-freeze").prop("checked",false); //!!! freeze = ~OnOff
+        $("#script-freeze").prop("checked",true); //!!! freeze = ~OnOff
     }
     else{
 
-        $("#script-freeze").prop("checked",true); //!!! freeze = ~OnOff
+        $("#script-freeze").prop("checked",false); //!!! freeze = ~OnOff
     }
+    */
 }
 
 /* boutons run/stop
@@ -1768,6 +1800,7 @@ $("input.btnGlobalMotor").bind('click', function() {
 
 // work around.......
 //var ctrlStopAll = 0;
+/*
 $("input.btnGlobalMotor").bind('click', function() {
 
     console.log("--------motor",animManager.ctrlMotorStopAll);
@@ -1802,7 +1835,7 @@ $("input.btnGlobalMotor").bind('click', function() {
     }
      
 });
-
+*/
 
 //Animations
 /*

@@ -84,10 +84,13 @@ Dxl.prototype.sendGoalSpeed = function(){
         if(this.m.enabled){
             if(this.temperature>65)
                 this.onoff(false);
-            mod=this.m.mode;
-            s = this.dxlSpeed;
+            if(!this.frozen){
+                mod=this.m.mode;
+                s = this.dxlSpeed;
+                //console.log("sendGoalSpeed: frozen",mod)
+            }
             //console.log("sendGoalSpeed:",mod)
-        } 
+        }
         cm9Com.pushMessage(
            "dxlMotor"+this.index+" "+this.m.dxlID
           +","+mod+","+s+","+this.dxlGoal+"\n"
@@ -295,10 +298,10 @@ Dxl.prototype.stopMotor = function(){
 }
 
 Dxl.prototype.freezeMotor = function(){
-    console.log("freeeeeeeeeze:",this.index);
     if(this.m.enabled){
         this.frozen = true;
         this.enable(false);
+        console.log("freeeeeeeeeze:",this.index,this.enabled);
     }
 }
 
@@ -306,6 +309,7 @@ Dxl.prototype.unfreezeMotor = function(){
     if(this.frozen){
         this.frozen = false;
         this.enable(true);
+        console.log("unfreeeeeeeeeze:",this.index,this.m.enabled);
     }
 }
 
