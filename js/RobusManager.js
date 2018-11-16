@@ -89,6 +89,8 @@ class LuosBot{
         this.gotBase = false;
         this.bufferHead = 0;
         this.buffer = Buffer.alloc(1024);
+        this.aliases = [];
+
         //this.sensors = {};
     }
 
@@ -111,14 +113,14 @@ class LuosBot{
                 this.initModules(msg.modules);
             }
             else{
-                console.log("LUOS:",msg)
+                //console.log("LUOS:",msg)
                 //this.testOutput(msg);
                 var arr = msg.modules;
                 for(var i=0;i<arr.length;i++){
                     var m = arr[i];
                     if(m.type != "Gate"){ //old firmware:'gate'
                         m.gate = this.gateAlias; //for sensor
-                        sensorManager.onRobusValue(m);
+                        //sensorManager.onRobusValue(m);
                     }
                 }
             }
@@ -126,6 +128,35 @@ class LuosBot{
         }catch(err){
             console.log("luos:bad json:",this.gotBase,err);
         } //Bad json        
+    }
+
+    getAliases(){
+        var als = []
+        if(this.modules!=undefined){
+            for(var i=0;i<this.modules.length;i++){
+                if(this.modules[i].type != "Gate") //old firmware:'gate'
+                    als.push(this.modules[i].alias)
+            }
+        }
+        return als;
+    }
+
+    getOutputs(alias){
+        var outs = []
+        if(this.modules!=undefined){
+            for(var i=0;i<this.modules.length;i++){
+                if( this.modules[i].alias == alias){
+                    console.log("alias found")
+                    for(var i in this.modules[i]){
+                        if((i!="type")&&(i!="id")&&(i!="alias")&&(i!="gate"))
+                        outs.push(i);
+                    }
+                    break;
+                }
+            }
+        }
+        console.log("============OUTPUTS:",outs);
+        return outs;
     }
 
     testOutput(msg){
@@ -156,11 +187,9 @@ class LuosBot{
         this.serialPort.write(json); 
     }
 
-
-    initModules(modules){
+    initModules(modules){ //array
         console.log("Luos:initModules",modules);
-        var names = [];
-        var params = [];
+        this.modules = modules;
         var info = "";
         for(var i=0;i<modules.length;i++){
             var m = modules[i];
@@ -169,8 +198,12 @@ class LuosBot{
                 this.gotBase = true;
                 this.gateAlias = m.alias;
             }
+            //aliases
+            //outputs
+
         }
         misGUI.showValue({class:"robusManager",func:"luosInfo",val:info});
+        sensorManager.luosNewGate(this.gateAlias);
 
 /*        
         //this.serialPort.write("{'modules': {rgb_led: {'color': [127,0,0]}}}\r");
@@ -187,7 +220,7 @@ class LuosBot{
         //this.serialPort.write('{"modules":{"rgb_led_mod":{"revision":""}}}');      
 */
 
-        sensorManager.robusInitSelections(); //(re)initialise la GUI
+        //sensorManager.robusInitSelections(); //(re)initialise la GUI
     }
     
     open(){
@@ -387,7 +420,7 @@ class RobusManager{
         misGUI.showValue({class:"robusManager",func:"freeze",val:onoff});
     }
 
-    getBotByGate(gate){
+    botByGate(gate){
         for( var botid in this.luosBots ){
             if(this.luosBots[botid].gateAlias == gate)
                 return this.luosBots[botid];
@@ -401,16 +434,27 @@ class RobusManager{
             if(this.luosBots[botid].gateAlias != undefined)
                 gates.push(this.luosBots[botid].gateAlias);
         }
-        if(gates.length==0)
-            gates.push("gate");
+        //if(gates.length==0)gates.push("none");
         return gates;
     }
-    getModules(gate){ //TODO
-        console.log("luos.getModules")
-        var bot = this.getBotByGate(gate);
-        //...
-        return ["L0_1","L0_2","L0_3","L0_4"];
+
+    getAliases(gate){
+        var bot = this.botByGate(gate)
+        if(bot!=undefined)
+            return bot.getAliases()
+
+        return []
     }
+
+    getOutputs(gate,alias){
+        console.log("MNG:getOutputs ",gate,alias)
+        var bot = this.botByGate(gate)
+        if(bot!=undefined)
+            return bot.getOutputs(alias)
+
+        return []
+    }
+ 
     getPins(gate,module){ //TODO
         console.log("luos.getPins")
         return ["p0","p5","p6","p7","p8","p9"];

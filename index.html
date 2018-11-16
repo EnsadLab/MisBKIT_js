@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>misB KIT 3.0.1</title>
+        <title>misB KIT 3.0.3</title>
         <link rel="stylesheet" href="css/jquery-ui.css">
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/toggle.css">
@@ -302,9 +302,9 @@
 							  	<div class="slider round"></div>
 							</label>
 						</div>
-						<button func="dxlZero" type="checkbox" class="reset"
+						<button func="goStill" type="checkbox" class="reset"
 								   title="reset to init"><img src="assets/init.png"></button>
-						<button func="" type="checkbox" class="set"
+						<button func="setStillAngle" type="checkbox" class="set"
 								   title="set init value"><img src="assets/pin.png"></button>
 						<input func="onControl" type="number" class="num_rotary" placeholder="angle/speed">
 					</div>
@@ -873,7 +873,7 @@
 								<h4>Robus</h4>
 							</div>
 							<div class="medium float-right text-right">
-								<select class= "float-right" func="onRobusParam" param="gate" style="width:145px;">
+								<select class= "float-right" func="uiLuosParam" param="gate" style="width:145px;">
 									<option value="default">gate</option>
 									<option value="gate">gate</option>
 								</select>
@@ -882,7 +882,7 @@
 
 							<div class="large float-left">
 									<div class="float-left">
-										<select class= "float-right" func="onRobusParam" param="module" style="width:145px;" >
+										<select class= "float-right" func="uiLuosParam" param="module" style="width:145px;" >
 											<option value="default">none</option>
 											<option value="L0_1">L0_1</option>
 											<!--option value="L0_2">L0_2</option>
@@ -891,7 +891,7 @@
 										</select>
 									</div>
 									<div class="float-right text-right">
-										<select class= "float-right" func="onRobusParam" param="pin" style="width:145px;">
+										<select class= "float-right" func="uiLuosParam" param="pin" style="width:145px;">
 											<option value="default">pin</option>
 											<option value="p1">p1</option>
 											<!--option value="p5">p5</option>

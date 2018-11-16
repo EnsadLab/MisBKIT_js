@@ -345,7 +345,7 @@ MisGUI.prototype.setElementValue = function(elt,value){
                 break;
             case "SELECT":
                 if(Array.isArray(value)){ //fill options with value(s)
-                //console.log("select:values[]:"); //,value);
+                    //console.log("select:values[]:",value);
                     e.each(function(i) {  //value != for each ones
                         var prev = $(this).val();
                         //console.log("select:prev:",prev);

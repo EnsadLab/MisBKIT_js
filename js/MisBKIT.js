@@ -18,8 +18,6 @@ dmxManager    = require("./DmxManager.js");;
 //fakeManager    = require("./fakeManager.js");;
 
 
-
-
 //acces them by little name
 var managers = {
     dxl    :require("./DxlManager.js"),

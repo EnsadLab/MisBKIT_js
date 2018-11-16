@@ -327,7 +327,10 @@ class SensorManager{
         MisGUI_sensors.changeSinusRandomParams(sensor.ID,sensor.s.sinusParams);
         MisGUI_sensors.changeSinusRandomParams(sensor.ID,sensor.s.randomParams);
         misGUI.setManagerValue("sensorManager","onNameText",sensor.s.name,sensor.ID);
-        sensor.s.enabled = true;
+
+        console.log("LUOSPARAMS:",s.robusInputParams);
+
+        sensor.s.enabled = true; //???
         misGUI.setManagerValue("sensorManager","enable",true,sensor.ID);
         this.updateTextDescription(sensor.ID);
         this.sensorID++;      
@@ -787,8 +790,6 @@ class SensorManager{
     
     }
 
-
-
     //called by cm9Manager // array of sensor values, one loop.
     handlePinValues(vals){
         var nbv = vals.length;
@@ -906,20 +907,40 @@ class SensorManager{
 
     }
 
-    onRobusParam(eltID,value,param){
-        console.log("onRobusParam:",eltID,value,param);
+    uiLuosParam(eltID,value,param){
         var sensor = this.getSensorWithID(eltID);
-        if(sensor != undefined){
-            console.log("robusParams:",sensor.s);
-            sensor.s.robusInputParams[param]=value;
-            //console.log("robusParam:",sensor.s.robusParams);
-            //robusManager.addSensorEmitter(eltID,sensor.s.robusParams);
-
+        if(sensor!=undefined){
+            switch(param){
+                case "gate":
+                    sensor.s.robusInputParams["gate"]=value;
+                    var a = robusManager.getAliases(value);
+                    misGUI.showValue({class:"sensorManager",id:eltID,param:"module",val:a})
+                    value = sensor.s.robusInputParams["module"]
+                case "module":
+                    var gate = sensor.s.robusInputParams["gate"] 
+                    sensor.s.robusInputParams["module"]=value;
+                    var a = robusManager.getOutputs(gate,value);
+                    misGUI.showValue({class:"sensorManager",id:eltID,param:"pin",val:a})                    
+                    break;
+                case "pin":
+                    sensor.s.robusInputParams["pin"]=value;
+            }    
         }
     }
 
+    luosNewGate( gateAlias ){
+        var gates = ["none"].concat(robusManager.getGates())
+        console.log(" luosGates:",gates)
+        misGUI.showValue({class:"sensorManager",param:"gate",val:gates})
+        //DBG misGUI.showValue({class:"sensorManager",param:"module",val:aliases})
+        //DBG misGUI.showValue({class:"sensorManager",param:"pin",val:outs})
+    }
+
+ 
     //event {gate: ,alias: ,p0:value ,p1:value ,...}
     onRobusValue(event){
+        console.log("onRobusValue:",p.pin);
+        /*
         for(var i=0; i<this.sensors.length;i++){
             if( this.sensors[i].s.robusEnabledInput ){ //this.sensors[i].s.input_entry=="robus"){
                 var p = this.sensors[i].s.robusInputParams;
@@ -930,11 +951,13 @@ class SensorManager{
                 }
             }
         }
+        */
     }
 
     robusInitSelections(){
-        var gates = robusManager.getGates();
-        //console.log("robusInitSelections:",gates)
+        //var gates = robusManager.getGates();
+        console.log("robusInitSelections:"); //,gates)
+        /*
         for(var i=0; i<this.sensors.length;i++){
             var sensor = this.sensors[i];
             if(this.sensors[i].s.input_entry=="robus"){ //?do it for all sensors?
@@ -945,11 +968,11 @@ class SensorManager{
                 misGUI.setManagerValue("robusInput","onRobusParam",pins,sensor.ID,"pin");
             }
         }
+        */
     }
-
+    
     //DELETED onSinusPopup(eltID,arg1,arg2){
     //DELETED onRandomPopup(eltID,arg1,arg2){
-
 
     setPopupValues(eltID){ //val param
         var sensor = this.getSensorWithID(eltID);
