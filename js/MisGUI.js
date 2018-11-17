@@ -1272,8 +1272,8 @@ MisGUI.prototype.initMotorDiv = function(){
     
     $("#btAdvID").on("change",function() {
         var id = $("#btAdvID").val();
-        //console.log("#btDxlRefresh click ",id);
-        self.clearDxlRegs(+id);
+        console.log("??????????? #btDxlRefresh click ",id);
+        misGUI.clearDxlRegs(+id);
         dxlManager.startReadDxl(+id); //async >> showDxlReg            
     });
     $("#btAdvID").keypress(function(e){

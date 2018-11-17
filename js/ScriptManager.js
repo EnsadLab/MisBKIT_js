@@ -13,7 +13,9 @@ function scriptSleep(delay,arg){
     return new Promise(resolve=>{setTimeout(()=>{resolve(arg)},delay)})
 }
 */
-  
+
+
+
 
 //TODO multiple scripts (GUI)
 class scriptManager {
@@ -61,8 +63,6 @@ class scriptManager {
             }
         }
     }
-
-
 
     folderIsReady(folder){
         console.log("***** SCRIPT FOLDER READY *****",folder,this.currName)
@@ -199,21 +199,25 @@ class scriptManager {
             +"function next(name,d){script._nextDuration=d; script._nextTask=name;}"
             +"function goto(task,d){next(task,d);throw('goto')}"
             +"function exit(){throw('exit')}"
+            +"function ramp(v0,v1,t,d){return script.ramp(v0,v1,t,d)}"
                     
         try{
             this.script = new Function(code);
             this.script.first = false;
-            this.script.last  = false; 
+            this.script.last  = false;
+            this.script.duration = 0;
             this.script._prevTask = undefined;
             this.script._currTask = "loop"
             this.script._nextDuration  = undefined;
             this.script._xTime = 0
             this.script._xTimeout = undefined;
+            this.script.ramp = this.newRamp;
 
             this.script.nextTask = function(){
                 //console.log("----NEXT TASK----",this._currTask,this._nextDuration)
                 // next duration if set with next() or timeout()
-                this._xTimeout=this._nextDuration
+                this._xTimeout= this._nextDuration
+                this.duration = this._xTimeout  //remplacer _xTimeout par duration?
                 this._nextDuration=undefined
                 //task_init if exist
                 self.call(this._currTask+"_init")
@@ -305,6 +309,26 @@ class scriptManager {
         });
     }
     */
+
+    newRamp(v0,v1,t0,extent){
+        var ramp = new Object();
+        ramp.v0 = v0;
+        ramp.v1 = v1;
+        ramp.t0 = t0;
+        ramp.extent = extent;
+        ramp.init  = function(av0,av1,at0,aextent){
+            v0 = av0; v1 = av1; t0 = at0; extent = aextent;    
+        }
+        ramp.value = function(t){
+            if(t<t0)
+                return v0
+            var dt = (t-t0)
+            if(dt>extent)
+                return v1
+            return (v1-v0)*dt/extent + v0;
+        };
+        return ramp;
+   }
 
     
     logError(err){

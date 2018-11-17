@@ -535,7 +535,7 @@ DxlManager.prototype.unfreezeAllMotors = function(){
 
 DxlManager.prototype.startReadDxl = function(dxlId) {
     //this.stopAllAnims();
-    animManager.stopAll();
+    //animManager.stopAll();
     this.refreshID = dxlId;
     this.refreshAddr = 0;
 }
@@ -753,6 +753,14 @@ DxlManager.prototype.onMidi = function(index,cmd,arg){
    this.onNormControl(index,arg/127);  
 };
 
+
+DxlManager.prototype.control = function(index,val){ //pour script & osc
+    this.onControl(index,val) //TODO renomer onControl
+}
+DxlManager.prototype.normControl = function(index,val){ //pour script & osc
+    this.onNormControl(index,val) //TODO renomer onControl
+}
+
 DxlManager.prototype.onNormControl = function(index,val){
     //console.log("norm:",index,val);
     if(index<this.motors.length){
@@ -792,6 +800,11 @@ DxlManager.prototype.setAngle = function(index,val){ //degrés
     }
     return 0;
 };
+
+
+
+
+
 
 DxlManager.prototype.setAngleN = function(index,val){
     if(index<this.motors.length){

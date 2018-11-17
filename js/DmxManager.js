@@ -148,6 +148,7 @@ class DmxManager{
             }
             if(name==undefined){
                 misGUI.showValue({class:"dmxManager",func:"portName",val:"ENTTEC not found"});
+                misGUI.showValue({class:"dmxManager",func:"onOff",val:false}); //ERROR ?                
             }
             else if(callback){
                 callback(name);

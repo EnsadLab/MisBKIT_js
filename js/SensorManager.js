@@ -456,7 +456,7 @@ class SensorManager{
             //console.log("B",this.getSensorWithID(eltID).s.midiEnabledInput,this.getSensorWithID(eltID).s["midiEnabledInput"]);
             this.updateTextDescription(eltID);
 
-            this.robusInitSelections();
+            //this.robusInitSelections();
 
             this.saveSensorSettings();
         }
@@ -935,41 +935,21 @@ class SensorManager{
         //DBG misGUI.showValue({class:"sensorManager",param:"module",val:aliases})
         //DBG misGUI.showValue({class:"sensorManager",param:"pin",val:outs})
     }
-
  
     //event {gate: ,alias: ,p0:value ,p1:value ,...}
-    onRobusValue(event){
-        console.log("onRobusValue:",p.pin);
-        /*
+    //TODO ? dictionary ?
+    onLuosValue(modu){
         for(var i=0; i<this.sensors.length;i++){
             if( this.sensors[i].s.robusEnabledInput ){ //this.sensors[i].s.input_entry=="robus"){
                 var p = this.sensors[i].s.robusInputParams;
-                if(event.gate==p.gate && event.alias==p.module ){
-                    //console.log("onRobusValue:",p.pin);
-                    if(event[p.pin])
-                        this.sensors[i].onValue(event[p.pin]);
-                }
+                if(modu.gate==p.gate && modu.alias==p.module && modu[p.pin]!=undefined )
+                    this.sensors[i].onValue(+modu[p.pin]);
             }
         }
-        */
     }
 
-    robusInitSelections(){
-        //var gates = robusManager.getGates();
-        console.log("robusInitSelections:"); //,gates)
-        /*
-        for(var i=0; i<this.sensors.length;i++){
-            var sensor = this.sensors[i];
-            if(this.sensors[i].s.input_entry=="robus"){ //?do it for all sensors?
-                misGUI.setManagerValue("robusInput","onRobusParam",gates,sensor.ID,"gate");
-                var modules = robusManager.getModules(sensor.s.robusInputParams);
-                misGUI.setManagerValue("robusInput","onRobusParam",modules,sensor.ID,"module");
-                var pins = robusManager.getPins(sensor.s.robusInputParams);
-                misGUI.setManagerValue("robusInput","onRobusParam",pins,sensor.ID,"pin");
-            }
-        }
-        */
-    }
+
+    //robusInitSelections(){ DELETED
     
     //DELETED onSinusPopup(eltID,arg1,arg2){
     //DELETED onRandomPopup(eltID,arg1,arg2){

@@ -103,6 +103,8 @@ class LuosBot{
         else{
             this.close();
         }
+        misGUI.showValue({class:"robusManager",func:"enable",val:false}); //ID ?
+        misGUI.showValue({class:"robusManager",func:"freeze",val:false}); //REMOVE when multi gates
     }
 
     update(json){
@@ -113,14 +115,13 @@ class LuosBot{
                 this.initModules(msg.modules);
             }
             else{
-                //console.log("LUOS:",msg)
                 //this.testOutput(msg);
                 var arr = msg.modules;
                 for(var i=0;i<arr.length;i++){
                     var m = arr[i];
                     if(m.type != "Gate"){ //old firmware:'gate'
                         m.gate = this.gateAlias; //for sensor
-                        //sensorManager.onRobusValue(m);
+                        sensorManager.onLuosValue(m);
                     }
                 }
             }
@@ -255,6 +256,7 @@ class LuosBot{
     openSerial(){
         this.close();
         if(this.serialName==null){
+            misGUI.showValue({class:"robusManager",func:"freeze",val:false}); //REMOVE when multi gates
             misGUI.showValue({class:"robusManager",func:"enable",val:"ERROR"});
             return;
         }
@@ -291,6 +293,7 @@ class LuosBot{
         this.serialPort.on('error',(err)=>{
             console.log("luos Serial ERROR:",this.id,err);
             misGUI.showValue({class:"robusManager",id:this.id,func:"enable",val:"ERROR"});
+            misGUI.showValue({class:"robusManager",func:"freeze",val:false}); //REMOVE when multi gates
             self.serialPort = null;
         });        
     }//openSerial
@@ -304,6 +307,7 @@ class LuosBot{
             }
             else{
                 misGUI.showValue({class:"robusManager",func:"enable",val:"ERROR"});
+                misGUI.showValue({class:"robusManager",func:"freeze",val:false}); //REMOVE when multi gates
             }            
         }
         else
@@ -386,6 +390,7 @@ class RobusManager{
         for( var botid in this.luosBots ){
             this.luosBots[botid].close(); //open only if enabled
         }    
+        misGUI.showValue({class:"robusManager",func:"freeze",val:false});
     }
     
     addLuosBot(){
