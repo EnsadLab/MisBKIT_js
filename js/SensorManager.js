@@ -414,7 +414,11 @@ class SensorManager{
             }
             //console.log("sensorSetting:",sensor.s);
             */
-           this.saveSensorSettings();
+            if(name == "randomEnabledInput" || name == "sinusEnabledInput"){
+                sensor.inputOnOff(value);
+            } 
+
+            this.saveSensorSettings();
 
         }    
     }
@@ -432,35 +436,39 @@ class SensorManager{
         
         console.log("change input selection:",input);
         if(this.checkConnection(input) && this.getSensorWithID(eltID) != undefined){
-            var sensor = this.getSensorWithID(eltID); //once please ...
+            var sensor = this.getSensorWithID(eltID); //once please ... yup :-)
 
-            this.getSensorWithID(eltID).inputOnOff(false); //Didier 
+            if(sensor != undefined){
 
-            this.getSensorWithID(eltID).s.input_entry = input;
-    
-            // disable previous selected entry - diable all entries
-            $.each(connections,function(i,name){
-                var k = name + "EnabledInput";
-                sensorManager.getSensorWithID(eltID).s[k] = false;
-                console.log("disable:",name);
-                misGUI.setManagerValue("sensorManager","changeSettingsVariable",false,eltID,name+"EnabledInput");
-            });
+
+                //sensor.inputOnOff(false); //Didier //cec.. changed to true et je l'ai mis en bas.
             
-            // enable current selected entry
-            //console.log("A",input,this.getSensorWithID(eltID).s.midiEnabledInput,this.getSensorWithID(eltID).s["midiEnabledInput"]);
- 
-            var k = input + "EnabledInput";
-            this.getSensorWithID(eltID).s[k] = true;
+                sensor.s.input_entry = input;
+        
+                // disable previous selected entry - diable all entries
+                $.each(connections,function(i,name){
+                    var k = name + "EnabledInput";
+                    sensorManager.getSensorWithID(eltID).s[k] = false;
+                    console.log("disable:",name);
+                    misGUI.setManagerValue("sensorManager","changeSettingsVariable",false,eltID,name+"EnabledInput");
+                });
+                
+                // enable current selected entry
+                //console.log("A",input,this.getSensorWithID(eltID).s.midiEnabledInput,this.getSensorWithID(eltID).s["midiEnabledInput"]);
     
-            MisGUI_sensors.selectEntry(eltID, input);
-            misGUI.setManagerValue("sensorManager","changeSettingsVariable",true,eltID,input+"EnabledInput");
-            //console.log("B",this.getSensorWithID(eltID).s.midiEnabledInput,this.getSensorWithID(eltID).s["midiEnabledInput"]);
-            this.updateTextDescription(eltID);
+                var k = input + "EnabledInput";
+                sensor.s[k] = true;
+                sensor.inputOnOff(true); //Didier  //cec: changed to true
+                MisGUI_sensors.selectEntry(eltID, input);
+                misGUI.setManagerValue("sensorManager","changeSettingsVariable",true,eltID,input+"EnabledInput");
+                //console.log("B",this.getSensorWithID(eltID).s.midiEnabledInput,this.getSensorWithID(eltID).s["midiEnabledInput"]);
+                this.updateTextDescription(eltID);
 
-            console.log("luosSettingParams",sensor.s.robusInputParams)
-            this.luosSettingParams(eltID,sensor.s.robusInputParams);
+                console.log("luosSettingParams",sensor.s.robusInputParams)
+                this.luosSettingParams(eltID,sensor.s.robusInputParams);
 
-            this.saveSensorSettings();
+                this.saveSensorSettings();
+            }
         }
 
     }

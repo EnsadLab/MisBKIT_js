@@ -103,7 +103,7 @@ MidiPort.prototype.onMessage = function(dt,msg){
                         for(var i=0; i<motorIDs.length; i++){
                             dxlManager.onMidi(motorIDs[i], "midi", 127.0*0.5);
                         }
-                    }else if(msg[1] == 42) {// BIG STOP BUTTON
+                    }else if(msg[1] == 42 && self.portName == "nanoKONTROL2 SLIDER/KNOB") {// BIG STOP BUTTON
                         dxlManager.stopAllMotors();
                     }
                     
