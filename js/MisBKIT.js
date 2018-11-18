@@ -15,7 +15,7 @@ scriptManager = require("./ScriptManager.js");
 animManager   = require("./AnimManager.js");
 pythonManager = require("./PythonManager.js");
 dmxManager    = require("./DmxManager.js");;
-//fakeManager    = require("./fakeManager.js");;
+fakeManager    = require("./fakeManager.js");;
 
 
 //acces them by little name
@@ -28,7 +28,7 @@ var managers = {
     python :require("./PythonManager.js"),
     ui     :require("./MisGUI.js"),
     dmx    :require("./DmxManager.js"),
-//    fake   :require("./fakeManager.js")
+    fake   :require("./fakeManager.js")
 }
 
 //module.exports = class MisBKIT{

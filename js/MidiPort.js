@@ -32,19 +32,20 @@ MidiPort = function () {
 
     this.enabled = false;
     this.enabledOnGUI = false;
-    // BUG MIDI: old version
-    // this.midiIn = new MIDI.input();
-    // this.midiOut = new MIDI.output();
-    this.midiIn = undefined;
-    this.midiOut = undefined;
+    this.midiIn = undefined;  //= new MIDI.input();
+    this.midiOut = undefined; //= new MIDI.output();
     this.callback = null;
     this.portName = "";
     this.portID = 0;
-    var self = this;
-    
-    /*
-    // BUG MIDI: old version
-    this.midiIn.on('message', function (dt, msg) {
+    //var self = this;
+};
+ 
+
+
+//    this.midiIn.on('message', function (dt, msg) {
+//callback moved out of 'constructor' ... see open()
+MidiPort.prototype.onMessage = function(dt,msg){
+    var self = this;    
         if(self.enabled) {
 
             //console.log("midi1:",msg)
@@ -58,8 +59,9 @@ MidiPort = function () {
                 //var midiMsg = {port:self.portID,midi:msg}; //should be {channel,type,data1,data2} ?
                 //var midiMsg = {port:self.portID,ch:channel,type:type,d1:data1,d2:data2};
                 //var midiStr = ""+self.portID+" "+chan+" "+type+" "+d1+" "+d2            
-                scriptManager.call("onMidi",self.portID,chan,type,d1,d2);
-                pythonManager.onMidi(self.portID,chan,type,d1,d2);
+                scriptManager.call("onMidi",self.portName,chan,type,d1,d2);
+                pythonManager.onMidi(self.portName,chan,type,d1,d2);
+                //un id visible sur la GUI serait sans doute plus facile à uliser en script
             } 
             
             // www.computermusicresource.com/MIDI.Commands.html
@@ -140,24 +142,20 @@ MidiPort = function () {
             if (self.callback)
                 self.callback(msg[1], msg[2] / 127);
         }
-    });
-    */
+    //});
 };
 
 MidiPort.prototype.sendMidi = function(cmd,index,val){
-    
-    var arg_0;
-    if(cmd){ // note
+    if(this.midiOut!=undefined){ //ajout didier    
+        var arg_0;
+        if(cmd){ // note
         arg_0 = +index + 144;
-    }else{ // cc
-        arg_0 = +index + 176;
-    }
-    val = parseFloat(val) * 127.0;
-    //console.log("SENDING midi:",cmd," // ",arg_0,index,val);
-    //BUG MIDI: rajout du if
-    if(this.midiOut != undefined){
+        }else{ // cc
+            arg_0 = +index + 176;
+        }
+        val = parseFloat(val) * 127.0;
+        //console.log("SENDING midi:",cmd," // ",arg_0,index,val);
         this.midiOut.sendMessage([arg_0,index,val]); // 2nd argument? Since index is already included in first arg.
-
     }
 }
 
@@ -171,18 +169,19 @@ MidiPort.prototype.close = function(n) {
 
 MidiPort.prototype.close = function(n) {
     console.log("CLOSING MIDIPORT",this.midiIn)
-    //Didier -> Cecile : à retester ce qui suit :
-
-    // BUG: en commentaire
+    // Didier -> Cecile : à retester ce qui suit :
     if(this.enabled){
-        //this.midiIn.closePort(this.portID); // Didier -> Cecile : à retester 
-        this.midiIn.on('message', function (dt, msg) {});
-        this.midiIn = undefined;            //    then this.midiIn = undefined;
-         // and open: new MIDI.input()  ; on('message' ... ) ; openPort
-        //this.midiOut.closePort(this.portID);// ---> plantage ????
-        this.midiOut = undefined;
+        if(this.midiIn!=undefined){
+            this.midiIn.on("message",function(){}) //off , undefined doesnt work
+            this.midiIn.closePort(this.portID); // Didier -> Cecile : à retester 
+            this.midiIn =  undefined;            //    then this.midiIn = undefined;
+        }
+        if(this.midiOut!=undefined){
+            this.midiOut.closePort(this.portID); // Didier -> Cecile : à retester 
+            this.midiOut = undefined;
+        }
     }
-    
+    //*/
     this.enabled = false;
 }
 
@@ -200,115 +199,13 @@ MidiPort.prototype.open = function () {
 
 
 MidiPort.prototype.open = function () {
+    this.close();
     console.log("OPENING MIDI PORT: " + this.portName + " on port ID: " + this.portID);
-    // BUG: #####
-    if(this.midiIn == undefined){
-        this.midiIn = new MIDI.input();   
-        this.midiIn.on('message', function (dt, msg) {
-            console.log("in here....MIDI");
-            //if(this.enabled) {
-
-                console.log("midi1:",msg)
-                var chan = msg[0] & 0xF;
-                var type = ( msg[0] & 0x70 )>>4; //0:noteOff, 1:noteOn, 3:CC, 2:afterTouch, 4:programChange ...
-                var d1   = msg[1]  //for noteOn=note      , CC=num 
-                var d2   = msg[2]  //for noteOn=velocity  , CC=value
-    
-                //if(midiPortManager.enabled){
-                    sensorManager.onMidiDatas(self.portName,chan,type,d1,d2);
-                    //var midiMsg = {port:self.portID,midi:msg}; //should be {channel,type,data1,data2} ?
-                    //var midiMsg = {port:self.portID,ch:channel,type:type,d1:data1,d2:data2};
-                    //var midiStr = ""+self.portID+" "+chan+" "+type+" "+d1+" "+d2            
-                    scriptManager.call("onMidi",self.portID,chan,type,d1,d2);
-                    pythonManager.onMidi(self.portID,chan,type,d1,d2);
-                //} 
-                
-                // www.computermusicresource.com/MIDI.Commands.html
-                // m[0] : status (128-255) -> (128-159):notes, (176-191): CC (176=CC chanel 1, 177=CC chanel 2...), ...
-                // m[1] : data 1 (0-127) 
-                // m[2] : data 2 (0-127)
-                
-                
-                
-                // if(msg[0] >= 128 && msg[0] <= 159)
-                //     console.log("RECEIVING midi note:", msg[0], msg[1], msg[2]);
-                // else if(msg[0] >= 176 && msg[0] <= 191)
-                //     console.log("RECEIVING midi CC:", msg[0], msg[1], msg[2]);
-                
-    
-                //!! when sending from the midi controller, the distinction between
-                // the different sliders is not made in the channel selection
-                // but it is stored in the control value -> msg[1]
-    
-    
-                var cmd = "";
-                
-                if(msg[0] >= 128 && msg[0] <= 159){
-                    cmd = "note"; // TODO: off and on can also be distinguished in data2, right?
-                }else if(msg[0] >= 176 && msg[0] <= 191) cmd = "CC";
-                else console.log("New MIDI command with number " + msg[0] + " -> needs to be added in code");
-                
-                // if it is CC, we take the controller value
-                //if(midiPortManager.enabled){
-                    if(cmd == "CC"){
-                        motorMappingManager.setMappingToActive("midi",self.portName,cmd,msg[1]);
-                        if(motorMappingManager.isMapped("midi",self.portName,cmd,msg[1])){
-                            var motorIDs = motorMappingManager.getMotorIndex("midi",self.portName,cmd,msg[1]);
-                            for(var i=0; i<motorIDs.length; i++){
-                                dxlManager.onMidi(motorIDs[i], "midi", msg[2]);
-                            }
-                        }else if(motorMappingManager.isMapped("midi",self.portName,cmd,32 - msg[1])){ // STOP BUTTONS
-                            var motorIDs = motorMappingManager.getMotorIndex("midi",self.portName,cmd,32-msg[1]);
-                            for(var i=0; i<motorIDs.length; i++){
-                                dxlManager.onMidi(motorIDs[i], "midi", 127.0*0.5);
-                            }
-                        }else if(msg[1] == 42) {// BIG STOP BUTTON
-                            dxlManager.stopAllMotors();
-                        }
-                        
-                        // if(sensorManager.isMapped("sensor",self.portName,cmd,msg[1])){     
-                        //     var mappedSensors = sensorManager.getSensorIds("sensor",self.portName,cmd,msg[1]);
-                        //     for(var i=0; i<mappedSensors.length; i++){
-                        //         //console.log("CC",mappedSensors[i],msg[2]);
-                        //         sensorManager.onMidi(mappedSensors[i],"sensor",msg[2]);
-                        //     }
-                        // }
-                        
-                    }else if(cmd == "note"){ // if it is note, we take the channel value (-> no controller value)
-                        var channel;
-                        if(msg[0] <= 143) channel = msg[0] - 128;// + 1; // notes OFF
-                        else channel = msg[0] - 144;// + 1; // notes ON
-                        motorMappingManager.setMappingToActive("midi",self.portName,cmd,channel);
-                        //console.log("chanel ",channel);
-                        if(motorMappingManager.isMapped("midi",self.portName,cmd,channel)){
-                            var motorIDs = motorMappingManager.getMotorIndex("midi",self.portName,cmd,channel);
-                            for(var i=0; i<motorIDs.length; i++){
-                                dxlManager.onMidi(motorIDs[i], "midi", msg[2]); //quick n dirty
-                            }
-                        }
-                        
-                        // if(sensorManager.isMapped("sensor",self.portName,cmd,channel)){
-                        //     var mappedSensors = sensorManager.getSensorIds("sensor",self.portName,cmd,channel);
-                        //     for(var i=0; i<mappedSensors.length; i++){
-                        //         //console.log("note",mappedSensors[i],msg[1]);
-                        //         sensorManager.onMidi(mappedSensors[i],"sensor",msg[2]);
-                        //     }
-                        // }
-                        
-                    }
-                //}
-    
-                if (self.callback)
-                    self.callback(msg[1], msg[2] / 127);
-            //}
-        });
-    }
-    if(this.midiOut == undefined){
-        this.midiOut = new MIDI.output();
-    }
-    //#####
+    this.midiIn = new MIDI.input();
+    this.midiOut = new MIDI.output();
     this.midiIn.openPort(this.portID);
     this.midiOut.openPort(this.portID);
+    this.midiIn.on("message",this.onMessage.bind(this)) //ça m'évite  comment + copy/paste
     this.enabled = true;
     return this.enabled;
 

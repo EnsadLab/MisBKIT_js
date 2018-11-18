@@ -1,4 +1,4 @@
-class fakeManager {
+class FakeManager {
     constructor() {
         //this.name = "AnimManager"; //Didier? unifié ac les autres, non?  Oui, et c'est moins lourd que className
         this.className = "fakeManager";
@@ -9,3 +9,4 @@ class fakeManager {
     }
 
 }
+module.exports = new FakeManager();

@@ -132,7 +132,7 @@ class DmxManager{
 
     //find ENTTEC ( last one )
     scanSerials(callback){ //cb( name_of_port )
-        misGUI.showValue({class:"dmxManager",func:"serialNumber",val:""});
+        //misGUI.showValue({class:"dmxManager",func:"serialNumber",val:""});
         var name = undefined;
         SerialLib.list(function(err, ports) {
             if (err)
@@ -147,7 +147,7 @@ class DmxManager{
                 misGUI.showValue({class:"dmxManager",func:"portName",val:name});
             }
             if(name==undefined){
-                misGUI.showValue({class:"dmxManager",func:"portName",val:"ENTTEC not found"});
+                misGUI.showValue({class:"dmxManager",func:"portName",val:"not found"});
                 misGUI.showValue({class:"dmxManager",func:"onOff",val:false}); //ERROR ?                
             }
             else if(callback){
