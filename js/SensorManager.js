@@ -328,7 +328,7 @@ class SensorManager{
         MisGUI_sensors.changeSinusRandomParams(sensor.ID,sensor.s.randomParams);
         misGUI.setManagerValue("sensorManager","onNameText",sensor.s.name,sensor.ID);
 
-        console.log("LUOSPARAMS:",s.robusInputParams);
+        console.log("LUOSPARAMS:",sensor.s.robusInputParams);
 
         sensor.s.enabled = true; //???
         misGUI.setManagerValue("sensorManager","enable",true,sensor.ID);
