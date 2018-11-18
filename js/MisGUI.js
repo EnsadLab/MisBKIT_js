@@ -223,7 +223,12 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                     //$(this).on("open",function(){console.log("<>OPEN")});
                     //$(this).on("show",function(){console.log("<>SHOW")});
                     $(this).on("click",function(){
-                        console.log("<>CLICK",$(this).val())
+                        console.log("<select>CLICK",$(this).val())
+                        //var opts = manager.cmd("getOptions",$(this).attr("eltID"),$(this).val(),$(this).attr("param"));
+                        var opts = manager.cmd("getOptions",$(this).attr("eltID"),$(this).val(),$(this).attr("param"));
+                        console.log("<select>options",opts)
+                        if(opts!=undefined)
+                            misGUI.setElementValue($(this),opts)
                     });
 
                     $(this).on("change",function(){

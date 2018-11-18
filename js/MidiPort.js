@@ -39,7 +39,8 @@ MidiPort = function () {
     this.portID = 0;
     //var self = this;
 };
- 
+module.exports = MidiPort;
+
 
 
 //    this.midiIn.on('message', function (dt, msg) {

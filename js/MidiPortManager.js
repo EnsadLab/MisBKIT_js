@@ -3,6 +3,8 @@
 */
 
 var MIDI = null;
+var MidiPort = require("./MidiPort.js");
+
 
 MidiPortManager = function () {
 
@@ -27,6 +29,8 @@ MidiPortManager = function () {
     console.log("--> creating midiPortManager");
 
 };
+module.exports = new MidiPortManager();
+
 
 MidiPortManager.prototype.open = function (p) {
 

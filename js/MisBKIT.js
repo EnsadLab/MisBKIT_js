@@ -7,6 +7,7 @@
 settingsManager = require("./SettingsManager.js");
 cm9Com = require("./Cm9Manager.js");
 dxlManager    = require("./DxlManager.js");
+midiPortManager = require("./MidiPortManager.js"); 
 sensorManager = require("./SensorManager.js");
 robusManager  = require("./RobusManager.js");
 oscManager    = require("./OscManager.js");
@@ -58,7 +59,7 @@ class MisBKIT{
 
         //sensorManager = new SensorManager();
     
-        try{ midiPortManager = new MidiPortManager(); }catch(e){console.log(e);}
+        //try{ midiPortManager = new MidiPortManager(); }catch(e){console.log(e);}
         
         //oscMobilizing = new OscMobilizing();        
         console.log("======================== init: fakeManager");
@@ -142,6 +143,7 @@ class MisBKIT{
         scriptManager.stop();  //! important ! 
         scriptManager.saveSource();
         sensorManager.disableAll();
+        sensorManager.saveSensorSettings(); //after disableAll ?
         dmxManager.close();
     }
 

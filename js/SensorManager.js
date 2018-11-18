@@ -260,8 +260,8 @@ class SensorManager{
     cmd(func,eltID,val,param){
         console.log("SensorCmd:",func,eltID,val,param);
         if(this[func]){
-            if(eltID!=undefined)this[func](eltID,val,param);
-            else this[func](val,param);
+            if(eltID!=undefined)return this[func](eltID,val,param);
+            else return this[func](val,param);
         }
     }
 
@@ -344,13 +344,12 @@ class SensorManager{
         console.log("sensorManager.enable:",onoff);
         var sensor = this.getSensorWithID(eltID); 
         this.getSensorWithID(eltID).s.enabled = onoff;
-        this.saveSensorSettings();
+        //this.saveSensorSettings();
         /*
         if(sensor.s.input_entry=="random"){
             console.log("RANDOM onoff:",onoff);
         }
         */
-
         /*for(var i=0; i<this.sensors.length;i++){
             console.log("test",i,this.sensors[i].ID,this.sensors[i].s.enabled);
         } */ 
@@ -424,7 +423,7 @@ class SensorManager{
         console.log("sensorManager.onTameText", txt);
         var sensor = this.getSensorWithID(eltID);
         sensor.s.name = txt;
-        sensor.onName(txt); // Didier little trick
+        //sensor.onName(txt); // Didier was little trick
         this.saveSensorSettings();
     }
 
@@ -906,6 +905,21 @@ class SensorManager{
         });    
 
     }
+
+    /*
+    getOptions(eltID,currval,param){
+        console.log("<------>options:",eltID,currval,param)
+        switch(param){
+            case "gate":
+                return ["gate1","gate2","gate3"];
+            case "module":
+                return ["mo 1","mo 2","mo 3"];
+            case "pin":
+                return(["out 1","out 2","out 3"]);
+            default:
+                console.log("<------>default:",eltID,currval,param)
+        }
+    }*/
 
     //to move in MisGUI_sensors
     luosSettingParams(eltID,params){ //force <select> to current value

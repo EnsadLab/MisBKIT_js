@@ -381,7 +381,7 @@ class RobusManager{
             if(this[func])
             this[func](arg);
         }
-        else{
+        else if(typeof(this.luosBots[eltID][func])=='function'){
             this.luosBots[eltID][func](arg);
         }
     }
