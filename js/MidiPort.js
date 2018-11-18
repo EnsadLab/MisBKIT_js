@@ -32,14 +32,20 @@ MidiPort = function () {
 
     this.enabled = false;
     this.enabledOnGUI = false;
-    this.midiIn = new MIDI.input();
-    this.midiOut = new MIDI.output();
+    this.midiIn = undefined;  //= new MIDI.input();
+    this.midiOut = undefined; //= new MIDI.output();
     this.callback = null;
     this.portName = "";
     this.portID = 0;
-    var self = this;
-    
-    this.midiIn.on('message', function (dt, msg) {
+    //var self = this;
+};
+ 
+
+
+//    this.midiIn.on('message', function (dt, msg) {
+//callback moved out of 'constructor' ... see open()
+MidiPort.prototype.onMessage = function(dt,msg){
+    var self = this;    
         if(self.enabled) {
 
             //console.log("midi1:",msg)
@@ -53,8 +59,9 @@ MidiPort = function () {
                 //var midiMsg = {port:self.portID,midi:msg}; //should be {channel,type,data1,data2} ?
                 //var midiMsg = {port:self.portID,ch:channel,type:type,d1:data1,d2:data2};
                 //var midiStr = ""+self.portID+" "+chan+" "+type+" "+d1+" "+d2            
-                scriptManager.call("onMidi",self.portID,chan,type,d1,d2);
-                pythonManager.onMidi(self.portID,chan,type,d1,d2);
+                scriptManager.call("onMidi",self.portName,chan,type,d1,d2);
+                pythonManager.onMidi(self.portName,chan,type,d1,d2);
+                //un id visible sur la GUI serait sans doute plus facile à uliser en script
             } 
             /*
             www.computermusicresource.com/MIDI.Commands.html
@@ -135,40 +142,50 @@ MidiPort = function () {
             if (self.callback)
                 self.callback(msg[1], msg[2] / 127);
         }
-    });
+    //});
 };
 
 MidiPort.prototype.sendMidi = function(cmd,index,val){
-    
-    var arg_0;
-    if(cmd){ // note
+    if(this.midiOut!=undefined){ //ajout didier    
+        var arg_0;
+        if(cmd){ // note
         arg_0 = +index + 144;
-    }else{ // cc
-        arg_0 = +index + 176;
+        }else{ // cc
+            arg_0 = +index + 176;
+        }
+        val = parseFloat(val) * 127.0;
+        //console.log("SENDING midi:",cmd," // ",arg_0,index,val);
+        this.midiOut.sendMessage([arg_0,index,val]); // 2nd argument? Since index is already included in first arg.
     }
-    val = parseFloat(val) * 127.0;
-    //console.log("SENDING midi:",cmd," // ",arg_0,index,val);
-    this.midiOut.sendMessage([arg_0,index,val]); // 2nd argument? Since index is already included in first arg.
 }
 
 MidiPort.prototype.close = function(n) {
     console.log("CLOSING MIDIPORT",this.midiIn)
-    /* Didier -> Cecile : à retester ce qui suit :
+    // Didier -> Cecile : à retester ce qui suit :
     if(this.enabled){
-        this.midiIn.closePort(this.portID); // Didier -> Cecile : à retester 
-        this.midiIn = undefined;            //    then this.midiIn = undefined;
-         // and open: new MIDI.input()  ; on('message' ... ) ; openPort
-        //this.midiOut.closePort(this.portID); ---> plantage ????
+        if(this.midiIn!=undefined){
+            this.midiIn.on("message",function(){}) //off , undefined doesnt work
+            this.midiIn.closePort(this.portID); // Didier -> Cecile : à retester 
+            this.midiIn =  undefined;            //    then this.midiIn = undefined;
+        }
+        if(this.midiOut!=undefined){
+            this.midiOut.closePort(this.portID); // Didier -> Cecile : à retester 
+            this.midiOut = undefined;
+        }
     }
-    */
+    //*/
     this.enabled = false;
 }
 
 
 MidiPort.prototype.open = function () {
+    this.close();
     console.log("OPENING MIDI PORT: " + this.portName + " on port ID: " + this.portID);
+    this.midiIn = new MIDI.input();
+    this.midiOut = new MIDI.output();
     this.midiIn.openPort(this.portID);
     this.midiOut.openPort(this.portID);
+    this.midiIn.on("message",this.onMessage.bind(this)) //ça m'évite  comment + copy/paste
     this.enabled = true;
     return this.enabled;
 }

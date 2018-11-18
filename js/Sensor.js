@@ -41,7 +41,7 @@ Sensor = function () {
         toMotorIndex: 0,
         animationsEnabledOutput: false,
         robusEnabledInput: false,
-        robusInputParams: {gate:"gate",module:"",pin:""},
+        robusInputParams: {gate:"none",module:"none",pin:"none"},
         sinusEnabledInput: false,
         //sinusParams: {period:5,offset:0,current:0},
         sinusParams: {amplitude:1.0,offset:0.0,period:1.0,current:0},

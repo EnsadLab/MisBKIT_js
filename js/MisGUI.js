@@ -220,6 +220,12 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                     });
                 case "select-one": //select
                     //console.log("***",$(this)); 
+                    //$(this).on("open",function(){console.log("<>OPEN")});
+                    //$(this).on("show",function(){console.log("<>SHOW")});
+                    $(this).on("click",function(){
+                        console.log("<>CLICK",$(this).val())
+                    });
+
                     $(this).on("change",function(){
                         //console.log("INPUTCHANGE:",$(this).data("prevval"),$(this).val());
                         //console.log("FUNCCHANGE:",$(this).attr("eltID"),$(this).attr("param"));
@@ -230,7 +236,7 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                         var v = $(this).val();
                         if( (v!="")&&( !isNaN(+v)) ) // +"" -> 0 !
                             v=+v;                    //OK: 127.0.0.1 -> NaN
-                        console.log("GUI SELECTonchange:",$(this).attr("func"),typeof($(this).val()),v)
+                        //console.log("GUI SELECTonchange:",$(this).attr("func"),typeof($(this).val()),v)
                         manager.cmd($(this).attr("func"),$(this).attr("eltID"),v,$(this).attr("param"));
                         //console.log("  ->onchange:",$(this).attr("func"),$(this).attr("eltID"),v,$(this).attr("param"));
 
@@ -1209,14 +1215,14 @@ MisGUI.prototype.init =function(){
     //FREEZE MOTORS
     $("input.btnGlobalMotor").bind('click', function() {
         if($(".allMotors").hasClass('freezed')){
-            $(".allMotors").css("opacity", 1);
-            $(".allMotors").css("pointer-events", "auto");
-            $(".allMotors").removeClass('freezed');
+            $(".allMotors").css("opacity", 1)
+                .css("pointer-events", "auto")
+                .removeClass('freezed');
             dxlManager.uiFreeze(false);
         }else{
-            $(".allMotors").css("opacity", 0.3);
-            $(".allMotors").css("pointer-events", "none");
-            $(".allMotors").addClass('freezed');
+            $(".allMotors").css("opacity", 0.3)
+                .css("pointer-events", "none")
+                .addClass('freezed');
             dxlManager.uiFreeze(true);
         }
          
@@ -1269,17 +1275,15 @@ MisGUI.prototype.initMotorDiv = function(){
             dxlManager.startReadDxl(dxlID); //async >> showDxlReg            
         }
     });
-    
-    $("#btAdvID").on("change",function() {
+
+    $("#btAdvID").on("change",function() { //dxlid or refresh
         var id = $("#btAdvID").val();
-        console.log("??????????? #btDxlRefresh click ",id);
         misGUI.clearDxlRegs(+id);
         dxlManager.startReadDxl(+id); //async >> showDxlReg            
     });
     $("#btAdvID").keypress(function(e){
-        if(e.which==13){
+        if(e.which==13)
             $(this).change();
-        }
     });
     $("#btDxlRefresh").on("click",function(){
         $("#btAdvID").change();
@@ -1374,6 +1378,7 @@ MisGUI.prototype.openSaveDialog = function( title , path , callback ){
 };
 
 //TODELETE
+/*
 MisGUI.prototype.setDxlRegDEL=function(i,name,val){
     var inp = $( "#divDxlReg #addr"+i).eq(0);
     console.log("inputs:",inp.length);
@@ -1390,16 +1395,8 @@ MisGUI.prototype.setDxlRegDEL=function(i,name,val){
         });
     }
     inp.val(val);
-/*
-
-    var lbls = $( "#dialog label #addr"+i" );
-    console.log("inputs:",inps.length,i);
-    if(i<inps.length){
-        $(inps[i]).val(val);
-        $(lbls[i]).text(" "+name);
-    }
-    */
 }
+*/
 
 MisGUI.prototype.recOff=function(){ //V02 ok
     //console.log("DBG misGui.recOff 1");

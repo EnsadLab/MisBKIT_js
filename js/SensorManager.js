@@ -328,7 +328,7 @@ class SensorManager{
         MisGUI_sensors.changeSinusRandomParams(sensor.ID,sensor.s.randomParams);
         misGUI.setManagerValue("sensorManager","onNameText",sensor.s.name,sensor.ID);
 
-        console.log("LUOSPARAMS:",s.robusInputParams);
+        console.log("LUOSPARAMS:",sensor.s.robusInputParams);
 
         sensor.s.enabled = true; //???
         misGUI.setManagerValue("sensorManager","enable",true,sensor.ID);
@@ -432,6 +432,7 @@ class SensorManager{
         
         console.log("change input selection:",input);
         if(this.checkConnection(input) && this.getSensorWithID(eltID) != undefined){
+            var sensor = this.getSensorWithID(eltID); //once please ...
 
             this.getSensorWithID(eltID).inputOnOff(false); //Didier 
 
@@ -456,7 +457,8 @@ class SensorManager{
             //console.log("B",this.getSensorWithID(eltID).s.midiEnabledInput,this.getSensorWithID(eltID).s["midiEnabledInput"]);
             this.updateTextDescription(eltID);
 
-            //this.robusInitSelections();
+            console.log("luosSettingParams",sensor.s.robusInputParams)
+            this.luosSettingParams(eltID,sensor.s.robusInputParams);
 
             this.saveSensorSettings();
         }
@@ -685,19 +687,17 @@ class SensorManager{
     }
 
     //Didier: replacement of    isMapped() + getSensorIds() + onMidi()
-    // should use channel !
+    // what about channel !
     onMidiDatas(port,ch,type,d1,d2){ //TODO ? build a string 'midiID'
-        var num = d1; //Berk CC par default
+        var num = d1;        //CC par default
         var val = d2;
         var cmdbool = false; //Berk
-        if(type==1){ //noteOn (noteOff will be thrown)
+        if(type==1){         //noteOn (noteOff will be thrown)
             cmdbool = false; //others ?
-            val = d1; //note , num should be channel
+            val = d1;        //note , num should be channel
         }
-        //console.log("onMidiDatas:",port,cmdbool,num,val)
         $.each(this.sensors, function(i,sensor){
             var s = sensor.s;
-            //console.log("     sr:",s.midiPortInput,s.midiCmdInput,s.midiMappingInput)
             if(s.midiEnabledInput && s.midiPortInput == port && s.midiCmdInput == cmdbool && s.midiMappingInput == num )
                 sensor.onNormValue(val/127); // min/max ne servent plus
                 //sensor.onValue(val)        // à discuter
@@ -905,6 +905,31 @@ class SensorManager{
             settingsManager.saveToSensorFolder(sensor.s.name + ".json",json);
         });    
 
+    }
+
+    //to move in MisGUI_sensors
+    luosSettingParams(eltID,params){ //force <select> to current value
+        var sensor = this.getSensorWithID(eltID);
+        if(sensor!=undefined){
+            var gates = ["none"].concat(robusManager.getGates())
+            if(gates.indexOf(params.gate)<0)
+                gates.push(params.gate)
+
+            var modules = robusManager.getAliases(params.gate);
+            if(modules.indexOf(params.module)<0)
+                modules.unshift(params.module)
+
+            var pins = robusManager.getOutputs(params.gate,params.pin);
+            if(pins.indexOf(params.pin)<0)
+                pins.unshift(params.pin)
+    
+            misGUI.showValue({class:"sensorManager",id:eltID,param:"gate",val:gates})
+            misGUI.showValue({class:"sensorManager",id:eltID,param:"gate",val:params.gate})
+            misGUI.showValue({class:"sensorManager",id:eltID,param:"module",val:modules})
+            misGUI.showValue({class:"sensorManager",id:eltID,param:"module",val:params.module})
+            misGUI.showValue({class:"sensorManager",id:eltID,param:"pin",val:pins})
+            misGUI.showValue({class:"sensorManager",id:eltID,param:"pin",val:params.pin})
+        }
     }
 
     uiLuosParam(eltID,value,param){

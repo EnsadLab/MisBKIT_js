@@ -119,7 +119,7 @@ class LuosBot{
                 var arr = msg.modules;
                 for(var i=0;i<arr.length;i++){
                     var m = arr[i];
-                    if(m.type != "Gate"){ //old firmware:'gate'
+                    if(m.type != "Gate"){
                         m.gate = this.gateAlias; //for sensor
                         sensorManager.onLuosValue(m);
                     }
@@ -199,8 +199,8 @@ class LuosBot{
                 this.gotBase = true;
                 this.gateAlias = m.alias;
             }
-            //aliases
-            //outputs
+            else
+                this.aliases.push(m.alias)
 
         }
         misGUI.showValue({class:"robusManager",func:"luosInfo",val:info});
