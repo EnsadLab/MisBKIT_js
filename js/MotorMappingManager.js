@@ -77,10 +77,11 @@ MotorMappingManager.prototype.loadMappingSettings = function () {
 }
 
 MotorMappingManager.prototype.loadDefaultValue = function() {
-    var portName = "";
+    /*var portName = "";
     if(midiPortManager.getNbMidiPortsOnGUI() == 1){
         portName = midiPortManager.getFirstMidiPortOnGUI();
-    }
+    }*/
+    var portName = "nanoKONTROL2 SLIDER/KNOB";
     for(var i=0; i<dxlManager.motors.length; i++){
         var motorMapping = new MotorMapping();
         motorMapping.m = {enabled:true,motorIndex:parseInt(i),port:portName,cmd:"CC",nbID:parseInt(i)};

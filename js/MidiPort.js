@@ -64,19 +64,19 @@ MidiPort.prototype.onMessage = function(dt,msg){
                 pythonManager.onMidi(self.portName,chan,type,d1,d2);
                 //un id visible sur la GUI serait sans doute plus facile à uliser en script
             } 
-            /*
-            www.computermusicresource.com/MIDI.Commands.html
-            m[0] : status (128-255) -> (128-159):notes, (176-191): CC (176=CC chanel 1, 177=CC chanel 2...), ...
-            m[1] : data 1 (0-127) 
-            m[2] : data 2 (0-127)
-            */
             
-            /*
-            if(msg[0] >= 128 && msg[0] <= 159)
-                console.log("RECEIVING midi note:", msg[0], msg[1], msg[2]);
-            else if(msg[0] >= 176 && msg[0] <= 191)
-                console.log("RECEIVING midi CC:", msg[0], msg[1], msg[2]);
-            */
+            // www.computermusicresource.com/MIDI.Commands.html
+            // m[0] : status (128-255) -> (128-159):notes, (176-191): CC (176=CC chanel 1, 177=CC chanel 2...), ...
+            // m[1] : data 1 (0-127) 
+            // m[2] : data 2 (0-127)
+            
+            
+            
+            // if(msg[0] >= 128 && msg[0] <= 159)
+            //     console.log("RECEIVING midi note:", msg[0], msg[1], msg[2]);
+            // else if(msg[0] >= 176 && msg[0] <= 191)
+            //     console.log("RECEIVING midi CC:", msg[0], msg[1], msg[2]);
+            
 
             //!! when sending from the midi controller, the distinction between
             // the different sliders is not made in the channel selection
@@ -104,18 +104,18 @@ MidiPort.prototype.onMessage = function(dt,msg){
                         for(var i=0; i<motorIDs.length; i++){
                             dxlManager.onMidi(motorIDs[i], "midi", 127.0*0.5);
                         }
-                    }else if(msg[1] == 42) {// BIG STOP BUTTON
+                    }else if(msg[1] == 42 && self.portName == "nanoKONTROL2 SLIDER/KNOB") {// BIG STOP BUTTON
                         dxlManager.stopAllMotors();
                     }
-                    /*
-                    if(sensorManager.isMapped("sensor",self.portName,cmd,msg[1])){     
-                        var mappedSensors = sensorManager.getSensorIds("sensor",self.portName,cmd,msg[1]);
-                        for(var i=0; i<mappedSensors.length; i++){
-                            //console.log("CC",mappedSensors[i],msg[2]);
-                            sensorManager.onMidi(mappedSensors[i],"sensor",msg[2]);
-                        }
-                    }
-                    */
+                    
+                    // if(sensorManager.isMapped("sensor",self.portName,cmd,msg[1])){     
+                    //     var mappedSensors = sensorManager.getSensorIds("sensor",self.portName,cmd,msg[1]);
+                    //     for(var i=0; i<mappedSensors.length; i++){
+                    //         //console.log("CC",mappedSensors[i],msg[2]);
+                    //         sensorManager.onMidi(mappedSensors[i],"sensor",msg[2]);
+                    //     }
+                    // }
+                    
                 }else if(cmd == "note"){ // if it is note, we take the channel value (-> no controller value)
                     var channel;
                     if(msg[0] <= 143) channel = msg[0] - 128;// + 1; // notes OFF
@@ -128,15 +128,15 @@ MidiPort.prototype.onMessage = function(dt,msg){
                             dxlManager.onMidi(motorIDs[i], "midi", msg[2]); //quick n dirty
                         }
                     }
-                    /*
-                    if(sensorManager.isMapped("sensor",self.portName,cmd,channel)){
-                        var mappedSensors = sensorManager.getSensorIds("sensor",self.portName,cmd,channel);
-                        for(var i=0; i<mappedSensors.length; i++){
-                            //console.log("note",mappedSensors[i],msg[1]);
-                            sensorManager.onMidi(mappedSensors[i],"sensor",msg[2]);
-                        }
-                    }
-                    */
+                    
+                    // if(sensorManager.isMapped("sensor",self.portName,cmd,channel)){
+                    //     var mappedSensors = sensorManager.getSensorIds("sensor",self.portName,cmd,channel);
+                    //     for(var i=0; i<mappedSensors.length; i++){
+                    //         //console.log("note",mappedSensors[i],msg[1]);
+                    //         sensorManager.onMidi(mappedSensors[i],"sensor",msg[2]);
+                    //     }
+                    // }
+                    
                 }
             }
 
@@ -160,6 +160,14 @@ MidiPort.prototype.sendMidi = function(cmd,index,val){
     }
 }
 
+/*
+//BUG MIDI: old version
+MidiPort.prototype.close = function(n) {
+    this.enabled = false;
+}
+*/
+
+
 MidiPort.prototype.close = function(n) {
     console.log("CLOSING MIDIPORT",this.midiIn)
     // Didier -> Cecile : à retester ce qui suit :
@@ -178,6 +186,18 @@ MidiPort.prototype.close = function(n) {
     this.enabled = false;
 }
 
+/*
+//BUG MIDI: old version
+MidiPort.prototype.open = function () {
+    //#####
+    this.midiIn.openPort(this.portID);
+    this.midiOut.openPort(this.portID);
+    this.enabled = true;
+    return this.enabled;
+}
+*/
+
+
 
 MidiPort.prototype.open = function () {
     this.close();
@@ -189,5 +209,6 @@ MidiPort.prototype.open = function () {
     this.midiIn.on("message",this.onMessage.bind(this)) //ça m'évite  comment + copy/paste
     this.enabled = true;
     return this.enabled;
+
 }
 

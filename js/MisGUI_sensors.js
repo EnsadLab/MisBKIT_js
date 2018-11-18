@@ -75,6 +75,7 @@ MisGUI_sensors.initMidiInput = function(eltID){
 MisGUI_sensors.initMidiOutput = function(eltID){
     var midiSelection = $(".sensor-setting-more").find("[id=sortable-sens-output]").filter("[eltID="+ eltID + "]").find("[name=midiPortOutput]");
     midiSelection.empty();
+    midiSelection.append($("<option value='none'>none</option>"));
     for(var i=0; i<midiPortManager.midiPorts.length; i++){
         if(midiPortManager.midiPorts[i].enabledOnGUI){ // TODO: ou tester juste enable.. a voir le 2-3
             var p = midiPortManager.midiPorts[i].portName;
