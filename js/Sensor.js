@@ -59,10 +59,10 @@ Sensor = function () {
     //Suggestion: an object by input ...
     //   cm9:{ enabled:false , val:7 },
 
-    this._tmpValue   = undefined;  
-    this.currValue   = 0;
-    this.normValue   = 0;
-    this.filteredVal = 0
+    this._tmpValue = undefined;  
+    this.currValue = 0;
+    this.normValue = 0;
+    this.outValue   = 0;
     this.ID = -1;
     this.area = -1; // -1:nowhere, 0:before the threshold, 1:after the threshold
     this.oldArea = -1;
@@ -162,13 +162,14 @@ Sensor.prototype.update = function(){
         fval = this.lowPassFilter(val); 
     } 
 
-
     // TODO DIDIER2: si tu veux implémenter un autre filtre!! -> index.html ligne 947 ("anotherfilter")
     
     //console.log("val",val,"fval",fval);
     var fnv = (fval-this.s.valMin)/(this.s.valMax-this.s.valMin);
     */
     //console.log("val",val,"fval",fval);
+
+    this.outValue = fval;
     MisGUI_sensors.setSensorValue(this.ID,val,nv*100.0,fval,fnv*100.0);    
 }
 

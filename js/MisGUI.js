@@ -320,7 +320,6 @@ MisGUI.prototype.showParams=function(opt){
     else console.log("*****GUIPARAMS NOT FOUND:",sel);
 }
 
-
 //old implementation , for compatibility.  ---> showValue
 MisGUI.prototype.setManagerValue = function( className , func , value , eltID, param){   
     var sel = "."+className+" ";

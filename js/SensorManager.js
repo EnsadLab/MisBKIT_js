@@ -668,6 +668,32 @@ class SensorManager{
         return true;
     }
 
+
+    value(name,val){
+        if(val==undefined)
+            return this.getValue(name)
+        else
+            this.setValue(name,val)  
+    }
+
+    setValue(name,val){
+        for(var i=0; i<this.sensors.length;i++){
+            if(this.sensors[i].s.name == name){
+                this.sensors[i].onValue(+val)
+            }
+        }
+    }
+
+    getValue(name){
+        for(var i=0; i<this.sensors.length;i++){
+            if(this.sensors[i].s.name == name){
+                return this.sensors[i].outValue;
+            }
+        }        
+    }
+
+
+
     onMidi(id,type,arg){
         console.log("SensorManager.onMidi:",id,type,arg)
         var sensor = this.getSensorWithID(id);
