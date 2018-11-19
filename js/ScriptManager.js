@@ -323,6 +323,7 @@ class scriptManager {
             if(t<t0)
                 return v0
             var dt = (t-t0)
+            console.log("ramp:dt",dt,extent)
             if(dt>extent)
                 return v1
             return (v1-v0)*dt/extent + v0;

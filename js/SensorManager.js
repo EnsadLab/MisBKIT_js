@@ -666,7 +666,9 @@ class SensorManager{
     }
 
     activate( name,onoff ){ //<-script
-        if(onoff){
+        if(onoff=="false")
+            this.deactivate()
+        else{ //true or undef
             for(var i=0; i<this.sensors.length;i++){
                 if(this.sensors[i].s.name == name){
                     this.sensors[i].s.enabled = true;
@@ -675,8 +677,6 @@ class SensorManager{
             }
             this.saveSensorSettings();
         }
-        else
-            this.deactivate()
     }
 
     deactivate( name ){  //<-script

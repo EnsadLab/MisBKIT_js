@@ -754,10 +754,10 @@ DxlManager.prototype.onMidi = function(index,cmd,arg){
 };
 
 
-DxlManager.prototype.control = function(index,val){ //pour script & osc
+DxlManager.prototype.control = function(index,val){      //<--script & osc
     this.onControl(index,val) //TODO renomer onControl
 }
-DxlManager.prototype.normControl = function(index,val){ //pour script & osc
+DxlManager.prototype.normControl = function(index,val){  //<--script & osc
     this.onNormControl(index,val) //TODO renomer onControl
 }
 
@@ -784,7 +784,7 @@ DxlManager.prototype.onControl = function(index,val){
     }
 };
 
-DxlManager.prototype.angle = function(index,val){ //degrés
+DxlManager.prototype.angle = function(index,val){ //degrés //<--script
     if(val!=undefined)
         this.setAngle(index,val);
     else if(index<this.motors.length){ //return current wanted angle
@@ -813,8 +813,13 @@ DxlManager.prototype.setAngleN = function(index,val){
     }
 };
 
-DxlManager.prototype.speed = function(index,val){
-    this.setSpeed(index,val)
+DxlManager.prototype.speed = function(index,val){ //<--script
+    if(index<this.motors.length){
+        if(val == undefined)
+            return this.motors[index].this.wantedSpeed;
+        else
+            this.setSpeed(index,val)
+    }
 }
 
 DxlManager.prototype.setSpeed = function(index,val){
