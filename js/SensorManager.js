@@ -344,7 +344,7 @@ class SensorManager{
         console.log("sensorManager.enable:",onoff);
         var sensor = this.getSensorWithID(eltID); 
         this.getSensorWithID(eltID).s.enabled = onoff;
-        //this.saveSensorSettings();
+        this.saveSensorSettings();
         /*
         if(sensor.s.input_entry=="random"){
             console.log("RANDOM onoff:",onoff);
@@ -363,8 +363,6 @@ class SensorManager{
             sensor.inputOnOff(onoff,param);
         }
     }
-
-
 
     changeSettingsVariable(eltID,value,name){
         console.log("sensorManager.changesettingsvariable",eltID,value,name);
@@ -421,7 +419,6 @@ class SensorManager{
 
         }    
     }
-
 
     onNameText(eltID,txt){
         console.log("sensorManager.onTameText", txt);
@@ -668,15 +665,38 @@ class SensorManager{
         return true;
     }
 
+    activate( name,onoff ){ //<-script
+        if(onoff){
+            for(var i=0; i<this.sensors.length;i++){
+                if(this.sensors[i].s.name == name){
+                    this.sensors[i].s.enabled = true;
+                    misGUI.setManagerValue("sensorManager","enable",true,this.sensors[i].ID);
+                }
+            }
+            this.saveSensorSettings();
+        }
+        else
+            this.deactivate()
+    }
 
-    value(name,val){
+    deactivate( name ){  //<-script
+        for(var i=0; i<this.sensors.length;i++){
+            if(this.sensors[i].s.name == name){
+                this.sensors[i].s.enabled = false;
+                misGUI.setManagerValue("sensorManager","enable",false,this.sensors[i].ID);
+            }        
+        }
+        this.saveSensorSettings();
+    }
+
+    value(name,val){ //<-script
         if(val==undefined)
             return this.getValue(name)
         else
             this.setValue(name,val)  
     }
 
-    setValue(name,val){
+    setValue(name,val){ //<-script
         for(var i=0; i<this.sensors.length;i++){
             if(this.sensors[i].s.name == name){
                 this.sensors[i].onValue(+val)
@@ -684,15 +704,13 @@ class SensorManager{
         }
     }
 
-    getValue(name){
+    getValue(name){ //<-script
         for(var i=0; i<this.sensors.length;i++){
             if(this.sensors[i].s.name == name){
                 return this.sensors[i].outValue;
             }
         }        
     }
-
-
 
     onMidi(id,type,arg){
         console.log("SensorManager.onMidi:",id,type,arg)
@@ -955,7 +973,6 @@ class SensorManager{
         }
     }*/
 
-    //to move in MisGUI_sensors
     luosSettingParams(eltID,params){ //force <select> to current value
         var sensor = this.getSensorWithID(eltID);
         if(sensor!=undefined){

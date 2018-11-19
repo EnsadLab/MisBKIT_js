@@ -356,7 +356,7 @@ Sensor.prototype.lowPassFilter = function(v) {
     this.s.alpha = +this.s.alpha; // faudrait le faire ailleurs........
     if(this.s.alpha < 0) this.s.alpha = 0.0;
     else if(this.s.alpha > 1.0) this.s.alpha = 1.0;
-    console.log("----> lowpass filter, alpha: ",this.s.alpha, " oldVal:",this.oldVal,"v:",v);
+    //console.log("----> lowpass filter, alpha: ",this.s.alpha, " oldVal:",this.oldVal,"v:",v);
     var newVal = this.oldVal + this.s.alpha * (v-this.oldVal);
     newVal = parseFloat(newVal.toFixed(5)); // very important, but of course the number of decimals can be changed. When values are super small, it is not intepreted correctly.
     this.oldVal = newVal;
