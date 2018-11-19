@@ -918,10 +918,18 @@ class SensorManager{
 
     getSensorWithName(name){
         return this.sensors.find(function(sensor){
-            return sensor.s.name = name;
+            return sensor.s.name = name; //????????????????????
         });
     }
 
+    getSensorsByName(name){ //return array
+        var sensors = [];
+        for(var i=0; i<this.sensors.length;i++){
+            if( this.sensors[i].s.name == name )
+                sensors.push(this.sensors[i]);
+        }
+        return sensors;
+    }
 
     getSensorSetting(eltID,wich){
         var sensor = this.getSensorWithID(eltID);
