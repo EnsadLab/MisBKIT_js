@@ -98,7 +98,7 @@ class AnimManager {
             else anim.s.nbparams = 0;
             for(var i=0; i<anim.s.nbparams; i++){
                 var k = "param" + i;
-                if(selectedType == "sinus"){ if(i==0) params[k]=0;else if(i==1)params[k]=1.0;else if(i==2)params[k]=1.0; }
+                if(selectedType == "sinus"){ if(i==0) params[k]=0;else if(i==1)params[k]=1.0;else if(i==2)params[k]=50.0; }
                 else if(selectedType == "random"){ if(i==0) params[k]=0;else if(i==1)params[k]=3.0;else if(i==2)params[k]=100.0; else if(i==3)params[k]=5.0;}
                 else {
                     params[k] = i*10; // fake values for an unknown type
@@ -224,6 +224,14 @@ class AnimManager {
         console.log("AnimManager::saveSettings");
     }
 
+    start(name){ //<-script
+        for(var i=0; i<this.animations.length;i++){
+            if(this.animations[i].fileName == name){
+                this.startAnim(this.animations[i].id);
+            }
+        }        
+    }
+
     startAnim(eltID) {
         console.log("AnimManager::startAnim",eltID);
         var anim = this.animations[eltID];
@@ -234,6 +242,14 @@ class AnimManager {
         }
     }
 
+    loop(name,onoff){ //<-script
+        for(var i=0; i<this.animations.length;i++){
+            if(this.animations[i].fileName == name){
+                this.loopAnim(this.animations[i].id,onoff);
+            }
+        }        
+    }
+
     loopAnim(eltID,onoff) { //set anim.loop true/false //?loop count?
         console.log("AnimManager::loopAnim",eltID);
         var anim = this.animations[eltID];
@@ -241,6 +257,14 @@ class AnimManager {
             anim.loop = onoff;
             MisGUI_anims.loopAnim(eltID,onoff);
         }
+    }
+
+    stop(name){ //<-script
+        for(var i=0; i<this.animations.length;i++){
+            if(this.animations[i].fileName == name){
+                this.stopAnim(this.animations[i].id);
+            }
+        }        
     }
 
     stopAnim(eltID) {

@@ -93,8 +93,8 @@ DxlManager.prototype.cmdOld = function(cmd,index,arg){
 //dxlID clockwise angleMin angleMax speedMin speedMax
 //joint wheel recCheck enable angle velocity
 DxlManager.prototype.cmd = function(func,eltID,val,param){
-    console.log("dxlManager:cmd:",func,eltID,val,param);
-    console.log("     settings",this.motors[0].m);
+    //console.log("dxlManager:cmd:",func,eltID,val,param);
+    //console.log("     settings",this.motors[0].m);
 
     if(this[func]){
         this[func](+eltID,val,param); //eltID=index

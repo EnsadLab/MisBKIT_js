@@ -433,7 +433,7 @@ Animation.prototype.updateSinus = function() {
     var curr_time = performance.now();
     var t0 = curr_time-this.oldTime;
     this.oldTime = curr_time;
-    console.log("time",t0);
+    //console.log("time",t0);
     this.sinusTimer += 0.2;
     this.sinusTimer += 6.0;
     var a = this.sinusTimer;
