@@ -18,3 +18,4 @@ this.loop = function(t){
 this.onStop = function(){
   sensor.deactivate(sensorName) //force disabling this sensor  
 }
+

@@ -169,6 +169,7 @@ class scriptManager {
             }else
                 pathfile = this.folder+this.currName;
         }
+        misGUI.showValue({class:this.className,func:"setName",val:this.currName});
         fs.writeFileSync( pathfile , src ); 
     }
 
