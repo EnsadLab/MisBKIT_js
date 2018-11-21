@@ -390,7 +390,7 @@ Animation.prototype.playKey = function() {
             for(var c=0;c<this.nbChannels;c++){
                 if(this.channels[c].play) {
                     var v = this.datas.readFloatLE(ik);
-                    console.log("anim.playkey:",ik,v);
+                    //console.log("anim.playkey:",ik,v);
                     //console.log("play:",this.channels[c].i, " ", this.datas.readInt16LE(ik));
                     //console.log("play:",this.channels[c].i," ", this.datas.readFloatLE(ik));
                     dxlManager.playKey(this.channels[c].f,this.channels[c].i,this.datas.readFloatLE(ik));

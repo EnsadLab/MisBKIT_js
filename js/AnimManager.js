@@ -225,7 +225,10 @@ class AnimManager {
     }
 
     start(name){ //<-script
-        for(var i=0; i<this.animations.length;i++){
+        console.log("starting anim from SCRIPT",name,this.animations.length);
+        //for(var i=0; i<this.animations.length;i++){
+        for (var i in this.animations){
+            //console.log("anim name",this.animations[i].fileName);
             if(this.animations[i].fileName == name){
                 this.startAnim(this.animations[i].id);
             }
@@ -243,7 +246,8 @@ class AnimManager {
     }
 
     loop(name,onoff){ //<-script
-        for(var i=0; i<this.animations.length;i++){
+        //for(var i=0; i<this.animations.length;i++){
+        for (var i in this.animations){
             if(this.animations[i].fileName == name){
                 this.loopAnim(this.animations[i].id,onoff);
             }
@@ -260,7 +264,8 @@ class AnimManager {
     }
 
     stop(name){ //<-script
-        for(var i=0; i<this.animations.length;i++){
+        //for(var i=0; i<this.animations.length;i++){
+        for (var i in this.animations){
             if(this.animations[i].fileName == name){
                 this.stopAnim(this.animations[i].id);
             }
