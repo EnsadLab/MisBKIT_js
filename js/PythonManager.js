@@ -118,7 +118,7 @@ class PythonManager{
                 var rep = MBK.stringCmd(msg);
                 if(rep != undefined)
                     self.send(""+rep)
-                console.log("python msg:<"+msg+">rep:",rep);
+                console.log("python msg:<"+msg+">");
             });
             misGUI.showValue({class:this.className,func:"onOff",val:true})
         }catch(err){
@@ -136,7 +136,7 @@ class PythonManager{
             this.pyshell.end(function (err,code,signal) {
                 if(err){
                     console.log("pyshell end error:",err)
-                    misGUI.alert("Python Error :\n"+err);
+                    //misGUI.alert("Python Error :\n"+err);
                     //self.pyshell.terminate(function(){
                     //    console.log("PYSHELL TERMINATED")
                     //})
@@ -144,6 +144,7 @@ class PythonManager{
                 console.log('python end code  :' + code);
                 console.log('python end signal:' + signal);
               });
+              this.pyshell.terminate();
               this.pyshell = undefined;        
         }
         //immediat ... to allow an open true just after close
