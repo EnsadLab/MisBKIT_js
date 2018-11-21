@@ -3,7 +3,7 @@ from threading import Thread
 from time import sleep
 
 #-----------------------
-class pollSensor(Thread):
+class PollSensor(Thread):
   def __init__(self):
     self.running = True
     Thread.__init__(self)
@@ -12,7 +12,7 @@ class pollSensor(Thread):
     while(self.running):
       print("sensor.getValue scriptTest "+str(a))  #OK with python 2.7 & python3
       val = input()
-      print("sensor.getValue scriptTest "+str(a))  #OK with python 2.7 & python3
+      # ... store/use this value
       sleep(0.05)
 
   def stop(self):
@@ -20,13 +20,13 @@ class pollSensor(Thread):
 
 #------------------------
 
-process = Sinus()
-process.start()
+poll = PollSensor()
+poll.start()
 
 dorun = True
 while dorun:
-  #txt = raw_input()             #ONLY python 2.7
-  txt = input()                      #ONLY python 3
+  #txt = raw_input()           #ONLY python 2.7
+  txt = input()                #ONLY python 3
   #txt = sys.stdin.readline()  #BOTH
   print("#echo "+txt)
   if( txt == "" ):			 #with stdin.readline()
@@ -36,7 +36,7 @@ while dorun:
     print("#GOT BYE")
     dorun = False
 
-process.stop()
-process.join()
+poll.stop()
+poll.join()
 print("bye bye")
 
