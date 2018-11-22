@@ -14,9 +14,6 @@ function scriptSleep(delay,arg){
 }
 */
 
-
-
-
 //TODO multiple scripts (GUI)
 class scriptManager {
     constructor(){
@@ -59,6 +56,8 @@ class scriptManager {
                             misGUI.alert("Script Error in "+func+"\n"+err);
                         this.stop();
                     }
+                    else
+                        console.log("ERR GOTO")
                 }
             }
         }
@@ -198,7 +197,7 @@ class scriptManager {
             +" if(func != undefined)script._nextTask = func;"
             +" if(arg  != undefined)script._nextDuration = arg;}"
             +"function next(name,d){script._nextDuration=d; script._nextTask=name;}"
-            +"function goto(task,d){next(task,d);throw('goto')}"
+            +"function goto(task,d){next(task,d);script._xTimeout=0;throw('goto');}"
             +"function exit(){throw('exit')}"
             +"function ramp(v0,v1,t,d){return script.ramp(v0,v1,t,d)}"
                     
