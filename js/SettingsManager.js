@@ -118,12 +118,14 @@ SettingsManager.prototype.chooseMisBKITFolder = function() {
             }
         });
     } else { // if directories have already been created!
-        dxlManager.folderIsReady(this.animationFolder);
+        dxlManager.folderIsReady(this.animationFolder); //??dxlManager??
        // this.synchroniseFiles();
         motorMappingManager.folderIsReady(this.configurationFolder);
         sensorManager.folderIsReady(this.sensorFolder);
         console.log("SCR READY1:",this.scriptFolder)
         scriptManager.folderIsReady(this.scriptFolder);
+        
+        robusManager.loadSettings(this.configurationFolder);
     }
 };
 

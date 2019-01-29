@@ -118,7 +118,7 @@ class DmxManager{
         this.serialPort.on('error',(err)=>{
             console.log("DMX Serial ERROR:",err);
             misGUI.showValue({class:"dmxManager",id:this.id,func:"onOff",val:"ERROR"});
-            misGUI.showValue({class:"dmxManager",func:"serialNumber",val:""});
+            misGUI.showValue({class:"dmxManager",func:"serialNumber",val:"err"});
             self.serialPort = undefined;
         });
 

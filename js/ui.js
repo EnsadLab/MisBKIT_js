@@ -175,6 +175,7 @@ function stopCode(){
 }
 */
 
+
 // FOR CODEMIROR (code editor in script mode)
 var scriptEditor = CodeMirror(document.body.getElementsByClassName("input-code")[0], {
 	value: "",

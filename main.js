@@ -9,7 +9,7 @@
 //
 // npm install midi --runtime=electron --target=2.0.1 --disturl=https://atom.io/download/atom-shell --abi=53
 
-//electron-packager . --platform=darwin --arch=x64 --overwrite --icon=misbkit.icns
+//electron-packager . --platform=darwin --arch=x64 --overwrite --icon=misbkit.icns --prune=true --electronVersion=2.0.1
 //electron-packager . --platform=darwin --arch=x64 --overwrite --icon=misbkit.icns --prune=true --out=/Users/Didier/Documents/Dev/_MisBKIT_releases
 
 // git test....

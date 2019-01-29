@@ -230,7 +230,6 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                         if(opts!=undefined)
                             misGUI.setElementValue($(this),opts)
                     });
-
                     $(this).on("change",function(){
                         //console.log("INPUTCHANGE:",$(this).data("prevval"),$(this).val());
                         //console.log("FUNCCHANGE:",$(this).attr("eltID"),$(this).attr("param"));
@@ -241,7 +240,7 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
                         var v = $(this).val();
                         if( (v!="")&&( !isNaN(+v)) ) // +"" -> 0 !
                             v=+v;                    //OK: 127.0.0.1 -> NaN
-                        //console.log("GUI SELECTonchange:",$(this).attr("func"),typeof($(this).val()),v)
+                        console.log("GUI SELECTonchange:",$(this).attr("func"),typeof($(this).val()),v)
                         manager.cmd($(this).attr("func"),$(this).attr("eltID"),v,$(this).attr("param"));
                         //console.log("  ->onchange:",$(this).attr("func"),$(this).attr("eltID"),v,$(this).attr("param"));
 
@@ -277,9 +276,15 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
 
 MisGUI.prototype.setEltID=function(classname,id){
     console.log("setEltID:",classname,$("."+classname).find("*").length);
-
     $("."+classname).find("*").attr("eltID",id);
 }
+
+MisGUI.prototype.fillEltID = function(selector,eltID){
+    var dest = $(selector).first(); //?first? //TODO: changeEltID  previous -> newone
+    dest.attr("eltID",eltID);
+    dest.find("*").attr("eltID",eltID);
+}
+
 
 MisGUI.prototype.changeSettings = function(className,func,params,eltID){
     for( var p in params ){
@@ -311,6 +316,8 @@ MisGUI.prototype.showParams=function(opt){
     if(elts.length > 0){
         for( p in opt.val ){
             var e = elts.filter("[param="+p+"]");
+            if(p=="textID")
+                console.log("GUI TEXTID:",opt.val[p],e.length)
             if(e.length>0){
                 this.setElementValue(e,opt.val[p]);
             }
@@ -437,7 +444,7 @@ MisGUI.prototype.setElementValue = function(elt,value){
   onoffState( $(this),"ERROR");
 */
 MisGUI.prototype.onoffState = function( dolzis , state){
-    console.log("MisGUI.prototype.checkState",state);
+    //console.log("MisGUI.prototype.checkState",state);
     switch(state){
         case false:
         case "OFF":
@@ -532,11 +539,14 @@ MisGUI.prototype.midiPortManager = function(name) {
     var bt = $("#btMidi");
 };
 
+//TODELETE
+/*
 MisGUI.prototype.dxlID =function(index,val) {
     console.log("**************MisGUI.dxlID:", val);
     //this.getMotorUI(index).find(".identity").text(+val);
     this.getMotorStg(index).find("[param=dxlID]").val(+val); //name ou func ? param ?
 }
+*/
 
 //DELETED MisGUI.prototype.clockwise =function(index,val)
 
@@ -726,8 +736,6 @@ MisGUI.prototype.addMotor = function(index,settings){
     var cl1 = this.cloneElement("#divMotors .single-motor",index,index-1);
     var cl2 = this.cloneElement("#divMotorSettings .single-motor",index,index-1);
 
-
-
     var svgAngles = cl1.find(".rotAngle").first();
     var svgSpeeds = cl1.find(".rotSpeed").first();    
     //prevent scrolling with mousewheel
@@ -757,13 +765,12 @@ MisGUI.prototype.addMotor = function(index,settings){
     
 }
 
-
 MisGUI.prototype.motorSettings = function(index,s){
-    if((s==undefined)||(s==null)){//TODO default
+    if((s==undefined)||(s==null)){//TODO defaults ?
         return;
     }
-    this.showParams({class:"dxlManager",id:index,val:s});
 
+    this.showParams({class:"dxlManager",id:index,val:s});
     $(".thermo [eltID="+index+"]").text("-°"); //wait info from cm9
     //update rotaries
     this.angleMin(index,s.angleMin);

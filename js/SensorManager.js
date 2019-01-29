@@ -1036,11 +1036,11 @@ class SensorManager{
  
     //event {gate: ,alias: ,p0:value ,p1:value ,...}
     //TODO ? dictionary ?
-    onLuosValue(modu){
+    onLuosValue(gate,modu){
         for(var i=0; i<this.sensors.length;i++){
             if( this.sensors[i].s.robusEnabledInput ){ //this.sensors[i].s.input_entry=="robus"){
                 var p = this.sensors[i].s.robusInputParams;
-                if(modu.gate==p.gate && modu.alias==p.module && modu[p.pin]!=undefined )
+                if(modu.gate==gate && modu.alias==p.module && modu[p.pin]!=undefined )
                     this.sensors[i].onValue(+modu[p.pin]);
             }
         }

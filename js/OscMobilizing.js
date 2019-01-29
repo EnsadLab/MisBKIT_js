@@ -65,7 +65,8 @@ class OscMobilizing{
             }
         });
 
-        //wss.on('request',function(){console.log('wss request:')}) //never seen
+
+        //this.wsSocket.on('request',function(){console.log('wsSocket request:')}) //never seen
         this.wsSocket.on("connection", function(socket) {
             console.log("wss connection");
             //wss.on('message', function(msg){console.log('ws rcw:',msg);});

@@ -152,13 +152,14 @@
 									<input type="checkbox" func="serialWifi" checked="false">
 									<div class="slider serial round" css=""></div>
 								</label>
-								<select func="selectPort"  class= "small tiny" style="width:250px; display:none;"></select>
-								<input  func="setWifiName" type="text" style="width:250px;" placeholder="websoket">
+								<select func="selectUSB"  class= "small tiny" style="width:250px; display:none;"></select>
+								<input  func="setWifiName" type="text" style="width:250px;" value="raspberrypi.local">
 								<!--button func="killme" class="close"><img src="assets/close.png" alt=""></button-->
 								<br>Info:<br>
 								<font color='lightblue' size="3">
-									<textarea func="luosInfo" rows=6 cols=15></textarea>
+									<textarea func="luosInfo" rows=3 cols=18 style="width:500px;padding:3px" ></textarea>
 								</font>	
+								<hr>
 						</div>
 					</div>
 				</div>
@@ -209,7 +210,18 @@
 					</div>
 				</div>
 
+				<div class="plug">
+					<p>
+						ROS <span func="spanText" class="status"></span>
+						<input type="checkbox" class="small onoff" title="enable/disable">
+					</p>
+				</div>
+
+
 			</div>
+
+
+
 			<!-- END CONNEXIONS -->
 
 			
@@ -287,7 +299,10 @@
 							<input func="dxlEnable" param="enabled" type="checkbox" class="power" 
 								   title="enable/disable">
 							<div func="dxlIndex" param="index" class="motor-index">0</div>
-							<div func="dxlParam" param="dxlID" class="identity">42</div>
+							<font color='lightblue' size="3">
+							<div func="dxlParam" param="textID" class="identity">42</div>
+							</font>	
+
 						</div>
 						<div class="circle">
 							<svg class="rotAngle" ></svg>

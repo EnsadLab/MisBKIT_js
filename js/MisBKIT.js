@@ -9,13 +9,13 @@ cm9Com = require("./Cm9Manager.js");
 dxlManager    = require("./DxlManager.js");
 midiPortManager = require("./MidiPortManager.js"); 
 sensorManager = require("./SensorManager.js");
-robusManager  = require("./RobusManager.js");
 oscManager    = require("./OscManager.js");
 oscMobilizing = require("./OscMobilizing.js");
 scriptManager = require("./ScriptManager.js");
 animManager   = require("./AnimManager.js");
 pythonManager = require("./PythonManager.js");
 dmxManager    = require("./DmxManager.js");;
+robusManager  = require("./RobusManager.js");
 fakeManager    = require("./fakeManager.js");;
 
 
@@ -144,6 +144,8 @@ class MisBKIT{
         scriptManager.saveSource();
         sensorManager.disableAll();
         sensorManager.saveSensorSettings(); //after disableAll ?
+        robusManager.saveSettings();
+        //robusManager.close();
         dmxManager.close();
     }
 

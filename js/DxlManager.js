@@ -180,6 +180,7 @@ DxlManager.prototype.wheelMode = function(eltID,val){ //LUOS style
 }
 
 DxlManager.prototype.dxlMode = function(eltID,val){ //true=wheel false=joint
+    console.log("DXLMODE:",val)
     if(this.motors[eltID]){
         var m = false;
         switch(val){
@@ -391,12 +392,18 @@ DxlManager.prototype.update = function(){
     var nbm=this.motors.length;
     var t  = Date.now();
 
+    for(var i=0;i<nbm;i++){
+        this.motors[i].update(t);
+    }
+
+
     if(cm9Com.isReady()){
         //console.log("DxlManager.update");
-    
+        /*
         for(var i=0;i<nbm;i++){
             this.motors[i].update(t);
         }
+        */
     
         //read dxl regiters
         if( this.refreshID >= 0 ) {
@@ -409,6 +416,8 @@ DxlManager.prototype.update = function(){
         }
 
     }//cm9 is ready
+
+
 
 
     /*!!!cm9
@@ -430,11 +439,11 @@ DxlManager.prototype.update = function(){
     //setTimeout(this.update.bind(this),50);
 }
 
-//DELETED DxlManager.prototype.cm9Msg=function(str){
-
+//called by Cm9Manager
 DxlManager.prototype.sendAllMotors = function(){
     for(var i=0;i<this.motors.length;i++){
-        this.motors[i].sendGoalSpeed();
+        if(this.motors[i].gate=="cm9")
+            this.motors[i].sendGoalSpeed();
     }
 }
 
@@ -544,7 +553,7 @@ DxlManager.prototype.startReadDxl = function(dxlId) {
 //DELETED DxlManager.prototype.onCm9Strings=function(args){
 
 DxlManager.prototype.position =function(index){
-    return this.positions[index];
+    return +this.positions[index];
 }
 
 DxlManager.prototype.dxlPos=function(array) {  //array[0]="dxlpos"
@@ -563,6 +572,25 @@ DxlManager.prototype.dxlPos=function(array) {  //array[0]="dxlpos"
     }
     pythonManager.onDxlpos(array);
 }
+
+DxlManager.prototype.onLuos=function(msg){
+    if(msg.position != undefined){
+        //console.log("LUOS DXL:",m);
+        var dxlid = +msg.alias.substr(msg.alias.lastIndexOf("_")+1);
+        var motor = this.getMotorByID(dxlid); //TODO find luos ?
+        //console.log("LUOS DXL:",dxlid,motor.index,m.position);
+        if( motor != undefined){
+            var i = motor.index;
+            var p = motor.angle2pos(msg.position)
+            var a = motor.currPos(p).toFixed(1);
+            this.positions[i]=a;    //store if other managers want an array
+            sensorManager.handleDxlPos(i,motor.angleToNorm(a)); //use min & max
+            misGUI.needle(i,a);
+        }
+    }
+}
+
+
 
 //DELETED DxlManager.prototype.cm9Id=function(array) { //stringCmd
 
@@ -624,27 +652,26 @@ DxlManager.prototype.cmdString = function(str){ //"dxlXXXX val val val ..."
     }
 }
 
+DxlManager.prototype.removeAllLuos = function(){
 
-//TODELETE
-/*
-DxlManager.prototype.dxlReg=function(arr) { //arr[ index addr value ]
-        console.log("dxlREG:[",+arr[1],"]",arr[2]," ",arr[3]);
-        misGUI.showDxlReg(arr[1],arr[2],arr[3]);
 }
-*/
-//TODELETE
-/*
-DxlManager.prototype.readRegs=function(index) { //
-    if((index>=0)&&(index<this.motors.length))
-        this.motors[index]._regRead=0;
+
+//TODO same ID & gate different ???
+DxlManager.prototype.addLuosMotor=function(gate,alias,dxlid){
+    console.log("AddLuosBot:",gate,dxlid)
+    var motor = this.getMotorByID(dxlid);   //???
+    if( motor == undefined){
+        motor = this.getMotorByID(0);
+    }
+    if( motor != undefined){
+        motor.m.gate  = gate;
+        motor.m.alias = alias;
+        motor.dxlID(dxlid);
+        motor.m.textID = "luos_"+dxlid;
+        misGUI.motorSettings(motor.index,motor.m);           
+    }
+    console.log("luosMotor:",motor);
 }
-*/
-//TODELETE
-/*DxlManager.prototype.dxlRead=function(dxlid,addr) { //
-    console.log("dxlRead:",+dxlid,+addr);
-    cm9Com.pushMessage("DR "+dxlid+","+addr+",\n");
-}
-*/
 
 DxlManager.prototype.dxlWrite = function(dxlid,val,addr) { //id val param
     console.log("dxlWrite:",+dxlid,+addr,+val);
@@ -758,7 +785,7 @@ DxlManager.prototype.control = function(index,val){      //<--script & osc
     this.onControl(index,val) //TODO renomer onControl
 }
 DxlManager.prototype.normControl = function(index,val){  //<--script & osc
-    this.onNormControl(index,val) //TODO renomer onControl
+    this.onNormControl(index,val) //TODO renomer onNormControl
 }
 
 DxlManager.prototype.onNormControl = function(index,val){
@@ -785,12 +812,14 @@ DxlManager.prototype.onControl = function(index,val){
 };
 
 DxlManager.prototype.angle = function(index,val){ //degrés //<--script
+    //console.log("DxlManager:angle:",val);
     if(val!=undefined)
         this.setAngle(index,val);
     else if(index<this.motors.length){ //return current wanted angle
         return this.motors[index].wantedAngle;    
     }
 }
+
 DxlManager.prototype.setAngle = function(index,val){ //degrés
     //console.log("DxlManager:setangle:",index,val);
     if(index<this.motors.length){
@@ -816,7 +845,7 @@ DxlManager.prototype.setAngleN = function(index,val){
 DxlManager.prototype.speed = function(index,val){ //<--script
     if(index<this.motors.length){
         if(val == undefined)
-            return this.motors[index].this.wantedSpeed;
+            return this.motors[index].wantedSpeed;
         else
             this.setSpeed(index,val)
     }
@@ -836,7 +865,6 @@ DxlManager.prototype.setSpeedN = function(index,val){
         misGUI.motorSpeed (index,v);
     }
 };
-
 
 DxlManager.prototype.onPlay = function(index,val){
     if(index<this.motors.length){
@@ -915,15 +943,23 @@ DxlManager.prototype.scan=function(args){ //oldCM9
 }
 */
 
-//TODELETE ?
+DxlManager.prototype.clearMotors = function(){
+    for (var i = 0; i < this.motors.length; i++) {
+        this.motors[i].enable(false)
+        this.motors[i].dxlID(0);
+        this.motors[i].gate = "cm9";
+        this.motors[i].alias = "";
+        misGUI.motorSettings(i,this.motors[i].m);
+    }
+}
+
 DxlManager.prototype.startScan=function(){
     console.log("STARTSCAN");
+    this.clearMotors();
+    robusManager.scanDxl();
+
     if(cm9Com.isOpen()) {
         misGUI.scanProgress(0);
-        for (var i = 0; i < this.motors.length; i++) {
-            this.motors[i].dxlID(0);
-            misGUI.motorSettings(i,this.motors[i].m);
-        }
         cm9Com.pushMessage("dxlPing 1\n");
     }
     else
