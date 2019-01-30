@@ -28,8 +28,6 @@ var ipc = require("electron").ipcMain;
 var mainWindow   = null;
 var appPath = "";
 
-
-
 app.on('window-all-closed', function() {
   //if (process.platform != 'darwin') {
     app.quit();
@@ -56,7 +54,6 @@ app.on('ready', function() {
   if(appPath.includes("/Didier/")||appPath.includes("/cecilebucher/"))
     mainWindow.webContents.openDevTools();
 
-
   mainWindow.on('close', function() {
     mainWindow.webContents.send("close");
     console.log(" close ...");
@@ -72,7 +69,6 @@ app.on('ready', function() {
   //console.log("DOCUMENT:",app.getPath('document'));
   console.log("APPPATH:",app.getAppPath());
   console.log("LOCALES:",app.getLocale());
-
 
 });
 

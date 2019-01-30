@@ -98,6 +98,10 @@ class LuosBot{
             }
             this.lastMsg = msg.modules;
             this.rcvTime = Date.now();
+
+            if(this.msgTimer==undefined){
+                this.timedSender();
+            }
         }        
     }
 
@@ -166,10 +170,10 @@ class LuosBot{
     }
 
     pushMsg(str){
-        //if(this.serialPort==undefined)
-        //    return;
+        if(!this.connected)
+            return;
 
-        console.log("push:",this.msgStack.length,str,(Date.now()-this.rcvTime))
+        console.log("push:",this.msgStack.length,str,(Date.now()-this.rcvTime),)
         if(this.msgStack.length>24)
             this.flushMsg()
         //if( (Date.now()-this.rcvTime)<1000 ){
@@ -242,6 +246,7 @@ class LuosBot{
                 }
             }
         }
+        this.connected = true;
         misGUI.showValue({class:"robusManager",func:"luosInfo",val:info});
         sensorManager.luosNewGate(this.gateAlias);
     }
@@ -256,8 +261,8 @@ class LuosBot{
                 this.wsConnection = undefined;
                 this.gateAlias = undefined;
                 this.wsClient.on('connectFailed',function(err){
-
-                    robusManager.showState(this.id,"ERROR","connectFailed:\n"+err );                    
+                    robusManager.showState(this.id,"ERROR","connectFailed:\n"+err );
+                    //...                   
                 })
                 this.wsClient.on('connect',function(connection){
                     robusManager.showState(this.id,true,"websocket connected" );
@@ -286,15 +291,20 @@ class LuosBot{
         }   
     }
 
-    close(){
+    close(errInfo){
         this.connected = false;
-        misGUI.showValue({class:"robusbot",func:"enable",id:this.id,val:false});
         if(this.wsConnection) {this.wsConnection.close();this.wsConnection=undefined}
         if(this.wsClient) {this.wsClient.abort();this.wsClient=undefined}
         //if(this.wsClient) {this.wsClient.close();this.wsClient=undefined} //no close function
         if(this.serialPort != null) {this.serialPort.close();this.serialPort = undefined;}
         this.detectDecount = 0;
         this.gateAlias = undefined;
+        this.modules = {};
+        if(errInfo)
+            robusManager.showState(this.id,"ERROR",errInfo)
+        else
+            robusManager.showState(this.id,false,"closed")
+
     }
 
     openSerial(){
@@ -302,7 +312,7 @@ class LuosBot{
         this.close();
         robusManager.scanSerials();
         if( this.serialName==null ){
-            robusManager.showState(thi.id,"ERROR","choose usb port")
+            robusManager.showState(this.id,"ERROR","choose usb port")
             return;
         }
 
