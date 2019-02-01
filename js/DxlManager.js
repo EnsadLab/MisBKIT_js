@@ -668,9 +668,10 @@ DxlManager.prototype.addLuosMotor=function(gate,alias,dxlid){
         motor.m.alias = alias;
         motor.dxlID(dxlid);
         motor.m.textID = "luos_"+dxlid;
-        misGUI.motorSettings(motor.index,motor.m);           
+        misGUI.motorSettings(motor.index,motor.m);
     }
     console.log("luosMotor:",motor);
+    return motor;
 }
 
 DxlManager.prototype.dxlWrite = function(dxlid,val,addr) { //id val param

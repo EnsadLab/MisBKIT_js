@@ -2,6 +2,8 @@ const SerialLib  = require('serialport');
 const WSClient   = require('websocket').client;
 const dxlManager = require("./DxlManager.js");
 
+//luos message ->momos->update , trigger send -> enumerates momos ...> send messages
+
 //TODO ---> misGUI
 var robusWifiSerial=function( iswifi, eltID){
     console.log("robusWifiSerial:",iswifi,eltID)
@@ -16,6 +18,111 @@ var robusWifiSerial=function( iswifi, eltID){
     misGUI.showValue({class:"robusManager",func:"serialWifi",val:iswifi}); //ID ?
 }
 
+class LuosModule{
+    constructor(rcv){
+        this.modified={}
+        this.update(rcv)
+    }
+    getValue(param){
+        return this[param];
+    }
+    setValue(param,value){
+        if(this[param] !== value)
+            this.modified[param]=true;
+        this[param]=value;
+        console.log("setValue:",param,this[param])
+    }
+    update(rcv){
+        for(var p in rcv ){
+            this[p]=rcv[p]
+        }        
+    }
+    getMessage(){
+        //console.log("getMessage from:",this.alias)
+        //return(this.alias+"modified:",this.modified)
+    }
+}
+
+class DynamixelMotor extends LuosModule{
+    constructor(rcv){
+        super(rcv)
+        this.modeStep = 0
+    }
+    getMessage(){
+        //        var str = '{"modules":{"'+alias+'":{"'+param+'":'+value+'}}}\r';
+        if(this.modified.compliant){
+            this.compliant = true;
+            this.modified.compliant = false;
+            var msg = '{"modules":{"'+this.alias+'":{"compliant":true}}}\r';
+            return msg;
+        }
+        else if(this.modified.wheel_mode){
+            if(this.wheel_mode){
+                var msg;
+                switch(++this.modeStep){
+                    case 1:
+                        this.compliant=false;
+                        this.modified.compliant = false;
+                        msg = '{"modules":{"'+this.alias+'":{"compliant":false}}}\r';
+                        break;
+                    case 2:
+                        msg = '{"modules":{"'+this.alias+'":{"wheel_mode":true}}}\r';
+                        break;
+                    case 3:
+                        this.target_speed = 0;
+                        this.modeStep = 0;
+                        this.modified.wheel_mode = false;
+                        msg = '{"modules":{"'+this.alias+'":{"target_speed":0}}}\r';
+                        break;
+                }
+                return msg;        
+            }
+            else{ //mode_joint
+                switch(++this.modeStep){
+                    case 1:
+                        this.compliant=false;
+                        this.modified.compliant = false;
+                        msg = '{"modules":{"'+this.alias+'":{"compliant":false}}}\r';
+                        break;
+                    case 2:
+                        msg = '{"modules":{"'+this.alias+'":{"wheel_mode":false}}}\r';
+                        break;
+                    case 3:
+                        //this.target_speed = 10;
+                        msg = '{"modules":{"'+this.alias+'":{"target_speed":'+this.target_speed+'}}}\r';
+                        break;
+                    case 4:
+                        this.modeStep = 0;
+                        this.modified.wheel_mode = false;
+                        msg = '{"modules":{"'+this.alias+'":{"target_position":'+this.target_position+'}}}\r';
+                        break;
+                }
+                return msg;        
+            }
+        }
+        else if(this.modified.target_speed){
+            this.modified.target_speed = false;
+            return '{"modules":{"'+this.alias+'":{"target_speed":'+this.target_speed+'}}}\r';
+        }
+        else if(this.modified.target_position){
+            this.modified.target_position = false;
+            return '{"modules":{"'+this.alias+'":{"target_position":'+this.target_position+'}}}\r';
+        }
+    }
+    /*    
+    set wheel_mode(onoff){
+        console.log("wheel_mode")
+    }
+    set target_position(pos){
+        console.log("target_position")
+    }
+    set target_speed(speed){
+        console.log("target_speed")
+    }
+    */
+}
+
+
 class LuosBot{
     constructor(id){
         this.id = id;
@@ -29,7 +136,7 @@ class LuosBot{
         this.isOnWifi = true; //true = wifi; false = serial
         this.wifiName   = "raspberrypi.local";
         this.serialName = undefined;
-        this.serialIsReady = false;
+        //this.serialIsReady = false;
         this.serialPort = undefined;
         this.detectDecount = 0;
 
@@ -40,10 +147,22 @@ class LuosBot{
         this.wsClient = undefined;
         this.wsConnection = undefined;
 
+        this.moduliterator = undefined;
         this.msgTimer = undefined;
         this.msgStack = [];
     }
 
+    * iterMsg(){
+        while(true){
+            for(var m in this.modules ){
+                var msg = this.modules[m].getMessage();
+                if(msg!=undefined)
+                    yield(msg)
+            }
+            yield(undefined) //yield anyway if no messages waiting 
+        }
+    }
+    
     getSettings(){
         var c = "usb";
         if(this.isOnWifi)c="wifi"
@@ -52,6 +171,12 @@ class LuosBot{
             connection:c,
             serial:this.serialName,
             wifi:this.wifiName
+        }
+    }
+
+    setValue(alias,param,value){
+        if(this.modules[alias]){
+            this.modules[alias].setValue(param,value);
         }
     }
 
@@ -71,14 +196,17 @@ class LuosBot{
     onMessage(json){
         var msg;
         try{ msg = JSON.parse(json); }
-        catch(err){console.log("luos:bad json:",err);console.log("luos:rcv:",json)}
+        catch(err){console.log("luos:bad json:")}//,err);console.log("luos:rcv:",json)}
 
         if(msg!=undefined){
+            var t = Date.now();
+            var dt = t-this.rcvTime;
+            console.log(dt);
+            this.rcvTime = Date.now();
             //console.log(msg);
             if(this.gateAlias==undefined){
-                console.log("LUOS:gate:",this.id,msg);
-                this.updateModules(msg.modules);
                 this.initModules(msg.modules);
+                this.updateModules(msg.modules);
             }
             else{
                 var arr = msg.modules;
@@ -87,45 +215,40 @@ class LuosBot{
                     var m = arr[i];
                     if(m.type != "Gate"){
                         m.gate = this.gateAlias; //for sensor
-                        sensorManager.onLuosValue(this.gateAlias,m);
-                        
-                        if(m.type=="DynamixelMotor"){
-                            dxlManager.onLuos(m);
-                        }
-                        
+                        sensorManager.onLuosValue(this.gateAlias,m);                        
+                        //moved to updatemodules
+                        //if(m.type=="DynamixelMotor"){
+                        //    dxlManager.onLuos(m);
+                        //}
                     }
                 }
             }
             this.lastMsg = msg.modules;
-            this.rcvTime = Date.now();
-
+            var msg = this.moduliterator.next().value;
+            if(msg){
+                console.log("iter0:",msg)
+                this.sendStr(msg);
+            }
+            var self = this;
+            setTimeout(function(){
+                msg = self.moduliterator.next().value;
+                if(msg){
+                    console.log("iter1:",msg)
+                    self.sendStr(msg);
+                }
+            },10);
+            /*
             if(this.msgTimer==undefined){
                 this.timedSender();
             }
+            */
         }        
-    }
-
-    updateModules(array){
-        for(var i=0;i<array.length;i++){
-            var im = array[i];
-            if(this.modules[im.alias]==undefined)
-                this.modules[im.alias]={}
-            var momo = this.modules[im.alias]
-            for(var p in im ){
-                    momo[p]=im[p]
-            }
-            if(im.type=="DynamixelMotor"){
-                dxlManager.onLuos(im);
-            }
-        }
     }
 
     getValue(alias,param){
         if(this.modules[alias])
             return this.modules[alias][param];
-        else
-            return undefined; //inutile?
-    }
+    }//returns undefined if not found
 
     getAliases(){
         var als = []
@@ -147,26 +270,23 @@ class LuosBot{
         return outs;
     }
 
-    sendObj(obj){
+    /*
+    pushObjMsg(obj){
         var json = JSON.stringify(obj,null)+"\r";
         this.pushMsg(json); 
     }
+    */
 
-    sendOrForget(alias,param,value){
-        if(this.msgTimer==undefined){
-            var str = '{"modules":{"'+alias+'":{"'+param+'":'+value+'}}}\r';
-            this.pushMsg(str);
-        }
+    //DELETED sendOrForget(alias,param,value){
+
+    flushMsg(){ //!NOTGOOD! : may flush important messages
+        this.msgStack = [];
+        this.msgTimer==undefined;
     }
 
     pushValue(alias,param,value){
         var str = '{"modules":{"'+alias+'":{"'+param+'":'+value+'}}}\r';
         this.pushMsg(str);
-    }
-
-    flushMsg(){
-        this.msgStack = [];
-        this.msgTimer==undefined;
     }
 
     pushMsg(str){
@@ -177,10 +297,14 @@ class LuosBot{
         if(this.msgStack.length>24)
             this.flushMsg()
         //if( (Date.now()-this.rcvTime)<1000 ){
+            
             this.msgStack.push(str);
+
+        /*
             if(this.msgTimer==undefined){
                 this.timedSender();
             }
+        */  
         //}else{
         //    robusManager.showState(this.id,"ERROR","Luos timeout")
         //    this.flushMsg();
@@ -191,11 +315,14 @@ class LuosBot{
         if(this.msgStack.length>0){
             //console.log("timedSender:",this.msgStack.length);
             this.sendStr(this.msgStack.shift());
-            this.msgTimer = setTimeout(this.timedSender.bind(this),20); //wait after 
+            this.msgTimer = setTimeout(this.timedSender.bind(this),20); //wait after sent
         }
         else
             this.msgTimer = undefined;
     }
+
+
+
 
     sendStr(str){
         if( (this.wsConnection!=undefined)&&(this.wsConnection.connected) ){
@@ -204,7 +331,7 @@ class LuosBot{
         }        
         if(this.serialPort){
             var self=this;
-            self.serialIsReady=false;
+            //self.serialIsReady=false;
             //console.log("serialsending:",str)
             this.serialPort.drain(function(){
                 self.serialPort.write(Buffer.from(str),function(err){
@@ -216,39 +343,81 @@ class LuosBot{
         this.lastMsgTime = Date.now();
     }
 
-    scanDxl(){
+    
+    //TODO rescan(arraymsg)
+    scanDxl(){  //called after initModules
         for(var m in this.modules ){
             var momo = this.modules[m];
             if(momo.type=="DynamixelMotor"){
+                //!!! danger : renomage des 'modules' my_dxl_xx !!!
                 var dxlID = +momo.alias.substr(momo.alias.lastIndexOf("_")+1);
                 if(!isNaN(dxlID)){
-                    dxlManager.addLuosMotor(this.id,momo.alias,dxlID);
+                    var motor = dxlManager.addLuosMotor(this.id,momo.alias,dxlID);
+                    //momo.toSend = {mode:true,position:true,speed:true};
+                    //momo.update     = function(){console.log("momo.Function")}
+                    //momo.getMessage = this.testYield.bind(momo); //function(){console.log("dynamixel.Message");return "dxl:"+this.alias;}
+                    console.log("momo:",momo)
                 }
             }
         }
     }
 
-   initModules(modules){ //array
-        console.log("Luos:initModules",modules);
+    updateModules(array){ //Luos reception
+        for(var i=0;i<array.length;i++){
+            var im = array[i];
+            if(this.modules[im.alias]==undefined)
+                this.modules[im.alias]={}
+            var momo = this.modules[im.alias]
+            for(var p in im ){
+                    momo[p]=im[p]
+            }
+            if(im.type=="DynamixelMotor"){
+                dxlManager.onLuos(im);
+                //console.log("momo.update:",typeof(momo.update)); 
+            }
+        }
+    }
+
+   initModules(msgArray){ //array
+        this.modules = {}
         var info = "";
-        for(var m in this.modules ){
-            var momo = this.modules[m];
+        for(var i=0;i<msgArray.length;i++){
+            var momo = msgArray[i];
+            //test momo.getMessage = function(){console.log("momo.Message");return "msg:"+this.alias;}
+            if(momo.type=="DynamixelMotor"){
+                this.modules[momo.alias]=new DynamixelMotor(momo);
+            }
+            else 
+                this.modules[momo.alias] = new LuosModule(momo);
+
+            //this.modules[momo.alias]=momo;
             info += JSON.stringify(momo)+"\n";
             if( momo.type == "Gate"){ //old 'gate'
                 this.gateAlias = momo.alias;
             }
-            if(momo.type=="DynamixelMotor"){
-                console.log("LUOS DXL:",momo.alias)
-                var dxlID = +momo.alias.substr(momo.alias.lastIndexOf("_")+1);
-                if(!isNaN(dxlID)){
-                    console.log("LUOS DXL:",dxlID," luosID:",momo.alias,this.id);
-                    dxlManager.addLuosMotor(this.id,momo.alias,dxlID);
-                }
-            }
         }
+
+        this.scanDxl();
+
         this.connected = true;
         misGUI.showValue({class:"robusManager",func:"luosInfo",val:info});
         sensorManager.luosNewGate(this.gateAlias);
+        console.log("Luos:initModules",this.modules);
+
+        var gen = this.iterMsg(this.modules);
+        for(var i=0;i<10;i++){
+            var gn = gen.next();
+            if(gn.done)
+                break;
+            console.log(" generator:",gn.value)
+        };
+        console.log("genReturn0:",gen.return());
+        console.log("genReturn1:",gen.return());
+
+        if(this.moduliterator)
+            this.moduliterator.return();        
+        this.moduliterator = this.iterMsg();
+
     }
 
     open(){
@@ -292,6 +461,10 @@ class LuosBot{
     }
 
     close(errInfo){
+        if(this.moduliterator){
+            this.moduliterator.return();
+            this.moduliterator = undefined;
+        }
         this.connected = false;
         if(this.wsConnection) {this.wsConnection.close();this.wsConnection=undefined}
         if(this.wsClient) {this.wsClient.abort();this.wsClient=undefined}
@@ -432,39 +605,60 @@ class RobusManager{
         }
     }
     */
-    dxl_disable(gateId,alias){
+    /*
+    setValue(gateId,alias,param,value){
         if(this.luosBots[gateId]){
-            this.luosBots[gateId].flushMsg();
-            this.luosBots[gateId].pushValue(alias,"compliant",true);
+            this.luosBots[gateId].setValue(alias,param,value);
         }
     }
-
+    */
+ 
+    dxl_disable(gateId,alias){
+        console.log("dxl_disable",gateId,alias);
+        if(this.luosBots[gateId]){
+            this.luosBots[gateId].setValue(alias,"compliant",true);
+            /*
+            this.luosBots[gateId].flushMsg();
+            this.luosBots[gateId].pushValue(alias,"compliant",true);
+            */
+        }
+    }
     wheel_mode(gateId,alias){
         if(this.luosBots[gateId]){
+            this.luosBots[gateId].setValue(alias,"wheel_mode",true);
+            /*
             this.luosBots[gateId].flushMsg();
             this.luosBots[gateId].pushValue(alias,"compliant",false);
             this.luosBots[gateId].pushValue(alias,"wheel_mode",true);
             this.luosBots[gateId].pushValue(alias,"target_speed",0);
+            */
         }
     }
     joint_mode(gateId,alias,speed,pos){
         if(this.luosBots[gateId]){
+            this.luosBots[gateId].setValue(alias,"target_speed",speed);
+            this.luosBots[gateId].setValue(alias,"target_position",pos);
+            this.luosBots[gateId].setValue(alias,"wheel_mode",false);
+            /*
             this.luosBots[gateId].flushMsg();
             this.luosBots[gateId].pushValue(alias,"compliant",false);
             this.luosBots[gateId].pushValue(alias,"wheel_mode",false);
-            this.luosBots[gateId].pushValue(alias,"target_speed",speed);
-            this.luosBots[gateId].pushValue(alias,"target_position",pos);
+            */
+            this.luosBots[gateId].setValue(alias,"target_speed",speed);
+            this.luosBots[gateId].setValue(alias,"target_position",pos);
+            
         }
     }
     target_position(id,alias,angle){
         if(this.luosBots[id]){
-            this.luosBots[id].pushValue(alias,"target_position",angle.toFixed(2));
-            //this.luosBots[id].pushValue(alias,"target_speed",speed);
+            this.luosBots[id].setValue(alias,"target_position",angle.toFixed(2));
+            //this.luosBots[id].pushValue(alias,"target_position",angle.toFixed(2));
         }
     }
     target_speed(id,alias,speed){
         if(this.luosBots[id]){
-            this.luosBots[id].pushValue(alias,"target_speed",speed.toFixed(2));
+            this.luosBots[id].setValue(alias,"target_speed",speed.toFixed(2));
+            //this.luosBots[id].pushValue(alias,"target_speed",speed.toFixed(2));
         }
     }
 
@@ -473,7 +667,6 @@ class RobusManager{
         console.log("class:",this.className)
         misGUI.initManagerFunctions(this,this.className);
         misGUI.fillEltID("."+this.className,"Luos0")
-        //this.addLuosBot();
     }
 
     // "cmd" "LuosX" value
