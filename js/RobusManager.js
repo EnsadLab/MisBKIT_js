@@ -30,7 +30,7 @@ class LuosModule{
         if(this[param] !== value)
             this.modified[param]=true;
         this[param]=value;
-        console.log("setValue:",param,this[param])
+        //console.log("setValue:",param,this[param])
     }
     update(rcv){
         for(var p in rcv ){
@@ -57,6 +57,7 @@ class DynamixelMotor extends LuosModule{
             return msg;
         }
         else if(this.modified.wheel_mode){
+            //en attendant les commandes muliples dans les messages => multistep
             if(this.wheel_mode){
                 var msg;
                 switch(++this.modeStep){
@@ -194,6 +195,22 @@ class LuosBot{
     }
 
     onMessage(json){
+        if(this.moduliterator){
+            var msg = this.moduliterator.next().value;
+            if(msg){
+                //console.log("iter0:",msg)
+                this.sendStr(msg);
+            }
+            var self = this;
+            setTimeout(function(){
+                if(this.moduliterator){
+                    msg = self.moduliterator.next().value;
+                    if(msg)
+                        self.sendStr(msg);
+                }
+            },5);
+        }
+
         var msg;
         try{ msg = JSON.parse(json); }
         catch(err){console.log("luos:bad json:")}//,err);console.log("luos:rcv:",json)}
@@ -201,7 +218,7 @@ class LuosBot{
         if(msg!=undefined){
             var t = Date.now();
             var dt = t-this.rcvTime;
-            console.log(dt);
+            //console.log(dt);
             this.rcvTime = Date.now();
             //console.log(msg);
             if(this.gateAlias==undefined){
@@ -223,20 +240,24 @@ class LuosBot{
                     }
                 }
             }
-            this.lastMsg = msg.modules;
+            //this.lastMsg = msg.modules;
+            /*
+            if(this.moduliterator){
             var msg = this.moduliterator.next().value;
             if(msg){
-                console.log("iter0:",msg)
+                //console.log("iter0:",msg)
                 this.sendStr(msg);
             }
             var self = this;
             setTimeout(function(){
                 msg = self.moduliterator.next().value;
                 if(msg){
-                    console.log("iter1:",msg)
+                    //console.log("iter1:",msg)
                     self.sendStr(msg);
                 }
             },10);
+            }
+            */
             /*
             if(this.msgTimer==undefined){
                 this.timedSender();
@@ -321,8 +342,14 @@ class LuosBot{
             this.msgTimer = undefined;
     }
 
-
-
+    timedGenerator(){
+        if(this.moduliterator){
+            msg = this.moduliterator.next().value;
+            if(msg)
+                this.sendStr(msg);
+            this.msgTimer = setTimeout(this.timedGenerator.bind(this),20); //wait after sent
+        }
+    }
 
     sendStr(str){
         if( (this.wsConnection!=undefined)&&(this.wsConnection.connected) ){
@@ -698,6 +725,7 @@ class RobusManager{
         this.nextBotIndex++;
         this.luosBots[id]=new LuosBot(id); 
         misGUI.cloneElement( ".robusbot",id);
+        robusWifiSerial( this.luosBots[id].isOnWifi, id);
         return this.luosBots[id];
     }
 
@@ -787,7 +815,12 @@ class RobusManager{
         settingsManager.saveToConfigurationFolder("luos.json",json);
     }
 
+    folderIsReady(){ //dont need to store path : configuration folder
+        this.loadSettings()
+    }
+
     loadSettings(){
+        console.log("===== LUOS SETTING =====")
         var json = settingsManager.loadConfiguration("luos.json");
         var self = this;
         var count = 0;
@@ -822,9 +855,10 @@ class RobusManager{
                 }
             }
             if(count==0){
+                console.log("======================= LUOS SETTING2 ===========================")
                 var gate = self.addLuosBot("Luos0"); //default
                 gate.selectUSB(names[0]);
-                gate.serialWifi(false); //serial
+                gate.serialWifi(true); //serial
             }
         });
         //console.log("======= opening ws ===========")
@@ -840,7 +874,7 @@ class RobusManager{
             if (err)
                 console.log("robus.scanSerials ERROR:", err);
             else {
-                console.log("SerialPorts:",ports.length)
+                //console.log("SerialPorts:",ports.length)
                 for (var i = 0; i < ports.length; i++) {
                     console.log("serials:",ports[i].comName,ports[i].manufacturer);
                     if( (ports[i].manufacturer == "Pollen Robotics")||

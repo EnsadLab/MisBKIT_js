@@ -115,6 +115,8 @@ SettingsManager.prototype.chooseMisBKITFolder = function() {
                 });
 
                 self.getScriptFolder();
+
+                robusManager.folderIsReady(this.configurationFolder);
             }
         });
     } else { // if directories have already been created!
@@ -125,7 +127,7 @@ SettingsManager.prototype.chooseMisBKITFolder = function() {
         console.log("SCR READY1:",this.scriptFolder)
         scriptManager.folderIsReady(this.scriptFolder);
         
-        robusManager.loadSettings(this.configurationFolder);
+        robusManager.folderIsReady(this.configurationFolder);
     }
 };
 

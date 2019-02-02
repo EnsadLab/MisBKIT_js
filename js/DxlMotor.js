@@ -30,7 +30,6 @@ const ADDR_TORQUE      = 34;
 const ADDR_POSITION    = 36;
 const ADDR_TEMPERATURE = 43;
 
-
 const DXL_OFF = -1; //RELAX
 const DXL_JOINT = 0;
 const DXL_WHEEL = 1;
@@ -48,14 +47,14 @@ class Dxl{
             model:-1,         //AX12 par defaut
             clockwise:false,  //par defaut
             mode:DXL_OFF,     //0:joint 1:wheel //default=wheel -> no jump at srart
-            jointSpeed: 0, //[-100 100] !!! 0 = speedMax !!!
+            jointSpeed: 0,    //[-100 100] !!! 0 = speedMax !!!
             angleMin: -150,
-            angleMax: 150,
+            angleMax:  150,
             speedMin: -100,
-            speedMax: 100,
+            speedMax:  100,
             torqueMax: 1023,
             stillAngle: 0,
-            midi:{port:"",msg:"CC:0"} //TODO ? type:"CC" num:0  ? channel:0 ?
+            //midi:{port:"",msg:"CC:0"} //TODO ? type:"CC" num:0  ? channel:0 ?
         };
 
         this.index   = index;
@@ -73,7 +72,7 @@ class Dxl{
         this._gotModel = false;
         this.limitCW  = 0;
         this.limitCCW = 1023; //AX12
-        this.angleRef  = 300; //AX12
+        this.angleRef = 300;  //AX12
         this.temperature = 0;
         this.frozen = false;
     }

@@ -235,11 +235,13 @@ window.onload = function() {
                 case 65: //ctrl a :selectionne la page (berk)
                     break;
 
+                case 87: //ctrl W
+                case 68: //ctrl D   
                 case 32: //ctrl espace: open devtools
                     ipc.send('devTools');
                     break;
-                   
-                case 86: //ctrl espace: open devtools
+                
+                case 86:
                     console.log("CTRL V:",e);
                     break;
                 

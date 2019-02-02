@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>misB KIT 3.0.4</title>
+        <title>misB KIT 1er février 2019</title>
         <link rel="stylesheet" href="css/jquery-ui.css">
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/toggle.css">
@@ -143,20 +143,22 @@
 					</p>
 					<div class="content">
 						<br>Robots :
+						<hr>
 						<!--button func="addLuosBot" class="float-right"> Add Luos Bot</button>
 						<br-->
-						<div class="robusbot" style="display:none;">
-								<hr>
+						<!--class="single-sensor ui-state-default activ closable"-->
+						<div class="robusbot closable" style="display:none;">
+								<button class="close"><img src="assets/close.png" alt=""></button>
+
 								<input func="enable" id="robusOnOff" type="checkbox" class="power onoff" title="enable/disable">
 								<label class="toggle-small">
-									<input type="checkbox" func="serialWifi" checked="false">
+									<input type="checkbox" func="serialWifi" style="checked:true">
 									<div class="slider serial round" css=""></div>
 								</label>
 								<select func="selectUSB"  class= "small tiny" style="width:250px; display:none;"></select>
 								<input  func="setWifiName" type="text" style="width:250px;" value="raspberrypi.local">
-								<!--button func="killme" class="close"><img src="assets/close.png" alt=""></button-->
 								<br>Info:<br>
-								<font color='lightblue' size="3">
+								<font color='black' size="3">
 									<textarea func="luosInfo" rows=3 cols=18 style="width:500px;padding:3px" ></textarea>
 								</font>	
 								<hr>

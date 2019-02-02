@@ -1,12 +1,13 @@
 {
-  "name": "MisBKIT-2019-jan-29",
-  "version": "6.0.6",
+  "name": "MisBKIT-2019-feb-01",
+  "version": "6.0.7",
   "author": "Didier Bouchon, Cecile Bucher, Alexandre Dechosal",
   "description": "",
   "main": "main.js",
   "dependencies": {
+    "mdns": "^2.4.0",
     "midi": "^0.9.5",
-    "npm": "^6.0.1",
+    "npm": "^6.7.0",
     "osc": "^2.2.1",
     "osc-min": "^1.1.1",
     "python-shell": "^1.0.6",
