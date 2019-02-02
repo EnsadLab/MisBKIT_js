@@ -1,6 +1,11 @@
+
 const SerialLib  = require('serialport');
+//const mdns = require("mdns")
+//const ipscanner  = require('ip-scanner')
 const WSClient   = require('websocket').client;
+
 const dxlManager = require("./DxlManager.js");
+
 
 //luos message ->momos->update , trigger send -> enumerates momos ...> send messages
 
@@ -863,6 +868,7 @@ class RobusManager{
         });
         //console.log("======= opening ws ===========")
         //openWS("raspberrypi.local");
+        this.openMDNS();
     }
     
     scanSerials(callback){ //filter only pollen
@@ -888,8 +894,37 @@ class RobusManager{
             }
             if(callback)
                 callback(names);
-        });            
+        }); 
+                
     }
+
+    openMDNS(){
+        /*
+        //var mdnsBrowser = mdns.createBrowser(mdns.udp('ws'));
+        var mdnsBrowser = mdns.browseThemAll();
+        mdnsBrowser.on('serviceUp',function(srvc){
+            console.log("MDNS up:",srvc)
+        })
+        mdnsBrowser.on('serviceDown',function(srvc){
+            console.log("MDNS down:",srvc)
+        })
+        mdnsBrowser.start();
+        */
+       /*
+       ipscanner({
+        range1: [0, 10], // the next to last chunk of an ip address
+        range2: [0, 10], // the last chunk of an ip address
+        poolSize: 5, // how many requests to make at a time
+        ports: [9342], // ports to look at for each generated ip
+        timeout: 1000, // request timeout duration
+        urlTemplate: "http://192.168.%s.%s" //customize how the 2 ranges will be used in the url.
+        },function(result){
+            console.log("IP-SCAN:",result);
+        });
+        */
+    }
+
+
 };
 var rbmng = new RobusManager();
 module.exports = rbmng;

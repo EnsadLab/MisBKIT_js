@@ -5,9 +5,7 @@
   "description": "",
   "main": "main.js",
   "dependencies": {
-    "mdns": "^2.4.0",
     "midi": "^0.9.5",
-    "npm": "^6.7.0",
     "osc": "^2.2.1",
     "osc-min": "^1.1.1",
     "python-shell": "^1.0.6",
