@@ -49,7 +49,7 @@ var motorMappingManager = null; //cf MotorMappingManager.js
 var sensorManager = null; //cf SensorManager.js
 var oscManager = null; //cf OscManager.js
 var cm9Com     = null;
-var robusManager = null;
+//var robusManager = null;
 var oscMobilizing = null;
 var dmxManager = null;
 

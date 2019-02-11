@@ -40,8 +40,8 @@ Sensor = function () {
         motorEnabledOutput: false,
         toMotorIndex: 0,
         animationsEnabledOutput: false,
-        robusEnabledInput: false,
-        robusInputParams: {gate:"none",module:"none",pin:"none"},
+        luosEnabledInput: false,
+        luosInputParams: {gate:"none",alias:"none",pin:"none"},
         sinusEnabledInput: false,
         //sinusParams: {period:5,offset:0,current:0},
         sinusParams: {amplitude:1.0,offset:0.0,period:1.0,current:0},
@@ -107,6 +107,12 @@ Sensor.prototype.update = function(){
     if(!this.s.enabled)
         return;
 
+    if(this.s.luosEnabledInput){
+        var val = luosManager.getValue(this.s.luosInputParams);
+        if(val!=undefined)
+            this.currValue = val;
+    }
+
     var val = this.currValue;
         //console.log("sensor:",this.s.name,val);
 
@@ -152,6 +158,8 @@ Sensor.prototype.update = function(){
             //console.log("midiEnabledOutput",this.s.midiMappingOutput);
             midiPortManager.sendMidi(this.s.midiPortOutput,this.s.midiCmdOutput,this.s.midiMappingOutput,nv);
         }
+
+
     }
     
     // here we update the value in the gui. We need the value, the filtered value and the percentage
@@ -187,7 +195,7 @@ Sensor.prototype.init = function(){
             break;
         case "Robus":
             //console.log("Robus addcallback");
-            robusManager.setCallback(this.s.address,this.s.name,this.onValue.bind(this));
+            //robusManager.setCallback(this.s.address,this.s.name,this.onValue.bind(this));
             break;
         case "":
             break;

@@ -2,6 +2,7 @@
 const SerialLib  = require('serialport');
 //const mdns = require("mdns")
 //const ipscanner  = require('ip-scanner')
+//var mdns = require('mdns-js');
 const WSClient   = require('websocket').client;
 
 const dxlManager = require("./DxlManager.js");
@@ -24,9 +25,10 @@ var robusWifiSerial=function( iswifi, eltID){
 }
 
 class LuosModule{
-    constructor(rcv){
-        this.modified={}
-        this.update(rcv)
+    constructor(message){
+        this.revision=undefined;
+        this.modified={revision:true}
+        this.update(message)
     }
     getValue(param){
         return this[param];
@@ -37,23 +39,32 @@ class LuosModule{
         this[param]=value;
         //console.log("setValue:",param,this[param])
     }
-    update(rcv){
-        for(var p in rcv ){
-            this[p]=rcv[p]
+    update(message){
+        for( var p in message ){
+            this[p]=message[p]
         }        
     }
-    getMessage(){
-        //console.log("getMessage from:",this.alias)
+    nextMessage(){
+        //console.log("nextMessage from:",this.alias)
         //return(this.alias+"modified:",this.modified)
     }
 }
 
-class DynamixelMotor extends LuosModule{
-    constructor(rcv){
-        super(rcv)
+class RgbLed extends LuosModule{
+    constructor(message){
+        super(message)
         this.modeStep = 0
     }
-    getMessage(){
+    nextMessage(){
+    }
+}
+
+class DynamixelMotor extends LuosModule{
+    constructor(message){
+        super(message)
+        this.modeStep = 0
+    }
+    nextMessage(){
         //        var str = '{"modules":{"'+alias+'":{"'+param+'":'+value+'}}}\r';
         if(this.modified.compliant){
             this.compliant = true;
@@ -74,11 +85,11 @@ class DynamixelMotor extends LuosModule{
                     case 2:
                         msg = '{"modules":{"'+this.alias+'":{"wheel_mode":true}}}\r';
                         break;
-                    case 3:
+                    case 5:
                         this.target_speed = 0;
                         this.modeStep = 0;
                         this.modified.wheel_mode = false;
-                        msg = '{"modules":{"'+this.alias+'":{"target_speed":0}}}\r';
+                        //msg = '{"modules":{"'+this.alias+'":{"target_speed":0}}}\r';
                         break;
                 }
                 return msg;        
@@ -156,17 +167,47 @@ class LuosBot{
         this.moduliterator = undefined;
         this.msgTimer = undefined;
         this.msgStack = [];
+
+        this.testStep = 0;
     }
 
     * iterMsg(){
         while(true){
+            var count = 0;
             for(var m in this.modules ){
-                var msg = this.modules[m].getMessage();
-                if(msg!=undefined)
-                    yield(msg)
+                var msg = this.modules[m].nextMessage();
+                yield(msg)
+                //if(msg!=undefined){yield(msg);count++;}
             }
-            yield(undefined) //yield anyway if no messages waiting 
+            //if(count==0) 
+                yield(undefined) //a least 1 yield yield //prevent infinite loop with no yield 
         }
+    }
+
+    colorTest(){
+        /*
+        var r = 0|(Math.random()*255)
+        var g = 0|(Math.random()*255)
+        var b = 0|(Math.random()*255)
+        //{"color": [0, 0, 255]}
+        //var str = '{"modules":{"rgb":{"rgb_led_mod":{"color":['+r+','+g+','+b+']}}}\r';
+        var str='{"modules": {"rgb_led_mod": {"color": [0,'+g+','+b+']}}}\r'
+        */
+        var str;
+        switch(++this.testStep){
+            case 1:
+                //this.sendStr( '{"modules":{"rgb_led_mod":{"color":[255,0,0]}}}\r' );
+                break;
+            case 2:
+            this.sendStr( '{"modules":{"rgb_led_mod":{"color":[255,0,0]}}}\r{"modules":{"rgb_led_mod":{"color":[0,255,0]}}}\r' );
+                break;
+            case 5:
+                //this.sendStr(str = '{"modules":{"rgb_led_mod":{"color":[0,0,255]}}}\r');
+                this.testStep = 0;
+                break;
+            //case 4:this.testStep = 0;break;
+        }
+        //this.sendStr(str);
     }
     
     getSettings(){
@@ -200,12 +241,17 @@ class LuosBot{
     }
 
     onMessage(json){
+        //this.colorTest();
         if(this.moduliterator){
             var msg = this.moduliterator.next().value;
             if(msg){
-                //console.log("iter0:",msg)
                 this.sendStr(msg);
-            }
+                var t = Date.now();
+                var dt = t-this.rcvTime;
+                console.log("iterSend:",dt,msg)
+                this.rcvTime = Date.now();
+                }
+            /*
             var self = this;
             setTimeout(function(){
                 if(this.moduliterator){
@@ -214,17 +260,21 @@ class LuosBot{
                         self.sendStr(msg);
                 }
             },5);
+            */
         }
+        
 
         var msg;
         try{ msg = JSON.parse(json); }
         catch(err){console.log("luos:bad json:")}//,err);console.log("luos:rcv:",json)}
 
         if(msg!=undefined){
+            /*
             var t = Date.now();
             var dt = t-this.rcvTime;
             //console.log(dt);
             this.rcvTime = Date.now();
+            */
             //console.log(msg);
             if(this.gateAlias==undefined){
                 this.initModules(msg.modules);
@@ -245,6 +295,7 @@ class LuosBot{
                     }
                 }
             }
+
             //this.lastMsg = msg.modules;
             /*
             if(this.moduliterator){
@@ -366,9 +417,10 @@ class LuosBot{
             //self.serialIsReady=false;
             //console.log("serialsending:",str)
             this.serialPort.drain(function(){
-                self.serialPort.write(Buffer.from(str),function(err){
-                    if(err){console.log("LUOS USB:",err)}
-                    //else{ console.log("LUOS USB sent:",str) }
+                if(self.serialPort)
+                    self.serialPort.write(Buffer.from(str),function(err){
+                        if(err){console.log("LUOS USB:",err)}
+                        //else{ console.log("LUOS USB sent:",str) }
                 });
             });
         }
@@ -387,7 +439,7 @@ class LuosBot{
                     var motor = dxlManager.addLuosMotor(this.id,momo.alias,dxlID);
                     //momo.toSend = {mode:true,position:true,speed:true};
                     //momo.update     = function(){console.log("momo.Function")}
-                    //momo.getMessage = this.testYield.bind(momo); //function(){console.log("dynamixel.Message");return "dxl:"+this.alias;}
+                    //momo.nextMessage = this.testYield.bind(momo); //function(){console.log("dynamixel.Message");return "dxl:"+this.alias;}
                     console.log("momo:",momo)
                 }
             }
@@ -415,7 +467,7 @@ class LuosBot{
         var info = "";
         for(var i=0;i<msgArray.length;i++){
             var momo = msgArray[i];
-            //test momo.getMessage = function(){console.log("momo.Message");return "msg:"+this.alias;}
+            //test momo.nextMessage = function(){console.log("momo.Message");return "msg:"+this.alias;}
             if(momo.type=="DynamixelMotor"){
                 this.modules[momo.alias]=new DynamixelMotor(momo);
             }
@@ -480,7 +532,7 @@ class LuosBot{
                     })
                     self.detectDecount = 100;
                     self.timedDetection();
-                    misGUI.showValue({class:"robusbot",func:"enable",id:this.id,val:true});       
+                    misGUI.showValue({class:"luosGate",func:"enable",id:this.id,val:true});       
                 });
                 this.wsClient.connect('ws://'+self.wifiName+':9342',null)
                 //this.wsClient.connect('ws://raspberrypi.local:9342',null)
@@ -648,7 +700,10 @@ class RobusManager{
     dxl_disable(gateId,alias){
         console.log("dxl_disable",gateId,alias);
         if(this.luosBots[gateId]){
+            console.log("revision:",this.luosBots[gateId].revision)
             this.luosBots[gateId].setValue(alias,"compliant",true);
+            this.luosBots[gateId].setValue(alias,"revision",undefined);
+
             /*
             this.luosBots[gateId].flushMsg();
             this.luosBots[gateId].pushValue(alias,"compliant",true);
@@ -698,7 +753,7 @@ class RobusManager{
         console.log("==================== ROBUSmanager: init =====================");
         console.log("class:",this.className)
         misGUI.initManagerFunctions(this,this.className);
-        misGUI.fillEltID("."+this.className,"Luos0")
+        //misGUI.fillEltID("."+this.className,"Luos0")
     }
 
     // "cmd" "LuosX" value
@@ -729,13 +784,13 @@ class RobusManager{
         //var id = "Luos"+this.nextBotIndex;
         this.nextBotIndex++;
         this.luosBots[id]=new LuosBot(id); 
-        misGUI.cloneElement( ".robusbot",id);
+        misGUI.cloneElement( ".luosGate",id);
         robusWifiSerial( this.luosBots[id].isOnWifi, id);
         return this.luosBots[id];
     }
 
     killLuosBot(id){
-        misGUI.removeElement(".robusbot",id);
+        misGUI.removeElement(".luosGate",id);
         if(this.luosBots[id]){
             this.luosBots[id].close();
             delete this.luosBots[id];
@@ -868,7 +923,7 @@ class RobusManager{
         });
         //console.log("======= opening ws ===========")
         //openWS("raspberrypi.local");
-        this.openMDNS();
+        //this.openMDNS();
     }
     
     scanSerials(callback){ //filter only pollen
@@ -899,6 +954,14 @@ class RobusManager{
     }
 
     openMDNS(){
+        var browser = mdns.createBrowser();
+        browser.on('ready', function () {
+            console.log("MDNS:ready")
+            browser.discover(); 
+        });
+        browser.on('update', function (data) {
+            console.log('MDNS:', data);
+        });
         /*
         //var mdnsBrowser = mdns.createBrowser(mdns.udp('ws'));
         var mdnsBrowser = mdns.browseThemAll();

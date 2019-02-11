@@ -32,7 +32,7 @@ class scriptManager {
     }
     
     init(){
-        console.log("scriptManager init")
+        //console.log("scriptManager init")
         misGUI.initManagerFunctions(this,this.className);
     }
 

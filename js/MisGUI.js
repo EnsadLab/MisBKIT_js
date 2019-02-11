@@ -48,52 +48,19 @@ function MisGUI(){
         cm9Com.checkConnection();
     })
     
-
-    /* TODELETE
-    var inputs = $("#divDxlReg :input");
-    inputs.change(function(toto){
-        var id = $("#btAdvID").val();
-        var addr = +this.name;
-        var val  = +this.value;
-        console.log("inputs.change:",id,addr," ",val);
-        if(addr == 3){
-            dxlEditId = val;
-            console.log("dxlEditId",val);
-        }
-        else
-            dxlManager.dxlWrite(id,addr,val);
-    });
-
-    inputs.keypress(function(e){
-        console.log("inputs.keypress<", e.which);
-        console.log("inputs.keypress:",this.id,this.name," ",this.value);
-        if(e.which==13){
-            //$(this).trigger("change");
-            $(this).change();
-        }
-    });
-    //inputs.focusout(function(toto){
-    //    console.log("inputs.focusout:",this.name," ",this.value);
-    //});
-    */
-
-
 }; //MisGUI
 
-//generalisation de MisGUI_sensors
+//generalisation de ".activ" (cdf MisGUI_sensors)
 MisGUI.prototype.radioActivate = function(selector,eltid){
-    console.log("MisGUI.radioActivate ",selector,eltid);
     $(selector).removeClass("activ");
     if(eltid != undefined)
         $(selector).filter("[eltID="+ eltid + "]").addClass("activ");
 }
 
 MisGUI.prototype.radioHide = function(selector,eltid){
-    console.log("MisGUI.radioHide ",selector,eltid);
     $(selector).hide();
     $(selector).filter("[eltID="+ eltid + "]").show();
 }
-
 
 /*
   ex: cloneElement(".single-gizmo",42);
@@ -157,7 +124,6 @@ MisGUI.prototype.removeElement = function(selector,eltID){
     if(eltID != undefined){
         elt = elt.filter("[eltID="+eltID+"]"); //.first(); ALL?
     }
-    console.log("MisGUI.removing:",elt);
     elt.remove();  
 }
 
@@ -166,33 +132,15 @@ MisGUI.prototype.hideElement = function(selector,eltID){
     if(eltID != undefined){
         elt = elt.filter("[eltID="+eltID+"]"); //.first(); ALL?
     }
-    console.log("MisGUI.hiding:",elt);
     elt.hide();  
 }
 
 
 /*
-ex: html : <div class="myManager">
-             <input func="myfunc" ...>
-           </div>
-    
-    initGUIfunction( myManager, "myManager");
-
+    initGUIfunction( myManager, "myManager"); select .myManager & children
     -> manager.cmd(func,eltID,value);
-
-    ex:
-    myManager.prototype.cmd = function(func,eltID,value){
-        if( this[func]{
-            if( eltID == undefined )
-                this[func](value);
-            else
-                this[func](eltID,value);
-        }
-    }
-
-    className is for use with   setManagerValue() below
-
 */
+
 MisGUI.prototype.initManagerFunctions = function(manager,className){
     var parents = $("."+className);
     console.log("GUI_MANAGER:",className,parents.length)
@@ -200,7 +148,6 @@ MisGUI.prototype.initManagerFunctions = function(manager,className){
     parents.find("*").each(function(i) {
         var func = $(this).attr("func");
         $(this).data("manager",manager); //inutile ? keep manager ?
-        //console.log("GUI_MANAGER:",className,func)
         if(func){
             //console.log("INIT:",$(this).prop("tagName"),$(this).prop("type"));
 
@@ -285,7 +232,6 @@ MisGUI.prototype.fillEltID = function(selector,eltID){
     dest.find("*").attr("eltID",eltID);
 }
 
-
 MisGUI.prototype.changeSettings = function(className,func,params,eltID){
     for( var p in params ){
         this.setManagerValue(className,func,params[p],eltID,p);//class func val id param
@@ -308,7 +254,7 @@ MisGUI.prototype.showValue=function(opt){
 
 //opt: {class:classname,id:eltID,func:func,val:settings}
 MisGUI.prototype.showParams=function(opt){
-    console.log("MisGUI.showParams:",opt)
+    //console.log("MisGUI.showParams:",opt)
     var sel = "."+opt.class+" ";
     if(opt.id!=undefined)sel+="[eltID="+opt.id+"]";
     if(opt.func!=undefined)sel+="[func="+opt.func+"]";
@@ -316,8 +262,6 @@ MisGUI.prototype.showParams=function(opt){
     if(elts.length > 0){
         for( p in opt.val ){
             var e = elts.filter("[param="+p+"]");
-            if(p=="textID")
-                console.log("GUI TEXTID:",opt.val[p],e.length)
             if(e.length>0){
                 this.setElementValue(e,opt.val[p]);
             }
@@ -394,49 +338,7 @@ MisGUI.prototype.setElementValue = function(elt,value){
             default:
                 console.log("GUIvalue: type?:",func,param,elt.prop("tagName"),e.prop("type"),elt);
         }//switch prop
-    });//each elt
-    
-    /*
-    //console.log("MngValue:",elt.prop("tagName"),elt.prop("type"));
-    if(elt.is("p")||elt.is("span")||elt.is("textarea")){
-        elt.text(value); // elt.html(value); //TO DISCUSS 
-    }
-    else{ //input select ...
-        switch(elt.prop("type")){
-            case "select-one":
-                if(Array.isArray(value)){ //fill options with value(s)
-                    console.log("select:values[:",value);
-                    elt.each(function(i) {  //value != for each ones
-                        var prev = $(this).val();
-                        console.log("select:prev:",prev);
-                        $(this).empty();
-                        for(var i=0;i<value.length;i++){
-                            if(value[i].length>0)
-                                $(this).append($("<option value=" + "'" + value[i] + "'>" + value[i] + "</option>"));
-                        }
-                        if(prev!=null){
-                            $(this).val(prev);
-                        //else $(this).val(value[0]);
-                            $(this).trigger("change");
-                        }
-                    });
-                }
-                else{
-                    elt.val(value);            }
-                break;
-            case "text":
-            case "number":
-                elt.val(value);
-                break;
-            case "checkbox":
-                if(elt.is(".onoff")) this.onoffState(elt,value); //ON , OFF , ERROR
-                else elt.prop("checked",value);    
-                break;
-            default:
-                console.log("GUIvalue:type unhandled:",func,elt.prop("type"));
-        }
-    }
-    */
+    });//each elt    
 }
 
 /*
@@ -474,12 +376,6 @@ MisGUI.prototype.cmd = function(cmd,index,args) {
     }
 }
 
-/*
-MisGUI.prototype.openOSC = function(remoteAddr,remotePort) {
-    dxlManager.openOSC(remoteAddr,remotePort);
-};
-*/
-
 MisGUI.prototype.cm9State=function(state){
     console.log("??????????? DELETE ???????????? MisGUI.prototype.cm9State",state);
     var bt = $("#btcm9");
@@ -500,55 +396,17 @@ MisGUI.prototype.cm9State=function(state){
             this.cm9Info("");
             break;            
     }
-
-    /*
-    if(state=='OFF'){
-        //console.log("MisGUI.prototype.cm9State OFF?",state);
-        //bt.prop("class","disconnected").text("OFF");
-        bt.prop("checked",false);
-        this.cm9Info("");
-    }
-    else if(state=='ON')
-        //bt.prop("class", "connected").text("ON");
-        bt.prop("checked",true);
-    else{
-        //bt.prop("class", "error").text("ERROR");
-        bt.prop("checked",false);
-        this.cm9Info("error");        
-    }
-    bt.prop('disabled',false);
-    //this.blockUI(false);
-    */
 }
 
 MisGUI.prototype.cm9Info=function(txt){
     $("#cm9Text").html(txt);
 }
     
-
-/*
-MisGUI.prototype.midiPort = function(name) {
-    $('#selectMidi').val(name);
-    var bt = $("#btMidi");
-};
-*/
-
 // TODO: what was the use of this?
 MisGUI.prototype.midiPortManager = function(name) {
     $('#selectMidi').val(name);
     var bt = $("#btMidi");
 };
-
-//TODELETE
-/*
-MisGUI.prototype.dxlID =function(index,val) {
-    console.log("**************MisGUI.dxlID:", val);
-    //this.getMotorUI(index).find(".identity").text(+val);
-    this.getMotorStg(index).find("[param=dxlID]").val(+val); //name ou func ? param ?
-}
-*/
-
-//DELETED MisGUI.prototype.clockwise =function(index,val)
 
 MisGUI.prototype.angleMin =function(index,val){
     val = +val
@@ -564,6 +422,7 @@ MisGUI.prototype.angleMin =function(index,val){
         .setMinMax(+val);
     }
 }
+
 MisGUI.prototype.angleMax =function(index,val){
     val = +val
     //Didier:[-150,150] à contre coeur (Mx28 et autres)
@@ -619,7 +478,6 @@ MisGUI.prototype.midiMode =function(index,value){
 }
 
 MisGUI.prototype.motorMode =function(index,value){
-    console.log("************ MisGUI.mode:",index,value);
     if(this.rotSpeeds[index]){
         switch(value){
             case false: case 0: case "J": case "joint":
@@ -669,24 +527,9 @@ MisGUI.prototype.setValue = function(index,name,val){
 
 MisGUI.prototype.motorAngle = function(index,val){
     //console.log("MisGUI.angle",index,val);
-
-    //if(index<this.rotAngles.length){
     if(this.rotAngles[index]){
         var v = this.rotAngles[index].setValue(+val).value;
-        //this.inputVals.eq(index).val(v.toFixed(1));
         $("#divMotors .num_rotary").filter("[eltID="+index+"]").val(v.toFixed(1));
-
-        //console.log("misguiAngle:",val,v);
-
-        
-        // SIMULATION FROM MOTOR MAPPING TO SENSOR sans le moteur avec index 2 allumé.
-        // TEST -> donc à gicler quand on en a plus besoin.
-        // pour tester le BUG observé par Filipe concernant le motor mapping to.
-        /*
-        if(index == 2){
-            console.log("fake mapping to sensor");
-            sensorManager.handleDxlPos(2,Math.random());
-        }*/
     }
 }
 
@@ -712,8 +555,6 @@ MisGUI.prototype.getMotorStg = function(index){
     return $("#divMotorSettings .single-motor").filter("[eltID="+index+"]");
 }
 
-//DELETED MisGUI.prototype.changeDxlID=function(index,val){
-
 MisGUI.prototype.alert = function(msg){
     var bt = dialog.showMessageBox({
         type:"error",
@@ -723,7 +564,7 @@ MisGUI.prototype.alert = function(msg){
     });
 }
 
-//TO DELETE ? : never called ? 
+//TO DELETE ? : never called ?  ui.js ?
 MisGUI.prototype.toggleAdvanced = function(onoff){ //true='normal' false='advanced'
     console.log("********************* MisGUI.prototype.toggleAdvanced",onoff);
     console.log("????? TO DELETE ????? MisGUI.prototype.toggleAdvanced",onoff);
@@ -783,26 +624,7 @@ MisGUI.prototype.motorSettings = function(index,s){
 
 
 MisGUI.prototype.midiMotorSettings = function(midiMappingSettings,midiPorts){
-    console.log("MisGUI.prototype.midiMotorSettings",midiPorts);
-/*Didier: use this.showParams()
-    var motorIndex = midiMappingSettings.motorIndex;
-    var midiCmd_int;
-    if(midiMappingSettings.cmd == "note") midiCmd_int = true;
-    else midiCmd_int = false;
-    var midiPort = midiMappingSettings.port;
-    var midiIndexMapping = midiMappingSettings.nbID;
-
-    //toggle:
-    var parent = this.getMotorStg(motorIndex);
-    parent.find("[name=midiMode]").prop("checked",midiCmd_int);
-
-    //index:
-    this.setMappingNumberForMotor(motorIndex,midiIndexMapping);
-
-    //selections:
-    this.updateMidiMotorSelection(motorIndex,midiPort,midiPorts);
-//
-*/
+    //console.log("MisGUI.prototype.midiMotorSettings",midiPorts);
     var idx = midiMappingSettings.motorIndex;
     var mod = (midiMappingSettings.cmd == "note"); //CC:false note:true
     var num = midiMappingSettings.nbID;
@@ -814,8 +636,7 @@ MisGUI.prototype.midiMotorSettings = function(midiMappingSettings,midiPorts){
         ,val:{ midiMode:mod , num:num } //, port:["none","test 1","test 2"]}
         });
 
-    this.updateMidiMotorSelection(idx,midiMappingSettings.port,midiPorts);
-    
+    this.updateMidiMotorSelection(idx,midiMappingSettings.port,midiPorts);  
 }
 
 MisGUI.prototype.updateMidiMotorSelection = function(motorIndex,midiPortSelected,midiPorts){
@@ -833,64 +654,10 @@ MisGUI.prototype.updateMidiMotorSelection = function(motorIndex,midiPortSelected
     this.showValue({class:"dxlManager",id:motorIndex,param:"port",val:ports});
     //selectMidiMappingPort //default = first option  ("none")
     this.showValue({class:"dxlManager",id:motorIndex,param:"port",val:midiPortSelected});
-
-/*
-    //var sel = $("#divMotorSettings .midi-setting").eq(motorIndex);
-    //var sel = $("#divMotorSettings .midi-chanel").eq(motorIndex);
-    var sel = $("#divMotorSettings .midi-chanel [eltID="+motorIndex+"]");
-    //sel.data("id",motorIndex);
-
-    sel.empty();
-    sel.append($("<option value=" + "'" + "none" + "'>" + "none" + "</option>"));
-    for(var i=0;i<midiPorts.length;i++){
-        var portName = midiPorts[i].portName;
-        if(portName.length>0 && midiPorts[i].enabledOnGUI){
-            //sel.append($("<option value=" + "'" + portName + "'>" + portName + "</option>"));
-            sel.append($("<option value=" + "'" + portName + "'" + "name=" + portName + "'>" + portName + "</option>"));
-        }
-    }
-    sel.change(function(){ 
-        var id = $(this).data("id"); 
-        console.log(id,this.name,this.value);
-        motorMappingManager.setMidiMotorMappingPort(id,this.value);
-    });
-
-    //this.selectMidiMappingPort(motorIndex,midiPortSelected);
-    */
 }
-
-//only used in this 
-/*
-MisGUI.prototype.setMappingNumberForMotor = function(motorIndex, nbID) {
-//    if(nbID == null){ 
-//        //$("#divMotors .number-for-motor").eq(motorIndex).val(null); // done explicitly for now.. //cec
-//        $("#divMotorSettings").find("[name=mapping]").eq(motorIndex).val(null);
-//    }else{
-//        //$("#divMotors .number-for-motor").eq(motorIndex).val(nbID); //cec
-//        $("#divMotorSettings").find("[name=mapping]").eq(motorIndex).val(nbID);
-//    }
-}
-*/
-
-//only used in this
-/*
-MisGUI.prototype.selectMidiMappingPort = function(motorID, name){   
-//    console.log("*******************selectMidiMappingPort:",name);
-//    var div = this.getMotorStg(motorID);
-//    if( (name==undefined)||(name.length<1) )
-//        name = "none";
-//    //var sel = div.find(".midi-setting");
-//    var sel = div.find(".midi-chanel");
-//    sel.val(name);
-   if( (name==undefined)||(name.length<1) )
-       name = "none";
-    this.showValue({class:"dxlManager",id:motorID,param:"port",val:name});
-}
-*/
 
 MisGUI.prototype.init =function(){
     console.log("----- INIT GUI -----");
-
 
     var self = this;
     
@@ -898,169 +665,6 @@ MisGUI.prototype.init =function(){
     this.ctrlStopAll = 0;
 
     this.initMotorDiv();
-
-    /* >>> this.initMotorDiv(); + this.addMotor
-    //clone MotorsConfig(advanced)
-    //var parent = $("#dxlConfig");
-    var model = $("#divMotorSettings .single-motor");
-    var after = model;
-    model.data("index",0); model.find("*").data("index",0); //old
-    model.attr("eltID",0);
-    model.find("*").attr("eltID",0);
-    for(var i=1;i<6;i++) {
-        var clone = model.clone();
-        //clone.data("index",i);  //old
-        //clone.find("*").data("index",i); //old
-        clone.attr("eltID",i);
-        clone.find("*").attr("eltID",i);
-        clone.insertAfter(after);
-        after = clone;
-    }
-
-    // clone single-motors
-    var parent = $("#divMotors");
-    model = parent.find(".single-motor");
-    //model.data("index",0); //old
-    //model.find("*").data("index",0); //old
-    model.attr("eltID",0);
-    model.find("*").attr("eltID",0);
-    for(var i=1;i<6;i++) {
-        var clone = model.clone();
-        //clone.data("index",i);  //old
-        //clone.find("*").data("index",i); //old
-        clone.attr("eltID",i);
-        clone.find("*").attr("eltID",i);        
-        clone.appendTo(parent);
-        clone.find(".midi-blinker").bind("mouseover", frontBlinkInfo);
-        clone.find(".midi-blinker").css("display", "none");
-    }
-    */
-
-
-
-    //create rotaries
-    /*
-    var svgAngles = $(".rotAngle");
-    var svgSpeeds = $(".rotSpeed");
-
-    svgAngles.show(); //to have a good bounding rect
-    svgSpeeds.show();
-
-    var slidopt  = {x:0,y:0};
-
-    //var color = "#C0C0C0";
-    for(var i=1;i<svgAngles.length;i++) {
-        var rota = new DUI.Rotary(svgAngles[i],slidopt);
-        rota.setDomain(-150,150).setRange(-150,150).setMinMax(-150,150);
-        rota.userData = {i:i,f:"angle"};
-        rota.callback = this.onRotary.bind(this);
-        //this.rotAngles.push(rota); //not an array any more
-        this.rotAngles[i]=rota;
-
-        var rots = new DUI.Rotary(svgSpeeds[i],slidopt);
-        rots.setDomain(-160,160).setRange(-100,100).setMinMax(-100,100);
-        rots.userData = {i:i,f:"velocity"}; //speed
-        rots.callback = this.onRotary.bind(this);
-        //this.rotSpeeds.push(rots);
-        this.rotSpeeds[i]=rots;
-    }
-    svgSpeeds.hide();
-    */
-
-    //DB DELETED inputVals
-    //this.inputVals = $("#divMotors .num_rotary");
-    /*
-    for(var i=0;i<this.inputVals.length;i++) {
-        //console.log("num_rotary:",i);
-        this.inputVals.eq(i).val(0);
-        $(this.inputVals[i]).data("index",i);
-    }
-    */
-
-    /*
-    this.inputVals.on("change",function(){
-        //var index = $(this).data("index");
-        var index = $(this).attr("eltID");
-        var mode = dxlManager.getMode(index);
-        var val = $(this).val();
-        console.log("num_rotary change:",+index,mode,val);
-        if(mode==0){
-            dxlManager.setAngle(+index,val);
-            //self.angle(index,val); //rem called by dxlManager
-        }
-        else{
-            dxlManager.setSpeed(+index,val);
-            //self.speed(index,val); //rem called by dxlManager
-        }
-    });
-    */
-    /*
-    this.inputVals = $("#divMotors .num_rotary");
-    var parent = $(".single-motor").filter("[eltID="+index+"]"); //OK
-    console.log("inputval:parent",parent);
-    */
-    /*
-    this.inputVals.on("keydown",function(ev){
-        if(ev.keyCode==13){
-            var index = $(this).attr("eltID");
-           console.log("inputVals.on(keydown):",index,$(this).val());
-           dxlManager.onControl(+index,+$(this).val());
-        }
-    });
- 
-    //TODELETE ?
-    $("#divMotorSettings .cmd").on('change',function(){
-        //var index = $(this).data("index");
-        var index = +$(this).attr("eltID");        
-        var cmd = this.name;
-        console.log("************************GUI .cmd:",index," ",cmd," ",v);
-        //var val = parseFloat(this.value);
-        //console.log("DBG cmd:",index," ",cmd," ",v);
-        self[cmd](index,this.value);
-    });
-
-    //TODELETE ?
-    $(".motors .cmdTog").on('click',function(){
-        var v = this.checked ? 1 : 0;
-        //var index = $(this).data("index");
-        var index = +$(this).attr("eltID");        
-        var cmd = this.name;
-        console.log("************************ cmdTog:",index," ",cmd," ",v);
-        if(self[this.name])
-            self[cmd](index,v);
-        else
-            dxlManager.cmdOld(cmd,index,v);
-    });
-    */
-
-    /* removed by alex
-    $("button.start-rec").on("click",function() {
-        if(self.recording){
-            self.recording = false;
-            dxlManager.stopRec();
-            UIstoprecording();
-            self.recording = false;
-        }
-        else{
-            UIstartRec(); //!!! avant dxlManager.startRec()
-            self.recording = true;
-            dxlManager.startRec();
-        }
-    });
-    */
-
-    /* /* see animManager.uiLoad
-    $("#loadAnim").on("click",function(){
-        //TODO generic  loadUI , with folder
-        dialog.showOpenDialog({properties:['openFile','multiSelections']},function(filenames) {
-            if(filenames){
-                for(var i=0;i<filenames.length;i++) {
-                    animManager.loadAnim(filenames[i],false);
-                }
-            }
-        });
-    });
-    */
 
     // ??? is it used??
     // --> NO....
@@ -1091,18 +695,6 @@ MisGUI.prototype.init =function(){
         }
     });
 
-    /* see sensorManager.uiLoad
-    $("#loadSensor").on("click",function(){
-        dialog.showOpenDialog({properties:['openFile','multiSelections']},function(filenames) {
-            if(filenames){
-                for(var i=0;i<filenames.length;i++) {
-                    sensorManager.loadSensorFromGUI(filenames[i]);
-                }
-            }
-        });
-    });
-    */
-
     $("#sensor-freeze").on('click',function(){
         if($('#sensor-freeze').is(":checked")){
             console.log("----- sensor freeze all");
@@ -1113,13 +705,6 @@ MisGUI.prototype.init =function(){
             sensorManager.unfreezeAllSensors();
         }
     });
-
-    // hide default animation, also when no animations are loaded
-    /*
-    var parent = $("#sortable-anim");
-    var model = parent.find(".single-anim:first");
-    model.hide();
-    */
 
     // hide default sensor, also when no sensors are loaded
     var parentS = $(".sensors").find("[name=listSensors]");
@@ -1136,77 +721,6 @@ MisGUI.prototype.init =function(){
         $( "#dialog" ).dialog( "open" );
     });
 
-    /*
-    for(var i=0;i<1;i++){
-        $( "#dialog" ).append('<br><input type="text"><label>Label :</label>');
-    }
-    */
-    /*
-    $("#btDxlIDx").on("change",function(){
-        console.log("DxlId:",this.value);
-        $('#divDxlReg [id^="addr"]').val("?");
-        dxlManager.readRegs(this.value);
-    });
-    */
-
-
-    //ROBUS
-    /*
-    var robs = $("#robusRobots");
-    var bt   = $("#robusOnOff2");
-    robs.on("click",function(){
-        bt.prop("class","disconnected").text("OFF");
-    });    
-    robs.on("change",function(){
-        //console.log("DBG-ROBUSCHANGE",robs.val());
-        //var spl = this.value.split("\n");
-    });
-    bt.on('click',function(){
-        var cl = $(this).prop("class");
-        if(cl=="connected"){
-            robusManager.close();
-        }
-        else {
-            var list=robs.val().split("\n");
-            for (var i = 0; i < list.length; i++){
-                var n = list[i].trim();
-                if(n.length>1)
-                    robusManager.connect(list[i].trim());                
-            }
-        }
-    });
-    $("#robusInfo").on('click',function(){
-        var txt = robusManager.getInfo();
-        $("#robusTxt").val(txt);        
-    });
-    $("#robusReset").on('click',function(){
-        robusManager.reset();
-        $("#robusOnOff2").prop("class","disconnected").text("OFF");        
-        $("#robusTxt").val("");        
-    });
-    */
-
-    /*
-    divOsc = $("#divOSC");
-    divOsc.find("#btOSC").click(function(){
-        console.log("osc ON",this.checked);
-        oscManager.onOff(this.checked);
-    });
-    divOsc.find(".cmdInt").change(function(){
-        console.log("osc:",this.name);
-        oscManager.changeParam(this.name,parseInt($(this).val()));
-    });
-    divOsc.find(".cmdString").change(function(){
-        console.log("osc:",this.name);
-        oscManager.changeParam(this.name,$(this).val());
-    });
-    divOsc.on("mouseenter",function(){
-        console.log("divOSC:mouseenter");
-        misGUI.scanIPv4();
-    });
-    */
-
-
     $("#addEmptySensor").on("click",function(){
         sensorManager.addEmptySensor();
     })
@@ -1217,9 +731,7 @@ MisGUI.prototype.init =function(){
         misGUI.scanMidiPorts();
     }
 
-    //this.scanSerial();    /*Didier*/
-    //this.scanMidiPorts(); // done when loading the settings.. here the midimanager is not anymore created yet!
-    this.scanIPv4(); //Didier
+    this.scanIPv4(); //A sortir de là
 
     this.initScriptEditor();
 
@@ -1255,10 +767,8 @@ MisGUI.prototype.showFreeze = function(onoff){
     }
 }
 
-
 MisGUI.prototype.initMotorDiv = function(){
-    //before addMotor
-    
+    //before addMotor    
     //hide model , will be cloned
     $("#divMotors .single-motor").hide();
     $("#divMotorSettings .single-motor").hide();
@@ -1267,14 +777,6 @@ MisGUI.prototype.initMotorDiv = function(){
     $(".rotAngle").on("mousewheel",function(e){e.preventDefault();}); //<<<index.js
     $(".rotSpeed").on("mousewheel",function(e){e.preventDefault();}); //<<<index.js
        
-    /* PUT BACK
-    $("#motor-freeze").on('click',function(){
-        if($('#motor-freeze').is(":checked"))
-            dxlManager.freezeAllMotors();
-        else
-            dxlManager.unfreezeAllMotors();
-    });*/
-
     //---- dxlDialog ----
     $(".single-motor").contextmenu(function() { 
         var index = $(this).attr("eltID");
@@ -1319,37 +821,7 @@ MisGUI.prototype.initMotorDiv = function(){
             }
         }
     });
-    
-    /*DB: >>>> dxlManager.midiMapping(...,"num")
-    //motorMappings : TODO à verifier
-    var motorMappings = $("#divMotorSettings").find("[name=mapping]");
-    motorMappings.on("change",function(){  
-
-        //var index = $(this).data("index");
-        var index = +$(this).attr("eltID");      
-        var val = $(this).val();       
-        console.log("misgui:: setmidimotormapping will be called", index, val);          
-        motorMappingManager.setMidiMotorMappingIndex(index,parseInt(val)); // Gui only treats CC midi mappings for now
-    });
-    */
-
 }
-
-
-/*
-MisGUI.prototype.enableOSC = function(onoff){
-    $("#divOSC").find("#btOSC").prop("checked",onoff);
-}
-*/
-/*
-MisGUI.prototype.showOSC = function(settings){
-    console.log("==========showosc:",settings);
-    var div = $("#divOSC");
-    div.find("[name=oscLocalPort]").val(settings.oscLocalPort);
-    div.find("[name=oscRemoteIP]").val(settings.oscRemoteIP);
-    div.find("[name=oscRemotePort]").val(settings.oscRemotePort);    
-}
-*/
 
 MisGUI.prototype.openLoadDialog = function( title , path , callback , manager){
     dialog.showOpenDialog({
@@ -1388,27 +860,6 @@ MisGUI.prototype.openSaveDialog = function( title , path , callback ){
     );
 };
 
-//TODELETE
-/*
-MisGUI.prototype.setDxlRegDEL=function(i,name,val){
-    var inp = $( "#divDxlReg #addr"+i).eq(0);
-    console.log("inputs:",inp.length);
-    if(inp.length<1){
-    //if(inp==undefined){
-        //$( "#divDxlReg" ).append('<br><input type="text" size="5em" id="addr'+i+'"> '+name);
-        inp = $('<br><input type="text" size="5em" id="addr'+i+'">');
-        inp.data("addr",i);
-        $( "#divDxlReg" ).append(inp,name);
-        inp.on("change",function(){
-            //misGUI.changeDxlReg()
-            console.log("CHANGE REG:",this.id,this.value,$(this).data("addr"));
-            dxlManager.writeReg($("#btDxlIDx").val(),$(this).data("addr"),this.value);
-        });
-    }
-    inp.val(val);
-}
-*/
-
 MisGUI.prototype.recOff=function(){ //V02 ok
     //console.log("DBG misGui.recOff 1");
     self.recording = false;
@@ -1427,14 +878,12 @@ MisGUI.prototype.divAnim = function(animId){
     return $('.single-anim[eltID='+animId+']');
 }
 
-
 //TODO: devrait faire partie de MidiManager , ici on ne fait qu'afficher
 MisGUI.prototype.scanMidiPorts = function(){
+    console.log("#### MisGUI ----------------> Scanning midi ports");
+
     var self = this;
     var sel = $("#midi-available");
-    
-    console.log("##################################----------------> Scanning midi ports");
-
     sel.empty();
 
     if(midiPortManager){  
@@ -1472,13 +921,8 @@ MisGUI.prototype.scanMidiPorts = function(){
         }
 
         sensorManager.updateMidiPorts();
-        /*
-        for(id in sensorManager.sensors){
-            this.changeSensor(sensorManager.sensors[id].s,id)
-        }*/
     }
 };
-
 
 //??? only in MisGUI 
 MisGUI.prototype.simSelectMidiPorts = function(midiEnabled){
@@ -1489,7 +933,7 @@ MisGUI.prototype.simSelectMidiPorts = function(midiEnabled){
     $("#midi-available :input[type='checkbox']").each(
         function() {
             var portName =  $(this).prop("id");
-            console.log("PortName ", portName);
+            //console.log("PortName ", portName);
             $(this).prop("checked",midiPortManager.isMidiPortEnabled(portName));
         }
     ); 
@@ -1524,8 +968,7 @@ MisGUI.prototype.scanIPv4 = function(){
             }
         }
     }catch(e){}
-    //selector.append($("<option value='scan' >scan</option>"));
-    //*/
+
     $(".mbzIP").html(mbzSrv);
     $(".infoIP").on("click",function(){
         misGUI.scanIPv4();
@@ -1533,32 +976,7 @@ MisGUI.prototype.scanIPv4 = function(){
     $(".mbzIP").on("click",function(){
         misGUI.scanIPv4();
     })
-
-
-
 }
-
-/*
-MisGUI.prototype.robusOnOff = function(onoff){
-    if(onoff){
-        $("#robusOnOff2").prop("class","connected").text("ON");
-        var txt = robusManager.getInfo();
-        $("#robusTxt").val(txt);        
-    }
-    else
-        $("#robusOnOff2").prop("class","disconnected").text("OFF");
-};
-MisGUI.prototype.robusWait = function(text){
-        $("#robusOnOff2").prop("class","disconnected").text("WAIT");
-};
-MisGUI.prototype.robusInfo = function(text){
-    $("#robusTxt").val(text);
-};
-MisGUI.prototype.robusAppendInfo = function(text){
-    $("#robusTxt").val($("#robusTxt").val()+text);
-};
-*/
-
 
 MisGUI.prototype.blockUI=function(block){
     if(block)
@@ -1569,7 +987,7 @@ MisGUI.prototype.blockUI=function(block){
 
 MisGUI.prototype.scanProgress =function(val){
     //console.log("scanProgress:",val);
-    if(val >= $("#scanProgress").attr('max') - 1){ // TODO: talk about the progress bar with Didier!
+    if(val >= $("#scanProgress").attr('max') - 1){
         $("#scanProgress").val(0);
         $("#btScan").css('background', 'transparent');
 		$("#btScan").css('color', 'white');
@@ -1628,31 +1046,7 @@ MisGUI.prototype.showDxlReg = function(id,addr,val){ //showValue ?
 //------------------ editor ------------------------------
 MisGUI.prototype.initScriptEditor = function(){
     var editor = scriptEditor; //in ui.js
-    /* essai de cut / paste in App
-    var clipEdit = "";
-    //editor.on("keypress",function(e){console.log("editor:keypress",e)})
-    //editor.on("keyup",function(e){console.log("editor:keyup",e)})
-    //editor.on("keydown",function(e,k){
-    editor.on("keyup",function(e,k){
-        if( k.metaKey || k.ctrlKey ){  //MAC / Windows
-            console.log("editor:key",k)
-            if(k.key == 'c'){
-                clipEdit = e.getSelection();
-                console.log("editor:C copy:",clipEdit)  
-            }
-            else if(k.key == 'v'){
-                var curs = e.getCursor();
-                e.replaceRange(clipEdit,curs)
-                console.log("editor:V paste:",curs)  
-            }
-            else if(k.key == 'x'){
-                console.log("editor:X cut:",curs)  
-                clipEdit = e.getSelection();
-                e.replaceSelection("")
-            }
-        }
-    });
-    */
+
     // handled by window keydown , to be efective in App (see index.js)
     editor.setOption("extraKeys",{ //prevent to be called twice
         "Cmd-C":function(cm){console.log("Cmd-C")},
@@ -1662,12 +1056,7 @@ MisGUI.prototype.initScriptEditor = function(){
     editor.on("cut",function(e){console.log("editor:cut")})
     editor.on("copy",function(e){console.log("editor:copy")})
     editor.on("paste",function(e){console.log("editor:paste")})
-
-    //editor.on("keyHandled",function(ed,str,ev){
-    //    console.log("ed:keyHandled:",str,ev)
-    //});
 }
-//TODO modified ?
 
 MisGUI.prototype.getScript = function(){
     return scriptEditor.getValue(); // cf ui.js
@@ -1679,88 +1068,9 @@ MisGUI.prototype.setScript = function(code){
 
 MisGUI.prototype.scriptOnOff = function(onoff){
     misGUI.showValue({class:"scriptManager",func:"runStop",val:onoff});
-    /*
-    if(onoff){
-        $("#script-freeze").prop("checked",true); //!!! freeze = ~OnOff
-    }
-    else{
-
-        $("#script-freeze").prop("checked",false); //!!! freeze = ~OnOff
-    }
-    */
 }
-
-/* boutons run/stop
-MisGUI.prototype.scriptOnOff = function(onoff){
-    console.log("====== scriptOnOff =====",onoff,$("#script-freeze").prop("checked"))
-    if(onoff){
-        $("#run-code").html('Running...')
-            .addClass('active')
-            .css('opacity', 0.5)
-        $("#stop-code").css('opacity', 1);
-        $("#script-freeze").prop("checked",false); //!!! freeze = ~OnOff
-    }
-    else{
-        $("#run-code").html('Run')
-    		.removeClass('active')
-    		.css('opacity', 1);
-    	$("#stop-code").css('opacity', 0.5);
-        $("#script-freeze").prop("checked",true); //!!! freeze = ~OnOff
-    }
-}
-*/
 
 //------------------ animations ------------------------------
-
-// updateSlider(
-//     $("#sortable-sens-output .animation .minval").val(), 
-//     $("#sortable-sens-output .animation .maxval").val(), 
-//     $("#sortable-sens-output .animation .tolerance").val(), 
-//     $("#sortable-sens-output .animation .slider-range").data("default")
-// );
-
-// function sensorSettings(){
-
-//     var target = $(this).parent().parent().children();
-//     target.addClass('blury')
-//     var settings = $(this).parent().parent().find(".sensor-setting-more")
-//     settings.removeClass('blury')
-//     settings.css("display", "block");
-
-//     // NEW
-//     $(".sensor-setting-more").bind("mouseenter", stopScroll);
-//     $(".sensor-setting-more").bind("mouseleave", initScroll);
-//     $(".select-setting").on('change', selectSettings);
-
-
-
-//     $(this).parent().parent().find("button.set").bind("click", function(event) {
-//         settings.css("display", "none");        
-//         target.removeClass('blury');
-
-//     });
-// }
-
-// SCroll gestion
-// function initScroll(e){
-//     $(".sensors").css("overflow", "auto");
-// }
-// function stopScroll(e){
-//     $(".sensors").css("overflow", "hidden");
-// }
-
-
-
-
-// function selectSettings() {
-//     var target = $(this).val();
-//     if(target){
-//         $(".options").children().css("display", "none");
-//         $("."+target).css("display", "block");
-//     }
-// }
-
-
 
 function echoActiveSetting(){
     var info = $(this).data('label');
@@ -1771,94 +1081,6 @@ function echoActiveSetting(){
 }
 
 
-// PULL OFF
-/*
-function indexMotor(){
-    for (var i = 0; i < $(".motor-index").length; i++) {
-        $(".motor-index").eq(i).html(i+1);
-        console.log(i);
-    };
-}
-*/
-
-
-// STOP ALL
-//Motors
-/*
-$("input.btnGlobalMotor").bind('click', function() {
-
-
-    if($(".allMotors").hasClass('freezed')){
-    //if($(".allMotors").css("pointer-events")=="none"){
-        $(".allMotors").css("opacity", 1);
-        $(".allMotors").css("pointer-events", "auto");
-        $(".allMotors").removeClass('freezed');
-        console.log("normal mode");
-
-    }else{
-
-        $(".allMotors").css("opacity", 0.3);
-        $(".allMotors").css("pointer-events", "none");
-        $(".allMotors").addClass('freezed');
-        console.log("freeze mode");
-
-    }
-    
-});*/
-
-// work around.......
-//var ctrlStopAll = 0;
-/*
-$("input.btnGlobalMotor").bind('click', function() {
-
-    console.log("--------motor",animManager.ctrlMotorStopAll);
-    
-    if($(".allMotors").hasClass('freezed')){
-        //console.log("a",animManager.ctrlMotorStopAll);
-        if(animManager.ctrlMotorStopAll<=0){
-            //console.log("b",animManager.ctrlMotorStopAll);
-            $(".allMotors").css("opacity", 1);
-            $(".allMotors").css("pointer-events", "auto");
-            $(".allMotors").removeClass('freezed');
-            //console.log("normal mode");     
-            animManager.ctrlMotorStopAll = 1;   
-        } else {
-            //console.log("d",animManager.ctrlMotorStopAll);
-            animManager.ctrlMotorStopAll = 0;
-            //console.log("dd",animManager.ctrlMotorStopAll);
-        }
-        //console.log("aa",animManager.ctrlMotorStopAll);
-    }else{
-        //console.log("c",animManager.ctrlMotorStopAll);
-        if(animManager.ctrlMotorStopAll<=0){
-            $(".allMotors").css("opacity", 0.3);
-            $(".allMotors").css("pointer-events", "none");
-            $(".allMotors").addClass('freezed');
-            console.log("freeze mode");
-            animManager.ctrlMotorStopAll = 1;
-        } else {
-            animManager.ctrlMotorStopAll = 0;
-        }
-        //console.log("cc",animManager.ctrlStopAll); 
-    }
-     
-});
-*/
-
-//Animations
-/*
-$("input.btnGlobalAnim").bind('click', function() {
-
-    if($(".animations").css("pointer-events")=="none"){
-        $(".animations").css("opacity", 1);
-        $(".animations").css("pointer-events", "auto");
-    }else{
-        $(".animations").css("opacity", 0.3);
-        $(".animations").css("pointer-events", "none");
-    }
-
-});
-*/
 $("input.btnGlobalAnim").bind('click', function() {
     if($(".animations").hasClass('freezed')){
         if(animManager.ctrlAnimStopAll<=0){
@@ -1885,19 +1107,6 @@ $("input.btnGlobalAnim").bind('click', function() {
 
 
 // Sensors
-/*
-$("input.btnGlobalSensors").bind('click', function() {
-
-    if($(".sensors").css("pointer-events")=="none"){
-        $(".sensors").css("opacity", 1);
-        $(".sensors").css("pointer-events", "auto");
-    }else{
-        $(".sensors").css("opacity", 0.3);
-        $(".sensors").css("pointer-events", "none");
-    }
-
-});
-*/
 
 $("input.btnGlobalSensors").bind('click', function() {
     if($(".sensors").hasClass('freezed')){
@@ -1949,14 +1158,6 @@ $("#script-freeze").bind('click', function() {
     }
 });
 
-
-// Temperature motors
-
-// var clockForThermo = setInterval(function(){ thermoCheck()}, 1000);
-
-//TODO DB call this func
-
-
 // Midi frontBlink info
 var clockForMidiBlink = setInterval(function(){ checkMidiBlink()}, 500);
 
@@ -1970,14 +1171,21 @@ function checkMidiBlink(){
         }
     });
     motorMappingManager.setAllMappingActive(false);
-
 }
 
 MisGUI.prototype.setMidiBlinkOn = function(motorIndex){
     $('.allMotors').find('.single-motor').eq(motorIndex).find('.midi-blinker').css("display", "block");
 }
 
-
+MisGUI.prototype.toggleLuosWifi = function(eltID,usewifi){
+    var jqw = $('.luosManager [func=setWifiName]');
+    var jqs = $('.luosManager [func=selectUSB]');
+    jqw = jqw.filter("[eltID="+eltID+"]");
+    jqs = jqs.filter("[eltID="+eltID+"]");
+    if(usewifi){ jqs.hide(); jqw.show(); }
+    else { jqw.hide(); jqs.show(); }
+    this.showValue({class:"luosManager",id:eltID,func:"toggleWifi",val:usewifi});
+}
 
 //parseBlinker();
 function parseBlinker(){
@@ -2012,26 +1220,6 @@ function frontBlinkInfo(){
 
 }
 
-/*
-MisGUI.prototype.showCm9Num = function(onoff){
-    if(onoff)$("#numCm9").show();
-    else($("#numCm9").hide());
-}
-*/
-/*
-$(".cm9Plug").on("mouseover",function(){
-    //console.log("cm9Plug mouseover");
-    cm9Com.checkConnection();
-})
-*/
-/* already done in the init() function
-$(".midiPlug").bind("mouseover", midiPanelOver);
-function midiPanelOver(){
-    //console.log("midi over");
-}
-*/
-
-
 // NEW animation modale -- Alex changes
 $("#newAnim").bind('click', function(){
     $("#modalNewAnim").css("display", "block");
@@ -2045,55 +1233,6 @@ $("#modalNewAnim").find("#newAnimCancel").bind('click', function(){
     $("#modalNewAnim").css("display", "none"); 
     console.log("close");   
 })
-
-
-//select
-/*
-$(".modalNewAnim").find("span").bind('click', loadAnimmModal);
-
-
-function loadAnimmModal(){
-    
-    $(".modalNewAnim span").removeClass('selected');
-    
-    $(this).addClass('selected');
-
-
-    //console.log("yeeha!!!!!");
-    if($(this).hasClass('selected')){
-        console.log("???????? ------> selected",this.id,"a");
-        
-        // TODO: removed because it comes twice in this bind... why?? Wasn't like this in my version.
-        // $(this).removeClass('selected');
-        // console.log($(this));
-        // console.log("#modalNewAnim",$("#modalNewAnim"));
-        // $("#modalNewAnim span").removeClass('selected');
-        // $("#modalNewAnim button:first-of-type").css("opacity", 0.3);
-        // $("#modalNewAnim button:first-of-type").prop("disabled",true);
-
-        var selectedType = $(".listAnimType .selected").attr("name");
-        console.log("load anim "+ selectedType);
-        if(selectedType != undefined){
-            $("#modalNewAnim span").removeClass('selected');
-            $("#modalNewAnim").find("#newAnimLoad").css("opacity", 0.3);
-            $("#modalNewAnim").css("display", "none"); 
-            animManager.addAnim(selectedType);
-        }
-        
-
-    }else{
-        console.log("!!!!!!!! ------> selected",this.id,"a");
-        // TODO ALEX: pourquoi on rentre deux fois par ici quand on clicke sur record/sinus/random ?
-        
-
-        // $("#modalNewAnim button:first-of-type").css("opacity", 1);
-        // $("#modalNewAnim button:first-of-type").prop("disabled",false);
-
-        // rajouter par Cécile 
-        
-    }
-
-}*/
 
 //ctrlModalAnim
 $(".modalNewAnim").find("span").bind('click', loadAnimmModal);
@@ -2121,7 +1260,6 @@ $("#script-freeze").bind('click', function() {
         }
     }
 });
-
 
 function loadAnimmModal(){
     
@@ -2165,111 +1303,7 @@ function loadAnimmModal(){
     }
 }
         
-        // TODO: removed because it comes twice in this bind... why?? Wasn't like this in my version.
-        // $(this).removeClass('selected');
-        // console.log($(this));
-        // console.log("#modalNewAnim",$("#modalNewAnim"));
-        // $("#modalNewAnim span").removeClass('selected');
-        // $("#modalNewAnim button:first-of-type").css("opacity", 0.3);
-        // $("#modalNewAnim button:first-of-type").prop("disabled",true);
-        /*
-        var selectedType = $(".listAnimType .selected").attr("name");
-        console.log("load anim "+ selectedType);
-        if(selectedType != undefined){
-            $("#modalNewAnim span").removeClass('selected');
-            $("#modalNewAnim").find("#newAnimLoad").css("opacity", 0.3);
-            $("#modalNewAnim").css("display", "none"); 
-            animManager.addAnim(selectedType);
-        }*/
-        
-
- /*   }else{
-        console.log("!!!!!!!! ------> selected",this.id,"a",this.value);
-        
-        // $("#modalNewAnim button:first-of-type").css("opacity", 1);
-        // $("#modalNewAnim button:first-of-type").prop("disabled",false);
-
-        
-    }
-}*/
-
-
 var ctrlLoadAnim = 0;
 $(".modalNewAnim").find("span").bind('click', loadAnimmModal);
 
-
-/*
-function loadAnimmModal(){
-    
-    $(".modalNewAnim span").removeClass('selected');
-    
-    $(this).addClass('selected');
-
-
-    //console.log("yeeha!!!!!");
-    if($(this).hasClass('selected')){
-        console.log("???????? ------> selected",this.id,"a");
-        console.log("--????????------ctrlLoadAnim" + ctrlLoadAnim);
-
-        
-        // TODO: removed because it comes twice in this bind... why?? Wasn't like this in my version.
-        // $(this).removeClass('selected');
-        // console.log($(this));
-        // console.log("#modalNewAnim",$("#modalNewAnim"));
-        // $("#modalNewAnim span").removeClass('selected');
-        // $("#modalNewAnim button:first-of-type").css("opacity", 0.3);
-        // $("#modalNewAnim button:first-of-type").prop("disabled",true);
-
-        var selectedType = $(".listAnimType .selected").attr("name");
-        console.log("load anim "+ selectedType);
-        
-        if(selectedType != undefined && ctrlLoadAnim<=0){
-            
-            ctrlLoadAnim ++;   
-
-            console.log("-------------------ctrlLoadAnim" + ctrlLoadAnim);
-            $("#modalNewAnim span").removeClass('selected');
-            $("#modalNewAnim").find("#newAnimLoad").css("opacity", 0.3);
-            $("#modalNewAnim").css("display", "none"); 
-            
-
-
-            animManager.addAnim(selectedType);
-            
-            
-
-        }else{
-            console.log("--------ELSE-----------ctrlLoadAnim" + ctrlLoadAnim);
-
-            ctrlLoadAnim=0;    
-
-
-        }
-        
-
-    }else{
-        console.log("!!!!!!!! ------> selected",this.id,"a");
-        // TODO ALEX: pourquoi on rentre deux fois par ici quand on clicke sur record/sinus/random ?
-        
-
-        // $("#modalNewAnim button:first-of-type").css("opacity", 1);
-        // $("#modalNewAnim button:first-of-type").prop("disabled",false);
-
-        // rajouter par Cécile 
-    }
-}*/
-
-// load
-/* enlevé par Cécile
-$("#modalNewAnim").find("#newAnimLoad").bind('click', function(){
-    // TODO BUG: pourquoi on rentre ici deux fois... un lien ac l'autre bug du select??
-    var selectedType = $(".listAnimType .selected").attr("name");
-    console.log("load anim "+ selectedType);
-    if(selectedType != undefined){
-        $("#modalNewAnim span").removeClass('selected');
-        $("#modalNewAnim").find("#newAnimLoad").css("opacity", 0.3);
-        $("#modalNewAnim").css("display", "none"); 
-        animManager.addAnim(selectedType);
-    }
-})
-*/
+//------------ 2256 ---------- //

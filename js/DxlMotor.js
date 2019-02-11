@@ -1,4 +1,4 @@
-//const robusManager  = require("./RobusManager.js");
+//const luosManager  = require("./LuosManager.js");
 
 //============================================================================
 // DXL/sync addr nb id,val,val id,val,val id,val val
@@ -56,8 +56,9 @@ class Dxl{
             stillAngle: 0,
             //midi:{port:"",msg:"CC:0"} //TODO ? type:"CC" num:0  ? channel:0 ?
         };
-
         this.index   = index;
+        this.ioManager = undefined; //TOTHINK
+        this.ioID    = "";
         this.rec = false;
         //this.timeOfRequest = 0;
         this._currPos = NaN;
@@ -67,18 +68,19 @@ class Dxl{
         this.dxlSpeed = 0;
         this.wantedSpeed  = 0;
         this.wantedTorque = NaN;
-        this._taskCount = 0;
-        this._regRead = -1;
-        this._gotModel = false;
-        this.limitCW  = 0;
-        this.limitCCW = 1023; //AX12
-        this.angleRef = 300;  //AX12
-        this.temperature = 0;
+        this._taskCount   = 0;
+        this._regRead     = -1;
+        this._gotModel    = false;
+        this.limitCW      = 0;
+        this.limitCCW     = 1023; //AX12
+        this.angleRef     = 300;  //AX12
+        this.temperature  = 0;
         this.frozen = false;
     }
 }
 module.exports = Dxl;
 
+//cm9 --> dxlM -> sendGoalSpeed
 Dxl.prototype.sendGoalSpeed = function(){
     if(this.m.dxlID>0){
         var mod = DXL_OFF; //relax par default
@@ -168,21 +170,36 @@ Dxl.prototype.copySettings = function(dxl){
     if(this.m.id==0)this.m.id=this.m.dxlID; //m.id deprecated
     else if(this.m.dxlID==0)this.m.dxlID=this.m.id;
     if(this.m.dxlID==undefined)this.m.dxlID=0; //gasp
-    console.log("***copySettings:",this.m);
+    //console.log("***copySettings:",this.m);
 }
 
 Dxl.prototype.getSettings=function(){
     return this.m;
 }
 
-Dxl.prototype.update = function(t){   
-    if(this.m.enabled && this.m.dxlID>0) {
-        if(this.m.gate != "cm9"){
-            //console.log("Luos UPDATE:",this.m.dxlID,this.m.alias)
-            if(this.m.mode==DXL_JOINT)
-                robusManager.target_position(this.m.gate,this.m.alias,this.wantedAngle)
-            else
-                robusManager.target_speed(this.m.gate,this.m.alias,this.wantedSpeed)
+Dxl.prototype.update = function(t){ 
+    if( this.m.dxlID>0){
+        if( this.m.mode==DXL_WHEEL ){ //||((this.m.mode==DLX_OFF) )
+            this.wantedAngle = this._curAngle;
+        }
+        else if(!this.m.enabled){
+            if(this._currPos != NaN){
+                this.dxlGoal = this._currPos;
+            }
+            if(this._curAngle != undefined){ //????
+                this.wantedAngle = this._curAngle;
+                misGUI.motorAngle(this.index,this.wantedAngle);
+            }
+        }
+        //REDO gate cm9_luos
+        if(this.m.enabled) {
+            if(this.m.gate == "luos"){
+                if(this.m.mode==DXL_JOINT){
+                    luosManager.command(this.ioID,"setPosition",this.wantedAngle);
+                }
+                else
+                    luosManager.command(this.ioID,"setSpeed",this.wantedSpeed);
+                }
         }
     }
     return true;
@@ -199,7 +216,6 @@ Dxl.prototype.cm9Init = function() {
 Dxl.prototype.dxlID = function(id){
     this.enable(false);
 
-
     if(+id != this.m.dxlID){
         this.temperature = 0;
         this.m.model = -1; 
@@ -209,7 +225,6 @@ Dxl.prototype.dxlID = function(id){
     this.m.dxlID = +id; // same as html param >>> misGUI
     
     if(this.m.dxlID>0){
-
         this.m.textID = "cm9_"+id;
         if( this._gotModel == false){
             cm9Com.pushMessage("dxlModel "+this.m.dxlID+"\n");
@@ -291,8 +306,8 @@ Dxl.prototype.enable = function(onoff){
         this.wantedSpeed = 0;
         misGUI.motorSpeed(this.index,0);
 
-        if(this.m.gate!="cm9")//luos
-            robusManager.dxl_disable(this.m.gate,this.m.alias)
+        if(this.m.gate == "luos")//luos
+            luosManager.command(this.ioID,"setCompliant",false);
 
         //TORQUE ?
     }
@@ -352,8 +367,8 @@ Dxl.prototype.joint = function(){
                     +"dxlWrite "+this.m.dxlID+","+ADDR_SLOPE_CCW+",128\n"); //smooth
             }
         }
-        else{
-            robusManager.joint_mode(this.m.gate,this.m.alias,this.m.jointSpeed,this.wantedAngle);
+        else if(this.m.gate=="luos"){
+            luosManager.command(this.ioID,"modeJoint",this.m.jointSpeed,this.wantedAngle);
         }
     }
     return this;
@@ -364,8 +379,8 @@ Dxl.prototype.wheel = function(){
     this.dxlSpeed = 0;
     this.wantedSpeed = 0;
     animManager.setTrackForRecord(this.index,this.m.mode);
-    if(this.m.gate!="cm9"){
-        robusManager.wheel_mode(this.m.gate,this.m.alias,0)
+    if(this.m.gate=="luos"){
+        luosManager.command(this.ioID,"modeWheel");
     }
     return this;
 };
@@ -373,7 +388,6 @@ Dxl.prototype.wheel = function(){
 Dxl.prototype.angleToNorm = function(a){ //[0 1]
     return (a-this.m.angleMin)/(this.m.angleMax-this.m.angleMin);
 }
-
 
 //setCurrpos , returns angle
 Dxl.prototype.currPos = function(p){ //p=dynamixel position
@@ -395,6 +409,18 @@ Dxl.prototype.currPos = function(p){ //p=dynamixel position
     }
     return this.wantedAngle;
 }
+
+Dxl.prototype.getCurrentAngle = function(){
+    return this._curAngle;
+}
+
+Dxl.prototype.setCurrentAngle=function(angle){
+    var a = +angle;
+    var p = this.angle2pos(a);
+    this._curAngle = a;
+    this._currPos = p;
+}
+
 
 //val = angle ou speed en fonction du mode courant 
 Dxl.prototype.onValue =function(val){ //angle en°  ou  speed[0-100]

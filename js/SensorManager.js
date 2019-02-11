@@ -328,7 +328,7 @@ class SensorManager{
         MisGUI_sensors.changeSinusRandomParams(sensor.ID,sensor.s.randomParams);
         misGUI.setManagerValue("sensorManager","onNameText",sensor.s.name,sensor.ID);
 
-        console.log("LUOSPARAMS:",sensor.s.robusInputParams);
+        console.log("LUOSPARAMS:",sensor.s.luosInputParams);
 
         sensor.s.enabled = true; //???
         misGUI.setManagerValue("sensorManager","enable",true,sensor.ID);
@@ -445,7 +445,7 @@ class SensorManager{
                 $.each(connections,function(i,name){
                     var k = name + "EnabledInput";
                     sensorManager.getSensorWithID(eltID).s[k] = false;
-                    console.log("disable:",name);
+                    //console.log("disable:",name);
                     misGUI.setManagerValue("sensorManager","changeSettingsVariable",false,eltID,name+"EnabledInput");
                 });
                 
@@ -460,8 +460,8 @@ class SensorManager{
                 //console.log("B",this.getSensorWithID(eltID).s.midiEnabledInput,this.getSensorWithID(eltID).s["midiEnabledInput"]);
                 this.updateTextDescription(eltID);
 
-                console.log("luosSettingParams",sensor.s.robusInputParams)
-                this.luosSettingParams(eltID,sensor.s.robusInputParams);
+                console.log("luosSettingParams",sensor.s.luosInputParams)
+                this.luosSettingParams(eltID,sensor.s.luosInputParams);
 
                 this.saveSensorSettings();
             }
@@ -982,6 +982,7 @@ class SensorManager{
     }*/
 
     luosSettingParams(eltID,params){ //force <select> to current value
+    /*TODO redo
         var sensor = this.getSensorWithID(eltID);
         if(sensor!=undefined){
             var gates = ["none"].concat(robusManager.getGates())
@@ -1003,6 +1004,7 @@ class SensorManager{
             misGUI.showValue({class:"sensorManager",id:eltID,param:"pin",val:pins})
             misGUI.showValue({class:"sensorManager",id:eltID,param:"pin",val:params.pin})
         }
+    */
     }
 
     uiLuosParam(eltID,value,param){
@@ -1010,45 +1012,37 @@ class SensorManager{
         if(sensor!=undefined){
             switch(param){
                 case "gate":
-                    sensor.s.robusInputParams["gate"]=value;
-                    var a = robusManager.getAliases(value);
-                    misGUI.showValue({class:"sensorManager",id:eltID,param:"module",val:a})
-                    value = sensor.s.robusInputParams["module"]
-                case "module":
-                    var gate = sensor.s.robusInputParams["gate"] 
-                    sensor.s.robusInputParams["module"]=value;
-                    var a = robusManager.getOutputs(gate,value);
+                    sensor.s.luosInputParams["gate"]=value;
+                    var a = luosManager.getAliases(value);
+                    misGUI.showValue({class:"sensorManager",id:eltID,param:"module",val:a}) //TODO html alias
+                    value = sensor.s.luosInputParams["alias"] //->case module
+                    //break;
+                case "module": //TODO html alias
+                    var gate = sensor.s.luosInputParams["gate"] 
+                    sensor.s.luosInputParams["alias"]=value;
+                    var a = luosManager.getOutputs(gate,value);
                     misGUI.showValue({class:"sensorManager",id:eltID,param:"pin",val:a})                    
                     break;
                 case "pin":
-                    sensor.s.robusInputParams["pin"]=value;
-            }    
+                    sensor.s.luosInputParams["pin"]=value;
+            }
+            console.log("uiLuosParam:",eltID,value,param);
+            console.log("uiLuosParam:",sensor.s.luosInputParams);
+        
         }
     }
 
-    luosNewGate( gateAlias ){
-        var gates = ["none"].concat(robusManager.getGates())
+    luosNewGate(){
+        var gates = ["none"].concat(luosManager.getGates())
         console.log(" luosGates:",gates)
         misGUI.showValue({class:"sensorManager",param:"gate",val:gates})
         //DBG misGUI.showValue({class:"sensorManager",param:"module",val:aliases})
         //DBG misGUI.showValue({class:"sensorManager",param:"pin",val:outs})
     }
  
-    //event {gate: ,alias: ,p0:value ,p1:value ,...}
-    //TODO ? dictionary ?
-    onLuosValue(gate,modu){
-        for(var i=0; i<this.sensors.length;i++){
-            if( this.sensors[i].s.robusEnabledInput ){ //this.sensors[i].s.input_entry=="robus"){
-                var p = this.sensors[i].s.robusInputParams;
-                if(modu.gate==gate && modu.alias==p.module && modu[p.pin]!=undefined )
-                    this.sensors[i].onValue(+modu[p.pin]);
-            }
-        }
-    }
+    //DELETED onLuosValue(gate,alias){
+    //DELETED robusInitSelections(){
 
-
-    //robusInitSelections(){ DELETED
-    
     //DELETED onSinusPopup(eltID,arg1,arg2){
     //DELETED onRandomPopup(eltID,arg1,arg2){
 

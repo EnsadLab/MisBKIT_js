@@ -59,11 +59,8 @@ module.exports = dxlmng;
 
 
 DxlManager.prototype.init =function(){
-    console.log("------DxlManager.init-------");
-
     misGUI.initManagerFunctions(this,"dxlManager");
-    //var dummy = new Dxl(5);
-    //this.motors.push(dummy);
+
     for(var i=0;i<MAX_SERVOS;i++){
         var momo = new Dxl(i);
         this.motors.push( momo );
@@ -73,21 +70,7 @@ DxlManager.prototype.init =function(){
     this.updateTimer = setInterval(this.update.bind(this),45); //start
 
     misGUI.motorSettings(0,this.motors[0].m);
-    //DEBUG
 }
-
-/* TODELETE
-DxlManager.prototype.cmdOld = function(cmd,index,arg){
-    console.log("DEPRECATED dxl cmdOLD: ",index," cmd:",cmd," arg:",arg);
-    if(this[cmd]){
-        this[cmd](index,arg);
-    }
-    else {
-        if (index < this.motors.length)
-            this.motors[index][cmd](arg);
-    }
-};
-*/
 
 //GUI cmd 
 //dxlID clockwise angleMin angleMax speedMin speedMax
@@ -102,12 +85,12 @@ DxlManager.prototype.cmd = function(func,eltID,val,param){
     else{
         if( this.motors[+eltID] ){
             if( this.motors[+eltID][func] ){
-                console.log("dxlManager>>>>dxl:",func,eltID,val,param);
+                //console.log("dxlManager>>>>dxl:",func,eltID,val,param);
                 this.motors[+eltID][func](val,param);
             }
-            else console.log("DxlManager.cmd:BAD FUNC:",func,eltID);
+            //else console.log("DxlManager.cmd:BAD FUNC:",func,eltID);
         }
-        else console.log("DxlManager.cmd:BAD ID:",func,eltID);
+        //else console.log("DxlManager.cmd:BAD ID:",func,eltID);
     }
 }
 
@@ -393,9 +376,11 @@ DxlManager.prototype.update = function(){
     var t  = Date.now();
 
     for(var i=0;i<nbm;i++){
-        this.motors[i].update(t);
+        var motor = this.motors[i];
+        motor.update(t);
+        misGUI.needle(i,motor._curAngle);
+        //sensorManager.handleDxlPos(i,motor.angleToNorm(a)); //use min & max
     }
-
 
     if(cm9Com.isReady()){
         //console.log("DxlManager.update");
@@ -573,22 +558,16 @@ DxlManager.prototype.dxlPos=function(array) {  //array[0]="dxlpos"
     pythonManager.onDxlpos(array);
 }
 
-DxlManager.prototype.onLuos=function(msg){
-    if(msg.position != undefined){
-        //console.log("LUOS DXL:",m);
-        var dxlid = +msg.alias.substr(msg.alias.lastIndexOf("_")+1);
-        var motor = this.getMotorByID(dxlid); //TODO find luos ?
-        //console.log("LUOS DXL:",dxlid,motor.index,m.position);
-        if( motor != undefined){
-            var i = motor.index;
-            var p = motor.angle2pos(msg.position)
-            var a = motor.currPos(p).toFixed(1);
-            this.positions[i]=a;    //store if other managers want an array
-            sensorManager.handleDxlPos(i,motor.angleToNorm(a)); //use min & max
-            misGUI.needle(i,a);
-        }
+DxlManager.prototype.updatePosition =function(index,angle){
+    //console.log("updatePosition:",index,angle)
+    if(this.motors[index]!=undefined){
+        this.motors[index].setCurrentAngle(angle);
+        this.positions[index]=angle;
+        //sensorManager.handleDxlPos(i,motor.angleToNorm(a)); //use min & max
+        //misGUI.needle(index,a);
     }
 }
+
 
 
 
@@ -664,14 +643,14 @@ DxlManager.prototype.addLuosMotor=function(gate,alias,dxlid){
         motor = this.getMotorByID(0);
     }
     if( motor != undefined){
-        motor.m.gate  = gate;
-        motor.m.alias = alias;
+        motor.m.gate  = "luos";
+        motor.ioID = {gate:gate,alias:alias};
         motor.dxlID(dxlid);
         motor.m.textID = "luos_"+dxlid;
         misGUI.motorSettings(motor.index,motor.m);
     }
     console.log("luosMotor:",motor);
-    return motor;
+    return motor.index;
 }
 
 DxlManager.prototype.dxlWrite = function(dxlid,val,addr) { //id val param
@@ -949,7 +928,6 @@ DxlManager.prototype.clearMotors = function(){
         this.motors[i].enable(false)
         this.motors[i].dxlID(0);
         this.motors[i].gate = "cm9";
-        this.motors[i].alias = "";
         misGUI.motorSettings(i,this.motors[i].m);
     }
 }
@@ -957,7 +935,7 @@ DxlManager.prototype.clearMotors = function(){
 DxlManager.prototype.startScan=function(){
     console.log("STARTSCAN");
     this.clearMotors();
-    robusManager.scanDxl();
+    luosManager.scanDxl();
 
     if(cm9Com.isOpen()) {
         misGUI.scanProgress(0);

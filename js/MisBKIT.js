@@ -15,7 +15,8 @@ scriptManager = require("./ScriptManager.js");
 animManager   = require("./AnimManager.js");
 pythonManager = require("./PythonManager.js");
 dmxManager    = require("./DmxManager.js");;
-robusManager  = require("./RobusManager.js");
+//robusManager  = require("./RobusManager.js");
+luosManager   = require("./LuosManager");
 fakeManager    = require("./fakeManager.js");;
 
 
@@ -70,8 +71,8 @@ class MisBKIT{
         animManager.init();
         console.log("======================== init: dxlManager");
         dxlManager.init(); //before loadSettings
-        console.log("======================== init: robusManager");
-        robusManager.init();
+        console.log("======================== init: luosManager");
+        luosManager.init();
         console.log("======================== init: scriptManager");
         scriptManager.init();
         console.log("======================== init: oscManager");
@@ -144,8 +145,8 @@ class MisBKIT{
         scriptManager.saveSource();
         sensorManager.disableAll();
         sensorManager.saveSensorSettings(); //after disableAll ?
-        robusManager.saveSettings();
-        //robusManager.close();
+        luosManager.saveSettings();
+        luosManager.closeAll();
         dmxManager.close();
     }
 

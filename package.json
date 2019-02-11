@@ -5,6 +5,8 @@
   "description": "",
   "main": "main.js",
   "dependencies": {
+    "mdns-js": "^1.0.3",
+    "mdns-js2": "^0.1.5",
     "midi": "^0.9.5",
     "osc": "^2.2.1",
     "osc-min": "^1.1.1",
