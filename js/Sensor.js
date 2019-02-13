@@ -54,6 +54,8 @@ Sensor = function () {
         input_entry: "",
         output_entries:[],
         alpha: 0.5,
+        distanceSensorEnabledInput: false,
+        lightSensorEnabledInput: false,
     };
 
     //Suggestion: an object by input ...

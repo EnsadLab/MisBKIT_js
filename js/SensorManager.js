@@ -20,6 +20,8 @@ var Sensor = require("./Sensor.js");
 
 var connections = [
     "default",
+    "distanceSensor",
+    "lightSensor",
     "cm9",
     "osc",
     "midi",

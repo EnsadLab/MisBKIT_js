@@ -796,6 +796,8 @@
 				<div class="sensor-setting-more" eltID="default">
 					<select name="input" func="onSelectInput" id="" class="large">
 						<option value="default">Select Input</option>
+						<option value="distanceSensor">Distance sensor</option>
+						<option value="lightSensor">Light sensor</option>
 						<option value="cm9">CM9</option>
 						<option value="osc">OSC</option>
 						<option value="midi">Midi</option>
@@ -808,7 +810,24 @@
 					<div class="input-wrapper">
 
 						<!-- INPUT -->
-						
+
+
+						<section name="distanceSensor">
+							<div class="medium float-left ">
+								<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="distanceSensorEnabledInput" title="enable/disable">
+								<h4>distanceSensor</h4>
+							</div>
+								
+						</section>
+
+						<section name="lightSensor">
+							<div class="medium float-left ">
+								<input type="checkbox" func="changeSettingsVariable" class="small cmdOnOff" param ="lightSensorEnabledInput" title="enable/disable">
+								<h4>lightSensor</h4>
+							</div>
+								
+						</section>
+
 						<section name="cm9">
 							<div class="medium float-left ">
 								<input type="checkbox" func="changeSettingsVariable" class=" small cmdOnOff" param="cm9EnabledInput" title="enable/disable">	
