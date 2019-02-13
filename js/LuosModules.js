@@ -1,16 +1,22 @@
 const SerialLib  = require('serialport');
 const WSClient   = require('websocket').client;
 
-//! removed setters !
-//! removed ioClass for efficiency
+//! removed setters 
+//! removed ioClass 
+//! removed emitters & user callbacks ... tothink
+//! removed yields ... tothink
 
 class Module{
     constructor(object){
-        this.revision="";
-        this.modified={revision:1}
+        this.type = "";
+        this.id = 0;
+        this.alias = "";
+        this.modified={}
         this.outputs = [];
         this.update(object);
     }
+    //on(event,func){ removed ... for now
+
     getValue(param){
         return this[param];
     }
@@ -26,21 +32,22 @@ class Module{
     update(message){
         for( var p in message ){
             this[p]=message[p]
+            if(this[p]==undefined) console.log("-------- new param:",this.alias,p)
         }        
     }
 
     addDirective(obj){
-        var r={};
+        var dir={};
         var count = 0;
         Object.entries(this.modified).forEach(([k,v])=>{ //best than for in ?
             if(v>0){
                 this.modified[k]=v-1;
-                r[k]=this[k];
+                dir[k]=this[k];
                 count++;
             }
         });
         if(count>0){
-            obj[this.alias]=r;
+            obj[this.alias]=dir;
         }
         return count;
     }
@@ -50,50 +57,121 @@ class Module{
 
 }
 
-class DynamixelMotor extends Module{
+class Void extends Module{
     constructor(message){
         super(message)
-        this.modeStep   = 0;
-        this.motorIndex = -1;
-        this.outputs    = ["rot_position","temperature"];
+    }
+    reset(){ //Pyluos dxl_detect
+        console.log("*******RESET:",this.alias);
+        this.setValue("reinit",0,1);
+    }
+}
+
+class Potentiometer extends Module{
+    constructor(message){
+        super(message)
+        this.rot_position = 0;
+        this.position = 0;
+        this.outputs    = ["position"];
     }
     update(message){
         super.update(message);
-        dxlManager.updatePosition(this.motorId,this.rot_position)
+        this.position = this.rot_position; //value alias for ui
     }
-    test(a1,a2,a3){
-        console.log("TEST",a1,a2,a3)
+}
+
+class DistanceSensor extends Module{
+    constructor(message){
+        super(message);
+        this.trans_position = 0;
+        this.distance = 0;              //value alias for ui
+        this.outputs    = ["distance"];
+    }
+    update(message){
+        super.update(message);
+        this.distance = this.trans_position;
+    }
+}
+
+class LightSensor extends Module{
+    constructor(message){
+        super(message);
+        this.lux = 0;
+        this.outputs = ["lux"];
+    }
+}
+
+class DCMotor extends Module{
+    constructor(message){
+        super(message);
+        this.power_ratio = 0;
+    }
+    setEnabled(onoff){
+        if(!onoff)
+            this.setPower(0);
+    }    
+    setPower(val){
+        if(val<-100)val=-100;
+        else if(val> 100)val= 100;
+        this.setValue("power_ratio",parseFloat(val.toFixed(2)));        
+    }
+    setPosition(val){ //just to get a response
+        this.setPower(val)
+    }
+}
+
+class DynamixelMotor extends Module{
+    constructor(message){
+        super(message)
+        //this.modeStep   = 0;
+        this.motorId = -1;
+        this.rot_position = 0;
+        this.outputs    = ["rot_position","temperature"];
+        this.setCompliant(true)
+    }
+    update(message){
+        super.update(message);
+        //if(this.rot_position<-149) console.log("*********** popo:",this.rot_position);
+        dxlManager.updatePosition(this.motorId,this.rot_position)
+        //if( this.)
     }
 
     setCompliant(onoff){
+        this.setValue("compliant",onoff);
         if(onoff){
-            this.setValue("compliant",true);
-        }else{ //AX 12: "compliant" = mode wheel
-            //this.setValue("compliant",false);
-            this.setValue("target_rot_speed",0,5);
+            this.setValue("target_rot_speed",0,6); //AX12 only ?
             this.setValue("wheel_mode",true,2);
         }
     }
     modeWheel(){
-        //this.setValue("compliant",true);
-        this.setValue("target_rot_speed",0,5);//idem +1
+        this.setValue("compliant",false);
+        this.setValue("target_rot_speed",0,10);//idem +1
         this.setValue("wheel_mode",true,2);//ne marche pas forcement du 1er coup
         //this.setValue("target_rot_speed",0,5);//idem +1
     }
     modeJoint(speed,pos){
-        //this.setValue("compliant",true);
+        this.setValue("compliant",false);
         this.setValue("target_rot_position",this.rot_position,5);//idem +1
-        this.setValue("wheel_mode",false,2);//ne marche pas forcement du 1er coup
-        this.setValue("target_rot_speed",speed,3);//idem +1
-    }
+        this.setValue("wheel_mode",false,5);//ne marche pas forcement du 1er coup
+        this.setValue("target_rot_speed",speed,10);//idem +1
+    }    
     setSpeed(val){
-        this.setValue("target_rot_speed",val);        
+        this.setValue("target_rot_speed",parseFloat(val.toFixed(2)));        
+    }
+    setPower(val){
+        this.setValue("target_rot_speed",parseFloat(val.toFixed(2)));        
     }
     setPosition(val){
-        this.setValue("target_rot_position",val);                
+        this.setValue("target_rot_position",parseFloat(val.toFixed(2)));                
     }
+
     getPosition(){
         return this.rot_position;
+    }
+    
+    reset(){ //Pyluos :  detect():
+        console.log("*******RESET:",this.alias);
+        this.setValue("reinit", 0, 1)
     }
 
 }
@@ -131,7 +209,7 @@ class Gate{
     }
 
     /*
-    * iterMessages(){
+    * yieldMessages(){
         while(true){
             var count = 0;
             for(var m in this.modules ){
@@ -147,36 +225,8 @@ class Gate{
     }
     */
 
-   sendDirectives(){
-        var momos = {};
-        var count = 0;
-        Object.entries(this.modules).forEach(([k,v])=>{
-            count += v.addDirective(momos);
-        });
-        if(count>0){
-            //console.log("MOMOS:",JSON.stringify({modules:momos}))
-            this.sendStr(JSON.stringify({modules:momos})+"\r");
-        }
-    }
-
-
-    /*
-    collectDirectives(){
-        var momos = {};
-        var count = 0;
-        Object.entries(this.modules).forEach(([k,v])=>{
-            var d = v.getDirective();
-            if(d!=undefined){
-                momos[k]=d;
-                count++;
-            }
-        });
-        if(count>0){
-            //console.log("MOMOS:",JSON.stringify({modules:momos}))
-            this.sendStr(JSON.stringify({modules:momos})+"\r");
-        }
-    }
-    */
+   //DELETED sendDirectives(){  cf onMessage
+   //DELETED collectDirectives(){
 
     sendStr(str){
         if( (this.wsConnection!=undefined)&&(this.wsConnection.connected) ){
@@ -191,7 +241,7 @@ class Gate{
             });
             this.serialPort.drain(function(){
                 self.lastMsgTime = Date.now();
-                //console.log("drained:",str)
+                console.log("SENT:",str);
             });
         }
     }
@@ -217,13 +267,12 @@ class Gate{
             count += v.addDirective(momos);
         });
         if(count>0){
-            console.log("MOMOS:",JSON.stringify({modules:momos}))
             this.sendStr(JSON.stringify({modules:momos})+"\r");
         }
     
         var parsed;
         try{ parsed = JSON.parse(json); }
-        catch(err){console.log("LUOS:bad json");console.log(json.toString('utf8'))}
+        catch(err){console.log("LUOS:bad json")};//console.log(json.toString('utf8'))}
         //console.log("rcv:",String.fromCharCode.apply(null,json));
         if(parsed!=undefined){
             if(parsed.modules!=undefined){ //V3
@@ -250,10 +299,14 @@ class Gate{
         var info = "";
         for(var i=0;i<array.length;i++){
             var momo = array[i];
-            if(momo.type=="DynamixelMotor"){
-                this.modules[momo.alias]=new DynamixelMotor(momo);
-            }else{
-                this.modules[momo.alias] = new Module(momo);
+            switch(momo.type){
+                case "DynamixelMotor": this.modules[momo.alias]=new DynamixelMotor(momo); break;
+                case "DistanceSensor": this.modules[momo.alias]=new DistanceSensor(momo); break;
+                case "LightSensor":    this.modules[momo.alias]=new LightSensor(momo);    break;
+                case "Potentiometer" : this.modules[momo.alias]=new Potentiometer(momo);  break;
+                case "DCMotor" : this.modules[momo.alias]=new DCMotor(momo); break;
+                case "Void" : this.modules[momo.alias]=new Void(momo); break;
+                default: this.modules[momo.alias] = new Module(momo); break;
             }
 
             info += JSON.stringify(momo)+"\n";
@@ -265,6 +318,7 @@ class Gate{
 
         console.log("Luos:initModules:\n",this.modules);
         sensorManager.luosNewGate();
+        //this.sensorOutputs();
         luosManager.showState(this.id,true,info)
         this.connected = true;
     }
@@ -417,12 +471,13 @@ class Gate{
 
     // hello Luos 
     timedDetection(decount){
-        if( (this.gateAlias != undefined)||(this.rcvCount>0) )
+        console.log("detection",decount,this.rcvCount); //this.detectDecount);
+        if( (this.gateAlias != undefined) )//||(this.rcvCount>0) )
             return; //done
         if(decount>0){
             console.log("send detection",decount); //this.detectDecount);
             this.sendStr('{"detection":{}}\r');
-            setTimeout(this.timedDetection.bind(this,decount-1),100);
+            setTimeout(this.timedDetection.bind(this,decount-1),50);
         }
         else{
             this.close("Luos not found");
@@ -444,12 +499,21 @@ class Gate{
         }
     }
     
-    reScanDxl(){
-        this.sendString('{"modules":{"void_dxl":{"reinit":0}}}\n')
+    reset(){
+        //Object.entries(this.modules).forEach(([k,m])=>{ //best than for in ?
+        for(var m in this.modules ){
+            if( typeof(this.modules[m].reset) == "function" ){
+                this.modules[m].reset();
+            }
+        }//);
+        this.rcvCount = 0;
+        this.gateAlias = undefined;
+        setTimeout(this.timedDetection.bind(this,100),500);
     }
     
 
     scanDxl(){  //called after initModules & dxlManager
+        let dcNum = 100; //ugly patch
         for(var m in this.modules ){
             var momo = this.modules[m];
             if(momo.type=="DynamixelMotor"){
@@ -460,13 +524,29 @@ class Gate{
                     //momo.toSend = {mode:true,position:true,speed:true};
                     //momo.update     = function(){console.log("momo.Function")}
                     //momo.nextMessage = this.testYield.bind(momo); //function(){console.log("dynamixel.Message");return "dxl:"+this.alias;}
-                    console.log("LUOS DLX:",momo.motorID)
+                    console.log("LUOS DLX:",momo.motorId)
                 }
+            }
+            else if(momo.type=="DCMotor"){
+                momo.motorId = dxlManager.addLuosMotor(this.id,momo.alias,dcNum);
+                dcNum++;
             }
         }
     }
 
-
+    /* 
+    sensorOutputs(){
+        var list = [];
+        Object.entries(this.modules).forEach(([k,m])=>{
+            for(var i=0;i<m.outputs.length; i++){
+                list.push(m.alias+":"+m.outputs[i]);    
+            }
+        });
+        sensorManager.setLuosGate(this.id,list);
+        console.log("========== OUTPUTS ==========",list)
+        return list;
+    }
+    */
 
     killme(){
         console.log("adieu monde cruel !",this.id);
