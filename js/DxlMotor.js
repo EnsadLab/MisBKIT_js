@@ -61,7 +61,7 @@ class Dxl{
         this.ioID    = "";
         this.rec = false;
         //this.timeOfRequest = 0;
-        this._currPos = NaN;
+        this._currPos = NaN; //TOTHINK
         this._curAngle = 0; 
         this.dxlGoal = 512;
         this.wantedAngle  = 0;
@@ -191,16 +191,25 @@ Dxl.prototype.update = function(t){
                 misGUI.motorAngle(this.index,this.wantedAngle);
             }
         }
+        
         //REDO gate cm9_luos
         if(this.m.enabled) {
             if(this.m.gate == "luos"){
                 if(this.m.mode==DXL_JOINT){
-                    luosManager.command(this.ioID,"setPosition",this.wantedAngle);
+                    var a = (this.m.clockwise)? this.wantedAngle : this.wantedAngle;
+                    console.log("Angle:",a)
+                    luosManager.command(this.ioID,"setPosition",a);
                 }
-                else
-                    luosManager.command(this.ioID,"setSpeed",this.wantedSpeed);
+                else{
+                    var s = (this.m.clockwise)? +this.wantedSpeed : -this.wantedSpeed;
+                    console.log("Speed:",typeof(this.wantedSpeed),s)
+                    luosManager.command(this.ioID,"setPower",s);
                 }
+            }
         }
+
+        if (this.m.clockwise) misGUI.needle(this.index,this._curAngle);
+        else misGUI.needle(this.index,-this._curAngle);
     }
     return true;
 }
@@ -270,7 +279,6 @@ Dxl.prototype.model=function(val){
     }
 }
 
-
 Dxl.prototype.enable = function(onoff){
     console.log("-------- Dxl.Enable(): -------",this.m.dxlID,onoff);
 
@@ -306,11 +314,11 @@ Dxl.prototype.enable = function(onoff){
         this.wantedSpeed = 0;
         misGUI.motorSpeed(this.index,0);
 
-        if(this.m.gate == "luos")//luos
-            luosManager.command(this.ioID,"setCompliant",false);
-
         //TORQUE ?
     }
+    if(this.m.gate == "luos")//luos
+        luosManager.command(this.ioID,"setCompliant",!onoff);
+
     return onoff;
 }
 

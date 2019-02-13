@@ -378,7 +378,6 @@ DxlManager.prototype.update = function(){
     for(var i=0;i<nbm;i++){
         var motor = this.motors[i];
         motor.update(t);
-        misGUI.needle(i,motor._curAngle);
         //sensorManager.handleDxlPos(i,motor.angleToNorm(a)); //use min & max
     }
 
@@ -552,7 +551,7 @@ DxlManager.prototype.dxlPos=function(array) {  //array[0]="dxlpos"
             var a = m.currPos(v).toFixed(1);
             this.positions[i]=a;    //store if other managers want an array
             sensorManager.handleDxlPos(i,m.angleToNorm(a)); //use min & max
-            misGUI.needle(i,a);
+            //misGUI.needle(i,a);
         }
     }
     pythonManager.onDxlpos(array);
@@ -647,7 +646,9 @@ DxlManager.prototype.addLuosMotor=function(gate,alias,dxlid){
         motor.ioID = {gate:gate,alias:alias};
         motor.dxlID(dxlid);
         motor.m.textID = "luos_"+dxlid;
+        motor.enable(false);
         misGUI.motorSettings(motor.index,motor.m);
+        
     }
     console.log("luosMotor:",motor);
     return motor.index;
@@ -935,7 +936,6 @@ DxlManager.prototype.clearMotors = function(){
 DxlManager.prototype.startScan=function(){
     console.log("STARTSCAN");
     this.clearMotors();
-    luosManager.scanDxl();
 
     if(cm9Com.isOpen()) {
         misGUI.scanProgress(0);
@@ -943,7 +943,8 @@ DxlManager.prototype.startScan=function(){
     }
     else
         misGUI.scanProgress(255); //show failed
-    
+
+    luosManager.reset();
 }
 
 //TODELETE ?

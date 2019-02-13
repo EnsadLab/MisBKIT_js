@@ -1015,8 +1015,8 @@ class SensorManager{
                     sensor.s.luosInputParams["gate"]=value;
                     var a = luosManager.getAliases(value);
                     misGUI.showValue({class:"sensorManager",id:eltID,param:"module",val:a}) //TODO html alias
-                    value = sensor.s.luosInputParams["alias"] //->case module
-                    //break;
+                    value = sensor.s.luosInputParams["alias"]
+                    //break; //continue with value=alias
                 case "module": //TODO html alias
                     var gate = sensor.s.luosInputParams["gate"] 
                     sensor.s.luosInputParams["alias"]=value;
@@ -1025,13 +1025,21 @@ class SensorManager{
                     break;
                 case "pin":
                     sensor.s.luosInputParams["pin"]=value;
+                    break;
+                case "inputs":
+                    console.log("LUOS INPUT:",value);
             }
             console.log("uiLuosParam:",eltID,value,param);
             console.log("uiLuosParam:",sensor.s.luosInputParams);
-        
         }
     }
 
+    //Test moche : selector avec tous les inputs d'une gate 
+    /*
+    setLuosGate(id,list){
+        misGUI.showValue({class:"sensorManager",param:"inputs",val:list})
+    }
+    */
     luosNewGate(){
         var gates = ["none"].concat(luosManager.getGates())
         console.log(" luosGates:",gates)

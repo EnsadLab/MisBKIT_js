@@ -12,11 +12,11 @@ class LuosManager{
         this.usbPorts = [];
     }
 
-    init(settings){
+    init(){
         misGUI.initManagerFunctions(this,this.className);
     }
 
-    cmd(func,eltID,arg){
+    cmd(func,eltID,arg){ //eltID = gateID
         console.log("LUOS cmd:[",eltID,"]",func,arg)
         if(this[func]!=undefined){ 
             this[func](eltID,arg);
@@ -27,7 +27,7 @@ class LuosManager{
         }
     }
 
-    command(objId,func,...args){
+    command(objId,func,...args){ //objId = {gate:id,alias:alias}
         let g = this.gates[objId.gate]; 
         if(g!=undefined){
             let m = g.modules[objId.alias];
@@ -49,6 +49,13 @@ class LuosManager{
             return this.gates[opt.gate].getValue(opt.alias,opt.pin);
         }
     }
+
+    reset(){
+        Object.entries(this.gates).forEach(([k,g])=>{ //best than for in ?
+            g.reset();
+        });        
+    }
+
 
     closeAll(){
         for( var id in this.gates ){
