@@ -63,7 +63,7 @@
       "speedMax": 100,
       "torqueMax": 1023,
       "stillAngle": 0,
-      "midi": {
+      "midi": { 
         "port": "",
         "msg": "CC:0"
       }

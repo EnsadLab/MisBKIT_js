@@ -98,7 +98,7 @@ class AnimManager {
             else anim.s.nbparams = 0;
             for(var i=0; i<anim.s.nbparams; i++){
                 var k = "param" + i;
-                if(selectedType == "sinus"){ if(i==0) params[k]=0;else if(i==1)params[k]=1.0;else if(i==2)params[k]=50.0; }
+                if(selectedType == "sinus"){ if(i==0) params[k]=0;else if(i==1)params[k]=1.0;else if(i==2)params[k]=100.0; }
                 else if(selectedType == "random"){ if(i==0) params[k]=0;else if(i==1)params[k]=3.0;else if(i==2)params[k]=100.0; else if(i==3)params[k]=5.0;}
                 else {
                     params[k] = i*10; // fake values for an unknown type

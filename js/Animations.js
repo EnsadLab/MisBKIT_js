@@ -427,18 +427,13 @@ Animation.prototype.stopPlay = function() {
     
 }
 
-// sinus: param[0]: offset, param[1]: Frequency, param[2]: amplitude[0.0,1.0]
+// sinus: param[0]: offset, param[1]: period, param[2]: amplitude[0.0,1.0]
 Animation.prototype.updateSinus = function() {
-    //console.log("time",performance.now());
-    var curr_time = performance.now();
-    var t0 = curr_time-this.oldTime;
-    this.oldTime = curr_time;
-    //console.log("time",t0);
-    this.sinusTimer += 0.2;
-    this.sinusTimer += 6.0;
-    var a = this.sinusTimer;
-    var v = this.s.params["param2"]*Math.sin(Math.PI*2.0*a*this.s.params["param1"]/100.0) + this.s.params["param0"];
-    //var v = this.s.params["param2"]*Math.sin(Math.PI*2.0*a) + this.s.params["param0"];
+
+    var f = 1.0/(this.s.params["param1"]*1000.0);
+    var dt = performance.now() - this.oldTime;
+    var v = this.s.params["param2"]*Math.sin(Math.PI*2.0*f*dt) + this.s.params["param0"];
+    //console.log("-----> RESULT:",v);
     var nv = v*0.5 + 0.5;
     for(var c=0;c<this.channels.length;c++){
         if(this.channels[c].play) {

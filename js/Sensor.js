@@ -271,7 +271,7 @@ Sensor.prototype.inputOnOff = function(onoff){ //Didier
                 p.amplitude = +p.amplitude;
                 //p.offset = p.current; //starts where it stopped //CEC: huh?
                 p.current = +p.current;
-                this.inputTime = Date.now();
+                this.inputTime = performance.now();
                 this.inputInterval = setInterval(this.sinusUpdate.bind(this),50);
             }
             break;
@@ -288,8 +288,6 @@ Sensor.prototype.inputOnOff = function(onoff){ //Didier
                 p.valmax = +p.valmax;
                 p.intmin = +p.intmin;
                 p.intmax = +p.intmax;
-                this.inputTime = Date.now();
-                //this.inputTimer = setTimeout(this.updateRandom.bind(this),p.periodMin*1000);
                 this.inputTimer = setTimeout(this.updateRandom.bind(this),p.intmin*1000);
                 //console.log("RANDOM STARTED:",this.s.randomParams.periodMin*1000);
                 console.log("RANDOM STARTED:",this.s.randomParams.intmin*1000);
@@ -301,16 +299,18 @@ Sensor.prototype.inputOnOff = function(onoff){ //Didier
     }
 }
 
-// sinus: param[0]: offset, param[1]: Frequency, param[2]: amplitude[0.0,1.0]
+// sinus: param[0]: offset, param[1]: Period, param[2]: amplitude[0.0,1.0]
 Sensor.prototype.sinusUpdate = function(){
+    
     var p = this.s.sinusParams;
-    var dt = (Date.now()-this.inputTime)*0.001;
-
-    this.sinusTimer += 0.2;
-    //var a = this.sinusTimer;
-    var v = p.amplitude*Math.sin(Math.PI*2.0*dt*p.period) + p.offset; // melange entre periode et fréquence... dernière minute... pour que cela que c'est une * et non une division
+    var f = 1.0/(p.period*1000.0);
+    var dt = performance.now() - this.inputTime;
+    var v = p.amplitude*Math.sin(Math.PI*2.0*f*dt) + p.offset;
+   
     var nv = v*0.5 + 0.5;
-    this.onNormValue(nv);
+    //this.onNormValue(nv);
+    this.onValue(v);
+    
 }
 
 
