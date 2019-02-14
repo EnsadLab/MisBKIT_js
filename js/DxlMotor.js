@@ -125,27 +125,7 @@ Dxl.prototype.angle2pos=function(a){
         return (2048 +(a * 2048 / 180))|0; //MX28 ...
 }
 
-//TODELETE
-/*
-Dxl.prototype.onAddr=function(addr,val){
-    switch(addr){
-        case ADDR_MODEL:
-            if(val>=0){
-                this.model(val);
-                this._gotModel = true;
-            }
-            break;
-        case ADDR_POSITION:
-            var a = this.pos2angle(val);
-            this._curAngle = a;
-            this._currPos  = val;
-            break;
-        default:
-            console.log("DXLREG? ",reg," ",val);
-    }
-}
-*/
-
+//DELETED Dxl.prototype.onAddr=function(addr,val){
 //DELETED Dxl.prototype.delayMotorON = function(){
 //DELETED Dxl.prototype.pushSerialMsg = function(stack){
 //DELETED Dxl.prototype.sendMode = function(jw){ //0:joint 1:wheel
@@ -180,7 +160,7 @@ Dxl.prototype.getSettings=function(){
 Dxl.prototype.update = function(t){ 
     if( this.m.dxlID>0){
         if( this.m.mode==DXL_WHEEL ){ //||((this.m.mode==DLX_OFF) )
-            this.wantedAngle = this._curAngle;
+            this.wantedAngle = this._curAngle; //keep it updated
         }
         else if(!this.m.enabled){
             if(this._currPos != NaN){
@@ -188,28 +168,25 @@ Dxl.prototype.update = function(t){
             }
             if(this._curAngle != undefined){ //????
                 this.wantedAngle = this._curAngle;
-                misGUI.motorAngle(this.index,this.wantedAngle);
+                misGUI.motorAngle(this.index,this.wantedAngle); //force GUI to follow position
             }
         }
-        
+
         //REDO gate cm9_luos
         if(this.m.enabled) {
             if(this.m.gate == "luos"){
                 if(this.m.mode==DXL_JOINT){
-                    var a = (this.m.clockwise)? this.wantedAngle : this.wantedAngle;
-                    console.log("Angle:",a)
+                    let a = (this.m.clockwise)? this.wantedAngle : -this.wantedAngle;
                     luosManager.command(this.ioID,"setPosition",a);
                 }
                 else{
-                    var s = (this.m.clockwise)? +this.wantedSpeed : -this.wantedSpeed;
-                    console.log("Speed:",typeof(this.wantedSpeed),s)
+                    let s = (this.m.clockwise)? this.wantedSpeed : -this.wantedSpeed;
                     luosManager.command(this.ioID,"setPower",s);
                 }
             }
         }
 
-        if (this.m.clockwise) misGUI.needle(this.index,this._curAngle);
-        else misGUI.needle(this.index,-this._curAngle);
+        misGUI.needle(this.index,this._curAngle);
     }
     return true;
 }
@@ -245,7 +222,6 @@ Dxl.prototype.dxlID = function(id){
 
     return this;
 };
-
 
 Dxl.prototype.model=function(val){
     console.log("------ model:[",this.index,"]-------",val);
@@ -289,7 +265,7 @@ Dxl.prototype.enable = function(onoff){
     }
 
     //AREVOIR MODE
-    if(onoff){
+    if(onoff){ //enabling
         if(this.temperature>66){
             console.log("***** TO HOT ****",this.index);
             this.m.enabled = false;
@@ -354,14 +330,14 @@ Dxl.prototype.angleRange = function(min,max){
 
 Dxl.prototype.joint = function(){
     this.m.mode = DXL_JOINT;
-    this.m.jointSpeed = this.m.speedMax; //OK: good solution
-    if(this._currPos != NaN)
-        this.wantedAngle = this._curAngle
+    this.m.jointSpeed = this.m.speedMax; //OK: good solution, not a special UI
+    //if(this._currPos != NaN)
+        this.wantedAngle = this._curAngle;
 
     this.speed(this.m.jointSpeed);
     misGUI.motorAngle(this.index,this.wantedAngle); //updated by currPos
     console.log("----- Dxl.joint: ----",this.index,this.m.mode,this._curAngle);
-    console.log("     _currpos:",this._currPos,this._curAngle,this.wantedAngle)
+    console.log(" cp cA cWa ccw:",this._currPos,this._curAngle,this.wantedAngle,this.m.clockwise)
     // let the animations know about the change so that the label can be changed
     animManager.setTrackForRecord(this.index,this.m.mode);
     if(this.m.dxlID>0){
@@ -376,7 +352,8 @@ Dxl.prototype.joint = function(){
             }
         }
         else if(this.m.gate=="luos"){
-            luosManager.command(this.ioID,"modeJoint",this.m.jointSpeed,this.wantedAngle);
+            if(this.m.enabled)
+                luosManager.command(this.ioID,"modeJoint",this.m.jointSpeed,this.wantedAngle);
         }
     }
     return this;
@@ -388,7 +365,8 @@ Dxl.prototype.wheel = function(){
     this.wantedSpeed = 0;
     animManager.setTrackForRecord(this.index,this.m.mode);
     if(this.m.gate=="luos"){
-        luosManager.command(this.ioID,"modeWheel");
+        if(this.m.enabled)
+            luosManager.command(this.ioID,"modeWheel");
     }
     return this;
 };
@@ -400,7 +378,7 @@ Dxl.prototype.angleToNorm = function(a){ //[0 1]
 //setCurrpos , returns angle
 Dxl.prototype.currPos = function(p){ //p=dynamixel position
     if(p>=0) {
-        var a = this.pos2angle(p);
+        var a = this.pos2angle(p); //clockwise inversion
         this._curAngle = a;
         this._currPos = p;
 
@@ -422,11 +400,19 @@ Dxl.prototype.getCurrentAngle = function(){
     return this._curAngle;
 }
 
-Dxl.prototype.setCurrentAngle=function(angle){
-    var a = +angle;
-    var p = this.angle2pos(a);
+Dxl.prototype.setCurrentAngle=function(angle){ //luos position
+    //dont update this._ currPos
+    var a = (this.m.clockwise)? angle : -angle; //show inverse
     this._curAngle = a;
-    this._currPos = p;
+
+    if( this.m.mode==DXL_WHEEL ){
+        this.wantedAngle = a; //in case of toggle to Joint
+    }
+    else if(!this.m.enabled){
+        this.wantedAngle = a; 
+        misGUI.motorAngle(this.index,a);
+    }
+    return a;
 }
 
 
@@ -454,6 +440,7 @@ Dxl.prototype.onNormValue =function(val){ //angle  ou  speed normalisé
     }
 }
 
+//commande angle (setAngle)
 Dxl.prototype.angle = function(a){
     if(a!=undefined) {
         if (a > this.m.angleMax) a = this.m.angleMax;
@@ -482,12 +469,11 @@ Dxl.prototype.speed = function(s){
     if(s!=undefined) {
         if (s > this.m.speedMax)s = this.m.speedMax;
         else if (s < this.m.speedMin)s = this.m.speedMin;
-        this.wantedSpeed = s; 
+        this.wantedSpeed = s; //ok wanted speed n'est pas afecté par clockwise
 
         var v = (s*1023/100)|0;
         if(!this.m.clockwise) v=-v; //inversé
-        //if(v<0) v = 1024-v; //!!! SUR LE CM9 !!!
-        this.dxlSpeed = v;    
+        this.dxlSpeed = v; //if(v<0) v = 1024-v; //!!! SUR LE CM9 !!!
         return s;
     }
     else{
@@ -506,9 +492,10 @@ Dxl.prototype.nSpeed = function(s) {
 Dxl.prototype.clockwise = function(val){
     if(typeof(val)=='string')val=(val=="CCW");
     if(typeof(val)=='number')val=(val!=0);
-
-    if( val != this.m.clockwise ){ //mmm , do it more sure
-        this.wantedAngle = -this.wantedAngle;
+    
+    if( val != this.m.clockwise ){ //changed
+        this._curAngle = -this._curAngle;
+        this.wantedAngle = -this.wantedAngle; //wan
         misGUI.motorAngle(this.index,this.wantedAngle); //updated by currPos
     }
 

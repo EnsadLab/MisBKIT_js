@@ -560,10 +560,7 @@ DxlManager.prototype.dxlPos=function(array) {  //array[0]="dxlpos"
 DxlManager.prototype.updatePosition =function(index,angle){
     //console.log("updatePosition:",index,angle)
     if(this.motors[index]!=undefined){
-        this.motors[index].setCurrentAngle(angle);
-        this.positions[index]=angle;
-        //sensorManager.handleDxlPos(i,motor.angleToNorm(a)); //use min & max
-        //misGUI.needle(index,a);
+        this.positions[index] = this.motors[index].setCurrentAngle(angle);
     }
 }
 

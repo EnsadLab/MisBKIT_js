@@ -133,7 +133,6 @@ class DynamixelMotor extends Module{
         super.update(message);
         //if(this.rot_position<-149) console.log("*********** popo:",this.rot_position);
         dxlManager.updatePosition(this.motorId,this.rot_position)
-        //if( this.)
     }
 
     setCompliant(onoff){
@@ -143,12 +142,14 @@ class DynamixelMotor extends Module{
             this.setValue("wheel_mode",true,2);
         }
     }
+
     modeWheel(){
         this.setValue("compliant",false);
         this.setValue("target_rot_speed",0,10);//idem +1
         this.setValue("wheel_mode",true,2);//ne marche pas forcement du 1er coup
         //this.setValue("target_rot_speed",0,5);//idem +1
     }
+
     modeJoint(speed,pos){
         this.setValue("compliant",false);
         this.setValue("target_rot_position",this.rot_position,5);//idem +1
@@ -208,25 +209,9 @@ class Gate{
         this.dtMax = 0;
     }
 
-    /*
-    * yieldMessages(){
-        while(true){
-            var count = 0;
-            for(var m in this.modules ){
-                var msg = this.modules[m].nextMessage();
-                if(msg!=undefined){
-                    yield(msg);
-                    count++;
-                }
-            }
-            if(count==0) //a least 1 yield //prevent infinite loop with no yield
-                yield(undefined)  
-        }
-    }
-    */
-
-   //DELETED sendDirectives(){  cf onMessage
-   //DELETED collectDirectives(){
+    //DELETED * yieldMessages(){
+    //DELETED sendDirectives(){  cf onMessage
+    //DELETED collectDirectives(){
 
     sendStr(str){
         if( (this.wsConnection!=undefined)&&(this.wsConnection.connected) ){
@@ -240,8 +225,9 @@ class Gate{
                 //self.lastMsgTime = Date.now();
             });
             this.serialPort.drain(function(){
+                console.log( "DTM:",(Date.now()-self.lastMsgTime) )
                 self.lastMsgTime = Date.now();
-                console.log("SENT:",str);
+                //console.log("SENT:",str);
             });
         }
     }
@@ -268,6 +254,7 @@ class Gate{
         });
         if(count>0){
             this.sendStr(JSON.stringify({modules:momos})+"\r");
+            //console.log("DTR:",dtr)
         }
     
         var parsed;
@@ -551,11 +538,10 @@ class Gate{
     killme(){
         console.log("adieu monde cruel !",this.id);
         this.close();
+        //this.clean();
         //luosManager.killGate(this.id);
     }
 
 }//class LuosGate
-
-
 
 module.exports = { Gate,Module,DynamixelMotor }
