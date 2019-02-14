@@ -20,6 +20,8 @@ var Sensor = require("./Sensor.js");
 
 var connections = [
     "default",
+    "distanceSensor",
+    "lightSensor",
     "cm9",
     "osc",
     "midi",
@@ -307,7 +309,7 @@ class SensorManager{
         sensor.s.oscAdressOutput = "/mbk/sensor"+this.sensorID; // ... name ?
         ////////////////////////////////////////////////////////////////////////////////
         // IF WE WANT TO CHANGE THE DEFAULT SINUS AND RANDOM VALUES
-        sensor.s.sinusParams = {amplitude:1.0,offset:0.0,period:1.0,current:0};
+        sensor.s.sinusParams = {amplitude:100.0,offset:0.0,period:1.0,current:0};
         sensor.s.randomParams = {valmin:0,valmax:100,intmin:2,intmax:5};
         ////////////////////////////////////////////////////////////////////////////////
         sensor.s.alpha = 0.5;
