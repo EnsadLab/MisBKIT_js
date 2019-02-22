@@ -1,15 +1,28 @@
-const SerialLib  = require('serialport');
-const WSClient   = require('websocket').client;
+//HC-sr04
+
+const SerialLib = require('serialport');
+const WSClient  = require('websocket').client;
+//const Bluetooth = require('node-bluetooth');
+//var   btDeviceINQ = new Bluetooth.DeviceINQ();
+//var btSerial = new (require('bluetooth-serial-port')).BluetoothSerialPort();
+//var btSerial = undefined;
+
+bluetoothPaired = undefined;
+
+
+// create bluetooth device instance
+//const device = new bluetooth.DeviceINQ();
 
 //! removed setters 
 //! removed ioClass 
+//! removed pushMessage
 //! removed emitters & user callbacks ... tothink
 //! removed yields ... tothink
 
 class Module{
     constructor(object){
         this.type = "";
-        this.id = 0;
+        this.id = 0;        //luos id
         this.alias = "";
         this.modified={}
         this.outputs = [];
@@ -20,6 +33,7 @@ class Module{
     getValue(param){
         return this[param];
     }
+
     setValue(param,value,count = 0){
         if(count>this.modified[param])
             this.modified[param]=count;
@@ -52,7 +66,24 @@ class Module{
         return count;
     }
 
+    getDirective(){
+        var dir={} ,count = 0;
+        Object.entries(this.modified).forEach(([k,v])=>{ //best than for in ?
+            if(v>0){
+                this.modified[k]=v-1;
+                dir[k]=this[k];
+                count++;
+            }
+        });
+        if(count>0)
+            return dir;
+    }
+
+    reset(){
+    }
+
     cleanup(){
+        //clear emitters/listeners
     }
 
 }
@@ -123,17 +154,44 @@ class DCMotor extends Module{
 class DynamixelMotor extends Module{
     constructor(message){
         super(message)
-        //this.modeStep   = 0;
         this.motorId = -1;
         this.rot_position = 0;
-        this.outputs    = ["rot_position","temperature"];
+        this.temperature  = 0;
+        this.dxlSpeed  = 0;
+        this.outputs   = ["rot_position","temperature"];
+        //this.
+        this.modeStep   = -1;
         this.setCompliant(true)
+        //this.set_id = 9;
     }
+
     update(message){
         super.update(message);
         //if(this.rot_position<-149) console.log("*********** popo:",this.rot_position);
         dxlManager.updatePosition(this.motorId,this.rot_position)
     }
+
+    /*
+    addDirective(obj){ //register write
+        var dir={} ,count = 0;
+        Object.entries(this.modified).forEach(([k,v])=>{ //best than for in ?
+            if(v>0){
+                this.modified[k]=v-1;
+                if(k=="dxlSpeed"){
+                    dir["register"]=[32,this.dxlSpeed];
+                    console.log("DXLSPEED:",dir)                  
+                }else{
+                    dir[k]=this[k];
+                }
+                count++;
+            }
+        });
+        if(count>0){
+            obj[this.alias]=dir;
+        }
+        return count;
+    }
+    */
 
     setCompliant(onoff){
         this.setValue("compliant",onoff);
@@ -141,9 +199,16 @@ class DynamixelMotor extends Module{
             this.setValue("target_rot_speed",0,6); //AX12 only ?
             this.setValue("wheel_mode",true,2);
         }
+        //console.log("....set_id",this.set_id,this.modified)
     }
 
     modeWheel(){
+        /*
+        if(this.set_id != undefined){
+            this.setValue("set_id",7);
+        }
+        console.log("....set_id",this.set_id,this.modified)
+        */
         this.setValue("compliant",false);
         this.setValue("target_rot_speed",0,10);//idem +1
         this.setValue("wheel_mode",true,2);//ne marche pas forcement du 1er coup
@@ -151,17 +216,39 @@ class DynamixelMotor extends Module{
     }
 
     modeJoint(speed,pos){
+        /*
+        if(this.set_id != undefined){
+            this.setValue("set_id",7);
+        }
+        console.log("....set_id",this.set_id,this.modified)
+        */
         this.setValue("compliant",false);
         this.setValue("target_rot_position",this.rot_position,5);//idem +1
         this.setValue("wheel_mode",false,5);//ne marche pas forcement du 1er coup
         this.setValue("target_rot_speed",speed,10);//idem +1
     }    
     setSpeed(val){
-        this.setValue("target_rot_speed",parseFloat(val.toFixed(2)));        
+        var v = val*2;        
+        this.setValue("target_rot_speed",parseFloat(val.toFixed(2)));
     }
     setPower(val){
-        this.setValue("target_rot_speed",parseFloat(val.toFixed(2)));        
+        let p = 110*(val/100); //AX12 : rot_speed Max : 110 ???
+        this.setValue("target_rot_speed",parseFloat(p.toFixed(2)));
+        /*
+        let dxls = 0;
+        if(val>=0) dxls = (1023*val/100)|0;
+        //else dxls=1024-(10.23*val)|0;
+        var lb = (dxls & 0xff);
+        var hb = (dxls & 0xff00)>>8;
+
+        //var swap = (lb << 8)+hb;
+
+        dxls = dxls & 0xff;
+        console.log("dxls:",dxls,"#"+hb.toString(2)+" "+lb.toString(2));
+        this.setValue("dxlSpeed",dxls);
+        */
     }
+
     setPosition(val){
         this.setValue("target_rot_position",parseFloat(val.toFixed(2)));                
     }
@@ -169,10 +256,22 @@ class DynamixelMotor extends Module{
     getPosition(){
         return this.rot_position;
     }
+
+    rename(val){
+        this.modified = {};
+        this.setValue("set_id",val);
+    }
     
     reset(){ //Pyluos :  detect():
         console.log("*******RESET:",this.alias);
         this.setValue("reinit", 0, 1)
+        /*
+        if(this.set_id != undefined){
+            this.setValue("set_id",7);
+        }
+        console.log("reset ....set_id",this.set_id,this.modified)
+        */
+
     }
 
 }
@@ -182,52 +281,75 @@ class Gate{
         this.id = id;
         this.enabled = true; //for luos alone
         this.connected = false;
+        this.closing   = false;
         this.gateAlias = undefined;
         this.modules = {}; //
         //this.dynamixels = {}
     
         this.useWifi = false; //true = wifi; false = serial
-        this.wifiName   = "raspberrypi.local";
-        this.serialName = undefined;
+        this.wifiName   = "luoswifi0";
+
         //this.serialIsReady = false;
-        this.serialPort = undefined;
-    
+        this.serialName = undefined;
+        this.serialPort = undefined;    
         this.bufferHead = 0;
         this.buffer = Buffer.alloc(1024); //serial read buffer
     
         this.wsClient = undefined;
         this.wsConnection = undefined;
-    
-        this.detectTimer = undefined;
-        this.rcvCount = 0;
 
+        this.btConnection = undefined; //BlueTooth
+
+        //this.dxlStep = 0;
+ 
+        this.timerDetect = undefined;
         this.lasRcv  = undefined;
         this.lastMsgTime = 0;
 
-        this.rcvTime = Date.now();
+        this.rcvTime  = performance.now();
+        this.sendTime = performance.now();
+        this.hrTime = process.hrtime();
         this.dtMin = 1000;
         this.dtMax = 0;
+        
+        this.blinker = undefined;
+        console.log("GATE id:",this.id,typeof(this.id));
     }
 
     //DELETED * yieldMessages(){
     //DELETED sendDirectives(){  cf onMessage
     //DELETED collectDirectives(){
 
+    command(alias,func,...args){
+        var dog = performance.now()-this.rcvTime;
+        let m = this.modules[alias];
+        if((m!=undefined)&&(m[func]!=undefined)){
+            return m[func](...args)
+        }
+    }
+
     sendStr(str){
-        if( (this.wsConnection!=undefined)&&(this.wsConnection.connected) ){
+        if(this.btConnection!=undefined){
+            this.btConnection.write(Buffer.from(str,'utf-8'), function(err, bytesWritten) {
+                if (err){ console.warn("bt write:",err); }
+                console.log("BT->",str);
+            });
+        }
+        else if( (this.wsConnection!=undefined)&&(this.wsConnection.connected) ){
             this.wsConnection.sendUTF(str);
-            //console.log("LUOS WS sent:",str)
+            console.log("LUOS WS sent:",str)
         }        
-        if(this.serialPort){
+        else if(this.serialPort){
             var self=this;
             this.serialPort.write(Buffer.from(str),function(err){
                 if(err){console.log("LUOS USB:",err)}
-                //self.lastMsgTime = Date.now();
+                //self.lastMsgTime = performance.now();
             });
             this.serialPort.drain(function(){
-                console.log( "DTM:",(Date.now()-self.lastMsgTime) )
-                self.lastMsgTime = Date.now();
-                //console.log("SENT:",str);
+                //console.log( "DTM:",(performance.now()-self.lastMsgTime) )
+                let t = performance.now();
+                //console.log("SENT:",str,(t-self.lastMsgTime));
+                self.lastMsgTime = t; //performance.now();
             });
         }
     }
@@ -243,29 +365,32 @@ class Gate{
     }
 
     onMessage(json){
-        var t = Date.now();
-        var dtr = t-this.rcvTime;
-        this.rcvTime = t;
-        //this.sendDirectives();
-        var momos = {};
-        var count = 0;
-        Object.entries(this.modules).forEach(([k,v])=>{
-            count += v.addDirective(momos);
-        });
-        if(count>0){
-            this.sendStr(JSON.stringify({modules:momos})+"\r");
-            //console.log("DTR:",dtr)
+
+        if( (performance.now()-this.sendTime)>80 ){
+            //colect directives
+            var momos = {} , count = 0;
+            Object.entries(this.modules).forEach(([k,v])=>{
+            let drt = v.getDirective();
+            if( drt != undefined){
+                    momos[v.alias]=drt;
+                    count++;
+            }
+            });
+            if(count>0){
+                this.sendStr(JSON.stringify({modules:momos})+"\r");
+                this.sendTime = performance.now();
+            }
         }
-    
+
+        //exec message
         var parsed;
         try{ parsed = JSON.parse(json); }
-        catch(err){console.log("LUOS:bad json")};//console.log(json.toString('utf8'))}
-        //console.log("rcv:",String.fromCharCode.apply(null,json));
+        catch(err){ /*console.log("bad json")*/ }//,json.toString('utf8'))};
+        
         if(parsed!=undefined){
-            if(parsed.modules!=undefined){ //V3
+            if(parsed.modules!=undefined){ //V3 : message
                 for( var g in parsed.modules){
                     if(this.modules[g]!=undefined){
-                        //console.log("updateModules:",g)
                         this.modules[g].update(parsed.modules[g])
                     }
                 }
@@ -273,13 +398,16 @@ class Gate{
             else if(parsed.route_table!=undefined){ //V3 routeTable
                 this.initModules(parsed);
             }
-            this.lastRcv = parsed; //DBG
-        }
+            else{
+                console.log("???",parsed);
+            }
+        }        
     }
     
     //!!! new init message !!!
     //{"route_table": [{"type":"Gate","id":1,"alias":"gate"}, {"type":"Void","id": 2, "alias": "void_dxl"}, {"type": "RgbLed", "id": 3, "alias": "rgb_led_mod"}]}
     initModules(parsed){
+        this.stopBlink();
         this.modules = {}
         var array = parsed.route_table;
 
@@ -305,7 +433,6 @@ class Gate{
 
         console.log("Luos:initModules:\n",this.modules);
         sensorManager.luosNewGate();
-        //this.sensorOutputs();
         luosManager.showState(this.id,true,info)
         this.connected = true;
     }
@@ -327,7 +454,8 @@ class Gate{
         //this.msgStack = [];
         if(this.enabled){
             if(this.useWifi){
-                this.openWebSocket()
+                this.startWebSocket()
+                //this.openBlueTooth();
             }else{
                 this.openSerial()
             }
@@ -335,7 +463,11 @@ class Gate{
     }
 
     close(errInfo){
+        console.log("CLOSE:",errInfo)
+        this.stopDetection();
+        this.stopBlink();
         this.connected = false;
+        this.closing   = true;
 
         if(this.wsConnection) {this.wsConnection.close();this.wsConnection=undefined}
         if(this.wsClient) {this.wsClient.abort();this.wsClient=undefined}
@@ -343,6 +475,13 @@ class Gate{
         if(this.serialPort != undefined) {
             this.serialPort.close();
             this.serialPort = undefined;
+        }
+
+       if(this.btConnection != undefined){
+            console.log("CLOSE BLUETOOTH")
+            try{this.btConnection.close();}
+            catch(err){console.warn("btSerial:",err)}
+            this.btConnection = undefined;
         }
 
         this.detectDecount = 0;
@@ -355,6 +494,13 @@ class Gate{
     setWifi(onoff){ //from ui or settings
         this.close();
         this.useWifi = onoff;
+        luosManager.scanSerials()
+    }
+
+    selectWebsocket(name){
+        this.close();
+        this.wifiName = name;
+        misGUI.showValue({class:"luosManager",id:this.id,func:"selectWebsocket",val:name})
     }
 
     setWifiName(name){ //from ui or settings
@@ -363,78 +509,230 @@ class Gate{
 
     setSerialName(name){ //from ui or settings
         this.serialName = name;
+        misGUI.showValue({class:"luosManager",id:this.id,func:"selectUSB",val:name})
+    }
+
+    startWebSocket(){
+        this.stopDetection();
+        this.startBlink();
+        this.close();
+        this.wsConnection = undefined;
+        this.gateAlias = undefined;
+        this.openWebSocket();
     }
 
     openWebSocket(){
-        this.close();
         luosManager.showState(this.id,true,"connecting to "+this.wifiName );
         this.wsClient = new WSClient();
         this.wsConnection = undefined;
-        this.gateAlias = undefined;
-        var self = this;
+        var self = this;        
         this.wsClient.on('connectFailed',function(err){
-            luosManager.showState(this.id,"ERROR","connectFailed:\n"+err );
-            //...                   
+            self.stopBlink();
+            luosManager.showState(self.id,"ERROR","connectFailed:\n"+err );
+            self.close("Wifi connectFailed:\n"+err);
+            console.log("Luos:connectFailed:",err)
         })
         this.wsClient.on('connect',function(connection){
-            luosManager.showState(this.id,true,"websocket connected" );
+            luosManager.showState(self.id,true,"websocket connected" );
             self.wsConnection = connection;
             connection.on('message',function(data){
-                self.onMessage(data.utf8Data);
+                let t = performance.now();
+                let dtr = t-this.rcvTime;
+                this.rcvTime = t;
+
+                //messages tronqués
+                let str = data.utf8Data.toString('utf8');
+                let ig = str.indexOf('{"gate');
+                if(ig>=0){
+                    self.onMessage('{"modules":'+str.substr(ig));
+                }
+                else if(str.startsWith('{"route_table":')){
+                    self.onMessage(str);
+                }
+                //else{ console.log("WS lost:",str)}
             })
             connection.on('error',function(err){
-                luosManager.showState(this.id,"ERROR","connection:",err );
+                luosManager.showState(self.id,"ERROR","connection:",err );
+                console.log("WS connection error:",err)
+                //close ?
             })
             connection.on('close',function(code,desc){
+                self.connected = false;
                 self.wsConnection = undefined;
-                luosManager.showState(this.id,false,"closed" );
+                luosManager.showState(self.id,false,"closed" );
+                console.log("WS connection closed:",code,desc);
+                if( code != 1000 ){
+                    console.log("!!!!!  Closed By SERVER !!!!!!");
+                    self.openWebSocket();
+                }
             })
-            self.detectDecount = 100;
-            self.timedDetection();
-            misGUI.showValue({class:"luosGate",func:"enable",id:this.id,val:true});       
+            self.connected = true;
+            if(self.gateAlias == undefined)
+                self.timedDetection(100);
+            misGUI.showValue({class:"luosGate",func:"enable",id:self.id,val:true});       
         });
-        this.wsClient.connect('ws://'+self.wifiName+':9342',null)
+        this.wsClient.connect('ws://'+self.wifiName+'.local:9342',null)
         //this.wsClient.connect('ws://raspberrypi.local:9342',null)
 
     }
 
-    openSerial(){
+    openBlueTooth(){
+        console.log("OPENING BLUETOOTH ...")
         this.close();
-        if( this.serialName==undefined ){
-            this.serialName = luosManager.usbPorts[0]
-            if(this.serialName==undefined){
-                luosManager.showState(this.id,"ERROR","choose USB port")
-                luosManager.scanSerials();
-            }
+        if(this.btConnection != undefined){
+            console.log("BLUETOOTH already open?");
             return;
         }
 
-        console.log("LUOS openserial:",this.id,this.serialName);
+        this.startBlink();
         var self = this;
-        this.serialPort = new SerialLib(this.serialName,{baudRate:1000000});
+        var addressFound;
+        //ok make a new clean one
+        this.btConnection = new (require('bluetooth-serial-port')).BluetoothSerialPort();
+        this.btConnection.listPairedDevices(function(pairedDevices) {
+            pairedDevices.forEach(function(device) {
+                console.log("PAIRED:",device);
+            });
+        });
+        this.btConnection.on('data', function(buffer) {
+            /*
+            var seps = [];
+            for(var i=0;i<buffer.length;i++){
+                if(buffer[i]<32)seps.push(+buffer[i]);
+            }
+            console.log(seps);
+            */
+            try{
+                var spl = buffer.toString('utf-8').split(/\r\n|\r|\n/g); //(/\r?\n/);
+                for(var i=0;i<spl.length;i++){
+                    if(self.gateAlias==undefined)
+                        console.log(spl[i]);
+
+                    if( (spl[i].length>12) && (spl[i][0]=='{') && ( spl[i].endsWith("}") ) ) //early filter modules:}}} gate }]}
+                        self.onMessage(spl[i]);
+                }
+            }
+            catch(err){console.log(err)};
+            //cmds = str.split("\r");
+            
+        });
+
+        this.btConnection.on("finished",function(){
+            console.log("btSerial finished:",addressFound);
+            if(addressFound != undefined){
+                console.log("btSerial find serial:",addressFound);                
+                //btSerial.findSerialPortChannel(addressFound,function(channel){ //FAIL ?
+                //    console.log("btSerial found serialPort:",address,channel)                   
+                    self.btConnection.connect(addressFound,1,function(){
+                        console.log('btSerial connected');
+                        self.gateAlias = undefined;
+                        self.connected = true;
+                        self.timedDetection(100);
+                        self.stopBlink();
+                        luosManager.showState(self.id,true,"Bluetooth connected")
+                    },function(err){
+                        console.log('btSerial connect error:',err);
+                        self.stopBlink();
+                        luosManager.showState(self.id,"ERROR","Bluetooth:\n"+err)
+                    });
+                
+                //},function(err){console.warn("btSerial no serial found");self.stopBlink();});
+            }else{
+                self.stopBlink();
+                luosManager.showState(self.id,"ERROR","No Luos Bluetooth found");
+            }
+        });
+        this.btConnection.on("closed",function(){
+            self.stopBlink();
+            luosManager.showState(self.id,false,"Bluetooth closed");
+            console.log("BTSERIAL: closed");
+        });
+        this.btConnection.on("failure",function(err){
+            console.log("BTSERIAL: failure:",err)
+            self.stopBlink();
+            luosManager.showState(self.id,"ERROR","Bluetooth failure:\n"+err)
+        });
+        this.btConnection.on('found', function(address, name) {
+            console.log("btSerial found:",name,address,self.wifiName);
+            if(name==self.wifiName){
+                console.log("btSerial found luos:",name,address);
+                addressFound = address;
+            }
+        },function(){
+            console.log('btSerial found nothing');
+            self.stopBlink();
+            luosManager.showState(self.id,"ERROR","No Luos Bluetooth found")
+        });
+        this.btConnection.inquire();
+    }
+
+    openSerial(){
+        this.close();
+        var self = this;
+        if( (this.serialName=="")||(this.serialName==undefined) ){
+            luosManager.showState(this.id,"ERROR","USB error, Please Retry")
+            luosManager.scanSerials(function(ports){
+                console.log("RescanSerial:",ports)
+                self.setSerialName(ports[0]);
+            });
+            return;
+        }
+
+        console.log("LUOS openserial2:",this.id,typeof(this.serialName),this.serialName);
+        this.serialPort = new SerialLib(this.serialName,{baudRate:1000000}); //,highWaterMark:128});
         this.bufferHead = 0;
         this.serialPort.on('open',function(){
             if(self.serialPort){ //undefined ??? ça arrive close/open ...
                 self.serialPort.flush(function(){
                     luosManager.showState(self.id,true,"waiting luos ...")
+                    self.connected = true;
                     self.gateAlias = undefined;
-                    self.rcvCount = 0;
                     self.timedDetection(50);    
                 });
             }
         });
 
-        //forget parser ! :
+        //minimal
+        //this.serialPort.on('data',function(rcv){
+        //    self.gateAlias = "Gate";
+        //});
+/*
+            for(var i=0;i<rcv.length;i++){
+                var c = rcv[i];
+                //self.buffer[self.bufferHead]=c;
+                if(c==0xA){
+                    self.gateAlias = "Gate";
+                    var dt  = process.hrtime(self.hrTime);
+                    self.hrTime = process.hrtime();
+                    //var line = self.buffer.slice(0,self.bufferHead+1);
+                    self.bufferHead = 0;
+                    if(dt[1]>9000000)
+                    console.log("hrTime",dt[1]/1000000) //,line.toString('utf8'))
+                    break;
+                }
+                else if(++self.bufferHead>1022){ //!!! OVERFLOW
+                    self.bufferHead=0; //forget ! ?
+                    console.log("**** Luos overflow ****:");
+                }
+            }
+        });
+*/
+
+        //! removed parser ! :
         this.serialPort.on('data',function(rcv){
-            self.rcvCount++;
             for(var i=0;i<rcv.length;i++){
                 var c = rcv[i];
                 self.buffer[self.bufferHead]=c;
-                //console.log(c,c==0xA,self.bufferHead);
                 if(c==0xA){
+                    let t = performance.now();
+                    let dtr = t-this.rcvTime;
+                    this.rcvTime = t;
+            
                     var line = self.buffer.slice(0,self.bufferHead+1);
                     self.bufferHead = 0;
-                    self.onMessage( line );
+                    //if(dtr>3)
+                        self.onMessage( line );
+                    if(dtr>60)console.log("DTR:",dtr); //,json)
                 }
                 else if(++self.bufferHead>1022){ //!!! OVERFLOW
                     self.bufferHead=0; //forget ! ?
@@ -446,6 +744,7 @@ class Gate{
         this.serialPort.on("close",function(){
             luosManager.showState(self.id,false,"closed");
             self.serialPort = undefined;
+            self.closing = false;
         });
 
         this.serialPort.on('error',(err)=>{
@@ -453,18 +752,22 @@ class Gate{
             luosManager.showState(self.id,"ERROR",err);
             //self.close() ?
             self.serialPort = undefined;
+            self.serialName = "";
         });        
     }//openSerial
 
     // hello Luos 
+    stopDetection(){
+        clearTimeout(this.timerDetect);
+    }
+
     timedDetection(decount){
-        console.log("detection",decount,this.rcvCount); //this.detectDecount);
-        if( (this.gateAlias != undefined) )//||(this.rcvCount>0) )
+        if( (this.gateAlias != undefined)||(this.connected==false) )
             return; //done
         if(decount>0){
             console.log("send detection",decount); //this.detectDecount);
             this.sendStr('{"detection":{}}\r');
-            setTimeout(this.timedDetection.bind(this,decount-1),50);
+            this.timerDetect = setTimeout(this.timedDetection.bind(this,decount-1),500);
         }
         else{
             this.close("Luos not found");
@@ -486,6 +789,13 @@ class Gate{
         }
     }
     
+    rename(){
+
+
+    }
+
+
+
     reset(){
         //Object.entries(this.modules).forEach(([k,m])=>{ //best than for in ?
         for(var m in this.modules ){
@@ -493,9 +803,9 @@ class Gate{
                 this.modules[m].reset();
             }
         }//);
-        this.rcvCount = 0;
         this.gateAlias = undefined;
         setTimeout(this.timedDetection.bind(this,100),500);
+
     }
     
 
@@ -521,6 +831,21 @@ class Gate{
         }
     }
 
+    stopBlink(){
+        clearInterval(this.blinker);
+    }
+ 
+    startBlink(){
+        var self = this;
+        var tog = true;        
+        clearInterval(this.blinker);
+        this.blinker = setInterval(function(){
+            misGUI.showValue({class:"luosManager",func:"freeze",val:tog});
+            misGUI.showValue({class:"luosManager",id:self.id,func:"enable",val:tog});
+            if(tog) tog = false;
+            else    tog = true;
+        },250);
+    }
     /* 
     sensorOutputs(){
         var list = [];

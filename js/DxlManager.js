@@ -44,15 +44,12 @@ function DxlManager(){
 
     this.motors = [];
     this.positions = [];
-
-    this.updateTimer = undefined;
   
     this.refreshID = -1;
     this.refreshAddr = -1;
-
-    this.onoffTimer = undefined;
-
     this.chgID = {prev:-1,new:-1,count:-1}; //prevID newID
+
+    this.updateTime = performance.now();
 };
 var dxlmng = new DxlManager();
 module.exports = dxlmng;
@@ -67,7 +64,7 @@ DxlManager.prototype.init =function(){
         misGUI.addMotor(i,momo.m);
     }
  
-    this.updateTimer = setInterval(this.update.bind(this),45); //start
+    //this.updateTimer = setInterval(this.update.bind(this),45); //start
 
     misGUI.motorSettings(0,this.motors[0].m);
 }
@@ -371,9 +368,8 @@ DxlManager.prototype.cm9OnOff= function(onoff){
 //DELETED DxlManager.prototype.setPause = function(nframes){
 
 DxlManager.prototype.update = function(){
-
+    var t = performance.now();
     var nbm=this.motors.length;
-    var t  = Date.now();
 
     for(var i=0;i<nbm;i++){
         var motor = this.motors[i];
@@ -381,14 +377,7 @@ DxlManager.prototype.update = function(){
         //sensorManager.handleDxlPos(i,motor.angleToNorm(a)); //use min & max
     }
 
-    if(cm9Com.isReady()){
-        //console.log("DxlManager.update");
-        /*
-        for(var i=0;i<nbm;i++){
-            this.motors[i].update(t);
-        }
-        */
-    
+    if(cm9Com.isReady()){    
         //read dxl regiters
         if( this.refreshID >= 0 ) {
             if( this.refreshAddr<48 ){
@@ -1076,7 +1065,6 @@ DxlManager.prototype.getIDByIndex = function(index){
     return 0;    
 }
 
-
 DxlManager.prototype.getMode = function(index){
     console.log("DxlManager.getMode:",index);
     if(this.motors[index])
@@ -1084,10 +1072,10 @@ DxlManager.prototype.getMode = function(index){
     return 1; //????
 };
 
-
 DxlManager.prototype.isEnabled = function(index){
     var motor = this.servoByIndex(index);
     if(motor )return motor.enabled;
     else return false;
 }
 
+//1094

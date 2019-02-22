@@ -240,12 +240,12 @@ MisGUI.prototype.changeSettings = function(className,func,params,eltID){
 
 //opt: {class:classname,id:eltID,func:func,param:param,val:value}
 MisGUI.prototype.showValue=function(opt){
-    //console.log("showValue:",opt);
     var sel = "."+opt.class+" ";
     if(opt.id!=undefined)sel+="[eltID="+opt.id+"]";
     if(opt.func!=undefined)sel+="[func="+opt.func+"]";
     if(opt.param!=undefined)sel+="[param="+opt.param+"]";
     var elts = $(sel);
+    //console.log("showValue",opt,elts.length)
     if(elts.length > 0){
         this.setElementValue(elts,opt.val);
     }
@@ -325,6 +325,7 @@ MisGUI.prototype.setElementValue = function(elt,value){
                     });
                 }
                 else{
+                    console.log("showSelection",value,$(this).find("option[value='"+value+"']").length )
                     if($(this).find("option[value='"+value+"']").length>0)e.val(value);
                     else e.prop("selectedIndex", 0); //select first option par defaut
                 }
@@ -1178,7 +1179,7 @@ MisGUI.prototype.setMidiBlinkOn = function(motorIndex){
 }
 
 MisGUI.prototype.toggleLuosWifi = function(eltID,usewifi){
-    var jqw = $('.luosManager [func=setWifiName]');
+    var jqw = $('.luosManager [func=selectWebsocket]');
     var jqs = $('.luosManager [func=selectUSB]');
     jqw = jqw.filter("[eltID="+eltID+"]");
     jqs = jqs.filter("[eltID="+eltID+"]");

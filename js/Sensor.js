@@ -116,16 +116,16 @@ Sensor.prototype.update = function(){
         if(val!=undefined)
             this.currValue = val;
     }
-    else if(this.distanceSensorEnabledInput){
+    else if(this.s.distanceSensorEnabledInput){
         //var val = luosManager.getValue(this.s.luosInputParams);
         let val = luosManager.getValue({gate:"Luos0",alias:"Lidar_mod",pin:"distance"}); //!!! FAKE param before a mean to choose them!!!
         console.log("distanceSensorEnabledInput:",val)
         if(val!=undefined)
             this.currValue = val;
     }
-    else if(this.lightSensorEnabledInput){
+    else if(this.s.lightSensorEnabledInput){
         //var val = luosManager.getValue(this.s.luosInputParams);
-        let val = luosManager.getValue({gate:"Luos0",alias:"Lidar_mod",pin:"distance"}); //!!! FAKE param before a mean to choose them!!!
+        let val = luosManager.getValue({gate:"Luos0",alias:"light_sensor_mo",pin:"lux"}); //!!! FAKE param before a mean to choose them!!!
         if(val!=undefined)
             this.currValue = val;
     }
