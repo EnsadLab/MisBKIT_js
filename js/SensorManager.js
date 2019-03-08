@@ -1023,6 +1023,7 @@ class SensorManager{
                     var gate = sensor.s.luosInputParams["gate"] 
                     sensor.s.luosInputParams["alias"]=value;
                     var a = luosManager.getOutputs(gate,value);
+                    console.log("*********** getOutputs *******",a)
                     misGUI.showValue({class:"sensorManager",id:eltID,param:"pin",val:a})                    
                     break;
                 case "pin":
@@ -1036,8 +1037,8 @@ class SensorManager{
         }
     }
 
-    //Test moche : selector avec tous les inputs d'une gate 
-    /*
+    
+    /* //Test moche : selector avec tous les inputs d'une gate 
     setLuosGate(id,list){
         misGUI.showValue({class:"sensorManager",param:"inputs",val:list})
     }

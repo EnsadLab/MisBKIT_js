@@ -999,8 +999,11 @@ MisGUI.prototype.scanProgress =function(val){
 }
 
 MisGUI.prototype.temperature = function(index,value){
-    var prevt = parseInt($(".thermo").eq(index).html());
-    $(".thermo").eq(index).html(value+"°");
+    index += 1; //????? SkipClone ????????????
+    //var jqTermo = $(".thermo").eq(index);
+    var jqTermo = $("#divMotors .single-motor").eq(index).find(".thermo");
+    var prevt = parseInt(jqTermo.html());
+    jqTermo.html(value+"°");
     if(prevt==value)
         return;
     var motodiv = $(".single-motor").eq(index);
@@ -1178,6 +1181,17 @@ MisGUI.prototype.setMidiBlinkOn = function(motorIndex){
     $('.allMotors').find('.single-motor').eq(motorIndex).find('.midi-blinker').css("display", "block");
 }
 
+MisGUI.prototype.selectLuosConnexion = function(eltID,str){
+    var jqw = $('.luosManager [func=setWifiName]');
+    var jqs = $('.luosManager [func=selectUSB]');
+    jqw = jqw.filter("[eltID="+eltID+"]");
+    jqs = jqs.filter("[eltID="+eltID+"]");
+    if(str=="USB"){ jqw.hide(); jqs.show(); }
+    else{ jqs.hide(); jqw.show(); }
+    this.showValue({class:"luosManager",id:eltID,func:"selectConnexion",val:str});
+}
+
+//TODELETE
 MisGUI.prototype.toggleLuosWifi = function(eltID,usewifi){
     var jqw = $('.luosManager [func=selectWebsocket]');
     var jqs = $('.luosManager [func=selectUSB]');

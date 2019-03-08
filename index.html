@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>MisBKIT (2019-feb-18)</title>
+        <title>MisBKIT (2019-feb-23)</title>
         <link rel="stylesheet" href="css/jquery-ui.css">
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/toggle.css">
@@ -52,21 +52,28 @@
 										<br-->
 										<!--class="single-sensor ui-state-default activ closable"-->
 										<div class="luosGate closable" style="display:none;">
-												<button class="close"><img src="assets/close.png" alt=""></button>
-				
+												<button class="close"><img src="assets/close.png" alt=""></button>				
 												<input func="enable" id="robusOnOff" type="checkbox" class="power onoff" title="enable/disable">
-												<label class="toggle-small">
+
+												<select func="selectConnexion" class= "small tiny" style="width:100px;">
+													<option value="USB">USB</option>
+													<option value="WIFI">WIFI</option>
+													<option value="BLUETOOTH">BLUETOOTH</option>
+												</select>
+
+												<!--label class="toggle-small">
 													<input type="checkbox" func="toggleWifi" style="checked:true">
 													<div class="slider serial round" css=""></div>
-												</label>
+												</label-->
 												<select func="selectUSB"  class= "small tiny" style="width:250px; display:none;"></select>
 												<!--input  func="setWifiName" type="text" style="width:250px;" value="raspberrypi.local"-->
-												<select func="selectWebsocket"  class= "small tiny" style="width:250px;">
+												<!--select func="selectWebsocket"  class= "small tiny" style="width:250px;"-->
+												<select func="setWifiName"  class= "small tiny" style="width:250px;">
 													<option value="LuosNetwork">LuosNetwork</option>
-													<option value="luoswifi01">Luos Wifi 1</option>
-													<option value="luoswifi02">Luos Wifi 2</option>				
+													<option value="Luos-01">Luos-01</option>
+													<option value="Luos-02">Luos-02</option>				
 													<option value="Luos-03">Luos-03</option>		
-													<option value="luoswifi04">Luos Wifi 4</option>		
+													<option value="Luos-04">Luos-04</option>		
 													<option value="Luos-05">Luos-05</option>				
 												</select>
 

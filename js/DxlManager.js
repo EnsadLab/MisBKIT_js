@@ -634,10 +634,10 @@ DxlManager.prototype.addLuosMotor=function(gate,alias,dxlid){
         motor.m.textID = "luos_"+dxlid;
         motor.enable(false);
         misGUI.motorSettings(motor.index,motor.m);
-        
+        console.log("luosMotor:",motor);
+        return motor.index;        
     }
-    console.log("luosMotor:",motor);
-    return motor.index;
+    return undefined;
 }
 
 DxlManager.prototype.dxlWrite = function(dxlid,val,addr) { //id val param
@@ -645,9 +645,11 @@ DxlManager.prototype.dxlWrite = function(dxlid,val,addr) { //id val param
     cm9Com.pushMessage("dxlWrite "+dxlid+","+addr+","+val+"\n");
 }
 
-DxlManager.prototype.temperature = function(args){
-    console.log("temperature:",args);
-    misGUI.temperature(args[1],args[2]);
+DxlManager.prototype.temperature = function(args){ //"func",index,val
+    if(this.motors[args[1]]!=undefined){
+        this.motors[args[1]].setTemperature(args[2]);
+    }
+    /*
     oscMobilizing.sendOSC({
         address:"/mbk/temperature",
         args:[
@@ -655,7 +657,7 @@ DxlManager.prototype.temperature = function(args){
             {type:'i',value:args[2]}            
         ]
     });
-
+    */
 }
 
 
@@ -1006,7 +1008,13 @@ DxlManager.prototype.changeDxlID = function(id,newID){
     var motor = this.getMotorByID(id);
     if(motor)motor.enable(false);
 
-    cm9Com.pushMessage("dxlW "+id+",3,"+newID+"\n"); //3=ADDR_ID (PROTECTED)
+    if(motor.m.gate == "cm9")
+        cm9Com.pushMessage("dxlW "+id+",3,"+newID+"\n"); //3=ADDR_ID (PROTECTED)
+
+    else if(motor.m.gate == "luos"){ //UGLY PATCH
+        console.log("LUOS RENAMING DYNAMIXEL:",id,newID);
+        luosManager.renameDynamixel("Luos0",id,newID);
+    }
 
     if(motor){ //what if failed ?
         motor.dxlID(newID);

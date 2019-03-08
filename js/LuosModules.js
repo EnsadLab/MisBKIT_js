@@ -9,12 +9,11 @@ const WSClient  = require('websocket').client;
 
 bluetoothPaired = undefined;
 
-
 // create bluetooth device instance
 //const device = new bluetooth.DeviceINQ();
 
 //! removed setters 
-//! removed ioClass 
+//! removed ioClass ... to redo
 //! removed pushMessage
 //! removed emitters & user callbacks ... tothink
 //! removed yields ... tothink
@@ -50,6 +49,7 @@ class Module{
         }        
     }
 
+    /*
     addDirective(obj){
         var dir={};
         var count = 0;
@@ -65,6 +65,7 @@ class Module{
         }
         return count;
     }
+    */
 
     getDirective(){
         var dir={} ,count = 0;
@@ -88,6 +89,22 @@ class Module{
 
 }
 
+
+class Gate extends Module{
+    constructor(message){
+        super(message)
+        this.delay = 25;
+        this.modified={delay:5}
+    }
+    getDirective(){
+        var d = super.getDirective();
+        if(d!=undefined)
+            console.log("GATE:",this.alias,d);
+        return d;
+    }
+}
+
+
 class Void extends Module{
     constructor(message){
         super(message)
@@ -95,6 +112,13 @@ class Void extends Module{
     reset(){ //Pyluos dxl_detect
         console.log("*******RESET:",this.alias);
         this.setValue("reinit",0,1);
+    }
+}
+
+class GPIO extends Module{
+    constructor(message){
+        super(message);
+        this.outputs    = ["p1","p7","p8","p9"];
     }
 }
 
@@ -154,7 +178,7 @@ class DCMotor extends Module{
 class DynamixelMotor extends Module{
     constructor(message){
         super(message)
-        this.motorId = -1;
+        this.motorIndex;
         this.rot_position = 0;
         this.temperature  = 0;
         this.dxlSpeed  = 0;
@@ -168,41 +192,40 @@ class DynamixelMotor extends Module{
     update(message){
         super.update(message);
         //if(this.rot_position<-149) console.log("*********** popo:",this.rot_position);
-        dxlManager.updatePosition(this.motorId,this.rot_position)
+        dxlManager.updatePosition(this.motorIndex,this.rot_position)
+        if(message.temperature > 0){
+            dxlManager.temperature(["xxx",this.motorIndex,message.temperature])
+        }
     }
 
-    /*
-    addDirective(obj){ //register write
-        var dir={} ,count = 0;
-        Object.entries(this.modified).forEach(([k,v])=>{ //best than for in ?
-            if(v>0){
-                this.modified[k]=v-1;
-                if(k=="dxlSpeed"){
-                    dir["register"]=[32,this.dxlSpeed];
-                    console.log("DXLSPEED:",dir)                  
-                }else{
-                    dir[k]=this[k];
-                }
-                count++;
-            }
-        });
-        if(count>0){
-            obj[this.alias]=dir;
+    getDirective(){
+        if(this.set_id == undefined){
+            return super.getDirective();
         }
-        return count;
+        else{
+            if(this.modified.set_id>0){
+                this.modified.set_id -= 1;
+                var r = {set_id:this.set_id}
+                console.log("renaming",r,this.modified);
+                return {set_id:this.set_id};
+            }
+        }
     }
-    */
 
     setCompliant(onoff){
-        this.setValue("compliant",onoff);
-        if(onoff){
-            this.setValue("target_rot_speed",0,6); //AX12 only ?
-            this.setValue("wheel_mode",true,2);
+        if(this.set_id == undefined){ //patch
+            this.setValue("compliant",onoff);
+            if(onoff){
+                this.setValue("target_rot_speed",0,6); //AX12 only ?
+                this.setValue("wheel_mode",true,2);
+            }
         }
         //console.log("....set_id",this.set_id,this.modified)
     }
 
     modeWheel(){
+        if(this.set_id == undefined){ //patch
+
         /*
         if(this.set_id != undefined){
             this.setValue("set_id",7);
@@ -213,27 +236,35 @@ class DynamixelMotor extends Module{
         this.setValue("target_rot_speed",0,10);//idem +1
         this.setValue("wheel_mode",true,2);//ne marche pas forcement du 1er coup
         //this.setValue("target_rot_speed",0,5);//idem +1
+        }
     }
 
     modeJoint(speed,pos){
-        /*
-        if(this.set_id != undefined){
-            this.setValue("set_id",7);
+        if(this.set_id == undefined) {//patch
+            /*
+            if(this.set_id != undefined){
+                this.setValue("set_id",7);
+            }
+            console.log("....set_id",this.set_id,this.modified)
+            */
+            this.setValue("compliant",false);
+            this.setValue("target_rot_position",this.rot_position,5);//idem +1
+            this.setValue("wheel_mode",false,5);//ne marche pas forcement du 1er coup
+            this.setValue("target_rot_speed",speed,10);//idem +1
         }
-        console.log("....set_id",this.set_id,this.modified)
-        */
-        this.setValue("compliant",false);
-        this.setValue("target_rot_position",this.rot_position,5);//idem +1
-        this.setValue("wheel_mode",false,5);//ne marche pas forcement du 1er coup
-        this.setValue("target_rot_speed",speed,10);//idem +1
     }    
     setSpeed(val){
+        if(this.set_id == undefined){ //patch
+
         var v = val*2;        
         this.setValue("target_rot_speed",parseFloat(val.toFixed(2)));
+        }
     }
     setPower(val){
-        let p = 110*(val/100); //AX12 : rot_speed Max : 110 ???
-        this.setValue("target_rot_speed",parseFloat(p.toFixed(2)));
+        if(this.set_id == undefined){ //patch
+            let p = 110*(val/100); //AX12 : rot_speed Max : 110 ???
+            this.setValue("target_rot_speed",parseFloat(p.toFixed(2)));
+        }
         /*
         let dxls = 0;
         if(val>=0) dxls = (1023*val/100)|0;
@@ -250,7 +281,8 @@ class DynamixelMotor extends Module{
     }
 
     setPosition(val){
-        this.setValue("target_rot_position",parseFloat(val.toFixed(2)));                
+        if(this.set_id == undefined) //patch
+            this.setValue("target_rot_position",parseFloat(val.toFixed(2)));                
     }
 
     getPosition(){
@@ -258,25 +290,20 @@ class DynamixelMotor extends Module{
     }
 
     rename(val){
+        console.log("RENAME : ",val)
         this.modified = {};
-        this.setValue("set_id",val);
+        this.setValue("set_id",val,2);
+        this.setValue("rename","",2)
     }
     
     reset(){ //Pyluos :  detect():
         console.log("*******RESET:",this.alias);
         this.setValue("reinit", 0, 1)
-        /*
-        if(this.set_id != undefined){
-            this.setValue("set_id",7);
-        }
-        console.log("reset ....set_id",this.set_id,this.modified)
-        */
-
     }
 
 }
 
-class Gate{
+class LuosGate{
     constructor(id){
         this.id = id;
         this.enabled = true; //for luos alone
@@ -286,8 +313,9 @@ class Gate{
         this.modules = {}; //
         //this.dynamixels = {}
     
-        this.useWifi = false; //true = wifi; false = serial
-        this.wifiName   = "luoswifi0";
+        //this.useWifi = false; //true = wifi; false = serial
+        this.connectionType = "USB"; //"WIFI" "BLUETOOTH"
+        this.wifiName   = "LuosNetwork";
 
         //this.serialIsReady = false;
         this.serialName = undefined;
@@ -332,23 +360,23 @@ class Gate{
         if(this.btConnection!=undefined){
             this.btConnection.write(Buffer.from(str,'utf-8'), function(err, bytesWritten) {
                 if (err){ console.warn("bt write:",err); }
-                console.log("BT->",str);
+                //console.log("BT->",str);
             });
         }
         else if( (this.wsConnection!=undefined)&&(this.wsConnection.connected) ){
             this.wsConnection.sendUTF(str);
-            console.log("LUOS WS sent:",str)
+            //console.log("WS->",str)
         }        
         else if(this.serialPort){
             var self=this;
             this.serialPort.write(Buffer.from(str),function(err){
                 if(err){console.log("LUOS USB:",err)}
-                //self.lastMsgTime = performance.now();
             });
             this.serialPort.drain(function(){
                 //console.log( "DTM:",(performance.now()-self.lastMsgTime) )
                 let t = performance.now();
                 //console.log("SENT:",str,(t-self.lastMsgTime));
+                //console.log("USB->",str);
                 self.lastMsgTime = t; //performance.now();
             });
         }
@@ -366,7 +394,7 @@ class Gate{
 
     onMessage(json){
 
-        if( (performance.now()-this.sendTime)>80 ){
+        if( (performance.now()-this.sendTime)>45 ){
             //colect directives
             var momos = {} , count = 0;
             Object.entries(this.modules).forEach(([k,v])=>{
@@ -386,8 +414,8 @@ class Gate{
         var parsed;
         try{ parsed = JSON.parse(json); }
         catch(err){ /*console.log("bad json")*/ }//,json.toString('utf8'))};
-        
         if(parsed!=undefined){
+            //console.log(parsed)
             if(parsed.modules!=undefined){ //V3 : message
                 for( var g in parsed.modules){
                     if(this.modules[g]!=undefined){
@@ -416,18 +444,23 @@ class Gate{
             var momo = array[i];
             switch(momo.type){
                 case "DynamixelMotor": this.modules[momo.alias]=new DynamixelMotor(momo); break;
+                case "GPIO": this.modules[momo.alias]=new GPIO(momo); break;
                 case "DistanceSensor": this.modules[momo.alias]=new DistanceSensor(momo); break;
                 case "LightSensor":    this.modules[momo.alias]=new LightSensor(momo);    break;
                 case "Potentiometer" : this.modules[momo.alias]=new Potentiometer(momo);  break;
                 case "DCMotor" : this.modules[momo.alias]=new DCMotor(momo); break;
                 case "Void" : this.modules[momo.alias]=new Void(momo); break;
+                case "Gate" :
+                    this.modules[momo.alias]=new Gate(momo);
+                    this.gateAlias = momo.alias;
+                    break;
                 default: this.modules[momo.alias] = new Module(momo); break;
             }
 
             info += JSON.stringify(momo)+"\n";
-            if( momo.type == "Gate"){ //old was 'gate'
-                this.gateAlias = momo.alias;
-            }
+            //if( momo.type == "Gate"){ //old was 'gate'
+            //    this.gateAlias = momo.alias;
+            //}
         }
         this.scanDxl();
 
@@ -451,14 +484,27 @@ class Gate{
     }
 
     open(){
-        //this.msgStack = [];
         if(this.enabled){
+            switch(this.connectionType){ //... use Function ?
+                case "USB":
+                    luosManager.scanSerials();
+                    this.openSerial();
+                    break;
+                case "WIFI":
+                    this.startWebSocket();
+                    break;
+                case "BLUETOOTH":
+                    this.openBlueTooth();
+                    break;
+            }
+            /*
             if(this.useWifi){
                 this.startWebSocket()
                 //this.openBlueTooth();
             }else{
                 this.openSerial()
             }
+            */
         }
     }
 
@@ -491,20 +537,23 @@ class Gate{
         else luosManager.showState(this.id,false,"closed")
     }
 
-    setWifi(onoff){ //from ui or settings
+    selectConnexion(str){//"USB" "WIF" "BLUETOOTH"
         this.close();
-        this.useWifi = onoff;
-        luosManager.scanSerials()
+        this.connectionType = str;
+        console.log("selectConnection:",str);
+        misGUI.selectLuosConnexion(this.id,str);
     }
 
     selectWebsocket(name){
         this.close();
         this.wifiName = name;
-        misGUI.showValue({class:"luosManager",id:this.id,func:"selectWebsocket",val:name})
+        misGUI.showValue({class:"luosManager",id:this.id,func:"Wireless:",val:name})
     }
 
     setWifiName(name){ //from ui or settings
+        this.close();
         this.wifiName = name;
+        console.log("setWifiName:",name)
     }
 
     setSerialName(name){ //from ui or settings
@@ -514,7 +563,6 @@ class Gate{
 
     startWebSocket(){
         this.stopDetection();
-        this.startBlink();
         this.close();
         this.wsConnection = undefined;
         this.gateAlias = undefined;
@@ -522,7 +570,8 @@ class Gate{
     }
 
     openWebSocket(){
-        luosManager.showState(this.id,true,"connecting to "+this.wifiName );
+        luosManager.showState(this.id,true,"connecting to "+this.wifiName+".local" );
+        this.startBlink();
         this.wsClient = new WSClient();
         this.wsConnection = undefined;
         var self = this;        
@@ -545,6 +594,7 @@ class Gate{
                 let ig = str.indexOf('{"gate');
                 if(ig>=0){
                     self.onMessage('{"modules":'+str.substr(ig));
+                    //console.log("dtr:",dtr,str);
                 }
                 else if(str.startsWith('{"route_table":')){
                     self.onMessage(str);
@@ -569,6 +619,8 @@ class Gate{
             self.connected = true;
             if(self.gateAlias == undefined)
                 self.timedDetection(100);
+            else
+                self.stopBlink();
             misGUI.showValue({class:"luosGate",func:"enable",id:self.id,val:true});       
         });
         this.wsClient.connect('ws://'+self.wifiName+'.local:9342',null)
@@ -586,35 +638,23 @@ class Gate{
 
         this.startBlink();
         var self = this;
-        var addressFound;
+        var addressFound = undefined;
+        bluetoothPaired = [];
         //ok make a new clean one
         this.btConnection = new (require('bluetooth-serial-port')).BluetoothSerialPort();
-        this.btConnection.listPairedDevices(function(pairedDevices) {
-            pairedDevices.forEach(function(device) {
-                console.log("PAIRED:",device);
-            });
-        });
         this.btConnection.on('data', function(buffer) {
-            /*
-            var seps = [];
-            for(var i=0;i<buffer.length;i++){
-                if(buffer[i]<32)seps.push(+buffer[i]);
-            }
-            console.log(seps);
-            */
             try{
                 var spl = buffer.toString('utf-8').split(/\r\n|\r|\n/g); //(/\r?\n/);
+                console.log("bt>",spl);
                 for(var i=0;i<spl.length;i++){
-                    if(self.gateAlias==undefined)
-                        console.log(spl[i]);
+                    //if(self.gateAlias==undefined)
+                    //console.log(spl[i]);
 
                     if( (spl[i].length>12) && (spl[i][0]=='{') && ( spl[i].endsWith("}") ) ) //early filter modules:}}} gate }]}
                         self.onMessage(spl[i]);
                 }
             }
-            catch(err){console.log(err)};
-            //cmds = str.split("\r");
-            
+            catch(err){console.log(err)};            
         });
 
         this.btConnection.on("finished",function(){
@@ -663,7 +703,35 @@ class Gate{
             self.stopBlink();
             luosManager.showState(self.id,"ERROR","No Luos Bluetooth found")
         });
-        this.btConnection.inquire();
+        //this.btConnection.inquire(); => finished
+
+        this.btConnection.listPairedDevices(function(devices) {
+            devices.forEach(function(device) {
+                console.log("BlueTooth paired:",device);
+                if(addressFound == undefined){
+                    //bluetoothPaired.push(device);
+                    if(device.name==self.wifiName){
+                        addressFound = device.address;
+                        console.log("bluetooth paired luos:",device.name,addressFound);
+                        self.btConnection.connect(addressFound,1,function(){
+                            console.log('btSerial connected');
+                            self.gateAlias = undefined;
+                            self.connected = true;
+                            self.timedDetection(100);
+                            self.stopBlink();
+                            luosManager.showState(self.id,true,"Bluetooth connected")
+                        },function(err){
+                            console.log('btSerial connect error:',err);
+                            self.stopBlink();
+                            luosManager.showState(self.id,"ERROR","Bluetooth:\n"+err)
+                        });
+                    }
+                }
+    
+            });
+        });
+
+
     }
 
     openSerial(){
@@ -732,7 +800,8 @@ class Gate{
                     self.bufferHead = 0;
                     //if(dtr>3)
                         self.onMessage( line );
-                    if(dtr>60)console.log("DTR:",dtr); //,json)
+                    //if(dtr>60)
+                    //console.log("DTR:",dtr); //,json)
                 }
                 else if(++self.bufferHead>1022){ //!!! OVERFLOW
                     self.bufferHead=0; //forget ! ?
@@ -775,39 +844,43 @@ class Gate{
     }
 
     toggleWifi(onoff){
-        this.close();
-        this.useWifi = onoff;
-        misGUI.toggleLuosWifi(this.id,onoff);
     }
 
     getSettings(){
         return {
             gate:this.gateAlias,
-            connection: (this.useWifi)? "wifi":"usb",
+            connection: this.connectionType,
             serial:this.serialName,
-            wifi:this.wifiName
+            wireless:this.wifiName
         }
     }
     
-    rename(){
-
-
-    }
-
-
-
+    //{"detection":{}}
     reset(){
         //Object.entries(this.modules).forEach(([k,m])=>{ //best than for in ?
-        for(var m in this.modules ){
-            if( typeof(this.modules[m].reset) == "function" ){
-                this.modules[m].reset();
-            }
-        }//);
-        this.gateAlias = undefined;
-        setTimeout(this.timedDetection.bind(this,100),500);
-
+        var self = this;
+        setTimeout(function(){
+            for(var m in self.modules ){
+                if( typeof(self.modules[m].reset) == "function" ){
+                    self.modules[m].reset();
+                }
+            }//);
+            self.gateAlias = undefined;
+            setTimeout(self.timedDetection.bind(self,10),1000);
+        },500);
     }
     
+    renameDynamixel(prevDxlID,newDxlID){
+        var alias = "dxl_"+prevDxlID;
+        if(this.modules[alias]!=undefined){
+            console.log("!!! GATE renaming DXL !!!",alias,newDxlID)
+            this.modules[alias].rename(+newDxlID);
+            this.reset();
+        }else{
+            console.log("!!! GATE renaming DXL NOT FOUND !!!",alias)
+        }
+    }
+
 
     scanDxl(){  //called after initModules & dxlManager
         let dcNum = 100; //ugly patch
@@ -817,15 +890,15 @@ class Gate{
                 //!!! danger : renomage des 'modules' my_dxl_xx !!!
                 var dxlID = +momo.alias.substr(momo.alias.lastIndexOf("_")+1);
                 if(!isNaN(dxlID)){
-                    momo.motorId = dxlManager.addLuosMotor(this.id,momo.alias,dxlID);
+                    momo.motorIndex = dxlManager.addLuosMotor(this.id,momo.alias,dxlID);
                     //momo.toSend = {mode:true,position:true,speed:true};
                     //momo.update     = function(){console.log("momo.Function")}
                     //momo.nextMessage = this.testYield.bind(momo); //function(){console.log("dynamixel.Message");return "dxl:"+this.alias;}
-                    console.log("LUOS DLX:",momo.motorId)
+                    console.log("LUOS DLX:",momo.motorIndex)
                 }
             }
             else if(momo.type=="DCMotor"){
-                momo.motorId = dxlManager.addLuosMotor(this.id,momo.alias,dcNum);
+                momo.motorIndex = dxlManager.addLuosMotor(this.id,momo.alias,dcNum);
                 dcNum++;
             }
         }
@@ -869,4 +942,4 @@ class Gate{
 
 }//class LuosGate
 
-module.exports = { Gate,Module,DynamixelMotor }
+module.exports = { LuosGate,Module,DynamixelMotor }
