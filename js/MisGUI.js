@@ -240,12 +240,12 @@ MisGUI.prototype.changeSettings = function(className,func,params,eltID){
 
 //opt: {class:classname,id:eltID,func:func,param:param,val:value}
 MisGUI.prototype.showValue=function(opt){
-    //console.log("showValue:",opt);
     var sel = "."+opt.class+" ";
     if(opt.id!=undefined)sel+="[eltID="+opt.id+"]";
     if(opt.func!=undefined)sel+="[func="+opt.func+"]";
     if(opt.param!=undefined)sel+="[param="+opt.param+"]";
     var elts = $(sel);
+    //console.log("showValue",opt,elts.length)
     if(elts.length > 0){
         this.setElementValue(elts,opt.val);
     }
@@ -325,6 +325,7 @@ MisGUI.prototype.setElementValue = function(elt,value){
                     });
                 }
                 else{
+                    console.log("showSelection",value,$(this).find("option[value='"+value+"']").length )
                     if($(this).find("option[value='"+value+"']").length>0)e.val(value);
                     else e.prop("selectedIndex", 0); //select first option par defaut
                 }
@@ -998,8 +999,11 @@ MisGUI.prototype.scanProgress =function(val){
 }
 
 MisGUI.prototype.temperature = function(index,value){
-    var prevt = parseInt($(".thermo").eq(index).html());
-    $(".thermo").eq(index).html(value+"°");
+    index += 1; //????? SkipClone ????????????
+    //var jqTermo = $(".thermo").eq(index);
+    var jqTermo = $("#divMotors .single-motor").eq(index).find(".thermo");
+    var prevt = parseInt(jqTermo.html());
+    jqTermo.html(value+"°");
     if(prevt==value)
         return;
     var motodiv = $(".single-motor").eq(index);
@@ -1177,8 +1181,19 @@ MisGUI.prototype.setMidiBlinkOn = function(motorIndex){
     $('.allMotors').find('.single-motor').eq(motorIndex).find('.midi-blinker').css("display", "block");
 }
 
-MisGUI.prototype.toggleLuosWifi = function(eltID,usewifi){
+MisGUI.prototype.selectLuosConnexion = function(eltID,str){
     var jqw = $('.luosManager [func=setWifiName]');
+    var jqs = $('.luosManager [func=selectUSB]');
+    jqw = jqw.filter("[eltID="+eltID+"]");
+    jqs = jqs.filter("[eltID="+eltID+"]");
+    if(str=="USB"){ jqw.hide(); jqs.show(); }
+    else{ jqs.hide(); jqw.show(); }
+    this.showValue({class:"luosManager",id:eltID,func:"selectConnexion",val:str});
+}
+
+//TODELETE
+MisGUI.prototype.toggleLuosWifi = function(eltID,usewifi){
+    var jqw = $('.luosManager [func=selectWebsocket]');
     var jqs = $('.luosManager [func=selectUSB]');
     jqw = jqw.filter("[eltID="+eltID+"]");
     jqs = jqs.filter("[eltID="+eltID+"]");

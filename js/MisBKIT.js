@@ -20,7 +20,7 @@ luosManager   = require("./LuosManager");
 fakeManager    = require("./fakeManager.js");;
 
 
-//acces them by little name
+//acces them by little name (script)
 var managers = {
     dxl    :require("./DxlManager.js"),
     anim   :require("./AnimManager.js"),
@@ -40,6 +40,7 @@ class MisBKIT{
        this.updateTimer;
 
        this.ctrlStopAll = 0;
+       this.time = 0;
     }
 
     init(){
@@ -133,9 +134,15 @@ class MisBKIT{
     }
 
     update(){ //"Mainloop"
+        var t = performance.now();
+        var tfr = t-this.time;
+        this.time = t;
+        //if(tfr>60)console.log("FRAME:",tfr)
+
         sensorManager.update();
         scriptManager.update(); //may command anim,motors ...
         animManager.update();
+        dxlManager.update();
     }
 
     terminate(){

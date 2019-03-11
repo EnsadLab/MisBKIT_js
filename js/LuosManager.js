@@ -3,6 +3,8 @@
 const SerialLib  = require('serialport');
 const LuosModules = require("./LuosModules.js");
 
+//const Bluetooth = require('node-bluetooth');
+//const btDevice  = new Bluetooth.DeviceINQ();
 
 class LuosManager{
     constructor(){
@@ -13,7 +15,7 @@ class LuosManager{
     }
 
     init(){
-        misGUI.initManagerFunctions(this,this.className);
+        misGUI.initManagerFunctions(this,this.className);          
     }
 
     cmd(func,eltID,arg){ //eltID = gateID
@@ -56,7 +58,6 @@ class LuosManager{
         });        
     }
 
-
     closeAll(){
         for( var id in this.gates ){
             this.gates[id].close();
@@ -64,18 +65,18 @@ class LuosManager{
         misGUI.showValue({class:"luosManager",func:"freeze",val:false});
     }
     
-    addGate(settings){
-        var id = "Luos"+this.nextGateIndex++;
-        this.gates[id]= new LuosModules.Gate(id); 
-        //console.log("+++GATE:",this.gates[id]);//???[0]:"L" [1]:"u" ....
-        if(settings){
-            for( var s in settings ){
-                this.gates[id][s] = settings[s]
-            }        
-        }
+    addGate(id,settings){
+        var gate = new LuosModules.LuosGate(id);
+        this.gates[id] = gate;
         misGUI.cloneElement( ".luosGate",id);
-        misGUI.toggleLuosWifi(id,this.gates[id].useWifi);
-        return this.gates[id];
+        if(settings!=undefined){
+            gate.serialName     = settings.serial;
+            gate.wifiName       = settings.wireless;
+            gate.selectConnexion(settings.connection);
+            misGUI.showValue({class:"luosManager",id:id,func:"selectUSB",val:gate.serialName});
+            misGUI.showValue({class:"luosManager",id:id,func:"setWifiName",val:gate.wifiName});
+        }
+        return gate;
     }
 
     getGates(){
@@ -90,6 +91,7 @@ class LuosManager{
     }
 
     getOutputs(gateId,alias){
+        console.log("getOutputs:",gateId,alias)
         if(this.gates[gateId]!=undefined){
             if(this.gates[gateId].modules[alias]!=undefined){
                 return this.gates[gateId].modules[alias].outputs;
@@ -131,31 +133,17 @@ class LuosManager{
                 catch(err){ console.log("BAD LUOS SETTINGS ",err)}
                 if(s!=undefined){
                     for( var id in s ){
-                        var c = s[id].connection;
-                        if(c=="wifi"){
-                            var gate = self.addGate(id);
-                            gate.setWifiName(s[id].wifi);
-                            gate.setWifi(true);
-                            gate.enable(true);
-                            count++;
-                            misGUI.toggleLuosWifi(id,true);
-                        }
-                        else if(c=="usb"){
-                            var gate = self.addGate(id);
-                            gate.setSerialName(s[id].serial);
-                            gate.setWifi(false);
-                            gate.enable(true);
-                            count++;
-                            misGUI.toggleLuosWifi(id,false);
-                        }
+                        var gate = self.addGate(id,s[id]);
+                        count++;
                     }
                 }
             }
             if(count==0){
                 console.log("===== LUOS Default gate =====")
                 var gate = self.addGate("Luos0"); //default
+                gate.selectWebsocket("luosnetwork");
                 gate.setSerialName(names[0]);
-                gate.setWifi(false);
+                gate.selectConnexion("USB");
             }
         });
     }
@@ -169,6 +157,12 @@ class LuosManager{
         }
     }
      
+    renameDynamixel(gateid,prevDxlID,newDxlID){
+        if(this.gates[gateid]){
+            this.gates[gateid].renameDynamixel(prevDxlID,newDxlID);
+        }
+    }
+
     scanDxl(){
         for( var g in this.gates ){
             this.gates[g].scanDxl();//--->dxlManager.addLuosBot
@@ -186,13 +180,13 @@ class LuosManager{
             else {
                 //console.log("SerialPorts:",ports.length)
                 for (var i = 0; i < ports.length; i++) {
-                    //console.log("serials:",ports[i].comName,ports[i].manufacturer);
+                    console.log("serials:",ports[i].comName,ports[i].manufacturer);
                     if( (ports[i].manufacturer == "Pollen Robotics")||
-                        (ports[i].manufacturer == "Pollen-Robotics")||
-                        (ports[i].manufacturer == "Luos-Robotics")) //!!!
+                        (ports[i].manufacturer == "Pollen-Robotics")||//!!!
+                        (ports[i].manufacturer == "Luos-Robotics")  ||//!!!
+                        (ports[i].manufacturer == "FTDI") )
                         names.push(ports[i].comName);
                 }
-                console.log("Luos serials:",names);
                 misGUI.showValue({class:"luosManager",func:"selectUSB",val:names});
                 self.usbPorts = names;
             }

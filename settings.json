@@ -27,10 +27,10 @@
   "sensors": [],
   "motors": [
     {
-      "canal": "cm9",
-      "luos": [],
+      "gate": "cm9",
+      "alias": "",
       "dxlID": 0,
-      "textID": "cm9",
+      "textID": "-",
       "enabled": false,
       "model": -1,
       "clockwise": false,
@@ -41,17 +41,13 @@
       "speedMin": -100,
       "speedMax": 100,
       "torqueMax": 1023,
-      "stillAngle": 0,
-      "midi": {
-        "port": "",
-        "msg": "CC:0"
-      }
+      "stillAngle": 0
     },
     {
-      "canal": "cm9",
-      "luos": [],
+      "gate": "cm9",
+      "alias": "",
       "dxlID": 0,
-      "textID": "cm9",
+      "textID": "-",
       "enabled": false,
       "model": -1,
       "clockwise": false,
@@ -62,17 +58,13 @@
       "speedMin": -100,
       "speedMax": 100,
       "torqueMax": 1023,
-      "stillAngle": 0,
-      "midi": { 
-        "port": "",
-        "msg": "CC:0"
-      }
+      "stillAngle": 0
     },
     {
-      "canal": "cm9",
-      "luos": [],
+      "gate": "cm9",
+      "alias": "",
       "dxlID": 0,
-      "textID": "cm9",
+      "textID": "-",
       "enabled": false,
       "model": -1,
       "clockwise": false,
@@ -83,17 +75,13 @@
       "speedMin": -100,
       "speedMax": 100,
       "torqueMax": 1023,
-      "stillAngle": 0,
-      "midi": {
-        "port": "",
-        "msg": "CC:0"
-      }
+      "stillAngle": 0
     },
     {
-      "canal": "cm9",
-      "luos": [],
+      "gate": "cm9",
+      "alias": "",
       "dxlID": 0,
-      "textID": "cm9",
+      "textID": "-",
       "enabled": false,
       "model": -1,
       "clockwise": false,
@@ -104,17 +92,13 @@
       "speedMin": -100,
       "speedMax": 100,
       "torqueMax": 1023,
-      "stillAngle": 0,
-      "midi": {
-        "port": "",
-        "msg": "CC:0"
-      }
+      "stillAngle": 0
     },
     {
-      "canal": "cm9",
-      "luos": [],
+      "gate": "cm9",
+      "alias": "",
       "dxlID": 0,
-      "textID": "cm9",
+      "textID": "-",
       "enabled": false,
       "model": -1,
       "clockwise": false,
@@ -125,17 +109,13 @@
       "speedMin": -100,
       "speedMax": 100,
       "torqueMax": 1023,
-      "stillAngle": 0,
-      "midi": {
-        "port": "",
-        "msg": "CC:0"
-      }
+      "stillAngle": 0
     },
     {
-      "canal": "cm9",
-      "luos": [],
+      "gate": "cm9",
+      "alias": "",
       "dxlID": 0,
-      "textID": "cm9",
+      "textID": "-",
       "enabled": false,
       "model": -1,
       "clockwise": false,
@@ -146,11 +126,7 @@
       "speedMin": -100,
       "speedMax": 100,
       "torqueMax": 1023,
-      "stillAngle": 0,
-      "midi": {
-        "port": "",
-        "msg": "CC:0"
-      }
+      "stillAngle": 0
     }
   ]
 }

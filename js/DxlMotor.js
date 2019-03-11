@@ -550,4 +550,9 @@ Dxl.prototype.setStillAngle = function(val){
     console.log("setStillAngle:",this.m.stillAngle)
 }
 
-
+Dxl.prototype.setTemperature = function(val){
+    if(val!=this.temperature){
+        this.temperature = val;
+        misGUI.temperature(this.index,val);
+    }
+}

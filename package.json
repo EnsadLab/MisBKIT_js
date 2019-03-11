@@ -1,10 +1,11 @@
 {
-  "name": "MisBKIT-2019-feb-01",
-  "version": "6.0.7",
+  "name": "MisBKIT-2019-03-08",
+  "version": "6.0.8",
   "author": "Didier Bouchon, Cecile Bucher, Alexandre Dechosal",
   "description": "",
   "main": "main.js",
   "dependencies": {
+    "bluetooth-serial-port": "^2.2.1",
     "mdns-js": "^1.0.3",
     "mdns-js2": "^0.1.5",
     "midi": "^0.9.5",
