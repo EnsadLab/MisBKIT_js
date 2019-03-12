@@ -46,7 +46,7 @@ class LuosManager{
 
     //opt = {gate:"Luos0",module:"dxl_1",pin:"rot_position"}
     getValue(opt){
-        console.log("getvalue:",opt);
+        //console.log("getvalue:",opt);
         if(this.gates[opt.gate]!=undefined){
             return this.gates[opt.gate].getValue(opt.alias,opt.pin);
         }

@@ -156,6 +156,33 @@ class LightSensor extends Module{
     }
 }
 
+class Servo extends Module{
+    constructor(message){
+        super(message);
+        this.position = 0;
+        this.parameters = [180,0.0005,0.0015];//max_angle , min_pulse , max_pulse
+        this.outputs = ["position"];
+    }
+    setPosition(val){
+        console.log("setPosition:",val)
+        this.position = val;
+        this.setValue("target_rot_position",parseFloat(val.toFixed(2)));                
+    }
+    setMaxAngle(val){
+        this.parameters[0]=val;
+        this.modified.parameters = 1;
+    }
+    setMinPulse(val){
+        this.parameters[1]=val;
+        this.modified.parameters = 1;
+    }
+    setMaxPulse(val){
+        this.parameters[2]=val;
+        this.modified.parameters = 1;
+    }
+
+}
+
 class DCMotor extends Module{
     constructor(message){
         super(message);
@@ -365,7 +392,7 @@ class LuosGate{
         }
         else if( (this.wsConnection!=undefined)&&(this.wsConnection.connected) ){
             this.wsConnection.sendUTF(str);
-            //console.log("WS->",str)
+            console.log("WS->",str)
         }        
         else if(this.serialPort){
             var self=this;
@@ -449,6 +476,7 @@ class LuosGate{
                 case "LightSensor":    this.modules[momo.alias]=new LightSensor(momo);    break;
                 case "Potentiometer" : this.modules[momo.alias]=new Potentiometer(momo);  break;
                 case "DCMotor" : this.modules[momo.alias]=new DCMotor(momo); break;
+                case "Servo" : this.modules[momo.alias]=new Servo(momo); break;
                 case "Void" : this.modules[momo.alias]=new Void(momo); break;
                 case "Gate" :
                     this.modules[momo.alias]=new Gate(momo);
@@ -898,6 +926,10 @@ class LuosGate{
                 }
             }
             else if(momo.type=="DCMotor"){
+                momo.motorIndex = dxlManager.addLuosMotor(this.id,momo.alias,dcNum);
+                dcNum++;
+            }
+            else if(momo.type=="Servo"){
                 momo.motorIndex = dxlManager.addLuosMotor(this.id,momo.alias,dcNum);
                 dcNum++;
             }
