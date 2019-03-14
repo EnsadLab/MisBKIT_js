@@ -212,7 +212,8 @@ Sensor.prototype.init = function(){
             //console.log("-------CM9 addcallback---------");
             //cm9Com.setCallback(+this.s.pin,this.onValue.bind(this));
             break;
-        case "Robus":
+        case "luos": // robus does not exist anymore.
+        //case "Robus":
             //console.log("Robus addcallback");
             //robusManager.setCallback(this.s.address,this.s.name,this.onValue.bind(this));
             break;

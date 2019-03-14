@@ -28,7 +28,7 @@ var connections = [
     "motor",
     "mobilizing", 
     "animations",
-    "robus",
+    "luos",
     "sinus",
     "random"
 ]
@@ -447,7 +447,7 @@ class SensorManager{
                 $.each(connections,function(i,name){
                     var k = name + "EnabledInput";
                     sensorManager.getSensorWithID(eltID).s[k] = false;
-                    //console.log("disable:",name);
+                    console.log("disable:",name);
                     misGUI.setManagerValue("sensorManager","changeSettingsVariable",false,eltID,name+"EnabledInput");
                 });
                 
