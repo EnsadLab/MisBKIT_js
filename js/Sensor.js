@@ -41,7 +41,7 @@ Sensor = function () {
         toMotorIndex: 0,
         animationsEnabledOutput: false,
         luosEnabledInput: false,
-        luosInputParams: {gate:"none",alias:"none",pin:"none"},
+        luosInputParams: {gate:"Luos0",alias:"none",pin:"none"},
         sinusEnabledInput: false,
         //sinusParams: {period:5,offset:0,current:0},
         sinusParams: {amplitude:1.0,offset:0.0,period:1.0,current:0},
@@ -54,8 +54,8 @@ Sensor = function () {
         input_entry: "",
         output_entries:[],
         alpha: 0.5,
-        distanceSensorEnabledInput: false,
-        lightSensorEnabledInput: false,
+        distanceSensorEnabledInput: false, //!!! use luosInputParams.alias
+        lightSensorEnabledInput: false,    //!!! use luosInputParams.alias
     };
 
     //Suggestion: an object by input ...
@@ -109,6 +109,8 @@ Sensor.prototype.update = function(){
     if(!this.s.enabled)
         return;
 
+    //console.log("S update:",this.s.luosEnabledInput,this.s.distanceSensorEnabledInput)
+
     //NOTE: should use 1 enabled and switch(this.s.device) to select what to do
     //      or better : use class hierarchy , or change update function at construct time !
     if(this.s.luosEnabledInput){
@@ -117,15 +119,15 @@ Sensor.prototype.update = function(){
             this.currValue = val;
     }
     else if(this.s.distanceSensorEnabledInput){
-        //var val = luosManager.getValue(this.s.luosInputParams);
-        let val = luosManager.getValue({gate:"Luos0",alias:"Lidar_mod",pin:"distance"}); //!!! FAKE param before a mean to choose them!!!
-        console.log("distanceSensorEnabledInput:",val)
+        //let val = luosManager.getValue({gate:"Luos0",alias:"Lidar_mod",pin:"distance"}); //!!! FAKE param before a mean to choose them!!!
+        let val = luosManager.getValue(this.s.luosInputParams);
+        //console.log("distanceSensorEnabledInput:",this.s.luosInputParams,val)
         if(val!=undefined)
             this.currValue = val;
     }
     else if(this.s.lightSensorEnabledInput){
-        //var val = luosManager.getValue(this.s.luosInputParams);
-        let val = luosManager.getValue({gate:"Luos0",alias:"light_sensor_mo",pin:"lux"}); //!!! FAKE param before a mean to choose them!!!
+        //let val = luosManager.getValue({gate:"Luos0",alias:"light_sensor_mo",pin:"lux"}); //!!! FAKE param before a mean to choose them!!!
+        let val = luosManager.getValue(this.s.luosInputParams);
         if(val!=undefined)
             this.currValue = val;
     }

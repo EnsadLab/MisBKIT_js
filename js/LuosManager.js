@@ -70,9 +70,10 @@ class LuosManager{
         this.gates[id] = gate;
         misGUI.cloneElement( ".luosGate",id);
         if(settings!=undefined){
-            gate.serialName     = settings.serial;
-            gate.wifiName       = settings.wireless;
-            gate.selectConnexion(settings.connection);
+            //gate.serialName     = settings.serial;
+            //gate.wifiName       = settings.wireless;
+            //gate.selectConnexion(settings.connection);
+            gate.setSettings(settings)
             misGUI.showValue({class:"luosManager",id:id,func:"selectUSB",val:gate.serialName});
             misGUI.showValue({class:"luosManager",id:id,func:"setWifiName",val:gate.wifiName});
         }
@@ -89,6 +90,18 @@ class LuosManager{
         }
         return []
     }
+
+    getAliasesOfType(gateId,type){
+        var aliases = [];
+        if(this.gates[gateId]!=undefined){
+            for(var m in this.gates[gateId].modules ){
+                if(m.type==type)
+                    aliases.push(m.alias);
+            }
+        }
+        return aliases
+    }
+
 
     getOutputs(gateId,alias){
         console.log("getOutputs:",gateId,alias)

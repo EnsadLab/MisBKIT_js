@@ -1009,8 +1009,18 @@ class SensorManager{
     */
     }
 
+    setDistanceAliases(gateID,aliases){
+        console.log("setDistanceAliases:",aliases)
+        misGUI.showValue({class:"sensorManager",param:"distanceAlias",val:aliases});
+    }
+    setLightAliases(gateID,aliases){
+        console.log("setLightAliases:",aliases)
+        misGUI.showValue({class:"sensorManager",param:"lightAlias",val:aliases});
+    }
+
     uiLuosParam(eltID,value,param){
         var sensor = this.getSensorWithID(eltID);
+        console.log("uiLuosParam:",eltID,value,param)
         if(sensor!=undefined){
             switch(param){
                 case "gate":
@@ -1031,6 +1041,18 @@ class SensorManager{
                     break;
                 case "inputs":
                     console.log("LUOS INPUT:",value);
+                    break;
+                case "distanceAlias": //might be "alias" ... tothink
+                    sensor.s.luosInputParams.gate = "Luos0"; //miss GUI: choose gate
+                    sensor.s.luosInputParams["alias"]=value;
+                    sensor.s.luosInputParams.pin = "distance";
+                    break;
+                case "lightAlias":    //might be "alias" ... tothink
+                    sensor.s.luosInputParams.gate = "Luos0"; //miss GUI: choose gate
+                    sensor.s.luosInputParams["alias"]=value;
+                    sensor.s.luosInputParams.pin = "lux";
+                    break;
+
             }
             console.log("uiLuosParam:",eltID,value,param);
             console.log("uiLuosParam:",sensor.s.luosInputParams);

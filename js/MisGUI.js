@@ -309,7 +309,7 @@ MisGUI.prototype.setElementValue = function(elt,value){
                     //console.log("select:values[]:",value);
                     e.each(function(i) {  //value != for each ones
                         var prev = $(this).val();
-                        //console.log("select:prev:",prev);
+                        console.log("MISGUI,select:prev:",prev);
                         $(this).empty();
                         for(var i=0;i<value.length;i++){
                             if(value[i].length>0)
@@ -317,6 +317,7 @@ MisGUI.prototype.setElementValue = function(elt,value){
                         }
                         if( (prev==null)||(prev=="default") ){
                             $(this).val(value[0]);
+                            //console.log("MISGUI,select:triger:",value[0]);
                             $(this).trigger("change");
                         }
                         else{
@@ -325,7 +326,7 @@ MisGUI.prototype.setElementValue = function(elt,value){
                     });
                 }
                 else{
-                    console.log("showSelection",value,$(this).find("option[value='"+value+"']").length )
+                    //console.log("showSelection",value,$(this).find("option[value='"+value+"']").length )
                     if($(this).find("option[value='"+value+"']").length>0)e.val(value);
                     else e.prop("selectedIndex", 0); //select first option par defaut
                 }

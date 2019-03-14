@@ -94,13 +94,21 @@ class Gate extends Module{
     constructor(message){
         super(message)
         this.delay = 25;
-        this.modified={delay:5}
+        this.L0_voltage = "";
+        this.modified={delay:5,L0_voltage:1}
     }
     getDirective(){
         var d = super.getDirective();
-        if(d!=undefined)
-            console.log("GATE:",this.alias,d);
+        if(d!=undefined){
+            console.log("GATE:",this.alias,d,this.L0_voltage);
+        }
         return d;
+    }
+    getVoltage(){
+        let v = this.L0_voltage;
+        this.L0_voltage = "";
+        this.modified.L0_voltage = 1;
+        return +v;
     }
 }
 
@@ -139,12 +147,14 @@ class DistanceSensor extends Module{
     constructor(message){
         super(message);
         this.trans_position = 0;
-        this.distance = 0;              //value alias for ui
+        this.distance = 9999;              //value alias for ui
         this.outputs    = ["distance"];
     }
     update(message){
         super.update(message);
         this.distance = this.trans_position;
+        if(this.distance<1)
+            this.distance = 9999;
     }
 }
 
@@ -363,10 +373,14 @@ class LuosGate{
 
         this.rcvTime  = performance.now();
         this.sendTime = performance.now();
+        this.voltageTime = 0;
         this.hrTime = process.hrtime();
         this.dtMin = 1000;
         this.dtMax = 0;
         
+        this.gateDelay  = 25;
+        this.lowVoltage = 6;
+
         this.blinker = undefined;
         console.log("GATE id:",this.id,typeof(this.id));
     }
@@ -376,7 +390,7 @@ class LuosGate{
     //DELETED collectDirectives(){
 
     command(alias,func,...args){
-        var dog = performance.now()-this.rcvTime;
+        //var dog = performance.now()-this.rcvTime;
         let m = this.modules[alias];
         if((m!=undefined)&&(m[func]!=undefined)){
             return m[func](...args)
@@ -420,8 +434,23 @@ class LuosGate{
     }
 
     onMessage(json){
+        var t = performance.now(); 
+        if( (t-this.sendTime)>45 ){
+            
+            if(this.modules[this.gateAlias]!=undefined){
+                if( (t-this.voltageTime)>2000 ){
+                    this.voltageTime = t;
+                    var volt = this.modules[this.gateAlias].getVoltage(); //!!! 1 shot de retard !!!
+                    //console.log(">>>>>>>>>>>Voltage:",volt,this.lowVoltage);
+                    if(volt && volt<this.lowVoltage){
+                        misGUI.alert("BATTERY LOW\n"+volt+"V");
+                        this.close();
+                        return;
+                    }
+                }
+            }
+            
 
-        if( (performance.now()-this.sendTime)>45 ){
             //colect directives
             var momos = {} , count = 0;
             Object.entries(this.modules).forEach(([k,v])=>{
@@ -431,6 +460,7 @@ class LuosGate{
                     count++;
             }
             });
+            //send directives
             if(count>0){
                 this.sendStr(JSON.stringify({modules:momos})+"\r");
                 this.sendTime = performance.now();
@@ -466,20 +496,32 @@ class LuosGate{
         this.modules = {}
         var array = parsed.route_table;
 
+        var distanceAliases = ["none"]; //for sensorManager ("none" -> change) TOFIND: elegant solution
+        var lightAliases    = ["none"]; //for sensorManager
+        var imuAliases      = ["none"]; //for sensorManager
+
         var info = "";
         for(var i=0;i<array.length;i++){
             var momo = array[i];
             switch(momo.type){
                 case "DynamixelMotor": this.modules[momo.alias]=new DynamixelMotor(momo); break;
                 case "GPIO": this.modules[momo.alias]=new GPIO(momo); break;
-                case "DistanceSensor": this.modules[momo.alias]=new DistanceSensor(momo); break;
-                case "LightSensor":    this.modules[momo.alias]=new LightSensor(momo);    break;
+                case "DistanceSensor":
+                    this.modules[momo.alias]=new DistanceSensor(momo);
+                    distanceAliases.push(momo.alias);
+                    break;
+                case "LightSensor":
+                    this.modules[momo.alias]=new LightSensor(momo);
+                    lightAliases.push(momo.alias);
+                    break;
                 case "Potentiometer" : this.modules[momo.alias]=new Potentiometer(momo);  break;
                 case "DCMotor" : this.modules[momo.alias]=new DCMotor(momo); break;
                 case "Servo" : this.modules[momo.alias]=new Servo(momo); break;
                 case "Void" : this.modules[momo.alias]=new Void(momo); break;
                 case "Gate" :
-                    this.modules[momo.alias]=new Gate(momo);
+                    let gate = new Gate(momo);
+                    gate.delay = this.gateDelay;
+                    this.modules[momo.alias] = gate;
                     this.gateAlias = momo.alias;
                     break;
                 default: this.modules[momo.alias] = new Module(momo); break;
@@ -494,6 +536,9 @@ class LuosGate{
 
         console.log("Luos:initModules:\n",this.modules);
         sensorManager.luosNewGate();
+
+        sensorManager.setDistanceAliases(this.id,distanceAliases);
+        sensorManager.setLightAliases(this.id,lightAliases);
         luosManager.showState(this.id,true,info)
         this.connected = true;
     }
@@ -637,6 +682,7 @@ class LuosGate{
             connection.on('close',function(code,desc){
                 self.connected = false;
                 self.wsConnection = undefined;
+                self.stopBlink();
                 luosManager.showState(self.id,false,"closed" );
                 console.log("WS connection closed:",code,desc);
                 if( code != 1000 ){
@@ -646,7 +692,7 @@ class LuosGate{
             })
             self.connected = true;
             if(self.gateAlias == undefined)
-                self.timedDetection(100);
+                self.timedDetection(5);
             else
                 self.stopBlink();
             misGUI.showValue({class:"luosGate",func:"enable",id:self.id,val:true});       
@@ -695,7 +741,7 @@ class LuosGate{
                         console.log('btSerial connected');
                         self.gateAlias = undefined;
                         self.connected = true;
-                        self.timedDetection(100);
+                        self.timedDetection(5);
                         self.stopBlink();
                         luosManager.showState(self.id,true,"Bluetooth connected")
                     },function(err){
@@ -745,7 +791,7 @@ class LuosGate{
                             console.log('btSerial connected');
                             self.gateAlias = undefined;
                             self.connected = true;
-                            self.timedDetection(100);
+                            self.timedDetection(5);
                             self.stopBlink();
                             luosManager.showState(self.id,true,"Bluetooth connected")
                         },function(err){
@@ -783,7 +829,7 @@ class LuosGate{
                     luosManager.showState(self.id,true,"waiting luos ...")
                     self.connected = true;
                     self.gateAlias = undefined;
-                    self.timedDetection(50);    
+                    self.timedDetection(5);    
                 });
             }
         });
@@ -864,24 +910,44 @@ class LuosGate{
         if(decount>0){
             console.log("send detection",decount); //this.detectDecount);
             this.sendStr('{"detection":{}}\r');
-            this.timerDetect = setTimeout(this.timedDetection.bind(this,decount-1),500);
+            this.timerDetect = setTimeout(this.timedDetection.bind(this,decount-1),1000);
         }
         else{
+            this.stopBlink();
             this.close("Luos not found");
         }
     }
 
     toggleWifi(onoff){
     }
-
+ 
     getSettings(){
         return {
             gate:this.gateAlias,
             connection: this.connectionType,
             serial:this.serialName,
-            wireless:this.wifiName
+            wireless:this.wifiName,
+            lowVoltage: this.lowVoltage,
+            gateDelay: this.gateDelay
         }
     }
+
+    setSettings(settings){ //assign
+        this.gateAlias  = settings.gate;
+        this.connectionType = settings.connection;
+        this.serialName = settings.serial;
+        this.wifiName = settings.wireless;
+
+        if(settings.connection)
+            this.selectConnexion(settings.connection);
+        if(settings.lowVoltage)
+            this.lowVoltage = settings.lowVoltage;
+        if(settings.gateDelay)
+            this.gateDelay  = settings.gateDelay;
+
+
+    }
+
     
     //{"detection":{}}
     reset(){
@@ -894,7 +960,7 @@ class LuosGate{
                 }
             }//);
             self.gateAlias = undefined;
-            setTimeout(self.timedDetection.bind(self,10),1000);
+            setTimeout(self.timedDetection.bind(self,5),1000);
         },500);
     }
     
