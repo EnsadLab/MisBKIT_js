@@ -97,13 +97,6 @@ class Gate extends Module{
         this.L0_voltage = "";
         this.modified={delay:5,L0_voltage:1}
     }
-    getDirective(){
-        var d = super.getDirective();
-        if(d!=undefined){
-            console.log("GATE:",this.alias,d,this.L0_voltage);
-        }
-        return d;
-    }
     getVoltage(){
         let v = this.L0_voltage;
         this.L0_voltage = "";

@@ -374,7 +374,8 @@ DxlManager.prototype.update = function(){
     for(var i=0;i<nbm;i++){
         var motor = this.motors[i];
         motor.update(t);
-        //sensorManager.handleDxlPos(i,motor.angleToNorm(a)); //use min & max
+        let a = motor.getCurrentAngle();
+        sensorManager.handleDxlPos(i,motor.angleToNorm(a)); //use min & max
     }
 
     if(cm9Com.isReady()){    
@@ -539,7 +540,7 @@ DxlManager.prototype.dxlPos=function(array) {  //array[0]="dxlpos"
             var m = this.motors[i];
             var a = m.currPos(v).toFixed(1);
             this.positions[i]=a;    //store if other managers want an array
-            sensorManager.handleDxlPos(i,m.angleToNorm(a)); //use min & max
+            //sensorManager.handleDxlPos(i,m.angleToNorm(a)); //use min & max
             //misGUI.needle(i,a);
         }
     }

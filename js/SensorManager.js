@@ -857,6 +857,7 @@ class SensorManager{
     }
 
     //Motor position -> sensor.s.fromMotorIndex
+    //Better : sensor.update --> dxlManager.getMotorPosition(index) (TODO)
     handleDxlPos(index,nval){
         //console.log("handleDxlPos:",index,nval);
         $.each(this.sensors,function(i,sensor) {
