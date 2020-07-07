@@ -6,7 +6,7 @@
   "main": "main.js",
   "dependencies": {
     "midi": "^0.9.5",
-    "npm": "^6.0.1",
+    "npm": "^6.14.6",
     "osc": "^2.2.1",
     "osc-min": "^1.1.1",
     "python-shell": "^1.0.6",
